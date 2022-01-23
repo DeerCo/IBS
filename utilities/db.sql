@@ -25,5 +25,3 @@ CREATE TABLE users
     username character varying(256) NOT NULL,
     PRIMARY KEY (username)
 );
-
-insert into interviews (task, time, ta) values ('phase_3', '2022-04-16 12:00', 'Howie')

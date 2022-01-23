@@ -16,6 +16,10 @@ dotenv.config();
 
 const a3Router = require('./routes/a3');
 const interviewsRouter = require('./routes/interviews');
+const interviewsTaRouter = require('./routes/interviews_ta');
+
+// const helpers = require("./utilities/helpers");
+// console.log(helpers.generateTaAccessToken("Howie", "phase_2"));
 
 /* 
 	Routes 
@@ -27,6 +31,8 @@ app.get("/", (req, res) => {
 app.use('/a3', a3Router);
 
 app.use('/interviews', interviewsRouter);
+
+app.use('/interviews_ta', interviewsTaRouter);
 
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`)
