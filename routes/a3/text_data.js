@@ -9,7 +9,6 @@ router.get("/text/data", (req, res) => {
 	} else {
 		let sql_text = "SELECT * FROM text WHERE paragraph >= ($1) AND paragraph < ($1) + 5 ORDER BY paragraph ASC";
 		client.query(sql_text, [req.query.paragraph], (err, pgRes) => {
-			console.log(constants.rows_count)
 			if (err) {
 				res.status(404).json({ message: "Unknown error." });
 			} else if (parseInt(req.query.paragraph) + 5 > constants.rows_count) {
