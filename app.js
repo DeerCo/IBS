@@ -18,9 +18,6 @@ const a3Router = require('./routes/a3');
 const interviewsRouter = require('./routes/interviews');
 const interviewsTaRouter = require('./routes/interviews_ta');
 
-// const helpers = require("./utilities/helpers");
-// console.log(helpers.generateTaAccessToken("Howie", "phase_2"));
-
 /* 
 	Routes 
 */
