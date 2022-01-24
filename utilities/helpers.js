@@ -23,7 +23,7 @@ function name_validate(name) {
 }
 
 function string_validate(string) {
-	let regex_string = new RegExp("^[0-9a-zA-Z_ \,\.]{1,500}$");
+	let regex_string = new RegExp("^[0-9a-zA-Z_ \.]{1,500}$");
 
 	if (!regex_string.test(string)) {
 		return 1;

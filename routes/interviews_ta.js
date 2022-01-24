@@ -6,6 +6,7 @@ const todayRouter = require("./interviews_ta/today");
 const scheduleRouter = require("./interviews_ta/schedule");
 const changeRouter = require("./interviews_ta/change");
 const deleteRouter = require("./interviews_ta/delete");
+const backipRouter = require("./interviews_ta/backup");
 
 router.use("/", middleware); // Verify if the token and task is valid
 router.use("/", allRouter);
@@ -13,5 +14,6 @@ router.use("/", todayRouter);
 router.use("/", scheduleRouter);
 router.use("/", changeRouter);
 router.use("/", deleteRouter);
+router.use("/", backipRouter);
 
 module.exports = router;
