@@ -3,7 +3,7 @@ const router = express.Router();
 const client = require("../../setup/db");
 
 router.delete("/:task/delete", (req, res) => {
-	if (!("id" in req.body) || isNaN(req.body["id"]) || req.body["id"].trim() === ""){
+	if (!("id" in req.body) || isNaN(req.body["id"]) || req.body["id"].trim() === "") {
 		res.status(404).json({ message: "Id is missing or has invalid format." });
 		return;
 	}

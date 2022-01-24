@@ -10,7 +10,7 @@ function generateAccessToken(group) {
 }
 
 function generateTaAccessToken(ta, task) {
-	return jwt.sign({ta: ta, type: "ta", task: task}, process.env.TOKEN_SECRET, { expiresIn: "30d" });
+	return jwt.sign({ ta: ta, type: "ta", task: task }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
 }
 
 function name_validate(name) {
@@ -62,51 +62,51 @@ function time_validate(time) {
 
 function query_filter(query) {
 	let filter = "";
-    if ("id" in query && !isNaN(query["id"]) && query["id"].trim() != ""){
-        filter = filter + " AND id = " + query["id"];
-    }
-    if ("time" in query && !time_validate(query["time"])){
-        filter = filter + " AND time = '" + query["time"] + " America/Toronto'";
-    }
-    if ("date" in query && !date_validate(query["date"])){
-        filter = filter + " AND time BETWEEN '" + query["date"] +" America/Toronto'::date AND '" + query["date"] + " America/Toronto'::date + INTERVAL '24 HOURS'";
-    }
-    if ("student" in query && !name_validate(query["student"])){
-        filter = filter + " AND student = '" + query["student"] + "'";
-    }
-    if ("length" in query && !isNaN(query["length"]) && query["length"].trim() != ""){
-        filter = filter + " AND length = " + query["length"];
-    }
-    if ("location" in query && !string_validate(query["location"])){
-        filter = filter + " AND location = '" + query["location"] + "'";
-    }
-    if ("cancelled" in query && (query["cancelled"].toLowerCase() === "true" || query["cancelled"].toLowerCase() === "false")){
-        filter = filter + " AND cancelled = '" + query["cancelled"].toLowerCase() + "'";
-    }
-    if ("note" in query && !string_validate(query["note"])){
-        filter = filter + " AND note = '" + query["note"] + "'";
-    }
+	if ("id" in query && !isNaN(query["id"]) && query["id"].trim() != "") {
+		filter = filter + " AND id = " + query["id"];
+	}
+	if ("time" in query && !time_validate(query["time"])) {
+		filter = filter + " AND time = '" + query["time"] + " America/Toronto'";
+	}
+	if ("date" in query && !date_validate(query["date"])) {
+		filter = filter + " AND time BETWEEN '" + query["date"] + " America/Toronto'::date AND '" + query["date"] + " America/Toronto'::date + INTERVAL '24 HOURS'";
+	}
+	if ("student" in query && !name_validate(query["student"])) {
+		filter = filter + " AND student = '" + query["student"] + "'";
+	}
+	if ("length" in query && !isNaN(query["length"]) && query["length"].trim() != "") {
+		filter = filter + " AND length = " + query["length"];
+	}
+	if ("location" in query && !string_validate(query["location"])) {
+		filter = filter + " AND location = '" + query["location"] + "'";
+	}
+	if ("cancelled" in query && (query["cancelled"].toLowerCase() === "true" || query["cancelled"].toLowerCase() === "false")) {
+		filter = filter + " AND cancelled = '" + query["cancelled"].toLowerCase() + "'";
+	}
+	if ("note" in query && !string_validate(query["note"])) {
+		filter = filter + " AND note = '" + query["note"] + "'";
+	}
 	return filter;
 }
 
 function query_set(query) {
 	console.log(query)
 	let set = "";
-    if ("set_time" in query && !time_validate(query["set_time"])){
-        set = set + " time = '" + query["set_time"] + " America/Toronto',";
-    }
-    if ("set_length" in query && !isNaN(query["set_length"]) && query["set_length"].trim() != ""){
-        set = set + " length = " + query["set_length"] + ",";
-    }
-    if ("set_location" in query && !string_validate(query["set_location"])){
-        set = set + " location = '" + query["set_location"] + "',";
-    }
-    if ("set_cancelled" in query && (query["set_cancelled"].toLowerCase() === "true" || query["set_cancelled"].toLowerCase() === "false")){
-        set = set + " cancelled = '" + query["set_cancelled"].toLowerCase() + "',";
-    }
-    if ("set_note" in query && !string_validate(query["set_note"])){
-        set = set + " note = '" + query["set_note"] + "',";
-    }
+	if ("set_time" in query && !time_validate(query["set_time"])) {
+		set = set + " time = '" + query["set_time"] + " America/Toronto',";
+	}
+	if ("set_length" in query && !isNaN(query["set_length"]) && query["set_length"].trim() != "") {
+		set = set + " length = " + query["set_length"] + ",";
+	}
+	if ("set_location" in query && !string_validate(query["set_location"])) {
+		set = set + " location = '" + query["set_location"] + "',";
+	}
+	if ("set_cancelled" in query && (query["set_cancelled"].toLowerCase() === "true" || query["set_cancelled"].toLowerCase() === "false")) {
+		set = set + " cancelled = '" + query["set_cancelled"].toLowerCase() + "',";
+	}
+	if ("set_note" in query && !string_validate(query["set_note"])) {
+		set = set + " note = '" + query["set_note"] + "',";
+	}
 	return set;
 }
 

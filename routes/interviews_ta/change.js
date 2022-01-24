@@ -7,11 +7,11 @@ router.put("/:task/change", (req, res) => {
 	let filter = helpers.query_filter(req.body);
 	let set = helpers.query_set(req.body);
 
-	if (filter === ""){
+	if (filter === "") {
 		res.status(406).json({ message: "Pleaes add at least one condition." });
 		return;
 	}
-	if (set === ""){
+	if (set === "") {
 		res.status(406).json({ message: "Nothing to change." });
 		return;
 	}
