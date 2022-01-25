@@ -122,8 +122,8 @@ function send_email(email, subject, body) {
 	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log(error); } });
 }
 
-function send_csv(json, res, backup) {
-	if (JSON.stringify(json) === "[]"){
+function send_csv(json, res, backup, note = "") {
+	if (JSON.stringify(json) === "[]") {
 		res.status(200).json({ message: "No data is available." });
 		return;
 	}
@@ -141,7 +141,7 @@ function send_csv(json, res, backup) {
 	}
 
 	let json2csvParser = new json2csv.Parser();
-	let file_name = "interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-hh-mm-ss") + ".csv";
+	let file_name = "interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-hh-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
 	let csv = json2csvParser.parse(json);
 	fs.writeFile(dir + file_name, csv, (err) => {
 		if (err) {
