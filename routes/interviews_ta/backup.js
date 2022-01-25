@@ -3,7 +3,7 @@ const router = express.Router();
 const client = require("../../setup/db");
 const helpers = require("../../utilities/helpers");
 
-router.get("/backup", (req, res) => {
+router.get("/:task/backup", (req, res) => {
     let sql_backup = "SELECT * FROM interviews";
     client.query(sql_backup, [], (err, pgRes) => {
         if (err) {

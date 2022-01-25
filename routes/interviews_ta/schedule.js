@@ -26,14 +26,14 @@ router.post("/:task/schedule", (req, res) => {
 	}
 
 	let sql_schedule = "INSERT INTO interviews (task, time, ta, length, location) VALUES (($1), ($2), ($3), ($4), ($5))";
-	client.query(sql_schedule, [req.params.task, time, res.locals.ta, req.body["length"], location], (err, pgRes) => {
+	client.query(sql_schedule, [req.params["task"], time, res.locals.ta, req.body["length"], location], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 		} else {
 			if (pgRes.rowCount !== 1) {
 				res.status(404).json({ message: "Unknown error." });
 			} else {
-				let message = "You have scheduled an interview for " + req.params.task + " at " + req.body["time"] + " successfully.";
+				let message = "You have scheduled an interview for " + req.params["task"] + " at " + req.body["time"] + " successfully.";
 				res.status(200).json({ message: message });
 			}
 		}

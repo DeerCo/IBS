@@ -17,11 +17,11 @@ router.post("/:task/token", rate_limit.interviews_limiter, (req, res) => {
 		res.status(400).json({ message: "Your student number is missing or has invalid format." });
 		return;
 	}
-	if (!constants.tasks[req.params.task]["open"]) {
+	if (!constants.tasks[req.params["task"]]["open"]) {
 		return;
 	}
 
-	helpers.get_users_information(req.body["group"], constants.tasks[req.params.task]["markus_id"]).then(data => {
+	helpers.get_users_information(req.body["group"], constants.tasks[req.params["task"]]["markus_id"]).then(data => {
 		if (data["status"]) {
 			if (data["users"].length === 0) {
 				res.status(406).json({ message: "The provided group name is invalid." });
@@ -35,7 +35,7 @@ router.post("/:task/token", rate_limit.interviews_limiter, (req, res) => {
 				if (email === "") {
 					res.status(406).json({ message: "The provided utorid or student number is invalid." });
 				} else {
-					const token = helpers.generateAccessToken({ group: req.body["group"], email: email, type: "student", task: req.params.task });
+					const token = helpers.generateAccessToken({ group: req.body["group"], email: email, type: "student", task: req.params["task"] });
 					res.send(token);
 					// send_email(email, "Your CSC309 Token", token);
 				}

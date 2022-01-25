@@ -16,7 +16,7 @@ router.use("/:task", rate_limit.interviews_limiter, function (req, res, next) {
 			} else {
 				if (ta.type !== "ta") {
 					res.status(403).json({ message: "You are not authorized to access." });
-				} else if (constants.tasks[req.params.task]["open"] && req.params.task === ta.task) {
+				} else if (constants.tasks[req.params["task"]]["open"] && req.params["task"] === ta.task) {
 					res.locals.ta = ta.ta;
 					next();
 				} else {

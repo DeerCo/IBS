@@ -14,7 +14,7 @@ router.use("/:task", rate_limit.interviews_limiter, function (req, res, next) {
 			if (err) {
 				res.status(403).json({ message: "Your token is invalid. Please generate a new one." });
 			} else {
-				if (constants.tasks[req.params.task]["open"] && req.params.task === group.task) {
+				if (constants.tasks[req.params["task"]]["open"] && req.params["task"] === group.task) {
 					res.locals.group = group.group;
 					res.locals.email = group.email;
 					next();

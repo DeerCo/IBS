@@ -9,7 +9,7 @@ router.delete("/:task/delete", (req, res) => {
 	}
 
 	let sql_delete = "DELETE FROM interviews WHERE task = ($1) AND ta = ($2) AND student IS NULL AND id = ($3)";
-	client.query(sql_delete, [req.params.task, res.locals.ta, req.body["id"]], (err, pgRes) => {
+	client.query(sql_delete, [req.params["task"], res.locals.ta, req.body["id"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 		} else {
