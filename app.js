@@ -32,5 +32,5 @@ app.use('/interviews', interviewsRouter);
 app.use('/interviews_ta', interviewsTaRouter);
 
 app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`)
+	console.log(`App listening at http://localhost:${port}`)
 })

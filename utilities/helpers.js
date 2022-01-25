@@ -92,7 +92,6 @@ function query_filter(query) {
 }
 
 function query_set(query) {
-	console.log(query)
 	let set = "";
 	if ("set_time" in query && !time_validate(query["set_time"])) {
 		set = set + " time = '" + query["set_time"] + " America/Toronto',";
@@ -124,6 +123,11 @@ function send_email(email, subject, body) {
 }
 
 function send_csv(json, res, backup) {
+	if (JSON.stringify(json) === "[]"){
+		res.status(200).json({ message: "No data is available." });
+		return;
+	}
+
 	if (backup) {
 		var dir = __dirname + "/../backup/";
 		if (!fs.existsSync(dir)) {
