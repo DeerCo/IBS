@@ -1,6 +1,6 @@
 CREATE TABLE interviews
 (
-    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 0 MINVALUE 0 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 0 MINVALUE 0 ),
     task character varying(50) NOT NULL,
     "time" timestamp with time zone NOT NULL,
     ta character varying(50) NOT NULL,

@@ -1,5 +1,11 @@
 const rateLimit = require("express-rate-limit");
 
+const general_limiter = rateLimit({
+	max: 1000,
+	windowMs: 20 * 60 * 1000,
+	message: "You sent too many requests! Try again in 20 minutes!"
+});
+
 const interviews_limiter = rateLimit({
 	max: 100,
 	windowMs: 20 * 60 * 1000,
@@ -19,6 +25,7 @@ const likes_limiter = rateLimit({
 });
 
 module.exports = {
+	general_limiter: general_limiter,
 	interviews_limiter: interviews_limiter,
 	register_limiter: register_limiter,
 	likes_limiter: likes_limiter,

@@ -18,10 +18,12 @@ const a3Router = require('./routes/a3');
 const interviewsRouter = require('./routes/interviews');
 const interviewsTaRouter = require('./routes/interviews_ta');
 
+const rate_limit = require("./setup/rate_limit");
+
 /* 
 	Routes 
 */
-app.get("/", (req, res) => {
+app.get("/", rate_limit.general_limiter, (req, res) => {
 	res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
 
