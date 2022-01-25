@@ -9,7 +9,7 @@ router.get("/backup", (req, res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {
-            helpers.send_csv(pgRes.rows, res);
+            helpers.send_csv(pgRes.rows, res, true);
         }
     });
 })

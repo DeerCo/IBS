@@ -123,15 +123,31 @@ function send_email(email, subject, body) {
 	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log(error); } });
 }
 
-function send_csv(json, res) {
+function send_csv(json, res, backup) {
+	if (backup) {
+		var dir = __dirname + "/../backup/";
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir);
+		}
+	} else {
+		var dir = __dirname + "/../tmp/";
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir);
+		}
+	}
+
 	let json2csvParser = new json2csv.Parser();
-	let file_name = __dirname.substring(0, __dirname.length - 9) + "backup/interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-hh-mm-ss") + ".csv";
+	let file_name = "interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-hh-mm-ss") + ".csv";
 	let csv = json2csvParser.parse(json);
-	fs.writeFile(file_name, csv, (err) => {
+	fs.writeFile(dir + file_name, csv, (err) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 		} else {
-			res.sendFile(file_name);
+			if (backup) {
+				res.sendFile(file_name, { root: "./backup/", headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+			} else {
+				res.sendFile(file_name, { root: "./tmp/", headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+			}
 		}
 	});
 }
