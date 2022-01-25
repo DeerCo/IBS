@@ -129,5 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# backup of the interviews table
+# backup and temp of the interviews table
 backup/*
+tmp/*
