@@ -6,13 +6,13 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const port = process.env.PORT || 3000;
-
 const cors = require("cors");
 app.use(cors());
 
 const dotenv = require("dotenv");
 dotenv.config();
+
+const port = process.env.PORT || 3000;
 
 const a3Router = require('./routes/a3');
 const interviewsRouter = require('./routes/interviews');
