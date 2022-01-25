@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
 require("moment-timezone");
+const fs = require("fs");
+const json2csv = require("json2csv");
 const bent = require("bent")
 const getJSON = bent("json")
 const transporter = require("../setup/email");
@@ -121,6 +123,19 @@ function send_email(email, subject, body) {
 	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log(error); } });
 }
 
+function send_csv(json, res) {
+	let json2csvParser = new json2csv.Parser();
+	let file_name = __dirname.substring(0, __dirname.length - 9) + "backup/interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-hh-mm-ss") + ".csv";
+	let csv = json2csvParser.parse(json);
+	fs.writeFile(file_name, csv, (err) => {
+		if (err) {
+			res.status(404).json({ message: "Unknown error." });
+		} else {
+			res.sendFile(file_name);
+		}
+	});
+}
+
 async function get_users_information(user_group, markus_id) {
 	try {
 		let groups = await getJSON(process.env.MARKUS_API + "assignments/" + markus_id + "/groups.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
@@ -151,5 +166,6 @@ module.exports = {
 	query_filter: query_filter,
 	query_set: query_set,
 	send_email: send_email,
+	send_csv: send_csv,
 	get_users_information: get_users_information
 }
