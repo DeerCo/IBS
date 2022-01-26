@@ -6,7 +6,7 @@ const rate_limit = require("../../setup/rate_limit");
 router.use("/:task", rate_limit.interviews_limiter, function (req, res, next) {
 	const authHeader = req.headers["authorization"];
 	const token = authHeader && authHeader.split(" ")[1];
-	if (req.params["task"] === "token"){
+	if (req.params["task"] === "token") {
 		res.status(400).json({ message: "Task is invalid." });
 	} else if (token == null) {
 		res.status(401).json({ message: "You need to provide a valid token." });
