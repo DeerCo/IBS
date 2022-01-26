@@ -116,7 +116,7 @@ function send_email(email, subject, body) {
 		from: "Han Xian Xu Huang <csc309@outlook.com>",
 		to: email,
 		subject: subject,
-		text: body + "\n\n(Please do not reply to this email, as no one monitors it. Post your question to Piazza instead.)"
+		text: "(Please do not reply to this email, as no one monitors it. Post your question to Piazza instead.)\n\n" + body
 	};
 
 	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log(error); } });
