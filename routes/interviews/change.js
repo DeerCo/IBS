@@ -36,7 +36,7 @@ router.put("/:task/change", (req, res) => {
 							} else {
 								let message = "You have changed your interview for " + req.params["task"] + " from " + pgRes.rows[0]["time"] + " to " + req.body["time"] + " successfully.";
 								res.status(200).json({ message: message });
-								// helpers.send_email(res.locals["email"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
+								helpers.send_email(res.locals["email"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
 								client.query(constants.sql_cancel, [pgRes.rows[0]["id"]], () => { });
 							}
 						}

@@ -38,7 +38,7 @@ router.post("/:task/token", rate_limit.interviews_limiter, (req, res) => {
 				} else {
 					const token = helpers.generateAccessToken({ group: req.body["group"], email: email, type: "student", task: req.params["task"] });
 					res.send(token);
-					// send_email(email, "Your CSC309 Token", token);
+					helpers.send_email(email, "Your CSC309 Token", token);
 				}
 			}
 		} else {

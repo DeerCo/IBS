@@ -24,7 +24,7 @@ router.delete("/:task/cancel", (req, res) => {
 					} else {
 						let message = "You have cancelled your interview for " + req.params["task"] + " at " + pgRes.rows[0]["time"] + " successfully.";
 						res.status(200).json({ message: message });
-						// helpers.send_email(res.locals["email"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
+						helpers.send_email(res.locals["email"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
 					}
 				});
 			}
