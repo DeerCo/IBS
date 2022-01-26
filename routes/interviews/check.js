@@ -4,7 +4,7 @@ const client = require("../../setup/db");
 const constants = require("../../setup/constants");
 
 router.get("/:task/check", (req, res) => {
-	client.query(constants.sql_check, [res.locals.group, req.params["task"]], (err, pgRes) => {
+	client.query(constants.sql_check, [res.locals["group"], req.params["task"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 		} else {

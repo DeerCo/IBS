@@ -13,7 +13,7 @@ router.use("/", rate_limit.interviews_limiter, function (req, res, next) {
 			if (err) {
 				res.status(401).json({ message: "Your token is invalid. Please generate a new one." });
 			} else {
-				if (ta_data.type !== "ta") {
+				if (ta_data["type"] !== "ta") {
 					res.status(403).json({ message: "You are not authorized to access." });
 				} else {
 					res.locals["ta_data"] = ta_data;

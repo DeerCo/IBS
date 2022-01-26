@@ -17,7 +17,8 @@ router.post("/:task/token", rate_limit.interviews_limiter, (req, res) => {
 		res.status(400).json({ message: "Your student number is missing or has invalid format." });
 		return;
 	}
-	if (!constants.tasks[req.params["task"]]["open"]) {
+	if (!(req.params["task"] in constants.tasks) || !constants.tasks[req.params["task"]]["open"]) {
+		res.status(406).json({ message: "Task is invalid." });
 		return;
 	}
 

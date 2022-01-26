@@ -13,7 +13,7 @@ router.put("/:task/change", (req, res) => {
 	}
 	let time = req.body["time"] + " America/Toronto";
 
-	client.query(constants.sql_check, [res.locals.group, req.params["task"]], (err, pgRes) => {
+	client.query(constants.sql_check, [res.locals["group"], req.params["task"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 		} else {
@@ -27,7 +27,7 @@ router.put("/:task/change", (req, res) => {
 				if (moment.tz(req.body["time"], "America/Toronto").subtract(5, "minutes") < moment().tz("America/Toronto")) {
 					res.status(406).json({ message: req.body["time"] + " was in the past or is within 5 minutes from now. Please choose a new time." });
 				} else {
-					client.query(constants.sql_book, [res.locals.group, req.params["task"], time, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes1) => {
+					client.query(constants.sql_book, [res.locals["group"], req.params["task"], time, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes1) => {
 						if (err) {
 							res.status(404).json({ message: "Unknown error." });
 						} else {
@@ -36,7 +36,7 @@ router.put("/:task/change", (req, res) => {
 							} else {
 								let message = "You have changed your interview for " + req.params["task"] + " from " + pgRes.rows[0]["time"] + " to " + req.body["time"] + " successfully.";
 								res.status(200).json({ message: message });
-								// helpers.send_email(res.locals.email, "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
+								// helpers.send_email(res.locals["email"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
 								client.query(constants.sql_cancel, [pgRes.rows[0]["id"]], () => { });
 							}
 						}
