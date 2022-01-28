@@ -4,7 +4,7 @@ const client = require("../../setup/db");
 const rate_limit = require("../../setup/rate_limit");
 
 router.post("/text/likes", rate_limit.likes_limiter, (req, res) => {
-	if (!("paragraph" in req.body) || isNaN(req.body["paragraph"]) || req.body["paragraph"].trim() === "") {
+	if (!("paragraph" in req.body) || isNaN(req.body["paragraph"]) || req.body["paragraph"] === "") {
 		res.status(400).json({ message: "Paragraph is not valid." });
 	} else {
 		let sql_likes = "UPDATE text SET likes = (SELECT likes FROM text WHERE paragraph = ($1) FOR UPDATE) + 1 WHERE paragraph = ($1) RETURNING likes";
