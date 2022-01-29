@@ -141,7 +141,7 @@ function send_csv(json, res, backup, note = "") {
 	}
 
 	let json2csvParser = new json2csv.Parser();
-	let file_name = "interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-hh-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
+	let file_name = "interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
 	let csv = json2csvParser.parse(json);
 	fs.writeFile(dir + file_name, csv, (err) => {
 		if (err) {
