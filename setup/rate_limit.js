@@ -13,7 +13,7 @@ const token_limiter = rateLimit({
 });
 
 const interviews_limiter = rateLimit({
-	max: 2,
+	max: 4,
 	windowMs: 60 * 60 * 1000,
 	message: "You sent too many 'interviews' requests! Try again in one hour!"
 });

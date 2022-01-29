@@ -38,6 +38,7 @@ router.post("/:task/token", rate_limit.token_limiter, (req, res) => {
 				} else {
 					const token = helpers.generateAccessToken({ group: req.body["group"], email: email, type: "student", task: req.params["task"] });
 					// res.send(token);
+					res.status(200).json({ message: "Your token has been sent to your email." });
 					helpers.send_email(email, "Your CSC309 Token", token);
 				}
 			}
