@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const rate_limit = require("../../setup/rate_limit");
 
-router.use("/:task", rate_limit.interviews_limiter, function (req, res, next) {
+router.use("/:task", function (req, res, next) {
 	const authHeader = req.headers["authorization"];
 	const token = authHeader && authHeader.split(" ")[1];
 	if (req.params["task"] === "token") {

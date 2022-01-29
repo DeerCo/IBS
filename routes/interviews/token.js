@@ -4,7 +4,7 @@ const constants = require("../../setup/constants");
 const rate_limit = require("../../setup/rate_limit");
 const helpers = require("../../utilities/helpers");
 
-router.post("/:task/token", rate_limit.interviews_limiter, (req, res) => {
+router.post("/:task/token", rate_limit.token_limiter, (req, res) => {
 	if (!("group" in req.body) || helpers.name_validate(req.body["group"])) {
 		res.status(400).json({ message: "Your group name is missing or has invalid format." });
 		return;
