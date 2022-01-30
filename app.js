@@ -17,7 +17,6 @@ const port = process.env.PORT || 3000;
 const a3Router = require('./routes/a3');
 const interviewsRouter = require('./routes/interviews');
 const interviewsTaRouter = require('./routes/interviews_ta');
-const interviewsTaUiRouter = require('./routes/interviews_ta_ui');
 
 const rate_limit = require("./setup/rate_limit");
 
@@ -33,8 +32,6 @@ app.use('/a3', a3Router);
 app.use('/interviews', interviewsRouter);
 
 app.use('/interviews_ta', interviewsTaRouter);
-
-app.use('/interviews_ta_ui', interviewsTaUiRouter);
 
 app.listen(port, () => {
 	console.log(`App listening at http://localhost:${port}`)

@@ -10,6 +10,11 @@ const scheduleRouter = require("./interviews_ta/schedule");
 const changeRouter = require("./interviews_ta/change");
 const deleteRouter = require("./interviews_ta/delete");
 
+router.use(express.static("./public"));
+router.get("/ui", (req, res) => {
+	res.sendFile("index.html", { root: "./public/" });
+});
+
 router.use("/", middleware);
 router.use("/", backupAllRouter);
 router.use("/", middleware_task);
