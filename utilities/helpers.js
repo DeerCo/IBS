@@ -164,7 +164,9 @@ async function get_users_information(user_group, markus_id) {
 		for (let group of groups) {
 			if (group["group_name"] === user_group) {
 				for (let member of group["members"]) {
-					users_requests.push(await getJSON(process.env.MARKUS_API + "users/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
+					if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter"){
+						users_requests.push(await getJSON(process.env.MARKUS_API + "users/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
+					}
 				}
 			}
 		}
