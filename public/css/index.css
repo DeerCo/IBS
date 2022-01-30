@@ -1,0 +1,90 @@
+body {
+  margin:0px;
+  font-family: 'Roboto Slab', serif;
+}
+h1, h2, h3, h4, h5, h6, a {
+  margin:0; padding:0;
+
+}
+.auth {
+  margin:0 auto;
+  max-width:500px;
+}
+.auth-header {
+  color:#384158;
+  text-align:center;
+  font-size:36px;
+}
+
+.auth-form {
+  border:.5px solid #ebebeb;
+  background:#f2f4f5;
+  border-radius:10px;
+  box-shadow:0px 0px 10px #000;
+}
+.auth-form h3 {
+  text-align:left;
+  margin-left:40px;
+  color:##384158;
+}
+.auth-form {
+  box-sizing:border-box;
+  padding-top:15px;
+	padding-bottom:10%;
+  margin:5% auto;
+  text-align:center;
+}
+.auth input[type="text"],
+.auth input[type="password"] {
+  max-width:400px;
+	width: 80%;
+  line-height:3em;
+  font-family: 'Roboto Slab', serif;
+  margin:1em 2em;
+  border-radius:5px;
+  border:2px solid #f2f2f2;
+  outline:none;
+  padding-left:10px;
+}
+.auth-form input[type="button"] {
+  height:30px;
+  width:120px;
+  background:#14bdee;
+  border:1px solid #f2f2f2;
+  border-radius:20px;
+  color: #ffffff;
+  text-transform:uppercase;
+  font-family: 'Roboto Slab', serif;
+  cursor:pointer;
+}
+.sign-up{
+  color:#f2f2f2;
+  margin-left:-70%;
+  cursor:pointer;
+  text-decoration:underline;
+}
+.no-access {
+  color:#E86850;
+  margin:20px 0px 20px -57%;
+  text-decoration:underline;
+  cursor:pointer;
+}
+.try-again {
+  color:#f2f2f2;
+  text-decoration:underline;
+  cursor:pointer;
+}
+
+/*Media Querie*/
+@media only screen and (min-width : 150px) and (max-width : 530px){
+  .auth-form h3 {
+    text-align:center;
+    margin:0;
+  }
+  .sign-up, .no-access {
+    margin:10px 0;
+  }
+  .auth-button {
+    margin-bottom:10px;
+  }
+}
