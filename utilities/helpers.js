@@ -113,7 +113,7 @@ function query_set(query) {
 
 function send_email(email, subject, body) {
 	let mailOptions = {
-		from: "Han Xian Xu Huang <csc309@outlook.com>",
+		from: "Han Xian Xu Huang <" + process.env.EMAIL_USER + ">",
 		to: email,
 		subject: subject,
 		text: "(Please do not reply to this email, as no one monitors it. Post your question to Discord or Piazza instead.)\n\n" + body
