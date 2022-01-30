@@ -25,7 +25,7 @@ h1, h2, h3, h4, h5, h6, a {
 .auth-form h3 {
   text-align:left;
   margin-left:40px;
-  color:##384158;
+  color:#384158;
 }
 .auth-form {
   box-sizing:border-box;
@@ -78,13 +78,13 @@ h1, h2, h3, h4, h5, h6, a {
 /*Media Querie*/
 @media only screen and (min-width : 150px) and (max-width : 530px){
   .auth-form h3 {
-    text-align:center;
-    margin:0;
+	text-align:center;
+	margin:0;
   }
   .sign-up, .no-access {
-    margin:10px 0;
+	margin:10px 0;
   }
   .auth-button {
-    margin-bottom:10px;
+	margin-bottom:10px;
   }
 }

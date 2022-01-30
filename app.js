@@ -3,8 +3,13 @@
 */
 const express = require("express");
 const app = express();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+const multer = require('multer');
+var upload = multer();
+app.use(upload.array());
 
 const cors = require("cors");
 app.use(cors());

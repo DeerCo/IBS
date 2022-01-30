@@ -5,7 +5,7 @@
  */
 
 function pageLoader() {
-$('#submit').click(initialize)
+	$('#submit').click(initialize)
 }
 
 
@@ -16,8 +16,8 @@ $('#submit').click(initialize)
  * 
  */
 function initialize() {
-    localStorage.token = $('#token').val().replace(/\s/g, '');
-    localStorage.task = $('#task').val().replace(/\s/g, '');
-    window.location = 'request.html'
+	localStorage.token = $('#token').val().replace(/\s/g, '');
+	localStorage.task = $('#task').val().replace(/\s/g, '');
+	window.location = 'request.html'
 
 }
