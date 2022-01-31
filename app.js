@@ -4,6 +4,9 @@
 const express = require("express");
 const app = express();
 
+app.set('trust proxy', 1); // get the real ip address
+app.get('/ip', (request, response) => response.send(request.ip));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
