@@ -4,7 +4,7 @@
  * 
  */
 
-function pageLoader(){
+ function pageLoader(){
     $('#main').html('\
     <h2> Current Task: ' + localStorage.task + '</h2>\
     <div id="data"> <p id="message">Use the selections at the left sidebar to query commands</p> </div>\
@@ -15,6 +15,7 @@ function pageLoader(){
     $('#schedule').click(scheduleSetup);
     $('#delete').click(delSetup);
     $('#change').click(changeSetup);
+    $('#groupInfo').click(groupInfoSetup);
     $('#backupAll').click(backupAll);
     $('#backupTask').click(backupTask);
 }
@@ -30,7 +31,7 @@ function pageLoader(){
  * @returns HTML File
  */
 
-function makeTable(rawData){
+function makeTable( rawData ) {
     let cleanData = rawData.replaceAll('\"', '');
     let dataRows = cleanData.split('\n');
     let table = "<table>";
@@ -43,6 +44,52 @@ function makeTable(rawData){
         for( let j = 0; j < dataCol.length; j++ ) {
             let element = dataCol[j]
             table += `<${elementTag} ${element} </${elementTag}`;
+        }
+        table += '</tr>';
+    }
+    table += '</table>'
+    return table;
+}
+
+/**
+ * 
+ * @param {list of JSONS} rawData 
+ * JSON format: String
+ * email: String
+ * first_name: String
+ * grace_credits: Int
+ * hidden: Boolean
+ * id: Int
+ * id_number: String
+ * last_name: String
+ * type: String
+ * user_name: String
+ * @returns HTML table
+ */
+
+function makeGroupTable( rawData ) { 
+    console.log(rawData)
+
+    let table = '<table>\
+                    <tr>\
+                        <th> ID </th>\
+                        <th> Type </th>\
+                        <th> First Name </th>\
+                        <th> Last Name </th>\
+                        <th> Username </th>\
+                        <th> Email </th>\
+                        <th> ID Number </th>\
+                        <th> Hidden </th>\
+                        <th> Grace Credits </th>\
+                    </tr>';
+    let keys = ['id', 'type', 'first_name', 'last_name', 'user_name', 'email', 'id_number', 'hidden', 'grace_credits']
+    for ( let i = 0; i < rawData.length; i++ ){
+        let student = rawData[i];
+        console.log(student)
+        table += '<tr>';
+
+        for( j = 0; j < keys.length; j++ ) {
+            table += `<td> ${student[keys[j]]} </td>`;
         }
         table += '</tr>';
     }
@@ -257,4 +304,32 @@ function del() {
     }
 
     deleteInterview(payload)
+}
+
+function groupInfoSetup() {
+    let htmlString = '<form id="delForm"> \
+                        <label for="groupId">Group: </label>\
+                        <input type="text" id="groupId" name="groupId" placeholder="group_0001" required" /><br>\
+                        <input type="submit" id="submit" value="Obtain Information" />\
+                    </form>\
+                    <div id="errMessage"><div>';
+    $('#data').html(htmlString);
+    $('#submit').click(groupInformation)
+    $('#delForm').submit(function (e) {
+        e.preventDefault();
+      });
+}
+
+function groupInformation() {
+    $('#errMessage').html('');
+    let groupId = $('#groupId').val().toString();
+
+    if ( !groupId ) {
+        $('#errMessage').html('<p> Please provide a group ID.</p>');
+        return;
+    }
+    
+    let payload = `group=${groupId}`
+
+    groupInfo(payload)
 }
