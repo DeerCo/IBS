@@ -2,16 +2,10 @@ const express = require("express");
 const router = express.Router();
 const moment = require("moment");
 require("moment-timezone");
-const constants = require("../../setup/constants");
 const client = require("../../setup/db");
 const helpers = require("../../utilities/helpers");
 
 router.get("/:task/today", (req, res) => {
-	if (!constants.tasks[req.params["task"]]["open"] || helpers.string_validate(req.params["ta"])) {
-		res.status(400).json({ message: "Task or TA is invalid" });
-		return;
-	}
-
 	let sql_times = "SELECT id, task, to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI') AS time, student, length, location, cancelled, note FROM interviews WHERE task = ($1) AND ta = ($2) AND time BETWEEN ($3) AND ($3) + INTERVAL '24 HOURS' ORDER BY time";
 	client.query(sql_times, [req.params["task"], res.locals["ta"], moment().tz("America/Toronto").format("YYYY-MM-DD") + " America/Toronto"], (err, pgRes) => {
 		if (err) {
