@@ -115,7 +115,7 @@ function scheduleSetup() {
 						<label for="length">Duration: </label>\
 						<input type="number" id="length" name="length" value="15" required /><br>\
 						<label for="location">Location: </label>\
-						<input type="text" id="location" name="location" value="zoom" /><br>\
+						<input type="text" id="location" name="location" value="Zoom" /><br>\
 						<input type="submit" id="submit" value="Schedule Interview" />\
 					</form>\
 					<div id="errMessage"><div>';
