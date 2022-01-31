@@ -9,6 +9,12 @@ const todayRouter = require("./interviews_ta/today");
 const scheduleRouter = require("./interviews_ta/schedule");
 const changeRouter = require("./interviews_ta/change");
 const deleteRouter = require("./interviews_ta/delete");
+const groupInformationRouter = require("./interviews_ta/group_information");
+
+router.use(express.static("./public"));
+router.get("/ui", (req, res) => {
+	res.sendFile("index.html", { root: "./public/" });
+});
 
 router.use("/", middleware);
 router.use("/", backupAllRouter);
@@ -19,5 +25,6 @@ router.use("/", todayRouter);
 router.use("/", scheduleRouter);
 router.use("/", changeRouter);
 router.use("/", deleteRouter);
+router.use("/", groupInformationRouter);
 
 module.exports = router;

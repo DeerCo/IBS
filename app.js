@@ -3,8 +3,15 @@
 */
 const express = require("express");
 const app = express();
+
+app.set('trust proxy', 1); // get the real ip address
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+const multer = require('multer');
+var upload = multer();
+app.use(upload.array());
 
 const cors = require("cors");
 app.use(cors());

@@ -13,26 +13,26 @@ let API_URL_PREFIX = `${BASE_URL}/interviews_ta/${localStorage.task}`;
  * 
  */
 function getAll() {
-    $.ajax({
-        url: `${API_URL_PREFIX}/all`,
-        method: 'GET',
-        contentType: 'application/json;charset=UTF-8',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-    }).done((data) => {
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-        } else { 
-            $('#data').html(makeTable(data))
-        }
+	$.ajax({
+		url: `${API_URL_PREFIX}/all`,
+		method: 'GET',
+		contentType: 'application/json;charset=UTF-8',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html(makeTable(data))
+		}
 
 
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
 
 /**
@@ -45,25 +45,25 @@ function getAll() {
  */
 
 function getToday() {
-    $.ajax({
-        url: `${API_URL_PREFIX}/today`,
-        method: 'GET',
-        contentType: 'application/json;charset=UTF-8',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-        
-    }).done((data) => {
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-        } else { 
-            $('#data').html(makeTable(data))
-        }
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	$.ajax({
+		url: `${API_URL_PREFIX}/today`,
+		method: 'GET',
+		contentType: 'application/json;charset=UTF-8',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html(makeTable(data))
+		}
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
 
 /**
@@ -80,26 +80,26 @@ function getToday() {
  */
 
 function scheduleInterview(payload) {
-    $.ajax({
-        url: `${API_URL_PREFIX}/schedule`,
-        method: 'POST',
-        contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify(payload),
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-    }).done((data) => {
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-        } else { 
-            $('#data').html('An error has occured.')
-            console.log(data)
-        }
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	$.ajax({
+		url: `${API_URL_PREFIX}/schedule`,
+		method: 'POST',
+		contentType: 'application/json;charset=UTF-8',
+		data: JSON.stringify(payload),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html('An error has occured.')
+			console.log(data)
+		}
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
 
 /**
@@ -126,27 +126,27 @@ function scheduleInterview(payload) {
  */
 
 function changeInterview(payload) {
-    $.ajax({
-        url: `${API_URL_PREFIX}/change`,
-        method: 'PUT',
-        contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify(payload),
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-    }).done((data) => {
-        console.log(data)
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-        } else { 
-            $('#data').html('An error has occured.')
-            console.log(data)
-        }
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	$.ajax({
+		url: `${API_URL_PREFIX}/change`,
+		method: 'PUT',
+		contentType: 'application/json;charset=UTF-8',
+		data: JSON.stringify(payload),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		console.log(data)
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html('An error has occured.')
+			console.log(data)
+		}
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
 
 /**
@@ -161,26 +161,26 @@ function changeInterview(payload) {
  */
 
 function deleteInterview(payload) {
-    $.ajax({
-        url: `${API_URL_PREFIX}/delete`,
-        method: 'DELETE',
-        contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify(payload),
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-    }).done((data) => {
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-        } else { 
-            $('#data').html('An error has occured.')
-            console.log(data)
-        }
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	$.ajax({
+		url: `${API_URL_PREFIX}/delete`,
+		method: 'DELETE',
+		contentType: 'application/json;charset=UTF-8',
+		data: JSON.stringify(payload),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html('An error has occured.')
+			console.log(data)
+		}
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
 
 /**
@@ -192,25 +192,25 @@ function deleteInterview(payload) {
  */
 
 function backupAll() {
-    $.ajax({
-        url: `${BASE_URL}/interviews_ta/backup`,
-        method: 'GET',
-        contentType: 'application/json;charset=UTF-8',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-    }).done((data) => {
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-        } else { 
-            $('#data').html(`<textarea cols="100"> ${data} </textarea>`)
-            $('#data').append(makeTable(data))
-        }
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	$.ajax({
+		url: `${BASE_URL}/interviews_ta/backup`,
+		method: 'GET',
+		contentType: 'application/json;charset=UTF-8',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html(`<textarea cols="100"> ${data} </textarea>`)
+			$('#data').append(makeTable(data))
+		}
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
 
 /**

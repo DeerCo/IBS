@@ -132,12 +132,12 @@
 					"urlencoded": [
 						{
 							"key": "time",
-							"value": "2022-02-01 12:00",
+							"value": "2022-02-03 17:45",
 							"type": "default"
 						},
 						{
 							"key": "length",
-							"value": "10",
+							"value": "15",
 							"type": "default"
 						},
 						{
@@ -172,7 +172,7 @@
 					"urlencoded": [
 						{
 							"key": "set_time",
-							"value": "2022-01-25 12:00",
+							"value": "2022-01-26 12:00",
 							"type": "text"
 						},
 						{
@@ -201,14 +201,14 @@
 						},
 						{
 							"key": "id",
-							"value": "41",
-							"type": "text",
-							"disabled": true
+							"value": "52",
+							"type": "text"
 						},
 						{
 							"key": "time",
-							"value": "2022-02-01 12:00",
-							"type": "text"
+							"value": "2022-01-26 12:00",
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "date",
@@ -279,7 +279,7 @@
 					"urlencoded": [
 						{
 							"key": "id",
-							"value": "42",
+							"value": "52",
 							"type": "text"
 						}
 					]
@@ -293,6 +293,31 @@
 						"interviews_ta",
 						"{{task}}",
 						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "group information",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/interviews_ta/{{task}}/group_information?group=group_0003",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"interviews_ta",
+						"{{task}}",
+						"group_information"
+					],
+					"query": [
+						{
+							"key": "group",
+							"value": "group_0003"
+						}
 					]
 				}
 			},
@@ -332,16 +357,16 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:3000",
+			"value": "https://mcsapps.utm.utoronto.ca/csc309s22",
 			"type": "default"
 		},
 		{
 			"key": "task",
-			"value": "phase_2"
+			"value": "phase_1_mentor_1"
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0YSI6Ikhvd2llIiwidHlwZSI6InRhIiwidGFzayI6InBoYXNlXzIiLCJpYXQiOjE2NDI5NjkxNDYsImV4cCI6MTY0NTU2MTE0Nn0.t4hhpKRKRLnGCi7KjyzpkL2_cOvlSNHVXEWCFNNDSSU"
+			"value": ""
 		}
 	]
 }
