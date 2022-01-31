@@ -5,20 +5,20 @@
  */
 
 
- function pageLoader(){
-    $('#main').html('\
+function pageLoader() {
+	$('#main').html('\
     <h2> Current Task: ' + localStorage.task + '</h2>\
     <div id="data"> <p id="message">Use the selections at the left sidebar to query commands</p> </div>\
     ');
 
-    $('#getAll').click(getAll);
-    $('#getToday').click(getToday);
-    $('#schedule').click(scheduleSetup);
-    $('#delete').click(delSetup);
-    $('#change').click(changeSetup);
-    $('#groupInfo').click(groupInfoSetup);
-    $('#backupAll').click(backupAll);
-    $('#backupTask').click(backupTask);
+	$('#getAll').click(getAll);
+	$('#getToday').click(getToday);
+	$('#schedule').click(scheduleSetup);
+	$('#delete').click(delSetup);
+	$('#change').click(changeSetup);
+	$('#groupInfo').click(groupInfoSetup);
+	$('#backupAll').click(backupAll);
+	$('#backupTask').click(backupTask);
 }
 
 /**
@@ -70,10 +70,10 @@ function makeTable(rawData) {
  * @returns HTML table
  */
 
-function makeGroupTable( rawData ) { 
-    console.log(rawData)
+function makeGroupTable(rawData) {
+	console.log(rawData)
 
-    let table = '<table>\
+	let table = '<table>\
                     <tr>\
                         <th> ID </th>\
                         <th> Type </th>\
@@ -85,19 +85,19 @@ function makeGroupTable( rawData ) {
                         <th> Hidden </th>\
                         <th> Grace Credits </th>\
                     </tr>';
-    let keys = ['id', 'type', 'first_name', 'last_name', 'user_name', 'email', 'id_number', 'hidden', 'grace_credits']
-    for ( let i = 0; i < rawData.length; i++ ){
-        let student = rawData[i];
-        console.log(student)
-        table += '<tr>';
+	let keys = ['id', 'type', 'first_name', 'last_name', 'user_name', 'email', 'id_number', 'hidden', 'grace_credits']
+	for (let i = 0; i < rawData.length; i++) {
+		let student = rawData[i];
+		console.log(student)
+		table += '<tr>';
 
-        for( j = 0; j < keys.length; j++ ) {
-            table += `<td> ${student[keys[j]]} </td>`;
-        }
-        table += '</tr>';
-    }
-    table += '</table>'
-    return table;
+		for (j = 0; j < keys.length; j++) {
+			table += `<td> ${student[keys[j]]} </td>`;
+		}
+		table += '</tr>';
+	}
+	table += '</table>'
+	return table;
 }
 
 /**
@@ -294,45 +294,45 @@ function delSetup() {
  */
 
 function del() {
-    $('#errMessage').html('');
-    let id = $('#id').val().toString();
+	$('#errMessage').html('');
+	let id = $('#id').val().toString();
 
-    if ( !id ) {
-        $('#errMessage').html('<p> Please provide the meeting ID you would like to remove.</p>');
-        return;
-    }
-    
-    let payload = {
-        'id': id,
-    }
+	if (!id) {
+		$('#errMessage').html('<p> Please provide the meeting ID you would like to remove.</p>');
+		return;
+	}
 
-    deleteInterview(payload)
+	let payload = {
+		'id': id,
+	}
+
+	deleteInterview(payload)
 }
 
 function groupInfoSetup() {
-    let htmlString = '<form id="delForm"> \
+	let htmlString = '<form id="delForm"> \
                         <label for="groupId">Group: </label>\
                         <input type="text" id="groupId" name="groupId" placeholder="group_0001" required" /><br>\
                         <input type="submit" id="submit" value="Obtain Information" />\
                     </form>\
                     <div id="errMessage"><div>';
-    $('#data').html(htmlString);
-    $('#submit').click(groupInformation)
-    $('#delForm').submit(function (e) {
-        e.preventDefault();
-      });
+	$('#data').html(htmlString);
+	$('#submit').click(groupInformation)
+	$('#delForm').submit(function (e) {
+		e.preventDefault();
+	});
 }
 
 function groupInformation() {
-    $('#errMessage').html('');
-    let groupId = $('#groupId').val().toString();
+	$('#errMessage').html('');
+	let groupId = $('#groupId').val().toString();
 
-    if ( !groupId ) {
-        $('#errMessage').html('<p> Please provide a group ID.</p>');
-        return;
-    }
-    
-    let payload = `group=${groupId}`
+	if (!groupId) {
+		$('#errMessage').html('<p> Please provide a group ID.</p>');
+		return;
+	}
 
-    groupInfo(payload)
+	let payload = `group=${groupId}`
+
+	groupInfo(payload)
 }

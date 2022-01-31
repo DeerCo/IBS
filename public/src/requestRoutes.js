@@ -222,26 +222,26 @@ function backupAll() {
  */
 
 function backupTask() {
-    $.ajax({
-        url: `${API_URL_PREFIX}/backup`,
-        method: 'GET',
-        contentType: 'application/json;charset=UTF-8',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-    }).done((data) => {
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-            
-        } else { 
-            $('#data').html(`<textarea cols="100"> ${data} </textarea>`)
-            $('#data').append(makeTable(data))
-        }
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	$.ajax({
+		url: `${API_URL_PREFIX}/backup`,
+		method: 'GET',
+		contentType: 'application/json;charset=UTF-8',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+
+		} else {
+			$('#data').html(`<textarea cols="100"> ${data} </textarea>`)
+			$('#data').append(makeTable(data))
+		}
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
 
 /**
@@ -253,24 +253,24 @@ function backupTask() {
  */
 
 function groupInfo(payload) {
-    $.ajax({
-        url: `${API_URL_PREFIX}/group_information/?${payload}`,
-        method: 'GET',
-        contentType: 'application/json;charset=UTF-8',
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
-        },
-    }).done((data) => {
-        if ( data.message ) {
-            $('#data').html(`<p> ${data.message} </p`)
-        } else { 
-            $('#data').html(makeGroupTable(data))
-        }
+	$.ajax({
+		url: `${API_URL_PREFIX}/group_information/?${payload}`,
+		method: 'GET',
+		contentType: 'application/json;charset=UTF-8',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html(makeGroupTable(data))
+		}
 
 
-    }).fail((data, textStatus, xhr) => {
-        console.log(xhr.status);
-        console.log(data);
-        console.log(textStatus);
-    })
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
 }
