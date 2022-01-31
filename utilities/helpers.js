@@ -130,16 +130,16 @@ function send_csv(json, res, backup, note = "") {
 
 	let current_time = moment().tz("America/Toronto");
 	let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
-	
+
 	if (backup) {
 		var dir = __dirname + "/../backup/" + dir_date;
 		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir, {recursive: true});
+			fs.mkdirSync(dir, { recursive: true });
 		}
 	} else {
 		var dir = __dirname + "/../tmp/" + dir_date;
 		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir, {recursive: true});
+			fs.mkdirSync(dir, { recursive: true });
 		}
 	}
 
@@ -167,7 +167,7 @@ async function get_users_information(user_group, markus_id) {
 		for (let group of groups) {
 			if (group["group_name"] === user_group) {
 				for (let member of group["members"]) {
-					if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter"){
+					if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
 						users_requests.push(await getJSON(process.env.MARKUS_API + "users/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
 					}
 				}
