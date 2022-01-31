@@ -217,29 +217,60 @@ function backupAll() {
  * 
  * GET Request
  * backup API Request
- * Displays scheduled interviews for a specific task and 
+ * Displays scheduled interviews for a specific task
  * 
  */
 
 function backupTask() {
-	$.ajax({
-		url: `${API_URL_PREFIX}/backup`,
-		method: 'GET',
-		contentType: 'application/json;charset=UTF-8',
-		beforeSend: function (xhr) {
-			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
-		},
-	}).done((data) => {
-		if (data.message) {
-			$('#data').html(`<p> ${data.message} </p`)
+    $.ajax({
+        url: `${API_URL_PREFIX}/backup`,
+        method: 'GET',
+        contentType: 'application/json;charset=UTF-8',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
+        },
+    }).done((data) => {
+        if ( data.message ) {
+            $('#data').html(`<p> ${data.message} </p`)
+            
+        } else { 
+            $('#data').html(`<textarea cols="100"> ${data} </textarea>`)
+            $('#data').append(makeTable(data))
+        }
+    }).fail((data, textStatus, xhr) => {
+        console.log(xhr.status);
+        console.log(data);
+        console.log(textStatus);
+    })
+}
 
-		} else {
-			$('#data').html(`<textarea cols="100"> ${data} </textarea>`)
-			$('#data').append(makeTable(data))
-		}
-	}).fail((data, textStatus, xhr) => {
-		console.log(xhr.status);
-		console.log(data);
-		console.log(textStatus);
-	})
+/**
+ * 
+ * GET Request
+ * group information API Request
+ * Displays student information by group.
+ * 
+ */
+
+function groupInfo(payload) {
+    $.ajax({
+        url: `${API_URL_PREFIX}/group_information/?${payload}`,
+        method: 'GET',
+        contentType: 'application/json;charset=UTF-8',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader ('Authorization', 'Token ' + localStorage.token);
+        },
+    }).done((data) => {
+        if ( data.message ) {
+            $('#data').html(`<p> ${data.message} </p`)
+        } else { 
+            $('#data').html(makeGroupTable(data))
+        }
+
+
+    }).fail((data, textStatus, xhr) => {
+        console.log(xhr.status);
+        console.log(data);
+        console.log(textStatus);
+    })
 }
