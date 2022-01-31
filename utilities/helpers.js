@@ -128,29 +128,32 @@ function send_csv(json, res, backup, note = "") {
 		return;
 	}
 
+	let current_time = moment().tz("America/Toronto");
+	let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
+	
 	if (backup) {
-		var dir = __dirname + "/../backup/";
+		var dir = __dirname + "/../backup/" + dir_date;
 		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir);
+			fs.mkdirSync(dir, {recursive: true});
 		}
 	} else {
-		var dir = __dirname + "/../tmp/";
+		var dir = __dirname + "/../tmp/" + dir_date;
 		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir);
+			fs.mkdirSync(dir, {recursive: true});
 		}
 	}
 
 	let json2csvParser = new json2csv.Parser();
-	let file_name = "interviews_" + moment().tz("America/Toronto").format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
+	let file_name = "interviews_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
 	let csv = json2csvParser.parse(json);
 	fs.writeFile(dir + file_name, csv, (err) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 		} else {
 			if (backup) {
-				res.sendFile(file_name, { root: "./backup/", headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+				res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
 			} else {
-				res.sendFile(file_name, { root: "./tmp/", headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+				res.sendFile(file_name, { root: "./tmp/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
 			}
 		}
 	});
