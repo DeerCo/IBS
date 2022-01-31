@@ -299,7 +299,7 @@
 			"response": []
 		},
 		{
-			"name": "group",
+			"name": "group information",
 			"request": {
 				"method": "GET",
 				"header": [],
