@@ -59,6 +59,11 @@
 					],
 					"query": [
 						{
+							"key": "booked",
+							"value": "true",
+							"disabled": true
+						},
+						{
 							"key": "id",
 							"value": "21",
 							"disabled": true
@@ -70,7 +75,12 @@
 						},
 						{
 							"key": "date",
-							"value": "2022-01-23",
+							"value": "2022-02-04",
+							"disabled": true
+						},
+						{
+							"key": "ta",
+							"value": "all",
 							"disabled": true
 						},
 						{
@@ -366,7 +376,7 @@
 		},
 		{
 			"key": "token",
-			"value": ""
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0YSI6Ikhvd2llIiwidHlwZSI6InRhIiwidGFzayI6InBoYXNlXzFfbWVudG9yXzEiLCJpYXQiOjE2NDM0OTU3ODUsImV4cCI6MTY0NjA4Nzc4NX0.gOvLji4WOCRrncGdLkDTDRV0OyCmy3qdjc5Iy6A0lYw"
 		}
 	]
 }

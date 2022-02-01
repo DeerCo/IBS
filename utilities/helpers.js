@@ -62,7 +62,7 @@ function time_validate(time) {
 	}
 }
 
-function query_filter(query) {
+function query_filter(query, ta="") {
 	let filter = "";
 	if ("id" in query && !isNaN(query["id"]) && query["id"].trim() != "") {
 		filter = filter + " AND id = " + query["id"];
@@ -87,6 +87,22 @@ function query_filter(query) {
 	}
 	if ("note" in query && !string_validate(query["note"])) {
 		filter = filter + " AND note = '" + query["note"] + "'";
+	}
+	if ("booked" in query ){
+		if (query["booked"].toLowerCase() === "true"){
+			filter = filter + " AND student IS NOT NULL";
+		} else if (query["booked"].toLowerCase() === "false"){
+			filter = filter + " AND student IS NULL";
+		}
+	}
+	if (ta != ""){
+		if ("ta" in query && !name_validate(query["ta"])) {
+			if (query["ta"].toLowerCase() != "all"){
+				filter = filter + " AND ta = '" + query["ta"] + "'";
+			} 
+		} else {
+			filter = filter + " AND ta = '" + ta + "'";
+		}
 	}
 	return filter;
 }
