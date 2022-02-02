@@ -135,3 +135,6 @@ tmp/*
 
 # package-lock
 package-lock.json
+
+# ecosystem.config.js
+ecosystem.config.js
