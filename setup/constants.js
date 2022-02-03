@@ -2,7 +2,7 @@ module.exports = {
 	rows_count: 40,
 	tasks: {
 		"phase_1_mentor_1": { open: true, markus_id: 4, exclude: [] },
-		"phase_1_mentor_2": { open: false, markus_id: 4, exclude: [] },
+		"phase_1_mentor_2": { open: true, markus_id: 4, exclude: [] },
 		"phase_1": { open: false, markus_id: 4, exclude: ["phase_2", "phase_3"] },
 		"phase_2": { open: false, markus_id: 4, exclude: ["phase_1", "phase_3"] },
 		"phase_3": { open: false, markus_id: 4, exclude: ["phase_1", "phase_2"] }
