@@ -43,10 +43,14 @@ function makeTable(rawData) {
 		let dataCol = dataRows[i].split(",");
 		let elementTag = 'td>';
 		table += '<tr>';
+
 		if (dataCol[0] == 'id') elementTag = 'th>';
+		
 		for (let j = 0; j < dataCol.length; j++) {
-			let element = dataCol[j].toString() + "";
+			let element = dataCol[j];
+
 			if ( element == "time" ) table += `<th> Day </th>`;
+
 			if ( j == 2 && element != "time" ){ 
 				let options = { weekday: 'long' };
 				let date = new Date(element);
