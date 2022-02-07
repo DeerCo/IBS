@@ -48,11 +48,8 @@ function makeTable(rawData) {
 			let element = dataCol[j].toString() + "";
 			if ( element == "time" ) table += `<th> Day </th>`;
 			if ( j == 2 && element != "time" ){ 
-				let dateTimeSplit = element.split(" ");
-				let dateSplit = dateTimeSplit[0].split("-");
-				let  timeSplit = dateTimeSplit[1].split(":");
 				let options = { weekday: 'long' };
-				let date = new Date(Date.UTC(dateSplit[0], dateSplit[1], dateSplit[2], timeSplit[0], timeSplit[1], 0))
+				let date = new Date(element);
 				let dateDay = date.toLocaleDateString(undefined, options);
 				table += `<${elementTag} ${dateDay} </${elementTag}`;
 			}
