@@ -23,8 +23,8 @@ router.post("/:task/book", rate_limit.interviews_limiter, (req, res) => {
 			} else if (pgRes.rowCount > 1) {
 				res.status(404).json({ message: "Unknown error." });
 			} else {
-				if (moment.tz(req.body["time"], "America/Toronto").subtract(5, "minutes") < moment().tz("America/Toronto")) {
-					res.status(406).json({ message: req.body["time"] + " was in the past or is within 5 minutes from now. Please choose a new time." });
+				if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
+					res.status(406).json({ message: req.body["time"] + " was in the past or is within 30 minutes from now. Please choose a new time." });
 				} else {
 					client.query(constants.sql_book, [res.locals.group, req.params["task"], time, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes) => {
 						if (err) {

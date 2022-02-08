@@ -25,8 +25,8 @@ router.put("/:task/change", rate_limit.interviews_limiter, (req, res) => {
 			} else if (moment.tz(pgRes.rows[0]["time"], "America/Toronto").subtract(2, "hours") < moment().tz("America/Toronto")) {
 				res.status(406).json({ message: "Your existing interview for " + req.params["task"] + " at " + pgRes.rows[0]["time"] + " was in the past or will take place in 2 hours. You can't book a new one at this time." });
 			} else {
-				if (moment.tz(req.body["time"], "America/Toronto").subtract(5, "minutes") < moment().tz("America/Toronto")) {
-					res.status(406).json({ message: req.body["time"] + " was in the past or is within 5 minutes from now. Please choose a new time." });
+				if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
+					res.status(406).json({ message: req.body["time"] + " was in the past or is within 30 minutes from now. Please choose a new time." });
 				} else {
 					client.query(constants.sql_book, [res.locals["group"], req.params["task"], time, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes1) => {
 						if (err) {
