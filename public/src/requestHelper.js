@@ -53,7 +53,9 @@ function makeTable(rawData) {
 
 			if ( j == 2 && element != "time" ){ 
 				let options = { weekday: 'long' };
-				let date = new Date(element);
+				let dateSplit = element.split(' ');
+				let dayTime = dateSplit[0] + ' '  + dateSplit[1];
+;				let date = new Date(dayTime);
 				let dateDay = date.toLocaleDateString(undefined, options);
 				table += `<${elementTag} ${dateDay} </${elementTag}`;
 			}
