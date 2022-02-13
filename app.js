@@ -9,6 +9,14 @@ app.set('trust proxy', 1); // get the real ip address
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(function (error, req, res, next) {
+	if (error instanceof SyntaxError) {
+		return res.status(500).send({ message: "Invalid data" });
+	} else {
+		next();
+	}
+});
+
 const multer = require('multer');
 var upload = multer();
 app.use(upload.array());
