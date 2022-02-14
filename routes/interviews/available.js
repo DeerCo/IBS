@@ -9,12 +9,19 @@ router.get("/:task/available", (req, res) => {
 			res.status(404).json({ message: "Unknown error." });
 		} else {
 			let interviews = {};
-			for (let interviews_times of pgRes.rows) {
-				if (interviews_times["all_count"] - interviews_times["booked_count"] > 0) {
-					interviews[interviews_times["time"]] = interviews_times["all_count"] - interviews_times["booked_count"];
+			for (let interview of pgRes.rows) {
+				if (interview["all_count"] - interview["booked_count"] > 0) {
+					if (!(interview["location"] in interviews)) {
+						interviews[interview["location"]] = {};
+					}
+					interviews[interview["location"]][interview["time"]] = interview["all_count"] - interview["booked_count"];
 				}
 			}
-			res.json({ name: req.params["task"], availability: interviews });
+			if (Object.keys(interviews).length != 0) {
+				res.json({ name: req.params["task"], length: constants.tasks[req.params["task"]]["length"] + " minutes", availability: interviews });
+			} else {
+				res.json({ name: req.params["task"], length: constants.tasks[req.params["task"]]["length"] + " minutes", message: "No interview is available." });
+			}
 		}
 	});
 })
