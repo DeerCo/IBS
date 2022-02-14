@@ -14,6 +14,17 @@ router.post("/:task/book", rate_limit.interviews_limiter, (req, res) => {
 	}
 	let time = req.body["time"] + " America/Toronto";
 
+	if ("location" in req.body) {
+		if (helpers.string_validate(req.body["location"])) {
+			res.status(400).json({ message: "Your desired location has invalid format." });
+			return;
+		} else {
+			var location = req.body["location"];
+		}
+	} else {
+		var location = "Zoom";
+	}
+
 	client.query(constants.sql_check, [res.locals.group, req.params["task"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
@@ -26,14 +37,14 @@ router.post("/:task/book", rate_limit.interviews_limiter, (req, res) => {
 				if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
 					res.status(406).json({ message: req.body["time"] + " was in the past or is within 30 minutes from now. Please choose a new time." });
 				} else {
-					client.query(constants.sql_book, [res.locals.group, req.params["task"], time, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes) => {
+					client.query(constants.sql_book, [res.locals.group, req.params["task"], time, location, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes) => {
 						if (err) {
 							res.status(404).json({ message: "Unknown error." });
 						} else {
 							if (pgRes.rowCount === 0) {
 								res.status(409).json({ message: "No available interview exists for " + req.params["task"] + " at " + req.body["time"] + ". Please choose a different time." });
 							} else {
-								let message = "You have booked your interview for " + req.params["task"] + " at " + req.body["time"] + " successfully.";
+								let message = "You have booked your interview for " + req.params["task"] + " at " + req.body["time"] + " successfully. The location is " + pgRes.rows[0]["location"] + ".";
 								res.status(200).json({ message: message });
 								helpers.send_email(res.locals.email, "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
 							}

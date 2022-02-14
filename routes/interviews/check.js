@@ -13,7 +13,8 @@ router.get("/:task/check", (req, res) => {
 			} else if (pgRes.rowCount > 1) {
 				res.status(404).json({ message: "Unknown error." });
 			} else {
-				res.status(200).json({ message: "Your interview for " + req.params["task"] + " is booked at " + pgRes.rows[0]["time"] + "." });
+				let message = "Your interview for " + req.params["task"] + " is booked at " + pgRes.rows[0]["time"] + ". The location is " + pgRes.rows[0]["location"] + ".";
+				res.status(200).json({ message: message });
 			}
 		}
 	});
