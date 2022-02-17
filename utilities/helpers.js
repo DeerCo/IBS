@@ -135,7 +135,7 @@ function send_email(email, subject, body) {
 		text: "(Please do not reply to this email, as no one monitors it. Post your question to Discord or Piazza instead.)\n\n" + body
 	};
 
-	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log(error); } });
+	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
 }
 
 function send_csv(json, res, backup, note = "") {
