@@ -189,7 +189,7 @@ function changeSetup() {
 						<label for="cancelled">Cancelled: </label> <select name="cancelled" id="cancelled"> <option value="none" selected> </option> <option value="true"> True </option> <option value="false"> False </option> </select>\
 						<label for="note">Note: </label> <input type="text" id="note" name="note" /><br>\
 						<label for="force">Force: </label> <select name="force" id="force"> <option value="none" selected> </option> <option value="true"> True </option> <option value="false"> False </option> </select><br><br>\
-						Setting "Force" to "True" will allow you to change a booked interview. Make sure the students are aware of this change!!!\
+						Setting "Force" to "True" will allow you to change booked interviews. Make sure the students are aware of this change!!!\
 						<br>\
 						<h3> Change Status </h3>\
 						<label for="set_time">Set Time: </label> <input type="time" id="set_time" name="set_time" /><br>\
