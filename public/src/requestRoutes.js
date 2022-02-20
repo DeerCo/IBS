@@ -119,6 +119,7 @@ function scheduleInterview(payload) {
  *      'location': String,
  *      'cancelled': String,
  *      'note': String
+ * 		'force': String
  *  }
  * 
  * change API Request

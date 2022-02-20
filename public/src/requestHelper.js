@@ -227,6 +227,7 @@ function change() {
 	let location = $('#location').val().toString();
 	let cancelled = $('#cancelled').val().toString();
 	let note = $('#note').val().toString();
+	let force = $('#force').val().toString();
 
 	// Change Status
 	let set_time = $('#set_time').val().toString();
@@ -269,7 +270,8 @@ function change() {
 		'length': length,
 		'location': location,
 		'cancelled': cancelled,
-		'note': note
+		'note': note,
+		'force': force
 	}
 
 	for (key in payload) {
