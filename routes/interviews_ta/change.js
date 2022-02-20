@@ -16,7 +16,12 @@ router.put("/:task/change", (req, res) => {
 		return;
 	}
 
-	let sql_change = "UPDATE interviews SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND ta = ($2) AND student IS NULL" + filter;
+	if ("force" in req.body && (req.body["force"].toLowerCase() === "true")) {
+		var sql_change = "UPDATE interviews SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND ta = ($2)" + filter;
+	} else {
+		var sql_change = "UPDATE interviews SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND ta = ($2) AND student IS NULL" + filter;
+	}
+
 	client.query(sql_change, [req.params["task"], res.locals["ta"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });

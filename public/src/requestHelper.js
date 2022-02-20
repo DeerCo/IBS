@@ -45,17 +45,17 @@ function makeTable(rawData) {
 		table += '<tr>';
 
 		if (dataCol[0] == 'id') elementTag = 'th>';
-		
+
 		for (let j = 0; j < dataCol.length; j++) {
 			let element = dataCol[j];
 
-			if ( element == "time" ) table += `<th> Day </th>`;
+			if (element == "time") table += `<th> Day </th>`;
 
-			if ( j == 2 && element != "time" ){ 
+			if (j == 2 && element != "time") {
 				let options = { weekday: 'long' };
 				let dateSplit = element.split(' ');
-				let dayTime = dateSplit[0] + ' '  + dateSplit[1];
-;				let date = new Date(dayTime);
+				let dayTime = dateSplit[0] + ' ' + dateSplit[1];
+				; let date = new Date(dayTime);
 				let dateDay = date.toLocaleDateString(undefined, options);
 				table += `<${elementTag} ${dateDay} </${elementTag}`;
 			}
@@ -179,22 +179,24 @@ function schedule() {
  */
 function changeSetup() {
 	let htmlString = '<form id="changeForm"> \
-						<p> Status Filter </p>\
+						<h3> Status Filter </h3>\
 						<label for="id">ID: </label> <input type="number" id="id" name="id" required" /><br>\
 						<label for="time">Time: </label> <input type="time" id="time" name="time" required" /><br>\
 						<label for="date">Date: </label> <input type="date" id="date" name="date" /><br>\
 						<label for="student">Student: </label> <input type="text" id="student" name="student" /><br>\
 						<label for="length" >Length: </label> <input type="number" id="length" name="length" /><br>\
 						<label for="location">Location: </label> <input type="text" id="location" name="location" /><br>\
-						<label for="cancelled">Cancelled: </label> <select name="cancelled" id="cancelled"> <option value="none" selected> </option> <option value="true"> Yes </option> <option value="true"> No </option> </select>\
+						<label for="cancelled">Cancelled: </label> <select name="cancelled" id="cancelled"> <option value="none" selected> </option> <option value="true"> True </option> <option value="false"> False </option> </select>\
 						<label for="note">Note: </label> <input type="text" id="note" name="note" /><br>\
+						<label for="force">Force: </label> <select name="force" id="force"> <option value="none" selected> </option> <option value="true"> True </option> <option value="false"> False </option> </select><br><br>\
+						Setting "Force" to "True" will allow you to change a booked interview. Make sure the students are aware of this change!!!\
 						<br>\
-						<p> Change Status </p>\
+						<h3> Change Status </h3>\
 						<label for="set_time">Set Time: </label> <input type="time" id="set_time" name="set_time" /><br>\
 						<label for="set_date">Set Date: </label> <input type="date" id="set_date" name="set_time" /><br>\
 						<label for="set_length">Set Length: </label> <input type="text" id="set_length" name="set_length" /><br>\
 						<label for="set_location">Set Location: </label> <input type="text" id="set_location" name="set_location" /><br>\
-						<label for="set_cancelled">Set Canceled: </label> <select name="set_cancelled" id="set_cancelled"> <option value="none" selected> </option>  <option value="true"> Yes </option> <option value="true"> No </option> </select>\
+						<label for="set_cancelled">Set Canceled: </label> <select name="set_cancelled" id="set_cancelled"> <option value="none" selected> </option>  <option value="true"> True </option> <option value="false"> False </option> </select>\
 						<label for="set_note">Set Note: </label> <input type="text" id="set_note" name="set_note" /><br>\
 						<br>\
 						<input type="submit" id="submit" value="Change Interview" />\
