@@ -5,10 +5,10 @@
  */
 
 function pageLoader() {
-    $('#submit').click(initialize)
+    $("#submit").click(initialize)
 }
 
-let BASE_URL = 'https://mcsapps.utm.utoronto.ca/csc309s22';
+let BASE_URL = "https://mcsapps.utm.utoronto.ca/csc309s22";
 let API_URL_PREFIX = `${BASE_URL}/interviews_ta/${localStorage.task}`;
 
 /**
@@ -18,15 +18,15 @@ let API_URL_PREFIX = `${BASE_URL}/interviews_ta/${localStorage.task}`;
  * 
  */
 function initialize() {
-    let username = $('#username').val().replace(/\s/g, '');
-    let password = $('#password').val().replace(/\s/g, '');
-    let token = $('#token').val().replace(/\s/g, '');
-    let task = $('#task').val().replace(/\s/g, '');
+    let username = $("#username").val().replace(/\s/g, "");
+    let password = $("#password").val().replace(/\s/g, "");
+    let token = $("#token").val().replace(/\s/g, "");
+    let task = $("#task").val().replace(/\s/g, "");
     if (username != "") {
         $.ajax({
             url: `${API_URL_PREFIX}/login`,
-            method: 'POST',
-            contentType: 'application/json;charset=UTF-8',
+            method: "POST",
+            contentType: "application/json;charset=UTF-8",
             data: JSON.stringify({
                 username: username,
                 password: password,
@@ -35,13 +35,15 @@ function initialize() {
         }).done((data) => {
             localStorage.token = data.token;
             localStorage.task = task;
-            window.location = 'request.html'
+            window.location = "request.html"
         }).fail((data, textStatus, xhr) => {
-            $('#errMessage').html(data.responseJSON.message)
+            $("#errMessage").html(data.responseJSON.message)
         })
-    } else {
+    } else if (token != "") {
         localStorage.token = token;
         localStorage.task = task;
-        window.location = 'request.html'
+        window.location = "request.html"
+    } else {
+        $("#errMessage").html("No credential is provided.")
     }
 }
