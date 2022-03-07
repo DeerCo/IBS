@@ -12,6 +12,13 @@ CREATE TABLE interviews
     PRIMARY KEY (id)
 );
 
+CREATE TABLE ta
+(
+    username character varying NOT NULL,
+    password character varying NOT NULL,
+    PRIMARY KEY (username)
+);
+
 CREATE TABLE text
 (
     paragraph bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),

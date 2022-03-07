@@ -6,19 +6,19 @@
 
 
 function pageLoader() {
-	$('#main').html('\
-    <h2> Current Task: ' + localStorage.task + '</h2>\
-    <div id="data"> <p id="message">Use the selections at the left sidebar to query commands</p> </div>\
-    ');
+    $('#main').html('\
+	<h2> Current Task: ' + localStorage.task + '</h2>\
+	<div id="data"> <p id="message">Use the selections at the left sidebar to query commands</p> </div>\
+	');
 
-	$('#getAll').click(getAll);
-	$('#getToday').click(getToday);
-	$('#schedule').click(scheduleSetup);
-	$('#delete').click(delSetup);
-	$('#change').click(changeSetup);
-	$('#groupInfo').click(groupInfoSetup);
-	$('#backupAll').click(backupAll);
-	$('#backupTask').click(backupTask);
+    $('#getAll').click(getAll);
+    $('#getToday').click(getToday);
+    $('#schedule').click(scheduleSetup);
+    $('#delete').click(delSetup);
+    $('#change').click(changeSetup);
+    $('#groupInfo').click(groupInfoSetup);
+    $('#backupAll').click(backupAll);
+    $('#backupTask').click(backupTask);
 }
 
 /**
@@ -35,36 +35,36 @@ function pageLoader() {
 
 
 function makeTable(rawData) {
-	let cleanData = rawData.replaceAll('\"', '');
-	let dataRows = cleanData.split('\n');
-	let table = "<table>";
+    let cleanData = rawData.replaceAll('\"', '');
+    let dataRows = cleanData.split('\n');
+    let table = "<table>";
 
-	for (let i = 0; i < dataRows.length; i++) {
-		let dataCol = dataRows[i].split(",");
-		let elementTag = 'td>';
-		table += '<tr>';
+    for (let i = 0; i < dataRows.length; i++) {
+        let dataCol = dataRows[i].split(",");
+        let elementTag = 'td>';
+        table += '<tr>';
 
-		if (dataCol[0] == 'id') elementTag = 'th>';
+        if (dataCol[0] == 'id') elementTag = 'th>';
 
-		for (let j = 0; j < dataCol.length; j++) {
-			let element = dataCol[j];
+        for (let j = 0; j < dataCol.length; j++) {
+            let element = dataCol[j];
 
-			if (element == "time") table += `<th> Day </th>`;
+            if (element == "time") table += `<th> Day </th>`;
 
-			if (j == 2 && element != "time") {
-				let options = { weekday: 'long' };
-				let dateSplit = element.split(' ');
-				let dayTime = dateSplit[0] + ' ' + dateSplit[1];
-				; let date = new Date(dayTime);
-				let dateDay = date.toLocaleDateString(undefined, options);
-				table += `<${elementTag} ${dateDay} </${elementTag}`;
-			}
-			table += `<${elementTag} ${element} </${elementTag}`;
-		}
-		table += '</tr>';
-	}
-	table += '</table>'
-	return table;
+            if (j == 2 && element != "time") {
+                let options = { weekday: 'long' };
+                let dateSplit = element.split(' ');
+                let dayTime = dateSplit[0] + ' ' + dateSplit[1];;
+                let date = new Date(dayTime);
+                let dateDay = date.toLocaleDateString(undefined, options);
+                table += `<${elementTag} ${dateDay} </${elementTag}`;
+            }
+            table += `<${elementTag} ${element} </${elementTag}`;
+        }
+        table += '</tr>';
+    }
+    table += '</table>'
+    return table;
 }
 
 /**
@@ -84,33 +84,33 @@ function makeTable(rawData) {
  */
 
 function makeGroupTable(rawData) {
-	console.log(rawData)
+    console.log(rawData)
 
-	let table = '<table>\
-                    <tr>\
-                        <th> ID </th>\
-                        <th> Type </th>\
-                        <th> First Name </th>\
-                        <th> Last Name </th>\
-                        <th> Username </th>\
-                        <th> Email </th>\
-                        <th> ID Number </th>\
-                        <th> Hidden </th>\
-                        <th> Grace Credits </th>\
-                    </tr>';
-	let keys = ['id', 'type', 'first_name', 'last_name', 'user_name', 'email', 'id_number', 'hidden', 'grace_credits']
-	for (let i = 0; i < rawData.length; i++) {
-		let student = rawData[i];
-		console.log(student)
-		table += '<tr>';
+    let table = '<table>\
+					<tr>\
+						<th> ID </th>\
+						<th> Type </th>\
+						<th> First Name </th>\
+						<th> Last Name </th>\
+						<th> Username </th>\
+						<th> Email </th>\
+						<th> ID Number </th>\
+						<th> Hidden </th>\
+						<th> Grace Credits </th>\
+					</tr>';
+    let keys = ['id', 'type', 'first_name', 'last_name', 'user_name', 'email', 'id_number', 'hidden', 'grace_credits']
+    for (let i = 0; i < rawData.length; i++) {
+        let student = rawData[i];
+        console.log(student)
+        table += '<tr>';
 
-		for (j = 0; j < keys.length; j++) {
-			table += `<td> ${student[keys[j]]} </td>`;
-		}
-		table += '</tr>';
-	}
-	table += '</table>'
-	return table;
+        for (j = 0; j < keys.length; j++) {
+            table += `<td> ${student[keys[j]]} </td>`;
+        }
+        table += '</tr>';
+    }
+    table += '</table>'
+    return table;
 }
 
 /**
@@ -120,7 +120,7 @@ function makeGroupTable(rawData) {
  */
 
 function scheduleSetup() {
-	let htmlString = '<form id="scheduleForm"> \
+    let htmlString = '<form id="scheduleForm"> \
 						<label for="date">Date: </label>\
 						<input type="date" id="date" name="date" required" /><br>\
 						<label for="time">Time: </label>\
@@ -131,12 +131,12 @@ function scheduleSetup() {
 						<input type="text" id="location" name="location" value="Zoom" /><br>\
 						<input type="submit" id="submit" value="Schedule Interview" />\
 					</form>\
-					<div id="errMessage"><div>';
-	$('#data').html(htmlString);
-	$('#submit').click(schedule)
-	$('#scheduleForm').submit(function (e) {
-		e.preventDefault();
-	});
+					<div id="errMessage"></div>';
+    $('#data').html(htmlString);
+    $('#submit').click(schedule)
+    $('#scheduleForm').submit(function(e) {
+        e.preventDefault();
+    });
 }
 
 /**
@@ -146,29 +146,29 @@ function scheduleSetup() {
  */
 
 function schedule() {
-	$('#errMessage').html('');
-	let time = $('#time').val().toString();
-	let date = $('#date').val().toString();
-	let length = $('#length').val().toString();
-	let location = $('#location').val().toString();
-	let dateTime = date + ' ' + time;
+    $('#errMessage').html('');
+    let time = $('#time').val().toString();
+    let date = $('#date').val().toString();
+    let length = $('#length').val().toString();
+    let location = $('#location').val().toString();
+    let dateTime = date + ' ' + time;
 
-	if (!time || !date || !length) {
-		$('#errMessage').html('<p> Please fill out all the fields</p>');
-		return;
-	}
+    if (!time || !date || !length) {
+        $('#errMessage').html('<p> Please fill out all the fields</p>');
+        return;
+    }
 
-	if (!location) {
-		location = 'Zoom';
-	}
+    if (!location) {
+        location = 'Zoom';
+    }
 
-	let payload = {
-		'time': dateTime,
-		'length': length,
-		'location': location
-	}
+    let payload = {
+        'time': dateTime,
+        'length': length,
+        'location': location
+    }
 
-	scheduleInterview(payload)
+    scheduleInterview(payload)
 
 }
 
@@ -178,7 +178,7 @@ function schedule() {
  * 
  */
 function changeSetup() {
-	let htmlString = '<form id="changeForm"> \
+    let htmlString = '<form id="changeForm"> \
 						<h3> Status Filter </h3>\
 						<label for="id">ID: </label> <input type="number" id="id" name="id" required" /><br>\
 						<label for="time">Time: </label> <input type="time" id="time" name="time" required" /><br>\
@@ -201,12 +201,12 @@ function changeSetup() {
 						<br>\
 						<input type="submit" id="submit" value="Change Interview" />\
 					</form>\
-					<div id="errMessage"><div>';
-	$('#data').html(htmlString);
-	$('#submit').click(change)
-	$('#changeForm').submit(function (e) {
-		e.preventDefault();
-	});
+					<div id="errMessage"></div>';
+    $('#data').html(htmlString);
+    $('#submit').click(change)
+    $('#changeForm').submit(function(e) {
+        e.preventDefault();
+    });
 }
 
 /**
@@ -216,71 +216,71 @@ function changeSetup() {
  */
 
 function change() {
-	$('#errMessage').html('')
+    $('#errMessage').html('')
 
-	// Status Filters
-	let id = $('#id').val().toString();
-	let time = $('#time').val().toString();
-	let date = $('#date').val().toString();
-	let length = $('#length').val().toString();
-	let student = $('#student').val().toString();
-	let location = $('#location').val().toString();
-	let cancelled = $('#cancelled').val().toString();
-	let note = $('#note').val().toString();
-	let force = $('#force').val().toString();
+    // Status Filters
+    let id = $('#id').val().toString();
+    let time = $('#time').val().toString();
+    let date = $('#date').val().toString();
+    let length = $('#length').val().toString();
+    let student = $('#student').val().toString();
+    let location = $('#location').val().toString();
+    let cancelled = $('#cancelled').val().toString();
+    let note = $('#note').val().toString();
+    let force = $('#force').val().toString();
 
-	// Change Status
-	let set_time = $('#set_time').val().toString();
-	let set_date = $('#set_date').val().toString();
-	let set_length = $('#set_length').val().toString();
-	let set_location = $('#set_location').val().toString();
-	let set_cancelled = $('#set_cancelled').val().toString();
-	let set_note = $('#set_note').val().toString();
-	let err = false;
+    // Change Status
+    let set_time = $('#set_time').val().toString();
+    let set_date = $('#set_date').val().toString();
+    let set_length = $('#set_length').val().toString();
+    let set_location = $('#set_location').val().toString();
+    let set_cancelled = $('#set_cancelled').val().toString();
+    let set_note = $('#set_note').val().toString();
+    let err = false;
 
-	if ((!date && time) || (!time && date) || (!set_date && set_time) || (!set_time && set_date)) {
-		$('#errMessage').append("Please fill out both Date and Time fields.");
-		err = true;
-	}
+    if ((!date && time) || (!time && date) || (!set_date && set_time) || (!set_time && set_date)) {
+        $('#errMessage').append("Please fill out both Date and Time fields.");
+        err = true;
+    }
 
-	if (!id && !time && !date && !length && !student && !location && cancelled == 'none' && !note) {
-		$('#errMessage').append("Fill out at least one of the status filter fields.");
-		err = true;
-	}
+    if (!id && !time && !date && !length && !student && !location && cancelled == 'none' && !note) {
+        $('#errMessage').append("Fill out at least one of the status filter fields.");
+        err = true;
+    }
 
-	if (!set_time && !set_length && !set_location && set_cancelled == 'none' && !set_note) {
-		$('#errMessage').append("Fill out at least one of the change status fields.");
-		err = true;
-	}
+    if (!set_time && !set_length && !set_location && set_cancelled == 'none' && !set_note) {
+        $('#errMessage').append("Fill out at least one of the change status fields.");
+        err = true;
+    }
 
-	if (err) return;
+    if (err) return;
 
-	time_payload = date + ' ' + time;
-	set_time_payload = set_date + ' ' + set_time;
-	let payload = {
-		'set_time': set_time_payload,
-		'set_length': set_length,
-		'set_location': set_location,
-		'set_cancelled': set_cancelled,
-		'set_note': set_note,
-		'id': id,
-		'time': time_payload,
-		'date': date,
-		'student': student,
-		'length': length,
-		'location': location,
-		'cancelled': cancelled,
-		'note': note,
-		'force': force
-	}
+    time_payload = date + ' ' + time;
+    set_time_payload = set_date + ' ' + set_time;
+    let payload = {
+        'set_time': set_time_payload,
+        'set_length': set_length,
+        'set_location': set_location,
+        'set_cancelled': set_cancelled,
+        'set_note': set_note,
+        'id': id,
+        'time': time_payload,
+        'date': date,
+        'student': student,
+        'length': length,
+        'location': location,
+        'cancelled': cancelled,
+        'note': note,
+        'force': force
+    }
 
-	for (key in payload) {
-		if (!payload[key] || payload[key] == 'none' || payload[key] == ' ') {
-			delete payload[key];
-		}
-	}
+    for (key in payload) {
+        if (!payload[key] || payload[key] == 'none' || payload[key] == ' ') {
+            delete payload[key];
+        }
+    }
 
-	changeInterview(payload);
+    changeInterview(payload);
 }
 
 
@@ -291,17 +291,17 @@ function change() {
  */
 
 function delSetup() {
-	let htmlString = '<form id="delForm"> \
+    let htmlString = '<form id="delForm"> \
 						<label for="id">Interview ID: </label>\
 						<input type="number" id="id" name="id" required" /><br>\
 						<input type="submit" id="submit" value="Delete Interview" />\
 					</form>\
-					<div id="errMessage"><div>';
-	$('#data').html(htmlString);
-	$('#submit').click(del)
-	$('#delForm').submit(function (e) {
-		e.preventDefault();
-	});
+					<div id="errMessage"></div>';
+    $('#data').html(htmlString);
+    $('#submit').click(del)
+    $('#delForm').submit(function(e) {
+        e.preventDefault();
+    });
 }
 
 /**
@@ -311,45 +311,45 @@ function delSetup() {
  */
 
 function del() {
-	$('#errMessage').html('');
-	let id = $('#id').val().toString();
+    $('#errMessage').html('');
+    let id = $('#id').val().toString();
 
-	if (!id) {
-		$('#errMessage').html('<p> Please provide the meeting ID you would like to remove.</p>');
-		return;
-	}
+    if (!id) {
+        $('#errMessage').html('<p> Please provide the meeting ID you would like to remove.</p>');
+        return;
+    }
 
-	let payload = {
-		'id': id,
-	}
+    let payload = {
+        'id': id,
+    }
 
-	deleteInterview(payload)
+    deleteInterview(payload)
 }
 
 function groupInfoSetup() {
-	let htmlString = '<form id="delForm"> \
-                        <label for="groupId">Group: </label>\
-                        <input type="text" id="groupId" name="groupId" placeholder="group_0001" required" /><br>\
-                        <input type="submit" id="submit" value="Obtain Information" />\
-                    </form>\
-                    <div id="errMessage"><div>';
-	$('#data').html(htmlString);
-	$('#submit').click(groupInformation)
-	$('#delForm').submit(function (e) {
-		e.preventDefault();
-	});
+    let htmlString = '<form id="delForm"> \
+						<label for="groupId">Group: </label>\
+						<input type="text" id="groupId" name="groupId" placeholder="group_0001" required" /><br>\
+						<input type="submit" id="submit" value="Obtain Information" />\
+					</form>\
+					<div id="errMessage"></div>';
+    $('#data').html(htmlString);
+    $('#submit').click(groupInformation)
+    $('#delForm').submit(function(e) {
+        e.preventDefault();
+    });
 }
 
 function groupInformation() {
-	$('#errMessage').html('');
-	let groupId = $('#groupId').val().toString();
+    $('#errMessage').html('');
+    let groupId = $('#groupId').val().toString();
 
-	if (!groupId) {
-		$('#errMessage').html('<p> Please provide a group ID.</p>');
-		return;
-	}
+    if (!groupId) {
+        $('#errMessage').html('<p> Please provide a group ID.</p>');
+        return;
+    }
 
-	let payload = `group=${groupId}`
+    let payload = `group=${groupId}`
 
-	groupInfo(payload)
+    groupInfo(payload)
 }

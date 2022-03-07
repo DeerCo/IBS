@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const login = require("./interviews_ta/login");
 const middleware = require("./interviews_ta/middleware");
 const middleware_task = require("./interviews_ta/middleware_task");
 const backupAllRouter = require("./interviews_ta/backup_all");
@@ -13,9 +14,10 @@ const groupInformationRouter = require("./interviews_ta/group_information");
 
 router.use(express.static("./public"));
 router.get("/ui", (req, res) => {
-	res.sendFile("index.html", { root: "./public/" });
+    res.sendFile("index.html", { root: "./public/" });
 });
 
+router.use("/", login);
 router.use("/", middleware);
 router.use("/", backupAllRouter);
 router.use("/", middleware_task);
