@@ -1,3 +1,6 @@
+var BASE_URL = "https://mcsapps.utm.utoronto.ca/csc309s22";
+var API_URL_PREFIX = '${BASE_URL}/interviews_ta/${localStorage.task}';
+
 /**
  * 
  * Sets up the page so that buttons are mapped to their respective functions.
@@ -7,9 +10,6 @@
 function pageLoader() {
     $("#submit").click(initialize)
 }
-
-let BASE_URL = "https://mcsapps.utm.utoronto.ca/csc309s22";
-let API_URL_PREFIX = `${BASE_URL}/interviews_ta/${localStorage.task}`;
 
 /**
  * 
@@ -23,8 +23,10 @@ function initialize() {
     let token = $("#token").val().replace(/\s/g, "");
     let task = $("#task").val().replace(/\s/g, "");
     if (username != "") {
+        var tempLocalStorage = localStorage;
+        var tempWindow = window;
         $.ajax({
-            url: `${API_URL_PREFIX}/login`,
+            url: "${API_URL_PREFIX}/login",
             method: "POST",
             contentType: "application/json;charset=UTF-8",
             data: JSON.stringify({
@@ -33,9 +35,9 @@ function initialize() {
                 task: task
             })
         }).done((data) => {
-            localStorage.token = data.token;
-            localStorage.task = task;
-            window.location = "request.html"
+            tempLocalStorage.token = data.token;
+            tempLocalStorage.task = task;
+            tempWindow.location = "request.html"
         }).fail((data, textStatus, xhr) => {
             $("#errMessage").html(data.responseJSON.message)
         })
