@@ -132,6 +132,7 @@ dist
 # backup and tmp
 backup/*
 tmp/*
+files/*
 
 # package-lock
 package-lock.json

@@ -1,5 +1,5 @@
 /* 
-	General Setup 
+    General Setup 
 */
 const express = require("express");
 const app = express();
@@ -9,12 +9,12 @@ app.set('trust proxy', 1); // get the real ip address
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(function (error, req, res, next) {
-	if (error instanceof SyntaxError) {
-		return res.status(500).send({ message: "Invalid data" });
-	} else {
-		next();
-	}
+app.use(function(error, req, res, next) {
+    if (error instanceof SyntaxError) {
+        return res.status(500).send({ message: "Invalid data" });
+    } else {
+        next();
+    }
 });
 
 const multer = require('multer');
@@ -32,14 +32,15 @@ const port = process.env.PORT || 3000;
 const a3Router = require('./routes/a3');
 const interviewsRouter = require('./routes/interviews');
 const interviewsTaRouter = require('./routes/interviews_ta');
+const filesRouter = require('./routes/files');
 
 const rate_limit = require("./setup/rate_limit");
 
 /* 
-	Routes 
+    Routes 
 */
 app.get("/", rate_limit.general_limiter, (req, res) => {
-	res.status(418).json({ message: "Why are you here??? LOL --Howie" });
+    res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
 
 app.use('/a3', a3Router);
@@ -48,6 +49,8 @@ app.use('/interviews', interviewsRouter);
 
 app.use('/interviews_ta', interviewsTaRouter);
 
+app.use('/files', filesRouter);
+
 app.listen(port, () => {
-	console.log(`App listening at http://localhost:${port}`)
+    console.log(`App listening at http://localhost:${port}`)
 })
