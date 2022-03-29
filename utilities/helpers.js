@@ -175,6 +175,30 @@ function send_csv(json, res, backup, note = "") {
     });
 }
 
+function search_files(keyword, sub_dir = "") {
+    let dir = __dirname + "/../files/" + sub_dir;
+    let result = [];
+
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    let files = fs.readdirSync(dir);
+
+    for (let i = 0; i < files.length; i++) {
+        let file_name = dir + files[i];
+        let stat = fs.lstatSync(file_name);
+
+        if (stat.isDirectory()) {
+            result = result.concat(search_files(keyword, sub_dir + files[i] + "/"));
+        } else if (file_name.indexOf(keyword) >= 0) {
+            result.push(sub_dir + files[i]);
+        };
+    };
+
+    return result;
+};
+
 async function get_user_information(user_name) {
     try {
         let user = {};
@@ -237,6 +261,7 @@ module.exports = {
     query_set: query_set,
     send_email: send_email,
     send_csv: send_csv,
+    search_files: search_files,
     get_user_information: get_user_information,
     get_group_information: get_group_information
 }
