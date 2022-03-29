@@ -30,6 +30,7 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 const a3Router = require('./routes/a3');
+const authRouter = require('./routes/auth');
 const interviewsRouter = require('./routes/interviews');
 const interviewsTaRouter = require('./routes/interviews_ta');
 const filesRouter = require('./routes/files');
@@ -44,6 +45,8 @@ app.get("/", rate_limit.general_limiter, (req, res) => {
 })
 
 app.use('/a3', a3Router);
+
+app.use('/auth', authRouter);
 
 app.use('/interviews', interviewsRouter);
 
