@@ -11,7 +11,11 @@ router.get("/:task/all", rate_limit.general_limiter, (req, res) => {
         files_json[i] = "/" + files[i];
     }
 
-    res.json({ keyword: res.locals["group"], files: files_json });
+    if (files.length === 0) {
+        res.json({ keyword: res.locals["group"], message: "You don't have any files for this task." });
+    } else {
+        res.json({ keyword: res.locals["group"], files: files_json });
+    }
 })
 
 module.exports = router;
