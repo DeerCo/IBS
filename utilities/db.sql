@@ -32,3 +32,14 @@ CREATE TABLE users
     username character varying(256) NOT NULL,
     PRIMARY KEY (username)
 );
+
+CREATE TABLE marks
+(
+    student character varying NOT NULL,
+    task character varying NOT NULL,
+    criteria character varying NOT NULL,
+    mark numeric,
+    total numeric,
+    description character varying,
+    PRIMARY KEY (student, task, criteria)
+);

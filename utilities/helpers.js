@@ -15,6 +15,10 @@ function generateTaAccessToken(ta, task) {
     return jwt.sign({ ta: ta, type: "ta", task: task }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
 }
 
+function generateAdminAccessToken(admin) {
+    return jwt.sign({ admin: admin, type: "admin" }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
+}
+
 function name_validate(name) {
     let regex_name = new RegExp("^[0-9a-zA-Z_]{1,30}$");
 
@@ -199,6 +203,31 @@ function search_files(keyword, sub_dir = "") {
     return result;
 };
 
+function backup_marks(json, note = "") {
+    if (JSON.stringify(json) === "[]") {
+        return;
+    }
+
+    let current_time = moment().tz("America/Toronto");
+    let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
+
+    let dir = __dirname + "/../backup/" + dir_date;
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    let json2csvParser = new json2csv.Parser();
+    let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
+    let csv = json2csvParser.parse(json);
+    fs.writeFile(dir + file_name, csv, (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("ok");
+        }
+    });
+}
+
 async function get_user_information(user_name) {
     try {
         let user = {};
@@ -212,6 +241,7 @@ async function get_user_information(user_name) {
 
         return { status: true, user: user };
     } catch (e) {
+        console.log(e);
         return { status: false };
     }
 }
@@ -245,6 +275,7 @@ async function get_group_information(user_id, markus_id) {
         let users_info = await Promise.all(users_requests);
         return { status: true, users: users_info, group: groups[found_index]["group_name"] };
     } catch (e) {
+        console.log(e);
         return { status: false };
     }
 }
@@ -252,6 +283,7 @@ async function get_group_information(user_id, markus_id) {
 module.exports = {
     generateAccessToken: generateAccessToken,
     generateTaAccessToken: generateTaAccessToken,
+    generateAdminAccessToken: generateAdminAccessToken,
     name_validate: name_validate,
     number_validate: number_validate,
     string_validate: string_validate,
@@ -262,6 +294,7 @@ module.exports = {
     send_email: send_email,
     send_csv: send_csv,
     search_files: search_files,
+    backup_marks: backup_marks,
     get_user_information: get_user_information,
     get_group_information: get_group_information
 }

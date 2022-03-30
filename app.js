@@ -18,8 +18,8 @@ app.use(function(error, req, res, next) {
 });
 
 const multer = require('multer');
-var upload = multer();
-app.use(upload.array());
+var upload = multer({ dest: './tmp/upload/' });
+app.use(upload.single('file'));
 
 const cors = require("cors");
 app.use(cors());
@@ -34,6 +34,7 @@ const authRouter = require('./routes/auth');
 const interviewsRouter = require('./routes/interviews');
 const interviewsTaRouter = require('./routes/interviews_ta');
 const filesRouter = require('./routes/files');
+const marksRouter = require('./routes/marks');
 
 const rate_limit = require("./setup/rate_limit");
 
@@ -51,6 +52,8 @@ app.use('/auth', authRouter);
 app.use('/interviews', interviewsRouter);
 
 app.use('/interviews_ta', interviewsTaRouter);
+
+app.use('/marks', marksRouter);
 
 app.use('/files', filesRouter);
 
