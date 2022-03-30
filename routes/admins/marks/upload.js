@@ -40,7 +40,12 @@ router.post("/upload", (req, res) => {
 
                 for (let i = 1; i < csv_row[0].length; i++) {
                     all_criteria.push(csv_row[0][i]);
-                    total.push(parseFloat(csv_row[1][i]));
+
+                    if (isNaN(parseFloat(csv_row[1][i]))) {
+                        total.push(0);
+                    } else {
+                        total.push(parseFloat(csv_row[1][i]));
+                    }
                 }
 
                 for (let j = 2; j < csv_row.length; j++) {

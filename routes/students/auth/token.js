@@ -14,7 +14,7 @@ router.post("/token", rate_limit.token_limiter, (req, res) => {
             if (Object.keys(data["user"]).length === 0) {
                 res.status(406).json({ message: "The provided utorid is invalid." });
             } else {
-                const token = helpers.generateAccessToken({ user_id: data["user"]["id"], user_name: req.body["utorid"], email: data["user"]["email"], type: "student" });
+                const token = helpers.generateStudentAccessToken({ user_id: data["user"]["id"], user_name: req.body["utorid"], email: data["user"]["email"], type: "student" });
                 res.status(200).json({ message: "Your token has been sent to your email." });
                 helpers.send_email(data["user"]["email"], "Your CSC309 Token", token);
             }

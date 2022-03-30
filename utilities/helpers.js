@@ -7,8 +7,8 @@ const bent = require("bent")
 const getJSON = bent("json")
 const transporter = require("../setup/email");
 
-function generateAccessToken(group) {
-    return jwt.sign(group, process.env.TOKEN_SECRET, { expiresIn: "10d" });
+function generateStudentAccessToken(student) {
+    return jwt.sign(student, process.env.TOKEN_SECRET, { expiresIn: "10d" });
 }
 
 function generateTaAccessToken(ta, task) {
@@ -300,7 +300,7 @@ async function get_group_information_by_group_name(group_name, markus_id) {
 }
 
 module.exports = {
-    generateAccessToken: generateAccessToken,
+    generateStudentAccessToken: generateStudentAccessToken,
     generateTaAccessToken: generateTaAccessToken,
     generateAdminAccessToken: generateAdminAccessToken,
     name_validate: name_validate,
