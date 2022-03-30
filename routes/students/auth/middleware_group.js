@@ -39,6 +39,7 @@ router.use("/:task", function(req, res, next) {
                         }
                     }
 
+                    res.locals["user_name"] = token_data["user_name"];
                     res.locals["user_email"] = token_data["email"];
                     res.locals["group"] = data["group"];
                     res.locals["group_emails"] = group_emails;
