@@ -220,11 +220,7 @@ function backup_marks(json, note = "") {
     let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
     let csv = json2csvParser.parse(json);
     fs.writeFile(dir + file_name, csv, (err) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log("ok");
-        }
+
     });
 }
 
