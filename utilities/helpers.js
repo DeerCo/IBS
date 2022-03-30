@@ -242,7 +242,7 @@ async function get_user_information(user_name) {
     }
 }
 
-async function get_group_information(user_id, markus_id) {
+async function get_group_information_by_user(user_id, markus_id) {
     try {
         let index = 0;
         let found_index = -1;
@@ -276,6 +276,29 @@ async function get_group_information(user_id, markus_id) {
     }
 }
 
+async function get_group_information_by_group_name(group_name, markus_id) {
+    try {
+        let users_requests = [];
+
+        let groups = await getJSON(process.env.MARKUS_API + "assignments/" + markus_id + "/groups.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
+        for (let group of groups) {
+            if (group["group_name"] === group_name) {
+                for (let member of group["members"]) {
+                    if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
+                        users_requests.push(await getJSON(process.env.MARKUS_API + "users/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
+                    }
+                }
+            }
+        }
+
+        let users_info = await Promise.all(users_requests);
+        return { status: true, users: users_info };
+    } catch (e) {
+        console.log(e);
+        return { status: false };
+    }
+}
+
 module.exports = {
     generateAccessToken: generateAccessToken,
     generateTaAccessToken: generateTaAccessToken,
@@ -292,5 +315,6 @@ module.exports = {
     search_files: search_files,
     backup_marks: backup_marks,
     get_user_information: get_user_information,
-    get_group_information: get_group_information
+    get_group_information_by_user: get_group_information_by_user,
+    get_group_information_by_group_name: get_group_information_by_group_name
 }

@@ -24,7 +24,7 @@ router.use("/:task", function(req, res, next) {
             return;
         }
 
-        helpers.get_group_information(token_data["user_id"], constants.tasks[req.params["task"]]["markus_id"]).then(data => {
+        helpers.get_group_information_by_user(token_data["user_id"], constants.tasks[req.params["task"]]["markus_id"]).then(data => {
             if (data["status"]) {
                 if (data["group"] === "") {
                     res.status(406).json({ message: "You are not currently in a group." });
