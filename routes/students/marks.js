@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const middlewareIndividualRouter = require("./auth/middleware_individual");
-const allRouter = require("./marks/all");
+const rawRouter = require("./marks/raw");
 
 router.use("/", middlewareIndividualRouter);
-router.use("/", allRouter);
+router.use("/", rawRouter);
 
 module.exports = router;
