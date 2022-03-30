@@ -16,7 +16,6 @@ router.post("/upload", (req, res) => {
     }
 
     let sql_upload = "INSERT INTO marks (student, task, criteria, mark, total) VALUES %L";
-    let sql_backup = "SELECT * FROM marks WHERE task = '" + req.body["task"] + "'";
 
     if ("overwrite" in req.body && req.body["overwrite"].toLowerCase() === "true") {
         sql_upload += "ON CONFLICT (student, task, criteria) DO UPDATE SET mark = EXCLUDED.mark, total = EXCLUDED.total";
@@ -24,7 +23,7 @@ router.post("/upload", (req, res) => {
         sql_upload += "ON CONFLICT (student, task, criteria) DO NOTHING";
     }
 
-    client.query(sql_backup, [], (err, pgRes) => {
+    client.query("SELECT * FROM marks WHERE task = ($1)", [req.body["task"]], (err, pgRes) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {

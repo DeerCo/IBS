@@ -42,9 +42,7 @@ router.post("/submit", (req, res) => {
         sql_add += "ON CONFLICT (student, task, criteria) DO NOTHING";
     }
 
-    let sql_backup = "SELECT * FROM marks WHERE task = '" + req.body["task"] + "'";
-
-    client.query(sql_backup, [], (err, pgRes) => {
+    client.query("SELECT * FROM marks WHERE task = ($1)", [req.body["task"]], (err, pgRes) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {
