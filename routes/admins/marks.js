@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const middleware = require("./marks/middleware");
+const middleware = require("./middleware");
 const submit = require("./marks/submit");
 const upload = require("./marks/upload");
 

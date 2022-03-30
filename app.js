@@ -29,12 +29,9 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 
-const a3Router = require('./routes/a3');
-const authRouter = require('./routes/auth');
-const interviewsRouter = require('./routes/interviews');
+const studentsRouter = require('./routes/students');
 const interviewsTaRouter = require('./routes/interviews_ta');
-const filesRouter = require('./routes/files');
-const marksRouter = require('./routes/marks');
+const adminsRouter = require('./routes/admins');
 
 const rate_limit = require("./setup/rate_limit");
 
@@ -44,18 +41,9 @@ const rate_limit = require("./setup/rate_limit");
 app.get("/", rate_limit.general_limiter, (req, res) => {
     res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
-
-app.use('/a3', a3Router);
-
-app.use('/auth', authRouter);
-
-app.use('/interviews', interviewsRouter);
-
+app.use('/', studentsRouter);
 app.use('/interviews_ta', interviewsTaRouter);
-
-app.use('/marks', marksRouter);
-
-app.use('/files', filesRouter);
+app.use('/admins', adminsRouter);
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`)

@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const csv = require('csvtojson');
 const format = require('pg-format');
-const client = require("../../setup/db");
-const helpers = require("../../utilities/helpers");
+const client = require("../../../setup/db");
+const helpers = require("../../../utilities/helpers");
 
 router.post("/upload", (req, res) => {
     if (req.file === undefined) {

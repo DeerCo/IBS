@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const moment = require("moment");
 require("moment-timezone");
-const client = require("../../setup/db");
-const constants = require("../../setup/constants");
-const helpers = require("../../utilities/helpers");
-const rate_limit = require("../../setup/rate_limit");
+const client = require("../../../setup/db");
+const constants = require("../../../setup/constants");
+const helpers = require("../../../utilities/helpers");
+const rate_limit = require("../../../setup/rate_limit");
 
 router.delete("/:task/cancel", rate_limit.interviews_limiter, (req, res) => {
     client.query(constants.sql_check, [res.locals["group"], req.params["task"]], (err, pgRes) => {

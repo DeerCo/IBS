@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const rate_limit = require("../../setup/rate_limit");
-const helpers = require("../../utilities/helpers");
+const rate_limit = require("../../../setup/rate_limit");
+const helpers = require("../../../utilities/helpers");
 
 router.get("/:task/all", rate_limit.general_limiter, (req, res) => {
     let files = helpers.search_files(res.locals["group"], req.params["task"] + "/");

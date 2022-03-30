@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const moment = require("moment");
 require("moment-timezone");
-const client = require("../../setup/db");
-const constants = require("../../setup/constants");
-const helpers = require("../../utilities/helpers");
-const rate_limit = require("../../setup/rate_limit");
+const client = require("../../../setup/db");
+const constants = require("../../../setup/constants");
+const helpers = require("../../../utilities/helpers");
+const rate_limit = require("../../../setup/rate_limit");
 
 router.post("/:task/book", rate_limit.interviews_limiter, (req, res) => {
     if (!("time" in req.body) || helpers.time_validate(req.body["time"])) {

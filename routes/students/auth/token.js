@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const rate_limit = require("../../setup/rate_limit");
-const helpers = require("../../utilities/helpers");
+const rate_limit = require("../../../setup/rate_limit");
+const helpers = require("../../../utilities/helpers");
 
 router.post("/token", rate_limit.token_limiter, (req, res) => {
     if (!("utorid" in req.body) || helpers.name_validate(req.body["utorid"])) {

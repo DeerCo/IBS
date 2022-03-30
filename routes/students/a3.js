@@ -6,7 +6,6 @@ const textLikesRouter = require("./a3/text_likes");
 
 router.use("/", function(req, res, next) {
     next();
-    // res.sendStatus(403);
 })
 
 router.use("/", registerRouter);

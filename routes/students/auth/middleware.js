@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const constants = require("../../setup/constants");
-const helpers = require("../../utilities/helpers");
+const constants = require("../../../setup/constants");
+const helpers = require("../../../utilities/helpers");
 
 router.use("/:task", function(req, res, next) {
     const authHeader = req.headers["authorization"];

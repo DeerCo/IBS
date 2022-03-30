@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const client = require("../../setup/db");
-const helpers = require("../../utilities/helpers");
+const client = require("../../../setup/db");
+const helpers = require("../../../utilities/helpers");
 
 router.post("/submit", (req, res) => {
     if (!("student" in req.body) || helpers.name_validate(req.body["student"])) {
