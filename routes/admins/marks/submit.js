@@ -47,18 +47,31 @@ router.post("/submit", (req, res) => {
             res.status(404).json({ message: "Unknown error." });
         } else {
             helpers.backup_marks(pgRes.rows);
-            client.query(sql_add, sql_add_data, (err, pgRes) => {
-                if (err) {
+
+            helpers.get_all_user_names().then(data => {
+                if (!data["status"]) {
                     res.status(404).json({ message: "Unknown error." });
-                } else {
-                    if (pgRes.rowCount === 0) {
-                        res.status(200).json({ message: "The mark is unchanged." });
-                    } else if (pgRes.rowCount === 1) {
-                        res.status(200).json({ message: "The mark is changed." });
-                    } else {
-                        res.status(404).json({ message: "Unknown error." });
-                    }
+                    return;
                 }
+
+                if (!data["user_names"].includes(req.body["student"])) {
+                    res.status(406).json({ message: "The user name is invalid." });
+                    return;
+                }
+
+                client.query(sql_add, sql_add_data, (err, pgRes) => {
+                    if (err) {
+                        res.status(404).json({ message: "Unknown error." });
+                    } else {
+                        if (pgRes.rowCount === 0) {
+                            res.status(200).json({ message: "The mark is unchanged." });
+                        } else if (pgRes.rowCount === 1) {
+                            res.status(200).json({ message: "The mark is changed." });
+                        } else {
+                            res.status(404).json({ message: "Unknown error." });
+                        }
+                    }
+                });
             });
         }
     });

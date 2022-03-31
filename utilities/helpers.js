@@ -242,6 +242,22 @@ async function get_user_information(user_name) {
     }
 }
 
+async function get_all_user_names() {
+    try {
+        let user_names = [];
+
+        let users = await getJSON(process.env.MARKUS_API + "users.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
+        for (let temp_user of users) {
+            user_names.push(temp_user["user_name"]);
+        }
+
+        return { status: true, user_names: user_names };
+    } catch (e) {
+        console.log(e);
+        return { status: false };
+    }
+}
+
 async function get_group_information_by_user(user_id, markus_id) {
     try {
         let index = 0;
@@ -315,6 +331,7 @@ module.exports = {
     search_files: search_files,
     backup_marks: backup_marks,
     get_user_information: get_user_information,
+    get_all_user_names: get_all_user_names,
     get_group_information_by_user: get_group_information_by_user,
     get_group_information_by_group_name: get_group_information_by_group_name
 }
