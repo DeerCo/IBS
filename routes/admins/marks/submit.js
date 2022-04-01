@@ -12,7 +12,7 @@ router.post("/submit", (req, res) => {
         res.status(400).json({ message: "The task is missing or has invalid format." });
         return;
     }
-    if (!("criteria" in req.body) || helpers.name_validate(req.body["criteria"])) {
+    if (!("criteria" in req.body) || helpers.string_validate(req.body["criteria"])) {
         res.status(400).json({ message: "The criteria is missing or has invalid format." });
         return;
     }
