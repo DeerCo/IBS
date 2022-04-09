@@ -1,5 +1,5 @@
 module.exports = {
-    rows_count: 40,
+    rows_count: 45,
     tasks: {
         "phase_1_mentor_1": { open_student: false, open_ta: true, length: 15, markus_id: 4, exclude: [] },
         "phase_1_mentor_2": { open_student: false, open_ta: true, length: 15, markus_id: 4, exclude: [] },
@@ -7,8 +7,8 @@ module.exports = {
         "phase_2_mentor_1": { open_student: false, open_ta: true, length: 15, markus_id: 5, exclude: [] },
         "phase_2_mentor_2": { open_student: false, open_ta: true, length: 15, markus_id: 5, exclude: [] },
         "phase_2": { open_student: true, open_ta: true, length: 60, markus_id: 5, exclude: ["phase_1", "phase_3"] },
-        "phase_3_mentor_1": { open_student: true, open_ta: true, length: 15, markus_id: 6, exclude: [] },
-        "phase_3_mentor_2": { open_student: false, open_ta: true, length: 15, markus_id: 6, exclude: [] },
+        "phase_3_mentor_1": { open_student: false, open_ta: true, length: 15, markus_id: 6, exclude: [] },
+        "phase_3_mentor_2": { open_student: true, open_ta: true, length: 15, markus_id: 6, exclude: [] },
         "phase_3": { open_student: false, open_ta: true, length: 45, markus_id: 6, exclude: ["phase_1", "phase_2"] },
         "a2": { open_student: true, open_ta: true, length: 10, markus_id: 2, exclude: [] },
         "a3": { open_student: true, open_ta: true, length: 10, markus_id: 3, exclude: [] }
