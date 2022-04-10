@@ -1,198 +1,188 @@
 {
-	"info": {
-		"_postman_id": "1e6ba4e1-cb94-462b-aaa9-fa389ef6d5aa",
-		"name": "admin",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "one",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/admins/marks/one?student=test",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"admins",
-						"marks",
-						"one"
-					],
-					"query": [
-						{
-							"key": "student",
-							"value": "test"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "all",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/admins/marks/all?task=p2&total=true",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"admins",
-						"marks",
-						"all"
-					],
-					"query": [
-						{
-							"key": "task",
-							"value": "p2"
-						},
-						{
-							"key": "total",
-							"value": "true"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "submit",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "student",
-							"value": "zhengwi3",
-							"type": "text"
-						},
-						{
-							"key": "task",
-							"value": "p2",
-							"type": "text"
-						},
-						{
-							"key": "criteria",
-							"value": "Integrated testing",
-							"type": "text"
-						},
-						{
-							"key": "mark",
-							"value": "10",
-							"type": "text"
-						},
-						{
-							"key": "total",
-							"value": "16",
-							"type": "text"
-						},
-						{
-							"key": "overwrite",
-							"value": "true",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/admins/marks/submit",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"admins",
-						"marks",
-						"submit"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "upload",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "file",
-							"type": "file",
-							"src": "/C:/Users/howie/OneDrive/Desktop/a3_marks.csv"
-						},
-						{
-							"key": "task",
-							"value": "a3",
-							"type": "text"
-						},
-						{
-							"key": "overwrite",
-							"value": "true",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/admins/marks/upload",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"admins",
-						"marks",
-						"upload"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "{{token}}",
-				"type": "string"
-			}
-		]
-	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "https://mcsapps.utm.utoronto.ca/csc309s22",
-			"type": "string"
-		},
-		{
-			"key": "token",
-			"value": "",
-			"type": "string"
-		}
-	]
+    "info": {
+        "_postman_id": "1e6ba4e1-cb94-462b-aaa9-fa389ef6d5aa",
+        "name": "admin",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [{
+            "name": "one",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/admins/marks/one?student=test",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "admins",
+                        "marks",
+                        "one"
+                    ],
+                    "query": [{
+                        "key": "student",
+                        "value": "test"
+                    }]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "all",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{base_url}}/admins/marks/all?task=p2&total=true",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "admins",
+                        "marks",
+                        "all"
+                    ],
+                    "query": [{
+                            "key": "task",
+                            "value": "p2"
+                        },
+                        {
+                            "key": "total",
+                            "value": "true"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "submit",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [{
+                            "key": "student",
+                            "value": "test",
+                            "type": "text"
+                        },
+                        {
+                            "key": "task",
+                            "value": "p2",
+                            "type": "text"
+                        },
+                        {
+                            "key": "criteria",
+                            "value": "Integrated testing",
+                            "type": "text"
+                        },
+                        {
+                            "key": "mark",
+                            "value": "10",
+                            "type": "text"
+                        },
+                        {
+                            "key": "total",
+                            "value": "16",
+                            "type": "text"
+                        },
+                        {
+                            "key": "overwrite",
+                            "value": "true",
+                            "type": "text"
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{base_url}}/admins/marks/submit",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "admins",
+                        "marks",
+                        "submit"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "upload",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "formdata",
+                    "formdata": [{
+                            "key": "file",
+                            "type": "file",
+                            "src": "/C:/Users/howie/OneDrive/Desktop/a3_marks.csv"
+                        },
+                        {
+                            "key": "task",
+                            "value": "a3",
+                            "type": "text"
+                        },
+                        {
+                            "key": "overwrite",
+                            "value": "true",
+                            "type": "text"
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{base_url}}/admins/marks/upload",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "admins",
+                        "marks",
+                        "upload"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [{
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+        }]
+    },
+    "event": [{
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [{
+            "key": "base_url",
+            "value": "https://mcsapps.utm.utoronto.ca/csc309s22",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ]
 }

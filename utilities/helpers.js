@@ -142,7 +142,7 @@ function send_email(email, subject, body) {
     transporter.sendMail(mailOptions, function(error, info) { if (error) { console.log("Email error:" + error); } });
 }
 
-function send_csv(json, res, backup, note = "") {
+function send_interviews_csv(json, res, backup, note = "") {
     if (JSON.stringify(json) === "[]") {
         res.status(200).json({ message: "No data is available." });
         return;
@@ -383,7 +383,7 @@ module.exports = {
     query_filter: query_filter,
     query_set: query_set,
     send_email: send_email,
-    send_csv: send_csv,
+    send_interviews_csv: send_interviews_csv,
     search_files: search_files,
     backup_marks: backup_marks,
     send_marks_csv: send_marks_csv,
