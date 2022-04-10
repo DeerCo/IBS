@@ -256,7 +256,7 @@ function send_marks_csv(json, res, note = "", total = false) {
         }
     }
 
-    let rows = Object.values(parsed_json);
+    let rows = [header].concat(Object.values(parsed_json));
 
     if (total) {
         for (let row of rows) {
@@ -270,7 +270,7 @@ function send_marks_csv(json, res, note = "", total = false) {
         }
     }
 
-    let csv = json2csvParser.parse([header].concat(rows));
+    let csv = json2csvParser.parse(rows);
     fs.writeFile(dir + file_name, csv, (err) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
