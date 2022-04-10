@@ -224,6 +224,62 @@ function backup_marks(json, note = "") {
     });
 }
 
+function send_marks_csv(json, res, note = "", total = false) {
+    if (JSON.stringify(json) === "[]") {
+        res.status(200).json({ message: "No data is available." });
+        return;
+    }
+
+    let current_time = moment().tz("America/Toronto");
+    let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
+
+    let dir = __dirname + "/../backup/" + dir_date;
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
+    let file_name = "marks_readable_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
+
+    let header = { Student: "/" };
+    let parsed_json = {};
+
+    for (let mark of json) {
+        if (!(mark["criteria"] in header)) {
+            header[mark["criteria"]] = parseFloat(mark["total"]);
+        }
+
+        if (mark["student"] in parsed_json) {
+            parsed_json[mark["student"]][mark["criteria"]] = parseFloat(mark["mark"]);
+        } else {
+            parsed_json[mark["student"]] = { Student: mark["student"], [mark["criteria"]]: parseFloat(mark["mark"]) };
+        }
+    }
+
+    let rows = Object.values(parsed_json);
+
+    if (total) {
+        for (let row of rows) {
+            let row_total = 0;
+            for (let criteria of Object.keys(row)) {
+                if (criteria != "Student") {
+                    row_total += row[criteria];
+                }
+            }
+            row["Total"] = row_total;
+        }
+    }
+
+    let csv = json2csvParser.parse([header].concat(rows));
+    fs.writeFile(dir + file_name, csv, (err) => {
+        if (err) {
+            res.status(404).json({ message: "Unknown error." });
+        } else {
+            res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+        }
+    });
+}
+
 async function get_user_information(user_name) {
     try {
         let user = {};
@@ -330,6 +386,7 @@ module.exports = {
     send_csv: send_csv,
     search_files: search_files,
     backup_marks: backup_marks,
+    send_marks_csv: send_marks_csv,
     get_user_information: get_user_information,
     get_all_user_names: get_all_user_names,
     get_group_information_by_user: get_group_information_by_user,

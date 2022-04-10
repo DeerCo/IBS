@@ -1,0 +1,288 @@
+{
+	"info": {
+		"_postman_id": "42c57d3d-7c11-4514-8496-3fa7233ee51d",
+		"name": "student",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "utorid",
+							"value": "test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/interviews/{{task}}/all",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"interviews",
+						"{{task}}",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "available",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/interviews/{{task}}/available",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"interviews",
+						"{{task}}",
+						"available"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/interviews/{{task}}/check",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"interviews",
+						"{{task}}",
+						"check"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "time",
+							"value": "2022-03-07 11:15",
+							"type": "default"
+						},
+						{
+							"key": "location",
+							"value": "Zoom",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/interviews/{{task}}/book",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"interviews",
+						"{{task}}",
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "change",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "time",
+							"value": "2022-03-07 11:30",
+							"type": "default"
+						},
+						{
+							"key": "location",
+							"value": "Zoom",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/interviews/{{task}}/change",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"interviews",
+						"{{task}}",
+						"change"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancel",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{base_url}}/interviews/{{task}}/cancel",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"interviews",
+						"{{task}}",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "file",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/files/{{task}}/file/0",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"files",
+						"{{task}}",
+						"file",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all files",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/files/{{task}}/all",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"files",
+						"{{task}}",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "raw marks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/marks/raw",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"marks",
+						"raw"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://mcsapps.utm.utoronto.ca/csc309s22",
+			"type": "default"
+		},
+		{
+			"key": "task",
+			"value": "phase_2"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

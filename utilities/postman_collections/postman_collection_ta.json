@@ -48,7 +48,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/interviews_ta/{{task}}/all",
+					"raw": "{{base_url}}/interviews_ta/{{task}}/all?booked=true&ta=all",
 					"host": [
 						"{{base_url}}"
 					],
@@ -60,8 +60,7 @@
 					"query": [
 						{
 							"key": "booked",
-							"value": "true",
-							"disabled": true
+							"value": "true"
 						},
 						{
 							"key": "id",
@@ -80,12 +79,11 @@
 						},
 						{
 							"key": "ta",
-							"value": "all",
-							"disabled": true
+							"value": "all"
 						},
 						{
 							"key": "student",
-							"value": "Bear",
+							"value": "test",
 							"disabled": true
 						},
 						{
@@ -142,12 +140,12 @@
 					"urlencoded": [
 						{
 							"key": "time",
-							"value": "2022-02-03 17:45",
+							"value": "2022-03-20 17:00",
 							"type": "default"
 						},
 						{
 							"key": "length",
-							"value": "15",
+							"value": "60",
 							"type": "default"
 						},
 						{
@@ -228,7 +226,7 @@
 						},
 						{
 							"key": "student",
-							"value": "Bear",
+							"value": "test",
 							"type": "text",
 							"disabled": true
 						},
@@ -372,11 +370,11 @@
 		},
 		{
 			"key": "task",
-			"value": "phase_1_mentor_1"
+			"value": "phase_2"
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0YSI6Ikhvd2llIiwidHlwZSI6InRhIiwidGFzayI6InBoYXNlXzFfbWVudG9yXzEiLCJpYXQiOjE2NDM0OTU3ODUsImV4cCI6MTY0NjA4Nzc4NX0.gOvLji4WOCRrncGdLkDTDRV0OyCmy3qdjc5Iy6A0lYw"
+			"value": ""
 		}
 	]
 }
