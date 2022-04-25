@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const client = require("../../../setup/db");
+const constants = require("../../../setup/constants");
 
 router.get("/raw", (req, res) => {
     client.query("SELECT task, criteria, mark, total, description FROM marks WHERE student = ($1)", [res.locals["user_name"]], (err, pgRes) => {
@@ -28,6 +29,13 @@ router.get("/raw", (req, res) => {
                     marks["summary"][row["task"]] = { total: temp_mark, out_of: temp_total };
                 }
             }
+
+            let final_mark = 0;
+            for (let task in marks["summary"]) {
+                let weighted_mark = marks["summary"][task]["total"] / marks["summary"][task]["out_of"] * constants["weights"][task];
+                final_mark += weighted_mark;
+            }
+            marks["summary"]["final"] = { total: final_mark, out_of: 100 };
 
             res.json({ marks: marks });
         }
