@@ -6,6 +6,7 @@ const json2csv = require("json2csv");
 const bent = require("bent")
 const getJSON = bent("json")
 const transporter = require("../setup/email");
+const constants = require("../setup/constants");
 
 function generateStudentAccessToken(student) {
     return jwt.sign(student, process.env.TOKEN_SECRET, { expiresIn: "10d" });
@@ -224,6 +225,44 @@ function backup_marks(json, note = "") {
     });
 }
 
+function calculate_marks(pgRes) {
+    let marks = { summary: {} };
+
+    for (let row of pgRes.rows) {
+        let temp_mark = parseFloat(row["mark"]);
+        let temp_total = parseFloat(row["total"]);
+
+        if (row["description"]) {
+            var temp_data = { criteria: row["criteria"], mark: temp_mark, out_of: temp_total, description: row["description"] };
+        } else {
+            var temp_data = { criteria: row["criteria"], mark: temp_mark, out_of: temp_total };
+        }
+
+        if (row["task"] in marks) {
+            marks[row["task"]].push(temp_data);
+            marks["summary"][row["task"]]["total"] += temp_mark;
+            marks["summary"][row["task"]]["out_of"] += temp_total;
+        } else {
+            marks[row["task"]] = [temp_data];
+            marks["summary"][row["task"]] = { total: temp_mark, out_of: temp_total };
+        }
+    }
+
+    let final_mark = 0;
+    for (let task in marks["summary"]) {
+        if (task in constants["max"] && marks["summary"][task]["total"] > constants["max"][task]) {
+            marks["summary"][task]["total"] = constants["max"][task];
+        }
+        if (marks["summary"][task]["out_of"] != 0) {
+            let weighted_mark = marks["summary"][task]["total"] / marks["summary"][task]["out_of"] * constants["weights"][task];
+            final_mark += weighted_mark;
+        }
+    }
+    marks["summary"]["final"] = { total: final_mark, out_of: 100 };
+
+    return marks;
+}
+
 function send_marks_csv(json, res, note = "", total = false) {
     if (JSON.stringify(json) === "[]") {
         res.status(200).json({ message: "No data is available." });
@@ -386,6 +425,7 @@ module.exports = {
     send_interviews_csv: send_interviews_csv,
     search_files: search_files,
     backup_marks: backup_marks,
+    calculate_marks: calculate_marks,
     send_marks_csv: send_marks_csv,
     get_user_information: get_user_information,
     get_all_user_names: get_all_user_names,
