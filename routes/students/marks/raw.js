@@ -8,7 +8,7 @@ router.get("/raw", (req, res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {
-            let marks = helpers.calculate_marks(pgRes);
+            let marks = helpers.calculate_marks(pgRes.rows);
             res.json({ marks: marks });
         }
     });

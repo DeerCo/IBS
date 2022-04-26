@@ -225,10 +225,10 @@ function backup_marks(json, note = "") {
     });
 }
 
-function calculate_marks(pgRes) {
+function calculate_marks(json) {
     let marks = { summary: {} };
 
-    for (let row of pgRes.rows) {
+    for (let row of json) {
         let temp_mark = parseFloat(row["mark"]);
         let temp_total = parseFloat(row["total"]);
 
@@ -307,6 +307,66 @@ function send_marks_csv(json, res, note = "", total = false) {
             }
             row["Total"] = row_total;
         }
+    }
+
+    let csv = json2csvParser.parse(rows);
+    fs.writeFile(dir + file_name, csv, (err) => {
+        if (err) {
+            res.status(404).json({ message: "Unknown error." });
+        } else {
+            res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+        }
+    });
+}
+
+function send_final_marks_csv(json, res) {
+    if (JSON.stringify(json) === "[]") {
+        res.status(200).json({ message: "No data is available." });
+        return;
+    }
+
+    let current_time = moment().tz("America/Toronto");
+    let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
+
+    let dir = __dirname + "/../backup/" + dir_date;
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
+    let file_name = "marks_final_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ".csv";
+
+    let header = Object.assign({ Student: "/" }, constants["weights"]);
+    let parsed_json = {};
+
+    for (let mark of json) {
+        if (mark["task"] in constants["max"] && parseFloat(mark["marks_sum"]) > constants["max"][mark["task"]]) {
+            mark["marks_sum"] = constants["max"][mark["task"]];
+        }
+
+        if (parseFloat(mark["totals_sum"]) != 0) {
+            var weighted_mark = parseFloat(mark["marks_sum"]) / parseFloat(mark["totals_sum"]) * constants["weights"][mark["task"]];
+        } else {
+            var weighted_mark = 0;
+        }
+
+        if (mark["student"] in parsed_json) {
+            parsed_json[mark["student"]][mark["task"]] = weighted_mark;
+        } else {
+            parsed_json[mark["student"]] = { Student: mark["student"], [mark["task"]]: weighted_mark };
+        }
+    }
+
+    let rows = [header].concat(Object.values(parsed_json));
+
+    for (let row of rows) {
+        let row_total = 0;
+        for (let task of Object.keys(row)) {
+            if (task != "Student") {
+                row_total += row[task];
+            }
+        }
+        row["Total"] = row_total;
     }
 
     let csv = json2csvParser.parse(rows);
@@ -427,6 +487,7 @@ module.exports = {
     backup_marks: backup_marks,
     calculate_marks: calculate_marks,
     send_marks_csv: send_marks_csv,
+    send_final_marks_csv: send_final_marks_csv,
     get_user_information: get_user_information,
     get_all_user_names: get_all_user_names,
     get_group_information_by_user: get_group_information_by_user,
