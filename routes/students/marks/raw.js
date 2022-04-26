@@ -32,8 +32,13 @@ router.get("/raw", (req, res) => {
 
             let final_mark = 0;
             for (let task in marks["summary"]) {
-                let weighted_mark = marks["summary"][task]["total"] / marks["summary"][task]["out_of"] * constants["weights"][task];
-                final_mark += weighted_mark;
+                if (task in constants["max"] && marks["summary"][task]["total"] > constants["max"][task]) {
+                    marks["summary"][task]["total"] = constants["max"][task];
+                }
+                if (marks["summary"][task]["out_of"] != 0) {
+                    let weighted_mark = marks["summary"][task]["total"] / marks["summary"][task]["out_of"] * constants["weights"][task];
+                    final_mark += weighted_mark;
+                }
             }
             marks["summary"]["final"] = { total: final_mark, out_of: 100 };
 
