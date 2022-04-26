@@ -319,7 +319,7 @@ function send_marks_csv(json, res, note = "", total = false) {
     });
 }
 
-function send_final_marks_csv(json, res) {
+function send_final_marks_csv(json, res, total = false) {
     if (JSON.stringify(json) === "[]") {
         res.status(200).json({ message: "No data is available." });
         return;
@@ -359,14 +359,16 @@ function send_final_marks_csv(json, res) {
 
     let rows = [header].concat(Object.values(parsed_json));
 
-    for (let row of rows) {
-        let row_total = 0;
-        for (let task of Object.keys(row)) {
-            if (task != "Student") {
-                row_total += row[task];
+    if (total) {
+        for (let row of rows) {
+            let row_total = 0;
+            for (let task of Object.keys(row)) {
+                if (task != "Student") {
+                    row_total += row[task];
+                }
             }
+            row["Total"] = row_total;
         }
-        row["Total"] = row_total;
     }
 
     let csv = json2csvParser.parse(rows);
