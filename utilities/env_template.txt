@@ -1,0 +1,8 @@
+TOKEN_SECRET=**something**
+DATABASE_URL=**postgres://...**
+MARKUS_API=**https://mcsmark.utm.utoronto.ca/csc309s22/api/**
+MARKUS_AUTH=**something**
+PORT=**7777**
+EMAIL_SERVICE=**yahoo**
+EMAIL_USER=**something**
+EMAIL_PASS=**something**
