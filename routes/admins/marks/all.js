@@ -5,6 +5,7 @@ const helpers = require("../../../utilities/helpers");
 
 router.get("/all", (req, res) => {
     let total = false;
+
     if ("total" in req.query && req.query["total"].toLowerCase() === "true") {
         total = true;
     }

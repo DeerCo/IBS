@@ -472,6 +472,7 @@ async function get_group_information_by_group_name(group_name, markus_id) {
     }
 }
 
+
 module.exports = {
     generateStudentAccessToken: generateStudentAccessToken,
     generateTaAccessToken: generateTaAccessToken,
