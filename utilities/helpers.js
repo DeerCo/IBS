@@ -135,10 +135,10 @@ function query_set(query) {
 
 function send_email(email, subject, body) {
     let mailOptions = {
-        from: "Han Xian Xu Huang <" + process.env.EMAIL_USER + ">",
+        from: "Howie via CSC309 <csc309-noreply@teach.cs.toronto.edu>",
         to: email,
         subject: subject,
-        text: "(Please do not reply to this email, as no one monitors it. Post your question to Discord or Piazza instead.)\n\n" + body
+        text: "(Please do not reply to this email, as no one monitors it. Post your question to Piazza instead.)\n\n" + body
     };
 
     transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
