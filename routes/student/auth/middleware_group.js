@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const constants = require("../../../setup/constants");
 const helpers = require("../../../utilities/helpers");
 
-router.use("/:task", function(req, res, next) {
+router.use("/:task", function (req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
 

@@ -14,7 +14,7 @@ router.post("/:task/login", rate_limit.general_limiter, (req, res) => {
         res.status(400).json({ message: "Your password is missing." });
         return;
     }
-    if (!("task" in req.body) || req.body["task"] === "" || !constants.tasks[req.body["task"]]["open_ta"]) {
+    if (!("task" in req.body) || req.body["task"] === "" || !(req.body["task"] in constants.tasks) || !constants.tasks[req.body["task"]]["open_ta"]) {
         res.status(400).json({ message: "Your task is missing or invalid." });
         return;
     }

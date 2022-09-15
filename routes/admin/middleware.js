@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const rate_limit = require("../../setup/rate_limit");
 
-router.use("/", rate_limit.general_limiter, function(req, res, next) {
+router.use("/", rate_limit.general_limiter, function (req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     if (token == null) {

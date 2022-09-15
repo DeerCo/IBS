@@ -1,5 +1,5 @@
-var BASE_URL = "https://mcsapps.utm.utoronto.ca/csc309s22";
-var API_URL_PREFIX = '${BASE_URL}/interviews_ta/${localStorage.task}';
+var BASE_URL = "http://vm005.teach.cs.toronto.edu";
+var API_URL_PREFIX = '${BASE_URL}/ta/${localStorage.task}';
 
 /**
  * 

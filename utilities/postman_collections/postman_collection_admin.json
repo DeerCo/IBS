@@ -4,7 +4,8 @@
         "name": "admin",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
-    "item": [{
+    "item": [
+        {
             "name": "one",
             "request": {
                 "method": "GET",
@@ -19,10 +20,12 @@
                         "marks",
                         "one"
                     ],
-                    "query": [{
-                        "key": "student",
-                        "value": "test"
-                    }]
+                    "query": [
+                        {
+                            "key": "student",
+                            "value": "test"
+                        }
+                    ]
                 }
             },
             "response": []
@@ -42,7 +45,8 @@
                         "marks",
                         "all"
                     ],
-                    "query": [{
+                    "query": [
+                        {
                             "key": "task",
                             "value": "p2"
                         },
@@ -62,7 +66,8 @@
                 "header": [],
                 "body": {
                     "mode": "formdata",
-                    "formdata": [{
+                    "formdata": [
+                        {
                             "key": "student",
                             "value": "test",
                             "type": "text"
@@ -115,7 +120,8 @@
                 "header": [],
                 "body": {
                     "mode": "formdata",
-                    "formdata": [{
+                    "formdata": [
+                        {
                             "key": "file",
                             "type": "file",
                             "src": "/C:/Users/howie/OneDrive/Desktop/a3_marks.csv"
@@ -149,13 +155,16 @@
     ],
     "auth": {
         "type": "bearer",
-        "bearer": [{
-            "key": "token",
-            "value": "{{token}}",
-            "type": "string"
-        }]
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
     },
-    "event": [{
+    "event": [
+        {
             "listen": "prerequest",
             "script": {
                 "type": "text/javascript",
@@ -174,7 +183,8 @@
             }
         }
     ],
-    "variable": [{
+    "variable": [
+        {
             "key": "base_url",
             "value": "https://mcsapps.utm.utoronto.ca/csc309s22",
             "type": "string"

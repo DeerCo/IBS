@@ -43,3 +43,19 @@ CREATE TABLE marks
     description character varying,
     PRIMARY KEY (student, task, criteria)
 );
+
+CREATE TABLE ddah
+(
+    username character varying NOT NULL,
+    duty character varying NOT NULL,
+    "time" integer NOT NULL,
+    supervisor_prepared timestamp with time zone,
+    chair_approved timestamp with time zone,
+    ta_accepted timestamp with time zone,
+    PRIMARY KEY (username, duty),
+    CONSTRAINT username FOREIGN KEY (username)
+        REFERENCES ta (username) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+        NOT VALID
+);

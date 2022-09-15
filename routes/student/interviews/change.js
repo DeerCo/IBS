@@ -49,7 +49,7 @@ router.put("/:task/change", rate_limit.interviews_limiter, (req, res) => {
                                 let message = "You have changed your interview for " + req.params["task"] + " from " + pgRes.rows[0]["time"] + " to " + req.body["time"] + " successfully. The new location is " + pgRes.rows[0]["location"] + ".";
                                 res.status(200).json({ message: message });
                                 helpers.send_email(res.locals["group_emails"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
-                                client.query(constants.sql_cancel, [pgRes.rows[0]["id"]], () => {});
+                                client.query(constants.sql_cancel, [pgRes.rows[0]["id"]], () => { });
                             }
                         }
                     });

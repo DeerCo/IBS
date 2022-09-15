@@ -1,8 +1,8 @@
 // Official URL: https://mcsapps.utm.utoronto.ca/csc309s22
 // Testing URL: http://www.hanxianxuhuang.ca
 
-let BASE_URL = 'https://mcsapps.utm.utoronto.ca/csc309s22';
-let API_URL_PREFIX = `${BASE_URL}/interviews_ta/${localStorage.task}`;
+let BASE_URL = 'http://vm005.teach.cs.toronto.edu';
+let API_URL_PREFIX = `${BASE_URL}/ta/${localStorage.task}`;
 
 /**
  * 
@@ -184,66 +184,7 @@ function deleteInterview(payload) {
 	})
 }
 
-/**
- * 
- * GET Request
- * backup API Request
- * Displays all scheduled interviews
- * 
- */
 
-function backupAll() {
-	$.ajax({
-		url: `${BASE_URL}/interviews_ta/backup`,
-		method: 'GET',
-		contentType: 'application/json;charset=UTF-8',
-		beforeSend: function (xhr) {
-			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
-		},
-	}).done((data) => {
-		if (data.message) {
-			$('#data').html(`<p> ${data.message} </p`)
-		} else {
-			$('#data').html(`<textarea cols="100"> ${data} </textarea>`)
-			$('#data').append(makeTable(data))
-		}
-	}).fail((data, textStatus, xhr) => {
-		console.log(xhr.status);
-		console.log(data);
-		console.log(textStatus);
-	})
-}
-
-/**
- * 
- * GET Request
- * backup API Request
- * Displays scheduled interviews for a specific task
- * 
- */
-
-function backupTask() {
-	$.ajax({
-		url: `${API_URL_PREFIX}/backup`,
-		method: 'GET',
-		contentType: 'application/json;charset=UTF-8',
-		beforeSend: function (xhr) {
-			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
-		},
-	}).done((data) => {
-		if (data.message) {
-			$('#data').html(`<p> ${data.message} </p`)
-
-		} else {
-			$('#data').html(`<textarea cols="100"> ${data} </textarea>`)
-			$('#data').append(makeTable(data))
-		}
-	}).fail((data, textStatus, xhr) => {
-		console.log(xhr.status);
-		console.log(data);
-		console.log(textStatus);
-	})
-}
 
 /**
  * 
@@ -269,6 +210,84 @@ function groupInfo(payload) {
 		}
 
 
+	}).fail((data, textStatus, xhr) => {
+		if (("message" in data.responseJSON) && data.responseJSON.message === "The provided group name is invalid.") {
+			$('#errMessage').html("The provided group name is invalid.")
+		} else {
+			console.log(xhr.status);
+			console.log(data);
+			console.log(textStatus);
+		}
+	})
+}
+
+/**
+ * 
+ * PUT Request
+ * Change Password
+ * 
+ * 
+ */
+
+function changePasswordRouter(payload) {
+	$.ajax({
+		url: `${BASE_URL}/ta/password`,
+		method: 'PUT',
+		contentType: 'application/json;charset=UTF-8',
+		data: JSON.stringify(payload),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').html(`<p> ${data.message} </p`)
+		} else {
+			$('#data').html('An error has occured.')
+			console.log(data)
+		}
+	}).fail((data, textStatus, xhr) => {
+		console.log(xhr.status);
+		console.log(data);
+		console.log(textStatus);
+	})
+}
+
+function taHoursRouter() {
+	$.ajax({
+		url: `${BASE_URL}/ta/ddah`,
+		method: 'GET',
+		contentType: 'application/json;charset=UTF-8',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Token ' + localStorage.token);
+		},
+	}).done((data) => {
+		if (data.message) {
+			$('#data').empty();
+
+			let table = "";
+			let prev_ta = "";
+			let total = 0;
+
+			for (item of data.message) {
+				if (item["username"] != prev_ta) {
+					if (prev_ta !== "") {
+						table += "<tr><th>Total</th><th>" + total + "</th>";
+						table += "</table>";
+					}
+					prev_ta = item["username"];
+					total = 0;
+					table = table + "<h3>TA: " + item["username"] + "</h3><table><tr><th>Duty</th><th>Time</th></tr>";
+				}
+				table += "<tr><td>" + item["duty"] + "</td><td>" + item["time"] + "</td>";
+				total += item["time"];
+			}
+			table += "<tr><th>Total</th><th>" + total + "</th>";
+			table += "</table>";
+			$('#data').html(table)
+		} else {
+			$('#data').html('An error has occured.')
+			console.log(data)
+		}
 	}).fail((data, textStatus, xhr) => {
 		console.log(xhr.status);
 		console.log(data);

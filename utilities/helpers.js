@@ -100,15 +100,16 @@ function query_filter(query, ta = "") {
             filter = filter + " AND student IS NULL";
         }
     }
-    if (ta != "") {
-        if ("ta" in query && !name_validate(query["ta"])) {
-            if (query["ta"].toLowerCase() != "all") {
-                filter = filter + " AND ta = '" + query["ta"] + "'";
-            }
-        } else {
-            filter = filter + " AND ta = '" + ta + "'";
-        }
-    }
+    // if (ta != "") {
+    //     if ("ta" in query && !name_validate(query["ta"])) {
+    //         if (query["ta"].toLowerCase() != "all") {
+    //             filter = filter + " AND ta = '" + query["ta"] + "'";
+    //         }
+    //     } else {
+    //         filter = filter + " AND ta = '" + ta + "'";
+    //     }
+    // }
+    filter = filter + " AND ta = '" + ta + "'";
     return filter;
 }
 
@@ -140,7 +141,7 @@ function send_email(email, subject, body) {
         text: "(Please do not reply to this email, as no one monitors it. Post your question to Discord or Piazza instead.)\n\n" + body
     };
 
-    transporter.sendMail(mailOptions, function(error, info) { if (error) { console.log("Email error:" + error); } });
+    transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
 }
 
 function send_interviews_csv(json, res, backup, note = "") {
@@ -385,7 +386,7 @@ async function get_user_information(user_name) {
     try {
         let user = {};
 
-        let users = await getJSON(process.env.MARKUS_API + "users.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
+        let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
         for (let temp_user of users) {
             if (temp_user["user_name"] === user_name) {
                 user = temp_user;
@@ -403,7 +404,7 @@ async function get_all_user_names() {
     try {
         let user_names = [];
 
-        let users = await getJSON(process.env.MARKUS_API + "users.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
+        let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
         for (let temp_user of users) {
             user_names.push(temp_user["user_name"]);
         }
@@ -438,7 +439,7 @@ async function get_group_information_by_user(user_id, markus_id) {
         // Get the group information based on the group index
         for (let member of groups[found_index]["members"]) {
             if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                users_requests.push(await getJSON(process.env.MARKUS_API + "users/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
+                users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
             }
         }
         let users_info = await Promise.all(users_requests);
@@ -458,7 +459,7 @@ async function get_group_information_by_group_name(group_name, markus_id) {
             if (group["group_name"] === group_name) {
                 for (let member of group["members"]) {
                     if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                        users_requests.push(await getJSON(process.env.MARKUS_API + "users/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
+                        users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
                     }
                 }
             }

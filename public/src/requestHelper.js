@@ -17,8 +17,8 @@ function pageLoader() {
     $('#delete').click(delSetup);
     $('#change').click(changeSetup);
     $('#groupInfo').click(groupInfoSetup);
-    $('#backupAll').click(backupAll);
-    $('#backupTask').click(backupTask);
+    $('#changePassword').click(changePasswordSetup);
+    $('#taHours').click(taHoursRouter);
 }
 
 /**
@@ -134,7 +134,7 @@ function scheduleSetup() {
 					<div id="errMessage"></div>';
     $('#data').html(htmlString);
     $('#submit').click(schedule)
-    $('#scheduleForm').submit(function(e) {
+    $('#scheduleForm').submit(function (e) {
         e.preventDefault();
     });
 }
@@ -204,7 +204,7 @@ function changeSetup() {
 					<div id="errMessage"></div>';
     $('#data').html(htmlString);
     $('#submit').click(change)
-    $('#changeForm').submit(function(e) {
+    $('#changeForm').submit(function (e) {
         e.preventDefault();
     });
 }
@@ -299,7 +299,7 @@ function delSetup() {
 					<div id="errMessage"></div>';
     $('#data').html(htmlString);
     $('#submit').click(del)
-    $('#delForm').submit(function(e) {
+    $('#delForm').submit(function (e) {
         e.preventDefault();
     });
 }
@@ -335,7 +335,7 @@ function groupInfoSetup() {
 					<div id="errMessage"></div>';
     $('#data').html(htmlString);
     $('#submit').click(groupInformation)
-    $('#delForm').submit(function(e) {
+    $('#delForm').submit(function (e) {
         e.preventDefault();
     });
 }
@@ -352,4 +352,43 @@ function groupInformation() {
     let payload = `group=${groupId}`
 
     groupInfo(payload)
+}
+
+function changePasswordSetup() {
+    let htmlString = '<form id="changePasswordForm"> \
+						<label for="password1">New Password: </label>\
+						<input type="password" id="password1" name="password1" required" /><br>\
+                        <label for="password1">New Password Again: </label>\
+                        <input type="password" id="password2" name="password2" required" /><br>\
+						<input type="submit" id="changePasswordSubmit" value="Change Password" />\
+					</form>\
+					<div id="errMessage"></div>';
+    $('#data').html(htmlString);
+    $('#changePasswordSubmit').click(changePassword);
+    $('#changePasswordForm').submit(function (e) {
+        e.preventDefault();
+    });
+}
+
+function changePassword() {
+    $('#errMessage').html('');
+    let password1 = $('#password1').val().toString();
+    let password2 = $('#password2').val().toString();
+
+    if (!password1 || !password2) {
+        $('#errMessage').html('<p> Password is invalid. </p>');
+        return;
+    }
+
+    if (password1 !== password2) {
+        $('#errMessage').html("<p> Passwords don't match. </p>");
+        return;
+    }
+
+    let payload = {
+        'password1': password1,
+        'password2': password2,
+    }
+
+    changePasswordRouter(payload)
 }

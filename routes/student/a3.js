@@ -4,7 +4,7 @@ const registerRouter = require("./a3/register");
 const textDataRouter = require("./a3/text_data");
 const textLikesRouter = require("./a3/text_likes");
 
-router.use("/", function(req, res, next) {
+router.use("/", function (req, res, next) {
     next();
 })
 
