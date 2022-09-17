@@ -1,7 +1,4 @@
-// Official URL: https://mcsapps.utm.utoronto.ca/csc309s22
-// Testing URL: http://www.hanxianxuhuang.ca
-
-let BASE_URL = 'http://vm005.teach.cs.toronto.edu';
+let BASE_URL = 'https://csc309.teach.cs.toronto.edu';
 let API_URL_PREFIX = `${BASE_URL}/ta/${localStorage.task}`;
 
 /**

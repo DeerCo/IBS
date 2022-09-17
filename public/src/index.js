@@ -1,4 +1,4 @@
-var BASE_URL = "http://vm005.teach.cs.toronto.edu";
+var BASE_URL = "https://csc309.teach.cs.toronto.edu";
 var API_URL_PREFIX = '${BASE_URL}/ta/${localStorage.task}';
 
 /**
