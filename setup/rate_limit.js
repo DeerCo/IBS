@@ -30,10 +30,17 @@ const likes_limiter = rateLimit({
 	message: "You sent too many 'likes' requests! Try again in one hour!"
 });
 
+const upload_limiter = rateLimit({
+	max: 200,
+	windowMs: 60 * 60 * 1000,
+	message: "You sent too many 'submit' requests! Try again in one hour!"
+});
+
 module.exports = {
 	general_limiter: general_limiter,
 	token_limiter: token_limiter,
 	interviews_limiter: interviews_limiter,
 	register_limiter: register_limiter,
 	likes_limiter: likes_limiter,
+	upload_limiter: upload_limiter,
 }

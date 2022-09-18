@@ -1,12 +1,17 @@
 const express = require("express");
 const router = express.Router();
+const multer = require('multer');
 const csv = require('csvtojson');
 const format = require('pg-format');
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
-router.post("/upload", (req, res) => {
-    if (req.files.length === 0) {
+const upload = multer({
+    dest: './tmp/upload/'
+});
+
+router.post("/upload", upload.single("file"), (req, res) => {
+    if (req.file === undefined) {
         res.status(400).json({ message: "The file is missing or has invalid format." });
         return;
     }
@@ -30,7 +35,7 @@ router.post("/upload", (req, res) => {
         }
         helpers.backup_marks(pgRes.rows);
 
-        const csv_path = req.files[0].destination + req.files[0].filename;
+        const csv_path = req.file.destination + req.file.filename;
         csv({
             noheader: true,
             output: "csv"
