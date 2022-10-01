@@ -14,9 +14,9 @@ const changeRouter = require("./ta/change");
 const deleteRouter = require("./ta/delete");
 const groupInformationRouter = require("./ta/group_information");
 
-router.use(express.static("./public"));
+router.use(express.static("./public/ta"));
 router.get("/ui", (req, res) => {
-    res.sendFile("index.html", { root: "./public/" });
+    res.sendFile("index.html", { root: "./public/ta" });
 });
 
 router.use("/", login);

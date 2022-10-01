@@ -6,6 +6,8 @@ router.use("/", function (req, res, next) {
     next();
 })
 
+router.use(express.static("./public/student/a1"));
+
 router.use("/", submitRouter);
 
 module.exports = router;

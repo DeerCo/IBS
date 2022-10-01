@@ -1,5 +1,5 @@
 module.exports = {
-    rows_count: 45,
+    rows_count: 40,
     tasks: {
         "pb_mentor_1": { open_student: false, open_ta: true, length: 15, markus_id: 22, exclude: [] },
         "pb_mentor_2": { open_student: false, open_ta: true, length: 15, markus_id: 22, exclude: [] },
