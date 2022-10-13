@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 
 app.set('trust proxy', 1); // get the real ip address
+app.disable('x-powered-by');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -43,18 +44,24 @@ dotenv.config();
 
 // Routes
 const rate_limit = require("./setup/rate_limit");
-const studentsRouter = require('./routes/student');
-const interviewsTaRouter = require('./routes/ta');
-const adminsRouter = require('./routes/admin');
+const adminRouter = require('./routes/admin');
+const instructorRouter = require('./routes/instructor');
+const taRouter = require('./routes/ta');
+const studentRouter = require('./routes/student');
  
 app.get("/", rate_limit.general_limiter, (req, res) => {
     res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
-app.use('/', studentsRouter);
-app.use('/ta', interviewsTaRouter);
-app.use('/admin', adminsRouter);
+app.use('/admin', adminRouter);
+app.use('/instructor', instructorRouter);
+app.use('/ta', taRouter);
+app.use('/', studentRouter);
 
 // Error handling
+app.use((req, res, next) => {
+    res.status(404).json({ message: "Invalid URL or request method." });
+})
+
 app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         if (err.code === "LIMIT_FILE_SIZE") {

@@ -19,20 +19,6 @@ CREATE TABLE ta
     PRIMARY KEY (username)
 );
 
-CREATE TABLE text
-(
-    paragraph bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
-    likes bigint NOT NULL DEFAULT 0,
-    content character varying,
-    PRIMARY KEY (paragraph)
-);
-
-CREATE TABLE users
-(
-    username character varying(256) NOT NULL,
-    PRIMARY KEY (username)
-);
-
 CREATE TABLE marks
 (
     student character varying NOT NULL,
@@ -55,6 +41,40 @@ CREATE TABLE ddah
     PRIMARY KEY (username, duty),
     CONSTRAINT username FOREIGN KEY (username)
         REFERENCES ta (username) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+        NOT VALID
+);
+
+CREATE TABLE user_info
+(
+    username character varying NOT NULL,
+    password character varying NOT NULL,
+    PRIMARY KEY (username)
+);
+
+CREATE TABLE course
+(
+    course_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
+    course_code character varying(256) NOT NULL,
+    course_session character varying(256) NOT NULL,
+    PRIMARY KEY (course_id),
+    UNIQUE (course_code, course_session)
+);
+
+CREATE TABLE course_role
+(
+    username character varying NOT NULL,
+    course_id integer NOT NULL,
+    role character varying NOT NULL,
+    PRIMARY KEY (username, course_id),
+    CONSTRAINT username FOREIGN KEY (username)
+        REFERENCES user_info (username) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+        NOT VALID,
+    CONSTRAINT course_id FOREIGN KEY (course_id)
+        REFERENCES course (course_id) MATCH SIMPLE
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
         NOT VALID

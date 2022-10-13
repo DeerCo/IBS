@@ -39,7 +39,7 @@ function string_validate(string) {
 }
 
 function number_validate(number) {
-    let regex_number = new RegExp("^[0-9]{9,10}$");
+    let regex_number = new RegExp("^[0-9]+$");
 
     if (!regex_number.test(number)) {
         return 1;
