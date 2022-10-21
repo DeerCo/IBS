@@ -8,7 +8,7 @@ router.post("/register", rate_limit.token_limiter, (req, res) => {
         res.status(400).json({ message: "Your utorid is missing or has invalid format." });
         return;
     }
-
+    
 ;
 })
 

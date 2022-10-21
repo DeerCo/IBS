@@ -9,7 +9,7 @@ router.use("/", function (req, res, next) {
     next();
 })
 
-router.use("/login", loginRouter);
-router.use("/register", registerRouter);
+router.use("/", loginRouter);
+router.use("/", registerRouter);
 
 module.exports = router;

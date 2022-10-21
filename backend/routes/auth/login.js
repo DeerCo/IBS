@@ -17,13 +17,12 @@ router.post("/login", rate_limit.general_limiter, (req, res) => {
     client.query("SELECT * FROM user_info WHERE username = ($1) AND password = ($2)", [req.body["username"], req.body["password"]], (err, pgRes) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
+            console.log(err);
         } else {
             if (pgRes.rowCount === 0) {
                 res.status(401).json({ message: "Your username or password is incorrect." });
-            } else if (pgRes.rowCount > 1) {
-                res.status(404).json({ message: "Unknown error." });
             } else {
-                res.json({ token: helpers.generateTaAccessToken(req.body["username"], req.body["task"]) });
+                res.json({ token: helpers.generateAccessToken(req.body["username"]) });
             }
         }
     });
