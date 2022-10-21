@@ -51,6 +51,15 @@ function number_validate(number) {
     return 0;
 }
 
+function email_validate(email) {
+    let regex_email = new RegExp("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/");
+
+    if (!regex_email.test(email)) {
+        return 1;
+    }
+    return 0;
+}
+
 function date_validate(date) {
     let regex = new RegExp("^([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))$");
 
@@ -71,6 +80,17 @@ function time_validate(time) {
     }
 }
 
+//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+
+function password_validate(password) {
+    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+
+    if (!regex.test(password)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 function query_filter(query, ta = "") {
     let filter = "";
     if ("id" in query && !isNaN(query["id"]) && query["id"].trim() != "") {
@@ -483,11 +503,13 @@ module.exports = {
     generateTaAccessToken: generateTaAccessToken,
     generateAdminAccessToken: generateAdminAccessToken,
     generateAccessToken: generateAccessToken,
+    password_validate: password_validate,
     name_validate: name_validate,
     number_validate: number_validate,
     string_validate: string_validate,
     date_validate: date_validate,
     time_validate: time_validate,
+    email_validate: email_validate,
     query_filter: query_filter,
     query_set: query_set,
     send_email: send_email,

@@ -8,7 +8,17 @@ router.post("/register", rate_limit.token_limiter, (req, res) => {
         res.status(400).json({ message: "Your utorid is missing or has invalid format." });
         return;
     }
+    if (!("email" in req.body) || helpers.email_validate(req.body["email"])) {
+        res.status(400).json({ message: "The email is missing or has invalid format." });
+        return;
+    }
     
+    if (!("password" in req.body) || helpers.password_validate(req.body["password"])) {
+        res.status(400).json({ message: "The password is missing or has invalid format." });
+        return;
+    } 
+    
+   
 ;
 })
 
