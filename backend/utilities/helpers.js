@@ -20,6 +20,10 @@ function generateAdminAccessToken(admin) {
     return jwt.sign({ admin: admin, type: "admin" }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
 }
 
+function generateAccessToken(user) {
+    return jwt.sign({ user: user, type: "user" }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
+}
+
 function name_validate(name) {
     let regex_name = new RegExp("^[0-9a-zA-Z_]{1,30}$");
 
@@ -478,6 +482,7 @@ module.exports = {
     generateStudentAccessToken: generateStudentAccessToken,
     generateTaAccessToken: generateTaAccessToken,
     generateAdminAccessToken: generateAdminAccessToken,
+    generateAccessToken: generateAccessToken,
     name_validate: name_validate,
     number_validate: number_validate,
     string_validate: string_validate,
