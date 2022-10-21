@@ -4,7 +4,6 @@ const rate_limit = require("../../setup/rate_limit");
 const helpers = require("../../utilities/helpers");
 const client = require("../../setup/db"); 
 
-// upon going into login should be set 
 router.post("/login", rate_limit.general_limiter, (req, res) => {
     if (!("username" in req.body) || req.body["username"] === "") {
         res.status(400).json({ message: "Your username is missing." });

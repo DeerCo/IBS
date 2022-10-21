@@ -52,8 +52,8 @@ function number_validate(number) {
 }
 
 function email_validate(email) {
-    let regex_email = new RegExp("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/");
-
+    let regex_email = new RegExp(".");
+///^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     if (!regex_email.test(email)) {
         return 1;
     }
@@ -83,8 +83,8 @@ function time_validate(time) {
 //Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
 
 function password_validate(password) {
-    let regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
-
+    let regex = new RegExp(".");
+// ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$
     if (!regex.test(password)) {
         return 1;
     } else {
