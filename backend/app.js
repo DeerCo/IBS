@@ -49,16 +49,17 @@ const instructorRouter = require('./routes/instructor');
 const taRouter = require('./routes/ta');
 const studentRouter = require('./routes/student');
 // general user path 
-const userRouter = require('./routes/auth');
+const authRouter = require('./routes/auth');
 
 app.get("/", rate_limit.general_limiter, (req, res) => {
     res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
+app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/instructor', instructorRouter);
 app.use('/ta', taRouter);
 app.use('/', studentRouter);
-app.use('/user', userRouter);
+
 
 // Error handling
 app.use((req, res, next) => {
