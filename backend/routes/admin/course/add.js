@@ -13,22 +13,19 @@ router.post("/add", (req, res) => {
         return;
     }
     
-    var sql_select = "SELECT * FROM course WHERE course_code = ($1) AND course_session = ($2)";
-    var sql_add = "INSERT INTO course (course_code, course_session) VALUES (($1), ($2))";
+    let sql_add = "INSERT INTO course (course_code, course_session) VALUES (($1), ($2))";
+    let sql_add_data = [req.body["course_code"], req.body["course_session"]];
 
-    client.query(sql_select, [req.body["course_code"], req.body["course_session"]], (err, pgRes) => {
+    client.query(sql_add, sql_add_data, (err, pgRes) => {
         if (err) {
-            res.status(404).json({ message: "Unknown error." });
-        } else if (pgRes.rowCount !== 0) {
-            res.status(409).json({ message: "The course must have unique course code and session." });
-        } else {
-            client.query(sql_add, [req.body["course_code"], req.body["course_session"]], (err, pgRes) => {
-                if (err) {
-                    res.status(404).json({ message: "Unknown error." });
-                } else if (pgRes.rowCount === 1) {
-                    res.status(200).json({ message: "The course is created." });
-                }
-            });
+            if (err.code === "23505") {
+                res.status(409).json({ message: "The course must have unique course code and session." });
+            } else {
+                res.status(404).json({ message: "Unknown error." });
+                console.log(err);
+            }
+        } else if (pgRes.rowCount === 1) {
+            res.status(200).json({ message: "The course is added." });
         }
     });
 })

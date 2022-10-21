@@ -33,6 +33,24 @@ CREATE TABLE course_role
         NOT VALID
 );
 
+CREATE TABLE course_task
+(
+    course_task_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
+    task character varying NOT NULL,
+    course_id integer NOT NULL,
+    due_date timestamp with time zone NOT NULL,
+    hidden boolean NOT NULL DEFAULT true,
+    min_member integer NOT NULL DEFAULT 1,
+    max_member integer NOT NULL DEFAULT 1,
+    task_order integer NOT NULL DEFAULT 0,
+    PRIMARY KEY (task, course_id),
+    CONSTRAINT course_id FOREIGN KEY (course_id)
+        REFERENCES course (course_id) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+        NOT VALID
+);
+
 CREATE TABLE interviews
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 0 MINVALUE 0 ),

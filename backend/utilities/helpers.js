@@ -42,6 +42,13 @@ function string_validate(string) {
     return 0;
 }
 
+function boolean_validate(string) {
+    if (string !== "true" && string !== "false") {
+        return 1;
+    }
+    return 0;
+}
+
 function number_validate(number) {
     let regex_number = new RegExp("^[0-9]+$");
 
@@ -71,7 +78,7 @@ function date_validate(date) {
 }
 
 function time_validate(time) {
-    let regex = new RegExp("^([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])) (([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9])$");
+    let regex = new RegExp("^([12][0-9]{3}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])) (([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])$");
 
     if (!regex.test(time) || !moment(time.substring(0, 10), "YYYY-MM-DD", true).isValid()) {
         return 1;
@@ -450,7 +457,7 @@ async function get_group_information_by_user(user_id, markus_id) {
         let groups = await getJSON(process.env.MARKUS_API + "assignments/" + markus_id + "/groups.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
         for (let group of groups) {
             for (let member of group["members"]) {
-                if (member["user_id"] === user_id) {
+                if (member["role_id"] === user_id) {
                     found_index = index;
                 }
             }
@@ -463,7 +470,7 @@ async function get_group_information_by_user(user_id, markus_id) {
         // Get the group information based on the group index
         for (let member of groups[found_index]["members"]) {
             if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
+                users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["role_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
             }
         }
         let users_info = await Promise.all(users_requests);
@@ -483,7 +490,7 @@ async function get_group_information_by_group_name(group_name, markus_id) {
             if (group["group_name"] === group_name) {
                 for (let member of group["members"]) {
                     if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                        users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["user_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
+                        users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["role_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
                     }
                 }
             }
@@ -505,6 +512,7 @@ module.exports = {
     generateAccessToken: generateAccessToken,
     password_validate: password_validate,
     name_validate: name_validate,
+    boolean_validate: boolean_validate,
     number_validate: number_validate,
     string_validate: string_validate,
     date_validate: date_validate,

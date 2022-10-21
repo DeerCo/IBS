@@ -48,10 +48,11 @@ const adminRouter = require('./routes/admin');
 const instructorRouter = require('./routes/instructor');
 const taRouter = require('./routes/ta');
 const studentRouter = require('./routes/student');
-// general user path 
 const authRouter = require('./routes/auth');
 
-app.get("/", rate_limit.general_limiter, (req, res) => {
+app.use(rate_limit.general_limiter);
+
+app.get("/", (req, res) => {
     res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
 app.use('/auth', authRouter);

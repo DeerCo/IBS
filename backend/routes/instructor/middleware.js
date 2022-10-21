@@ -13,7 +13,7 @@ router.use("/", rate_limit.general_limiter, function (req, res, next) {
             if (err) {
                 res.status(401).json({ message: "Your token is invalid. Please generate a new one." });
             } else {
-                if (instructor_data["type"] !== "instructor") {
+                if (instructor_data["type"] !== "instructor" && instructor_data["type"] !== "admin") {
                     res.status(403).json({ message: "You are not authorized to access." });
                 } else {
                     res.locals["instructor_data"] = instructor_data;
