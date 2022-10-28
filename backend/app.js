@@ -48,16 +48,19 @@ const adminRouter = require('./routes/admin');
 const instructorRouter = require('./routes/instructor');
 const taRouter = require('./routes/ta');
 const studentRouter = require('./routes/student');
+const authRouter = require('./routes/auth');
 
 app.use(rate_limit.general_limiter);
 
 app.get("/", (req, res) => {
     res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
+app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/instructor', instructorRouter);
 app.use('/ta', taRouter);
 app.use('/', studentRouter);
+
 
 // Error handling
 app.use((req, res, next) => {
