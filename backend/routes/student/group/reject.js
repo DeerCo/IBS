@@ -9,16 +9,16 @@ router.delete("/reject", (req, res) => {
         return;
     }
 
-	let sql_add_user = "DELETE FROM course_" + res.locals["course_id"] + ".course_group_user WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
+	let sql_reject = "DELETE FROM course_" + res.locals["course_id"] + ".course_group_user WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
 
-	client.query(sql_add_user, [res.locals["user_name"], req.body["group_id"]], (err, pgRes) => {
+	client.query(sql_reject, [res.locals["user_name"], req.body["group_id"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);
 		} else if (pgRes.rowCount === 1) {
 			res.status(200).json({ message: "You have rejected the invitation." });
 		} else if (pgRes.rowCount === 0) {
-			res.status(200).json({ message: "Invitation doesn't exist." });
+			res.status(400).json({ message: "Invitation doesn't exist." });
 		}
     });
 })
