@@ -8,10 +8,6 @@ router.post("/add", (req, res) => {
         res.status(400).json({ message: "The task is missing or has invalid format." });
         return;
     }
-    if (!("course_id" in req.body) || helpers.number_validate(req.body["course_id"])) {
-        res.status(400).json({ message: "The course id is missing or invalid." });
-        return;
-    }
     if (!("due_date" in req.body) || helpers.time_validate(req.body["due_date"])) {
 		res.status(400).json({ message: "The due date is missing or not correct." });
 		return;
@@ -34,14 +30,12 @@ router.post("/add", (req, res) => {
     }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_add = "INSERT INTO course_task (task, course_id, due_date, hidden, min_member, max_member, task_order) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7))";
-    let sql_add_data = [req.body["task"], req.body["course_id"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["task_order"]];
+    let sql_add = "INSERT INTO course_" + req.body["course_id"] + ".course_task (task, due_date, hidden, min_member, max_member, task_order) VALUES (($1), ($2), ($3), ($4), ($5), ($6))";
+    let sql_add_data = [req.body["task"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["task_order"]];
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {
         if (err) {
-            if (err.code === "23503") {
-                res.status(400).json({ message: "The course id is not found in the database." });
-            } else if (err.code === "23505") {
+            if (err.code === "23505") {
                 res.status(409).json({ message: "Task must have unique name for each course." });
             } else {
                 res.status(404).json({ message: "Unknown error." });
