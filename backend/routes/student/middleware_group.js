@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const constants = require("../../../setup/constants");
-const helpers = require("../../../utilities/helpers");
+const constants = require("../../setup/constants");
+const helpers = require("../../utilities/helpers");
 
 router.use("/:task", function (req, res, next) {
     const authHeader = req.headers["authorization"];
@@ -39,7 +39,7 @@ router.use("/:task", function (req, res, next) {
                         }
                     }
 
-                    res.locals["user_name"] = token_data["user_name"];
+                    res.locals["username"] = token_data["username"];
                     res.locals["user_email"] = token_data["email"];
                     res.locals["group"] = data["group"];
                     res.locals["group_emails"] = group_emails;

@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const rate_limit = require("../../setup/rate_limit");
 const helpers = require("../../utilities/helpers");
 
-router.use("/", rate_limit.general_limiter, function (req, res, next) {
+router.use("/:course_id/", rate_limit.general_limiter, function (req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     if (token == null) {
@@ -14,16 +14,19 @@ router.use("/", rate_limit.general_limiter, function (req, res, next) {
             if (err) {
                 res.status(401).json({ message: "Your token is invalid. Please generate a new one." });
             } else {
-                if (!("course_id" in req.body) || helpers.number_validate(req.body["course_id"])) {
+                if (helpers.number_validate(req.params["course_id"])) {
                     res.status(400).json({ message: "The course id is missing or invalid." });
                     return;
                 }
-                if (!token_data["admin"] && token_data["roles"][req.body["course_id"]] !== "instructor") {
+
+                if (!token_data["admin"] && token_data["roles"][req.params["course_id"]] !== "instructor") {
                     res.status(403).json({ message: "You don't have permission to access." });
                     return;
                 }
 
-                res.locals["token_data"] = token_data;
+                res.locals["course_id"] = req.params["course_id"];
+                res.locals["username"] = token_data["username"];
+                res.locals["email"] = token_data["email"];
                 next();
             }
         })

@@ -79,7 +79,7 @@ function makeTable(rawData) {
  * id_number: String
  * last_name: String
  * type: String
- * user_name: String
+ * username: String
  * @returns HTML table
  */
 
@@ -98,7 +98,7 @@ function makeGroupTable(rawData) {
 						<th> Hidden </th>\
 						<th> Grace Credits </th>\
 					</tr>';
-    let keys = ['id', 'type', 'first_name', 'last_name', 'user_name', 'email', 'id_number', 'hidden', 'grace_credits']
+    let keys = ['id', 'type', 'first_name', 'last_name', 'username', 'email', 'id_number', 'hidden', 'grace_credits']
     for (let i = 0; i < rawData.length; i++) {
         let student = rawData[i];
         console.log(student)

@@ -6,6 +6,7 @@ const rate_limit = require("../../setup/rate_limit");
 router.use("/", rate_limit.general_limiter, function (req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
+    
     if (token == null) {
         res.status(401).json({ message: "You need to provide a valid token." });
     } else {
@@ -14,9 +15,10 @@ router.use("/", rate_limit.general_limiter, function (req, res, next) {
                 res.status(401).json({ message: "Your token is invalid. Please generate a new one." });
             } else {
                 if (!token_data["admin"]) {
-                    res.status(403).json({ message: "You are not authorized to access." });
+                    res.status(403).json({ message: "You don't have permission to access." });
                 } else {
-                    res.locals["admin"] = token_data["admin"];
+                    res.locals["username"] = token_data["username"];
+                    res.locals["email"] = token_data["email"];
                     next();
                 }
             }

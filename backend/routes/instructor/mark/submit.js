@@ -48,13 +48,13 @@ router.post("/submit", (req, res) => {
         } else {
             helpers.backup_marks(pgRes.rows);
 
-            helpers.get_all_user_names().then(data => {
+            helpers.get_all_usernames().then(data => {
                 if (!data["status"]) {
                     res.status(404).json({ message: "Unknown error." });
                     return;
                 }
 
-                if (!data["user_names"].includes(req.body["student"])) {
+                if (!data["usernames"].includes(req.body["student"])) {
                     res.status(406).json({ message: "The user name is invalid." });
                     return;
                 }

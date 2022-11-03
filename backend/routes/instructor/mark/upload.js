@@ -44,7 +44,7 @@ router.post("/upload", upload.single("file"), (req, res) => {
             let total = [];
             let marks_data = [];
             let skipped_count = 0;
-            let skipped_user_names = [];
+            let skipped_usernames = [];
 
             for (let i = 1; i < csv_row[0].length; i++) {
                 all_criteria.push(csv_row[0][i]);
@@ -56,14 +56,14 @@ router.post("/upload", upload.single("file"), (req, res) => {
                 }
             }
 
-            helpers.get_all_user_names().then(data => {
+            helpers.get_all_usernames().then(data => {
                 if (!data["status"]) {
                     res.status(404).json({ message: "Unknown error." });
                     return;
                 }
 
                 for (let j = 2; j < csv_row.length; j++) {
-                    if (data["user_names"].includes(csv_row[j][0])) {
+                    if (data["usernames"].includes(csv_row[j][0])) {
                         for (let k = 0; k < all_criteria.length; k++) {
                             let mark = parseFloat(csv_row[j][k + 1]);
                             if (isNaN(parseFloat(csv_row[j][k + 1]))) {
@@ -74,7 +74,7 @@ router.post("/upload", upload.single("file"), (req, res) => {
                         }
                     } else {
                         skipped_count += 1;
-                        skipped_user_names.push(csv_row[j][0]);
+                        skipped_usernames.push(csv_row[j][0]);
                     }
                 }
 
@@ -90,7 +90,7 @@ router.post("/upload", upload.single("file"), (req, res) => {
                         res.status(200).json({ message: message });
                     } else {
                         let message = pgRes.rowCount + " marks are changed. " + (marks_data.length - pgRes.rowCount) + " marks are unchanged. " + skipped_count + " user names are invalid.";
-                        res.status(200).json({ message: message, skipped_user_names: skipped_user_names });
+                        res.status(200).json({ message: message, skipped_usernames: skipped_usernames });
                     }
                 });
             });

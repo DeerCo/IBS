@@ -13,7 +13,7 @@ router.delete("/leave", (req, res) => {
 	let sql_select= "SELECT * FROM course_" + res.locals["course_id"] + ".course_group_user WHERE group_id = ($1)";
 	let sql_delete = "DELETE FROM course_" + res.locals["course_id"] + ".course_group WHERE group_id = ($1)";
 
-	client.query(sql_leave, [res.locals["user_name"], req.body["group_id"]], (err, pgRes) => {
+	client.query(sql_leave, [res.locals["username"], req.body["group_id"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);

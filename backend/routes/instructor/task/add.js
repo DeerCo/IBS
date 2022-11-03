@@ -30,7 +30,7 @@ router.post("/add", (req, res) => {
     }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_add = "INSERT INTO course_" + req.body["course_id"] + ".course_task (task, due_date, hidden, min_member, max_member, task_order) VALUES (($1), ($2), ($3), ($4), ($5), ($6))";
+    let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".course_task (task, due_date, hidden, min_member, max_member, task_order) VALUES (($1), ($2), ($3), ($4), ($5), ($6))";
     let sql_add_data = [req.body["task"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["task_order"]];
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {

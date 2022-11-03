@@ -17,7 +17,7 @@ router.post("/invite", (req, res) => {
 	let sql_select_group = "SELECT * FROM course_" + res.locals["course_id"] + ".course_group WHERE group_id = ($1)";
 	let sql_invite = "INSERT INTO course_" + res.locals["course_id"] + ".course_group_user (course_task_id, username, group_id, status) VALUES (($1), ($2), ($3), 'pending')";
 
-	client.query(sql_select_user, [req.body["group_id"], res.locals["user_name"]], (err, pgRes) => {
+	client.query(sql_select_user, [req.body["group_id"], res.locals["username"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const middlewareGroupRouter = require("./auth/middleware_group");
+const middlewareGroupRouter = require("./middleware_group");
 const allRouter = require("./interviews/all");
 const availableRouter = require("./interviews/available");
 const checkRouter = require("./interviews/check");

@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const rate_limit = require("../../setup/rate_limit");
+const helpers = require("../../utilities/helpers");
 
-router.use("/:course_id/", rate_limit.general_limiter, function (req, res, next) {
-	const authHeader = req.headers["authorization"];
-	const token = authHeader && authHeader.split(" ")[1];
+router.use("/:course_id/", function (req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
-	if (token == null) {
+    if (token == null) {
         res.status(401).json({ message: "You need to provide a valid token." });
     } else {
         jwt.verify(token, process.env.TOKEN_SECRET, (err, token_data) => {
@@ -19,7 +19,7 @@ router.use("/:course_id/", rate_limit.general_limiter, function (req, res, next)
                     return;
                 }
 
-                if (!token_data["admin"] && token_data["roles"][req.params["course_id"]] !== "ta") {
+                if (!token_data["admin"] && token_data["roles"][req.params["course_id"]] !== "student") {
                     res.status(403).json({ message: "You don't have permission to access." });
                     return;
                 }

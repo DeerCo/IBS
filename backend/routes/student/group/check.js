@@ -11,7 +11,7 @@ router.get("/check", (req, res) => {
 
 	let sql_select = "SELECT * FROM course_" + res.locals["course_id"] + ".course_group_user WHERE username = ($1) AND course_task_id = ($2)";
 
-	client.query(sql_select, [res.locals["user_name"], req.body["course_task_id"]], (err, pgRes) => {
+	client.query(sql_select, [res.locals["username"], req.body["course_task_id"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const middleware = require("./instructor/middleware");
 const markRouter = require("./instructor/mark");
 const taskRouter = require("./instructor/task");
 
@@ -11,8 +12,9 @@ router.use("/", function (req, res, next) {
     next();
 })
 
-router.use("/mark", markRouter);
-router.use("/task", taskRouter);
+router.use("/course/", middleware);
+router.use("/course/:course_id/mark", markRouter);
+router.use("/course/:course_id/task", taskRouter);
 
 router.use("/", backupAllRouter);
 router.use("/", backupTaskRouter);

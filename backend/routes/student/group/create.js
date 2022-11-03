@@ -22,7 +22,7 @@ router.post("/create", (req, res) => {
             }
         } else if (pgRes.rowCount === 1) {
             let group_id = pgRes.rows[0]["group_id"];
-			client.query(sql_add_user, [req.body["course_task_id"], res.locals["user_name"], group_id], (err, pgRes) => {
+			client.query(sql_add_user, [req.body["course_task_id"], res.locals["username"], group_id], (err, pgRes) => {
 				if (err) {
 					if (err.code === "23505") {
 						res.status(409).json({ message: "You can join at most one group for each task." });

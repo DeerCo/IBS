@@ -4,7 +4,7 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.get("/raw", (req, res) => {
-    client.query("SELECT task, criteria, mark, total, description FROM marks WHERE student = ($1)", [res.locals["user_name"]], (err, pgRes) => {
+    client.query("SELECT task, criteria, mark, total, description FROM marks WHERE student = ($1)", [res.locals["username"]], (err, pgRes) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {

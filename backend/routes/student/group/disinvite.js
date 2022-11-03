@@ -16,7 +16,7 @@ router.delete("/disinvite", (req, res) => {
 	let sql_select_user = "SELECT * FROM course_" + res.locals["course_id"] + ".course_group_user WHERE group_id = ($1) AND username = ($2) AND status = 'confirmed'";
 	let sql_disinvite = "DELETE FROM course_" + res.locals["course_id"] + ".course_group_user WHERE group_id = ($1) AND username = ($2) AND status = 'pending'";
 
-	client.query(sql_select_user, [req.body["group_id"], res.locals["user_name"]], (err, pgRes) => {
+	client.query(sql_select_user, [req.body["group_id"], res.locals["username"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);

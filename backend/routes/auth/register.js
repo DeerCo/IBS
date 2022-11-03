@@ -20,7 +20,7 @@ router.post("/register", rate_limit.token_limiter, (req, res) => {
         return;
     }
     
-    let sql_add = "INSERT INTO user_info (username, password, email) VALUES (($1), ($2), ($3))";
+    let sql_add = "INSERT INTO user_info (username, password, email) VALUES (($1), crypt(($2), gen_salt('md5')), ($3))";
     let sql_add_data = [req.body["username"], req.body["password"], req.body["email"]];
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {

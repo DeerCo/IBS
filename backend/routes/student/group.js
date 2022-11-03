@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const middlewareIndividualRouter = require("./auth/middleware_individual");
 const checkRouter = require("./group/check");
 const createRouter = require("./group/create");
 const leaveRouter = require("./group/leave");
@@ -9,7 +8,6 @@ const disinviteRouter = require("./group/disinvite");
 const acceptRouter = require("./group/accept");
 const rejectRouter = require("./group/reject");
 
-router.use("/", middlewareIndividualRouter);
 router.use("/", checkRouter);
 router.use("/", createRouter);
 router.use("/", leaveRouter);

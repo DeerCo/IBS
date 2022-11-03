@@ -3,6 +3,7 @@ CREATE TABLE user_info
     username character varying NOT NULL,
     password character varying NOT NULL,
     email character varying NOT NULL,
+    admin boolean NOT NULL DEFAULT false,
     PRIMARY KEY (username)
 );
 

@@ -8,20 +8,8 @@ const getJSON = bent("json")
 const transporter = require("../setup/email");
 const constants = require("../setup/constants");
 
-function generateStudentAccessToken(student) {
-    return jwt.sign(student, process.env.TOKEN_SECRET, { expiresIn: "10d" });
-}
-
-function generateTaAccessToken(ta, task) {
-    return jwt.sign({ ta: ta, type: "ta", task: task }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
-}
-
-function generateAdminAccessToken(admin) {
-    return jwt.sign({ admin: admin, type: "admin" }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
-}
-
-function generateAccessToken(user) {
-    return jwt.sign({ user: user, type: "user" }, process.env.TOKEN_SECRET, { expiresIn: "30d" });
+function generateAccessToken(username, email, admin, roles) {
+    return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
 }
 
 function name_validate(name) {
@@ -413,13 +401,13 @@ function send_final_marks_csv(json, res, total = false) {
     });
 }
 
-async function get_user_information(user_name) {
+async function get_user_information(username) {
     try {
         let user = {};
 
         let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
         for (let temp_user of users) {
-            if (temp_user["user_name"] === user_name) {
+            if (temp_user["user_name"] === username) {
                 user = temp_user;
             }
         }
@@ -431,16 +419,16 @@ async function get_user_information(user_name) {
     }
 }
 
-async function get_all_user_names() {
+async function get_all_usernames() {
     try {
-        let user_names = [];
+        let usernames = [];
 
         let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
         for (let temp_user of users) {
-            user_names.push(temp_user["user_name"]);
+            usernames.push(temp_user["user_name"]);
         }
 
-        return { status: true, user_names: user_names };
+        return { status: true, usernames: usernames };
     } catch (e) {
         console.log(e);
         return { status: false };
@@ -506,9 +494,6 @@ async function get_group_information_by_group_name(group_name, markus_id) {
 
 
 module.exports = {
-    generateStudentAccessToken: generateStudentAccessToken,
-    generateTaAccessToken: generateTaAccessToken,
-    generateAdminAccessToken: generateAdminAccessToken,
     generateAccessToken: generateAccessToken,
     password_validate: password_validate,
     name_validate: name_validate,
@@ -528,7 +513,7 @@ module.exports = {
     send_marks_csv: send_marks_csv,
     send_final_marks_csv: send_final_marks_csv,
     get_user_information: get_user_information,
-    get_all_user_names: get_all_user_names,
+    get_all_usernames: get_all_usernames,
     get_group_information_by_user: get_group_information_by_user,
     get_group_information_by_group_name: get_group_information_by_group_name
 }
