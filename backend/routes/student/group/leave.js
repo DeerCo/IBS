@@ -9,9 +9,9 @@ router.delete("/leave", (req, res) => {
         return;
     }
 
-	let sql_leave = "DELETE FROM course_" + res.locals["course_id"] + ".course_group_user WHERE username = ($1) AND group_id = ($2)";
-	let sql_select= "SELECT * FROM course_" + res.locals["course_id"] + ".course_group_user WHERE group_id = ($1)";
-	let sql_delete = "DELETE FROM course_" + res.locals["course_id"] + ".course_group WHERE group_id = ($1)";
+	let sql_leave = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE username = ($1) AND group_id = ($2)";
+	let sql_select= "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1)";
+	let sql_delete = "DELETE FROM course_" + res.locals["course_id"] + ".group WHERE group_id = ($1)";
 
 	client.query(sql_leave, [res.locals["username"], req.body["group_id"]], (err, pgRes) => {
 		if (err) {

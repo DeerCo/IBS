@@ -13,9 +13,9 @@ router.post("/invite", (req, res) => {
         return;
     }
 
-	let sql_select_user = "SELECT * FROM course_" + res.locals["course_id"] + ".course_group_user WHERE group_id = ($1) AND username = ($2) AND status = 'confirmed'";
-	let sql_select_group = "SELECT * FROM course_" + res.locals["course_id"] + ".course_group WHERE group_id = ($1)";
-	let sql_invite = "INSERT INTO course_" + res.locals["course_id"] + ".course_group_user (course_task_id, username, group_id, status) VALUES (($1), ($2), ($3), 'pending')";
+	let sql_select_user = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1) AND username = ($2) AND status = 'confirmed'";
+	let sql_select_group = "SELECT * FROM course_" + res.locals["course_id"] + ".group WHERE group_id = ($1)";
+	let sql_invite = "INSERT INTO course_" + res.locals["course_id"] + ".group_user (task_id, username, group_id, status) VALUES (($1), ($2), ($3), 'pending')";
 
 	client.query(sql_select_user, [req.body["group_id"], res.locals["username"]], (err, pgRes) => {
 		if (err) {
@@ -32,8 +32,8 @@ router.post("/invite", (req, res) => {
 				res.status(404).json({ message: "Unknown error." });
 				console.log(err);
 			} else if (pgRes.rowCount === 1) {
-				let course_task_id = pgRes.rows[0]["course_task_id"];
-				client.query(sql_invite, [course_task_id, req.body["username"], req.body["group_id"]], (err, pgRes) => {
+				let task_id = pgRes.rows[0]["task_id"];
+				client.query(sql_invite, [task_id, req.body["username"], req.body["group_id"]], (err, pgRes) => {
 					if (err) {
 						if (err.code === "23503" && err.constraint === "username") {
 							res.status(400).json({ message: "The username is not found in the database." });

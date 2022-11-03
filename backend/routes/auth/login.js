@@ -37,7 +37,8 @@ router.post("/login", rate_limit.general_limiter, (req, res) => {
                     roles[row["course_id"]] = row["role"];
                 }
 
-                res.json({ token: helpers.generateAccessToken(req.body["username"], req.body["email"], pg_res_login.rows[0]["admin"], roles) });
+                let token = helpers.generateAccessToken(req.body["username"], req.body["email"], pg_res_login.rows[0]["admin"], roles);
+                res.json({ token: token, roles: roles});
             });
         } else {
             res.status(401).json({ message: "Your username or password is incorrect." });

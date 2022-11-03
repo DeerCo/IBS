@@ -13,8 +13,8 @@ router.delete("/disinvite", (req, res) => {
         return;
     }
 
-	let sql_select_user = "SELECT * FROM course_" + res.locals["course_id"] + ".course_group_user WHERE group_id = ($1) AND username = ($2) AND status = 'confirmed'";
-	let sql_disinvite = "DELETE FROM course_" + res.locals["course_id"] + ".course_group_user WHERE group_id = ($1) AND username = ($2) AND status = 'pending'";
+	let sql_select_user = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1) AND username = ($2) AND status = 'confirmed'";
+	let sql_disinvite = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1) AND username = ($2) AND status = 'pending'";
 
 	client.query(sql_select_user, [req.body["group_id"], res.locals["username"]], (err, pgRes) => {
 		if (err) {

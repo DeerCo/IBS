@@ -9,7 +9,7 @@ router.put("/accept", (req, res) => {
         return;
     }
 
-	let sql_accept = "UPDATE course_" + res.locals["course_id"] + ".course_group_user SET status = 'confirmed' WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
+	let sql_accept = "UPDATE course_" + res.locals["course_id"] + ".group_user SET status = 'confirmed' WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
 
 	client.query(sql_accept, [res.locals["username"], req.body["group_id"]], (err, pgRes) => {
 		if (err) {

@@ -9,7 +9,7 @@ router.delete("/reject", (req, res) => {
         return;
     }
 
-	let sql_reject = "DELETE FROM course_" + res.locals["course_id"] + ".course_group_user WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
+	let sql_reject = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
 
 	client.query(sql_reject, [res.locals["username"], req.body["group_id"]], (err, pgRes) => {
 		if (err) {
