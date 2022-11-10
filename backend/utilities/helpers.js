@@ -7,6 +7,8 @@ const bent = require("bent")
 const getJSON = bent("json")
 const transporter = require("../setup/email");
 const constants = require("../setup/constants");
+const db = require("../setup/db");
+const { tasks } = require("../setup/constants");
 
 function generateAccessToken(username, email, admin, roles) {
     return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
@@ -245,41 +247,98 @@ function backup_marks(json, note = "") {
     });
 }
 
-function calculate_marks(json) {
-    let marks = { summary: {} };
+async function get_tasks(course_id){
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".task ORDER BY task_order", []);
+
+    let tasks = {};
+    for (let row of pg_res.rows){
+        let task = {};
+        task["due_date"] = row["due_date"];
+        task["hidden"] = row["hidden"];
+        task["min_member"] = row["min_member"];
+        task["max_member"] = row["max_member"];
+
+        tasks[row["task"]] = task;
+    }
+
+    return tasks;
+}
+
+async function get_criteria_id(course_id, task, criteria){
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".criteria WHERE task = ($1) AND criteria = ($2)", [task, criteria]);
+
+    if (pg_res.rowCount === 0){
+        return -1;
+    } else{
+        return pg_res.rows[0]["criteria_id"];
+    }
+    
+}
+
+async function get_criteria(course_id, task){
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".criteria WHERE task = ($1)", [task]);
+
+    let all_criteria = {};
+    let total_out_of = 0;
+    for (let row of pg_res.rows){
+        let criteria = {};
+        criteria["task"] = row["task"];
+        criteria["criteria"] = row["criteria"];
+        criteria["total"] = row["total"];
+        criteria["description"] = row["description"];
+
+        all_criteria[row["criteria_id"]] = criteria;
+        total_out_of += row["total"];
+    }
+
+    return all_criteria;
+}
+
+async function get_total_out_of(course_id){
+    let pg_res = await db.query("SELECT task, SUM(total) AS sum FROM course_" + course_id + ".criteria GROUP BY task", []);
+
+    let total_out_of = {};
+    for (let row of pg_res.rows){
+        total_out_of[row["task"]] = row["sum"];
+    }
+
+    return total_out_of;
+}
+
+async function format_marks_one_task(json, course_id, task) {
+    let marks = {};
+    let all_criteria = await get_criteria(course_id, task);
 
     for (let row of json) {
-        let temp_mark = parseFloat(row["mark"]);
-        let temp_total = parseFloat(row["total"]);
-
-        if (row["description"]) {
-            var temp_data = { criteria: row["criteria"], mark: temp_mark, out_of: temp_total, description: row["description"] };
-        } else {
-            var temp_data = { criteria: row["criteria"], mark: temp_mark, out_of: temp_total };
+        let username = row["username"];
+        if (!(username in marks)){
+            marks[username] = {};
+            for (let criteria in all_criteria){
+                marks[username][all_criteria[criteria]["criteria"]] = {mark: 0, out_of: all_criteria[criteria]["total"]};
+            }
         }
 
-        if (row["task"] in marks) {
-            marks[row["task"]].push(temp_data);
-            marks["summary"][row["task"]]["total"] += temp_mark;
-            marks["summary"][row["task"]]["out_of"] += temp_total;
-        } else {
-            marks[row["task"]] = [temp_data];
-            marks["summary"][row["task"]] = { total: temp_mark, out_of: temp_total };
-        }
+        let criteria_name = all_criteria[row["criteria_id"]]["criteria"];
+        marks[username][criteria_name]["mark"] = parseFloat(row["mark"]);
     }
+    return marks;
+}
 
-    let final_mark = 0;
-    for (let task in marks["summary"]) {
-        if (task in constants["max"] && marks["summary"][task]["total"] > constants["max"][task]) {
-            marks["summary"][task]["total"] = constants["max"][task];
+async function format_marks_all_tasks(json, course_id) {
+    let marks = {};
+    let total_out_of = await get_total_out_of(course_id);
+
+    for (let row of json) {
+        let username = row["username"];
+        if (!(username in marks)){
+            marks[username] = {};
+            for (let task in total_out_of){
+                marks[username][task] = {mark: 0, out_of: total_out_of[task]};
+            }
         }
-        if (marks["summary"][task]["out_of"] != 0) {
-            let weighted_mark = marks["summary"][task]["total"] / marks["summary"][task]["out_of"] * constants["weights"][task];
-            final_mark += weighted_mark;
-        }
+
+        marks[username][row["task"]]["mark"] = parseFloat(row["sum"]);
     }
-    marks["summary"]["final"] = { total: final_mark, out_of: 100 };
-
     return marks;
 }
 
@@ -401,97 +460,6 @@ function send_final_marks_csv(json, res, total = false) {
     });
 }
 
-async function get_user_information(username) {
-    try {
-        let user = {};
-
-        let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let temp_user of users) {
-            if (temp_user["user_name"] === username) {
-                user = temp_user;
-            }
-        }
-
-        return { status: true, user: user };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
-async function get_all_usernames() {
-    try {
-        let usernames = [];
-
-        let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let temp_user of users) {
-            usernames.push(temp_user["user_name"]);
-        }
-
-        return { status: true, usernames: usernames };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
-async function get_group_information_by_user(user_id, markus_id) {
-    try {
-        let index = 0;
-        let found_index = -1;
-        let users_requests = [];
-
-        // Get the group index
-        let groups = await getJSON(process.env.MARKUS_API + "assignments/" + markus_id + "/groups.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let group of groups) {
-            for (let member of group["members"]) {
-                if (member["role_id"] === user_id) {
-                    found_index = index;
-                }
-            }
-            index += 1;
-        }
-        if (found_index === -1) {
-            return { status: true, users: [], group: "" };
-        }
-
-        // Get the group information based on the group index
-        for (let member of groups[found_index]["members"]) {
-            if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["role_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
-            }
-        }
-        let users_info = await Promise.all(users_requests);
-        return { status: true, users: users_info, group: groups[found_index]["group_name"] };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
-async function get_group_information_by_group_name(group_name, markus_id) {
-    try {
-        let users_requests = [];
-
-        let groups = await getJSON(process.env.MARKUS_API + "assignments/" + markus_id + "/groups.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let group of groups) {
-            if (group["group_name"] === group_name) {
-                for (let member of group["members"]) {
-                    if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                        users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["role_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
-                    }
-                }
-            }
-        }
-
-        let users_info = await Promise.all(users_requests);
-        return { status: true, users: users_info };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
 
 module.exports = {
     generateAccessToken: generateAccessToken,
@@ -509,11 +477,12 @@ module.exports = {
     send_interviews_csv: send_interviews_csv,
     search_files: search_files,
     backup_marks: backup_marks,
-    calculate_marks: calculate_marks,
+    get_tasks: get_tasks,
+    get_criteria_id: get_criteria_id,
+    get_criteria: get_criteria,
+    get_total_out_of: get_total_out_of,
+    format_marks_one_task: format_marks_one_task,
+    format_marks_all_tasks: format_marks_all_tasks,
     send_marks_csv: send_marks_csv,
     send_final_marks_csv: send_final_marks_csv,
-    get_user_information: get_user_information,
-    get_all_usernames: get_all_usernames,
-    get_group_information_by_user: get_group_information_by_user,
-    get_group_information_by_group_name: get_group_information_by_group_name
 }
