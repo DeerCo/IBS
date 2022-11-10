@@ -15,7 +15,7 @@ router.post("/", rate_limit.general_limiter, (req, res) => {
     }
 
     let sql_login = "SELECT (password = crypt(($1), password)) AS authenticated, email, admin FROM user_info WHERE username = ($2)";
-    let sql_roles = "SELECT * FROM course_role WHERE username = ($1)";
+    let sql_roles = "SELECT * FROM (course_role JOIN course ON course_role.course_id = course.course_id) WHERE username = ($1) AND hidden = false";
 
     client.query(sql_login, [req.body["password"], req.body["username"]], (err_login, pg_res_login) => {
         if (err_login) {
@@ -30,11 +30,11 @@ router.post("/", rate_limit.general_limiter, (req, res) => {
                 if (err_roles) {
                     res.status(404).json({ message: "Unknown error." });
                     console.log(err_roles);
+                    return;
                 }
-
-                let roles = {};
+                let roles = [];
                 for (let row of pg_res_roles.rows){
-                    roles[row["course_id"]] = row["role"];
+                    roles.push({course_id: row["course_id"], course_code: row["course_code"], course_session: row["course_session"], role: row["role"]});
                 }
 
                 let token = helpers.generateAccessToken(req.body["username"], req.body["email"], pg_res_login.rows[0]["admin"], roles);

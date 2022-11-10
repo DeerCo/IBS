@@ -12,6 +12,7 @@ CREATE TABLE course
     course_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
     course_code character varying(256) NOT NULL,
     course_session character varying(256) NOT NULL,
+    hidden boolean NOT NULL DEFAULT true,
     PRIMARY KEY (course_id),
     UNIQUE (course_code, course_session)
 );
@@ -46,17 +47,6 @@ CREATE TABLE interviews
     cancelled boolean NOT NULL DEFAULT false,
     note character varying,
     PRIMARY KEY (id)
-);
-
-CREATE TABLE marks
-(
-    student character varying NOT NULL,
-    task character varying NOT NULL,
-    criteria character varying NOT NULL,
-    mark numeric,
-    total numeric,
-    description character varying,
-    PRIMARY KEY (student, task, criteria)
 );
 
 CREATE TABLE ddah

@@ -247,6 +247,21 @@ function backup_marks(json, note = "") {
     });
 }
 
+async function get_courses(){
+    let pg_res = await db.query("SELECT * FROM course ORDER BY task_order", []);
+
+    let courses = {};
+    for (let row of pg_res.rows){
+        let course = {};
+        course["course_code"] = row["course_code"];
+        course["course_session"] = row["course_session"];
+
+        courses[row["course_id"]] = course;
+    }
+
+    return courses;
+}
+
 async function get_tasks(course_id){
     let pg_res = await db.query("SELECT * FROM course_" + course_id + ".task ORDER BY task_order", []);
 
@@ -477,6 +492,7 @@ module.exports = {
     send_interviews_csv: send_interviews_csv,
     search_files: search_files,
     backup_marks: backup_marks,
+    get_courses: get_courses,
     get_tasks: get_tasks,
     get_criteria_id: get_criteria_id,
     get_criteria: get_criteria,

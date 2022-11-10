@@ -12,9 +12,13 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The course session is missing or has invalid format." });
         return;
     }
+    let hidden = true;
+    if ("hidden" in req.body && req.body["hidden"].toLowerCase() === "false") {
+        hidden = false;
+    }
     
-    let sql_add_course = "INSERT INTO course (course_code, course_session) VALUES (($1), ($2)) RETURNING course_id";
-    let sql_add_data = [req.body["course_code"], req.body["course_session"]];
+    let sql_add_course = "INSERT INTO course (course_code, course_session, hidden) VALUES (($1), ($2), ($3)) RETURNING course_id";
+    let sql_add_data = [req.body["course_code"], req.body["course_session"], hidden];
 
     client.query(sql_add_course, sql_add_data, (err, pgRes) => {
         if (err) {
