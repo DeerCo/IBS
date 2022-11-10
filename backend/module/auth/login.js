@@ -32,13 +32,16 @@ router.post("/", rate_limit.general_limiter, (req, res) => {
                     console.log(err_roles);
                     return;
                 }
-                let roles = [];
+                
+                let roles = {};
+                let roles_with_details = [];
                 for (let row of pg_res_roles.rows){
-                    roles.push({course_id: row["course_id"], course_code: row["course_code"], course_session: row["course_session"], role: row["role"]});
+                    roles[row["course_id"]] = row["role"];
+                    roles_with_details.push({course_id: row["course_id"], course_code: row["course_code"], course_session: row["course_session"], role: row["role"]});
                 }
 
                 let token = helpers.generateAccessToken(req.body["username"], req.body["email"], pg_res_login.rows[0]["admin"], roles);
-                res.json({ token: token, roles: roles});
+                res.json({ token: token, roles: roles_with_details});
             });
         } else {
             res.status(401).json({ message: "Your username or password is incorrect." });
