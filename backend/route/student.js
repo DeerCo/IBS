@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const middlewareRouter = require("../module/student/middleware");
-const interviewsRouter = require("../module/student/interviews");
 const filesRouter = require("../module/student/files");
 const check_group = require("../module/group/student/check");
 const create_group = require("../module/group/student/create");
@@ -12,6 +11,12 @@ const disinvite_group = require("../module/group/student/disinvite");
 const accept_group = require("../module/group/student/accept");
 const reject_group = require("../module/group/student/reject");
 const mark = require("../module/mark/student/get");
+const all_interviews = require("../module/interview/student/all");
+const available_interviews = require("../module/interview/student/available");
+const check_interview = require("../module/interview/student/check");
+const book_interview = require("../module/interview/student/book");
+const change_interview = require("../module/interview/student/change");
+const cancel_interview = require("../module/interview/student/cancel");
 
 router.use("/", function (req, res, next) {
     next();
@@ -32,7 +37,14 @@ router.use("/course/:course_id/group/reject", reject_group);
 // Mark
 router.use("/course/:course_id/mark", mark);
 
-router.use("/course/:course_id/interviews", interviewsRouter);
+// Interview
+router.use("/course/:course_id/interview/all", all_interviews);
+router.use("/course/:course_id/interview/available", available_interviews);
+router.use("/course/:course_id/interview/check", check_interview);
+router.use("/course/:course_id/interview/book", book_interview);
+router.use("/course/:course_id/interview/change", change_interview);
+router.use("/course/:course_id/interview/cancel", cancel_interview);
+
 router.use("/course/:course_id/files", filesRouter);
 
 module.exports = router;

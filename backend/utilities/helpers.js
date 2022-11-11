@@ -88,10 +88,10 @@ function password_validate(password) {
         return 0;
     }
 }
-function query_filter(query, ta = "") {
+function query_filter(query, host) {
     let filter = "";
-    if ("id" in query && !isNaN(query["id"]) && query["id"].trim() != "") {
-        filter = filter + " AND id = " + query["id"];
+    if ("interview_id" in query && !isNaN(query["interview_id"]) && query["interview_id"].trim() != "") {
+        filter = filter + " AND interview_id = " + query["interview_id"];
     }
     if ("time" in query && !time_validate(query["time"])) {
         filter = filter + " AND time = '" + query["time"] + " America/Toronto'";
@@ -99,8 +99,8 @@ function query_filter(query, ta = "") {
     if ("date" in query && !date_validate(query["date"])) {
         filter = filter + " AND time BETWEEN '" + query["date"] + " America/Toronto'::date AND '" + query["date"] + " America/Toronto'::date + INTERVAL '24 HOURS'";
     }
-    if ("student" in query && !name_validate(query["student"])) {
-        filter = filter + " AND student = '" + query["student"] + "'";
+    if ("group_id" in query && !name_validate(query["group_id"])) {
+        filter = filter + " AND group_id = '" + query["group_id"] + "'";
     }
     if ("length" in query && !isNaN(query["length"]) && query["length"].trim() != "") {
         filter = filter + " AND length = " + query["length"];
@@ -108,29 +108,10 @@ function query_filter(query, ta = "") {
     if ("location" in query && !string_validate(query["location"])) {
         filter = filter + " AND location = '" + query["location"] + "'";
     }
-    if ("cancelled" in query && (query["cancelled"].toLowerCase() === "true" || query["cancelled"].toLowerCase() === "false")) {
-        filter = filter + " AND cancelled = '" + query["cancelled"].toLowerCase() + "'";
-    }
     if ("note" in query && !string_validate(query["note"])) {
         filter = filter + " AND note = '" + query["note"] + "'";
     }
-    if ("booked" in query) {
-        if (query["booked"].toLowerCase() === "true") {
-            filter = filter + " AND student IS NOT NULL";
-        } else if (query["booked"].toLowerCase() === "false") {
-            filter = filter + " AND student IS NULL";
-        }
-    }
-    // if (ta != "") {
-    //     if ("ta" in query && !name_validate(query["ta"])) {
-    //         if (query["ta"].toLowerCase() != "all") {
-    //             filter = filter + " AND ta = '" + query["ta"] + "'";
-    //         }
-    //     } else {
-    //         filter = filter + " AND ta = '" + ta + "'";
-    //     }
-    // }
-    filter = filter + " AND ta = '" + ta + "'";
+    filter = filter + " AND host = '" + host + "'";
     return filter;
 }
 
@@ -144,9 +125,6 @@ function query_set(query) {
     }
     if ("set_location" in query && !string_validate(query["set_location"])) {
         set = set + " location = '" + query["set_location"] + "',";
-    }
-    if ("set_cancelled" in query && (query["set_cancelled"].toLowerCase() === "true" || query["set_cancelled"].toLowerCase() === "false")) {
-        set = set + " cancelled = '" + query["set_cancelled"].toLowerCase() + "',";
     }
     if ("set_note" in query && !string_validate(query["set_note"])) {
         set = set + " note = '" + query["set_note"] + "',";
@@ -163,43 +141,6 @@ function send_email(email, subject, body) {
     };
 
     transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
-}
-
-function send_interviews_csv(json, res, backup, note = "") {
-    if (JSON.stringify(json) === "[]") {
-        res.status(200).json({ message: "No data is available." });
-        return;
-    }
-
-    let current_time = moment().tz("America/Toronto");
-    let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
-
-    if (backup) {
-        var dir = __dirname + "/../backup/" + dir_date;
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-    } else {
-        var dir = __dirname + "/../tmp/" + dir_date;
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-    }
-
-    let json2csvParser = new json2csv.Parser();
-    let file_name = "interviews_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
-    let csv = json2csvParser.parse(json);
-    fs.writeFile(dir + file_name, csv, (err) => {
-        if (err) {
-            res.status(404).json({ message: "Unknown error." });
-        } else {
-            if (backup) {
-                res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
-            } else {
-                res.sendFile(file_name, { root: "./tmp/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
-            }
-        }
-    });
 }
 
 function search_files(keyword, sub_dir = "") {
@@ -497,7 +438,6 @@ module.exports = {
     query_set: query_set,
     send_email: send_email,
     
-    send_interviews_csv: send_interviews_csv,
     search_files: search_files,
     backup_marks: backup_marks,
 

@@ -9,8 +9,11 @@ const get_all_marks = require("../module/mark/staff/all");
 const get_all_marks_csv = require("../module/mark/staff/all_csv");
 const submit_mark = require("../module/mark/staff/submit");
 const upload_marks = require("../module/mark/staff/upload");
-const backupAllRouter = require("../module/ta/backup_all");
-const backupTaskRouter = require("../module/ta/backup_task");
+const all_interviews = require("../module/interview/staff/all");
+const today_interviews = require("../module/interview/staff/today");
+const schedule_interview = require("../module/interview/staff/schedule");
+const change_interview = require("../module/interview/staff/change");
+const delete_interview = require("../module/interview/staff/delete");
 
 router.use("/", function (req, res, next) {
     next();
@@ -32,7 +35,11 @@ router.use("/course/:course_id/mark/all_csv", get_all_marks_csv);
 router.use("/course/:course_id/mark/submit", submit_mark);
 router.use("/course/:course_id/mark/upload", upload_marks);
 
-// router.use("/", backupAllRouter);
-// router.use("/", backupTaskRouter);
+// Interview
+router.use("/course/:course_id/interview/all", all_interviews);
+router.use("/course/:course_id/interview/today", today_interviews);
+router.use("/course/:course_id/interview/schedule", schedule_interview);
+router.use("/course/:course_id/interview/change", change_interview);
+router.use("/course/:course_id/interview/delete", delete_interview);
 
 module.exports = router;

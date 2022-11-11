@@ -12,9 +12,9 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The course session is missing or has invalid format." });
         return;
     }
-    let hidden = true;
-    if ("hidden" in req.body && req.body["hidden"].toLowerCase() === "false") {
-        hidden = false;
+    let hidden = false;
+    if ("hidden" in req.body && req.body["hidden"].toLowerCase() === "true") {
+        hidden = true;
     }
     
     let sql_add_course = "INSERT INTO course (course_code, course_session, hidden) VALUES (($1), ($2), ($3)) RETURNING course_id";
@@ -36,6 +36,7 @@ router.post("/", (req, res) => {
             let mark_table_name = "course_" + course_id + ".mark";
             let group_table_name = "course_" + course_id + ".group";
             let group_user_table_name = "course_" + course_id + ".group_user";
+            let interview_table_name = "course_" + course_id + ".interview";
 
             let sql_add_schema = "CREATE SCHEMA course_" + course_id + "; ";
             let sql_add_task_table = 
@@ -78,9 +79,23 @@ router.post("/", (req, res) => {
                 "CONSTRAINT username FOREIGN KEY (username) REFERENCES public.user_info (username) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
+            let sql_add_interview_table = 
+                "CREATE TABLE " + interview_table_name + "(" +
+                "interview_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 0 MINVALUE 0 ), " +
+                'task character varying NOT NULL, "time" timestamp with time zone NOT NULL, ' +
+                "host character varying NOT NULL, group_id integer, length integer, " +
+                "location character varying DEFAULT 'Zoom', note character varying, " +
+                'PRIMARY KEY (interview_id), UNIQUE(task, "time", host), ' +
+                "CONSTRAINT task FOREIGN KEY (task) REFERENCES " + task_table_name +" (task) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
+                "CONSTRAINT group_id FOREIGN KEY (group_id) REFERENCES " + group_table_name + " (group_id) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
+                "CONSTRAINT username FOREIGN KEY (host) REFERENCES public.user_info (username) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
+                ");";
 
             let sql_all = sql_add_schema + sql_add_task_table + sql_add_criteria_table + sql_add_mark_table + 
-                            sql_add_group_table + sql_add_group_user_table;
+                            sql_add_group_table + sql_add_group_user_table + sql_add_interview_table;
                         
             client.query(sql_all, [], (err, pgRes) => {
                 if (err) {
