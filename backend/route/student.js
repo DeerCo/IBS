@@ -4,7 +4,6 @@ const router = express.Router();
 const middlewareRouter = require("../module/student/middleware");
 const interviewsRouter = require("../module/student/interviews");
 const filesRouter = require("../module/student/files");
-const marksRouter = require("../module/student/marks");
 const check_group = require("../module/group/student/check");
 const create_group = require("../module/group/student/create");
 const leave_group = require("../module/group/student/leave");
@@ -12,6 +11,7 @@ const invite_group = require("../module/group/student/invite");
 const disinvite_group = require("../module/group/student/disinvite");
 const accept_group = require("../module/group/student/accept");
 const reject_group = require("../module/group/student/reject");
+const mark = require("../module/mark/student/get");
 
 router.use("/", function (req, res, next) {
     next();
@@ -29,8 +29,10 @@ router.use("/course/:course_id/group/disinvite", disinvite_group);
 router.use("/course/:course_id/group/accept", accept_group);
 router.use("/course/:course_id/group/reject", reject_group);
 
+// Mark
+router.use("/course/:course_id/mark", mark);
+
 router.use("/course/:course_id/interviews", interviewsRouter);
 router.use("/course/:course_id/files", filesRouter);
-router.use("/course/:course_id/marks", marksRouter);
 
 module.exports = router;

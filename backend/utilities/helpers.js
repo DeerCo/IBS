@@ -332,7 +332,7 @@ async function format_marks_one_task(json, course_id, task) {
                 marks[username][all_criteria[criteria]["criteria"]] = {mark: 0, out_of: all_criteria[criteria]["total"]};
             }
         }
-
+        
         let criteria_name = all_criteria[row["criteria_id"]]["criteria"];
         marks[username][criteria_name]["mark"] = parseFloat(row["mark"]);
     }
@@ -357,7 +357,7 @@ async function format_marks_all_tasks(json, course_id) {
     return marks;
 }
 
-function send_marks_csv(json, res, note = "", total = false) {
+async function format_marks_one_task_csv(json, course_id, task, res, note = "", total = false) {
     if (JSON.stringify(json) === "[]") {
         res.status(200).json({ message: "No data is available." });
         return;
@@ -365,27 +365,34 @@ function send_marks_csv(json, res, note = "", total = false) {
 
     let current_time = moment().tz("America/Toronto");
     let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
-
     let dir = __dirname + "/../backup/" + dir_date;
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
     }
 
     let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
-    let file_name = "marks_readable_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
-
-    let header = { Student: "/" };
+    let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
+    let header = { Student: "Out Of" };
     let parsed_json = {};
+    let marks = await format_marks_one_task(json, course_id, task);
 
-    for (let mark of json) {
-        if (!(mark["criteria"] in header)) {
-            header[mark["criteria"]] = parseFloat(mark["total"]);
-        }
+    if (Object.keys(marks).length === 0){
+        res.status(200).json({ message: "No mark is available." });
+        return;
+    }
 
-        if (mark["student"] in parsed_json) {
-            parsed_json[mark["student"]][mark["criteria"]] = parseFloat(mark["mark"]);
-        } else {
-            parsed_json[mark["student"]] = { Student: mark["student"], [mark["criteria"]]: parseFloat(mark["mark"]) };
+    for (let student in marks) {
+        for (let criteria in marks[student]){
+            if (!(criteria in header)) {
+                header[criteria] = parseFloat(marks[student][criteria]["out_of"]);
+            }
+
+            let mark = parseFloat(marks[student][criteria]["mark"]);
+            if (student in parsed_json) {
+                parsed_json[student][criteria] = parseFloat(mark);
+            } else {
+                parsed_json[student] = { Student: student, [criteria]: parseFloat(mark) };
+            }
         }
     }
 
@@ -489,9 +496,11 @@ module.exports = {
     query_filter: query_filter,
     query_set: query_set,
     send_email: send_email,
+    
     send_interviews_csv: send_interviews_csv,
     search_files: search_files,
     backup_marks: backup_marks,
+
     get_courses: get_courses,
     get_tasks: get_tasks,
     get_criteria_id: get_criteria_id,
@@ -499,6 +508,6 @@ module.exports = {
     get_total_out_of: get_total_out_of,
     format_marks_one_task: format_marks_one_task,
     format_marks_all_tasks: format_marks_all_tasks,
-    send_marks_csv: send_marks_csv,
+    format_marks_one_task_csv: format_marks_one_task_csv,
     send_final_marks_csv: send_final_marks_csv,
 }
