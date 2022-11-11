@@ -3,56 +3,58 @@ const router = express.Router();
 const moment = require("moment");
 require("moment-timezone");
 const client = require("../../../setup/db");
-const constants = require("../../../setup/constants");
 const helpers = require("../../../utilities/helpers");
-const rate_limit = require("../../../setup/rate_limit");
 
-router.post("/:task/book", rate_limit.interviews_limiter, (req, res) => {
+router.post("/", (req, res) => {
+    if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
+        res.status(400).json({ message: "The task is missing or has invalid format." });
+        return;
+    }
     if (!("time" in req.body) || helpers.time_validate(req.body["time"])) {
-        res.status(400).json({ message: "Your desired time is missing or not correct." });
+        res.status(400).json({ message: "The time is missing or has invalid format. (YYYY-MM-DD HH:MM:SS)" });
+        return;
+    }
+    if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
+        res.status(400).json({ message: req.body["time"] + " was in the past or is within 30 minutes from now. Please choose a new time." });
         return;
     }
     let time = req.body["time"] + " America/Toronto";
 
+    let location = "Zoom";
     if ("location" in req.body) {
         if (helpers.string_validate(req.body["location"])) {
-            res.status(400).json({ message: "Your desired location has invalid format." });
+            res.status(400).json({ message: "The location has invalid format." });
             return;
         } else {
-            var location = req.body["location"];
+            location = req.body["location"];
         }
-    } else {
-        var location = "Zoom";
     }
 
-    client.query(constants.sql_check, [res.locals["group"], req.params["task"]], (err, pgRes) => {
-        if (err) {
-            res.status(404).json({ message: "Unknown error." });
-        } else {
-            if (pgRes.rowCount === 1) {
-                res.status(406).json({ message: "You already have an existing interview for " + req.params["task"] + " at " + pgRes.rows[0]["time"] + "." });
-            } else if (pgRes.rowCount > 1) {
+    helpers.get_group_id(res.locals["course_id"], req.body["task"], res.locals["username"]).then(group_id => {
+        let sql_check = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS time FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2)";
+        client.query(sql_check, [group_id, req.body["task"]], (err, pgRes) => {
+            if (err) {
                 res.status(404).json({ message: "Unknown error." });
+                return;
+            } 
+
+            if (pgRes.rowCount === 1) {
+                res.status(400).json({ message: "You already have an existing interview for " + req.body["task"] + " at " + pgRes.rows[0]["time"] + "." });
             } else {
-                if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
-                    res.status(406).json({ message: req.body["time"] + " was in the past or is within 30 minutes from now. Please choose a new time." });
-                } else {
-                    client.query(constants.sql_book, [res.locals["group"], req.params["task"], time, location, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes) => {
-                        if (err) {
-                            res.status(404).json({ message: "Unknown error." });
-                        } else {
-                            if (pgRes.rowCount === 0) {
-                                res.status(409).json({ message: "No available interview exists for " + req.params["task"] + " at " + req.body["time"] + ". Please choose a different time." });
-                            } else {
-                                let message = "You have booked your interview for " + req.params["task"] + " at " + req.body["time"] + " successfully. The location is " + pgRes.rows[0]["location"] + ".";
-                                res.status(200).json({ message: message });
-                                helpers.send_email(res.locals["group_emails"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
-                            }
-                        }
-                    });
-                }
+                let sql_book = "UPDATE course_" + res.locals["course_id"] + ".interview SET group_id = ($1) WHERE interview_id = (SELECT interview_id FROM course_" + res.locals["course_id"] + ".interview WHERE task = ($2) AND time = ($3) AND group_id IS NULL AND location = ($4) LIMIT 1 FOR UPDATE)";
+                client.query(sql_book, [group_id, req.body["task"], time, location], (err, pgRes) => {
+                    if (err) {
+                        res.status(404).json({ message: "Unknown error." });
+                    } else if (pgRes.rowCount === 0) {
+                        res.status(409).json({ message: "No available interview exists for " + req.body["task"] + " at " + req.body["time"] + " at location " + location + ". Please choose a different time." });
+                    } else {
+                        let message = "You have booked your interview for " + req.body["task"] + " at " + req.body["time"] + " successfully. The location is " + location + ".";
+                        res.status(200).json({ message: message });
+                        helpers.send_email(res.locals["group_emails"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
+                    }
+                });
             }
-        }
+        });
     });
 })
 

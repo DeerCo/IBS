@@ -5,57 +5,65 @@ require("moment-timezone");
 const client = require("../../../setup/db");
 const constants = require("../../../setup/constants");
 const helpers = require("../../../utilities/helpers");
-const rate_limit = require("../../../setup/rate_limit");
 
-router.put("/:task/change", rate_limit.interviews_limiter, (req, res) => {
+router.put("/", (req, res) => {
+    if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
+        res.status(400).json({ message: "The task is missing or has invalid format." });
+        return;
+    }
     if (!("time" in req.body) || helpers.time_validate(req.body["time"])) {
         res.status(400).json({ message: "Your desired time is missing or not correct." });
         return;
     }
+    if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
+        res.status(400).json({ message: req.body["time"] + " was in the past or is within 30 minutes from now. Please choose a new time." });
+        return;
+    }
     let time = req.body["time"] + " America/Toronto";
-
+    
+    let location = "Zoom";
     if ("location" in req.body) {
         if (helpers.string_validate(req.body["location"])) {
             res.status(400).json({ message: "Your desired location has invalid format." });
             return;
         } else {
-            var location = req.body["location"];
+            location = req.body["location"];
         }
-    } else {
-        var location = "Zoom";
     }
 
-    client.query(constants.sql_check, [res.locals["group"], req.params["task"]], (err, pgRes) => {
-        if (err) {
-            res.status(404).json({ message: "Unknown error." });
-        } else {
-            if (pgRes.rowCount === 0) {
-                res.status(406).json({ message: "You don't have a booked interview for " + req.params["task"] + " yet." });
-            } else if (pgRes.rowCount > 1) {
+    helpers.get_group_id(res.locals["course_id"], req.body["task"], res.locals["username"]).then(group_id => {
+        let sql_check = "SELECT interview_id, to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS time, location FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2)";
+        client.query(sql_check, [group_id, req.body["task"]], (err, pg_res_check) => {
+            if (err) {
                 res.status(404).json({ message: "Unknown error." });
-            } else if (moment.tz(pgRes.rows[0]["time"], "America/Toronto").subtract(2, "hours") < moment().tz("America/Toronto")) {
-                res.status(406).json({ message: "Your existing interview for " + req.params["task"] + " at " + pgRes.rows[0]["time"] + " was in the past or will take place in 2 hours. You can't book a new one at this time." });
-            } else {
-                if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
-                    res.status(406).json({ message: req.body["time"] + " was in the past or is within 30 minutes from now. Please choose a new time." });
-                } else {
-                    client.query(constants.sql_book, [res.locals["group"], req.params["task"], time, location, constants.tasks[req.params["task"]]["exclude"]], (err, pgRes1) => {
-                        if (err) {
-                            res.status(404).json({ message: "Unknown error." });
-                        } else {
-                            if (pgRes1.rowCount === 0) {
-                                res.status(409).json({ message: "No available interview exists for " + req.params["task"] + " at " + req.body["time"] + ". Please choose a different time." });
-                            } else {
-                                let message = "You have changed your interview for " + req.params["task"] + " from " + pgRes.rows[0]["time"] + " to " + req.body["time"] + " successfully. The new location is " + pgRes.rows[0]["location"] + ".";
-                                res.status(200).json({ message: message });
-                                helpers.send_email(res.locals["group_emails"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
-                                client.query(constants.sql_cancel, [pgRes.rows[0]["id"]], () => { });
-                            }
-                        }
-                    });
-                }
+                return;
             }
-        }
+
+            if (pg_res_check.rowCount === 0) {
+                res.status(400).json({ message: "You don't have a booked interview for " + req.body["task"] + " yet." });
+            } else if (moment.tz(pg_res_check.rows[0]["time"], "America/Toronto").subtract(2, "hours") < moment().tz("America/Toronto")) {
+                res.status(400).json({ message: "Your existing interview for " + req.body["task"] + " at " + pg_res_check.rows[0]["time"] + " was in the past or will take place in 2 hours. You can't book a new one at this time." });
+            } else {
+                let sql_book = "UPDATE course_" + res.locals["course_id"] + ".interview SET group_id = ($1) WHERE interview_id = (SELECT interview_id FROM course_" + res.locals["course_id"] + ".interview WHERE task = ($2) AND time = ($3) AND group_id IS NULL AND location = ($4) LIMIT 1 FOR UPDATE)";
+                client.query(sql_book, [group_id, req.body["task"], time, location], (err, pg_res_book) => {
+                    if (err) {
+                        res.status(404).json({ message: "Unknown error." });
+                        return;
+                    }
+
+                    if (pg_res_book.rowCount === 0) {
+                        res.status(409).json({ message: "No available interview exists for " + req.body["task"] + " at " + req.body["time"] + " at location " + location + ". Please choose a different time." });
+                    } else {
+                        let message = "You have changed your interview for " + req.body["task"] + " from " + pg_res_check.rows[0]["time"] + " to " + req.body["time"] + " successfully. The new location is " + location + ".";
+                        res.status(200).json({ message: message });
+                        helpers.send_email(res.locals["group_emails"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
+                        
+                        let sql_cancel = "UPDATE course_" + res.locals["course_id"] + ".interview SET group_id = NULL WHERE interview_id = ($1)";
+                        client.query(sql_cancel, [pg_res_check.rows[0]["interview_id"]]);
+                    }
+                });
+            }
+        });
     });
 })
 

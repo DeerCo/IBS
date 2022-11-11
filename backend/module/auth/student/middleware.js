@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const helpers = require("../../utilities/helpers");
+const helpers = require("../../../utilities/helpers");
 
 router.use("/:course_id/", function (req, res, next) {
     const authHeader = req.headers["authorization"];

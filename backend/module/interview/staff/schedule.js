@@ -15,7 +15,7 @@ router.post("/", (req, res) => {
 
 	let location = "";
 	if ("location" in req.body && helpers.string_validate(req.body["location"])) {
-		res.status(400).json({ message: "" });
+		res.status(400).json({ message: "The location has invalid format." });
 		return;
 	} else if ("location" in req.body && !helpers.string_validate(req.body["location"])) {
 		location = req.body["location"];

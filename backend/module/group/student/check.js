@@ -4,14 +4,14 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
-	if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
+	if (!("task" in req.query) || helpers.string_validate(req.query["task"])) {
         res.status(400).json({ message: "The course task is missing or invalid." });
         return;
     }
 
 	let sql_select = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE username = ($1) AND task = ($2)";
 
-	client.query(sql_select, [res.locals["username"], req.body["task"]], (err, pgRes) => {
+	client.query(sql_select, [res.locals["username"], req.query["task"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);

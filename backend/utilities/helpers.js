@@ -235,7 +235,6 @@ async function get_criteria(course_id, task){
     let pg_res = await db.query("SELECT * FROM course_" + course_id + ".criteria WHERE task = ($1)", [task]);
 
     let all_criteria = {};
-    let total_out_of = 0;
     for (let row of pg_res.rows){
         let criteria = {};
         criteria["task"] = row["task"];
@@ -259,6 +258,16 @@ async function get_total_out_of(course_id){
     }
 
     return total_out_of;
+}
+
+async function get_group_id(course_id, task, username){
+    let pg_res = await db.query("SELECT group_id FROM course_" + course_id + ".group_user WHERE task = ($1) AND username= ($2) AND status = 'confirmed'", [task, username]);
+
+    if (pg_res.rowCount == 0){
+        return -1;
+    } else{
+        return pg_res.rows[0]["group_id"];
+    }
 }
 
 async function format_marks_one_task(json, course_id, task) {
@@ -446,6 +455,7 @@ module.exports = {
     get_criteria_id: get_criteria_id,
     get_criteria: get_criteria,
     get_total_out_of: get_total_out_of,
+    get_group_id: get_group_id,
     format_marks_one_task: format_marks_one_task,
     format_marks_all_tasks: format_marks_all_tasks,
     format_marks_one_task_csv: format_marks_one_task_csv,
