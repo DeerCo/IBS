@@ -5,6 +5,7 @@ import './index.css';
 import Login from "./components/login";
 import Register from "./components/register";
 import Frist from "./components/student_first_page";
+import Grade from "./components/student_grade_page";
 import reportWebVitals from './reportWebVitals';
 import {createRoot} from 'react-dom/client';
 
@@ -15,6 +16,7 @@ root.render(
       <Route path="/login" element={<Login />}></Route>
       <Route path="/register" element={<Register />}></Route>
       <Route path="/frontPage" element={<Frist />}></Route>
+      <Route path="/gradePage" element={<Grade />}></Route>
     </Routes>
   </BrowserRouter>,
 );

@@ -55,7 +55,7 @@ const Frist = () => {
                                     <div className="d-flex justify-content-between align-items-center">
                                         <div className="btn-group">
                                             <a href="student_file_page.html"><button type="button" className="btn btn-sm btn-outline-secondary">Files</button></a>
-                                            <a href="student_grade_page.html"><button type="button" className="btn btn-sm btn-outline-secondary">Grades</button></a>
+                                            <Link to="/gradePage"><button type="button" className="btn btn-sm btn-outline-secondary">Grades</button></Link>
                                             <a href="student_interview_page.html"><button type="button" className="btn btn-sm btn-outline-secondary">Interview</button></a>
                                         </div>
                                         <small className="text-muted">course number {d.course_id}</small>
