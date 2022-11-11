@@ -18,6 +18,8 @@ const required = (value) => {
 };
 
 const Login = () => {
+  
+
     let navigate = useNavigate();
   
     const form = useRef();
@@ -43,8 +45,8 @@ const Login = () => {
     
         form.current.validateAll();
         AuthService.login(username, password).then(
-          () => {
-            navigate("/register");
+          (result) => {
+            navigate("/frontPage", {state: result});
             window.location.reload();
           },
           (error) => {
@@ -110,7 +112,7 @@ const Login = () => {
                   </Form>
 
                   <div id="formFooter">
-                    <a className="underlineHover"><Link to="/Register"> Register </Link></a>
+                    <Link className="underlineHover" to="/Register"> Register </Link>
                   </div>
 
               </div>

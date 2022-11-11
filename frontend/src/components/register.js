@@ -125,7 +125,7 @@ const Register = () => {
 
                   <div id="formFooter">
                       
-                      <a className="underlineHover"><Link to="/login"> Log In </Link></a>
+                      <Link className="underlineHover" to="/login"> Log In </Link>
                   </div>
 
               </div>
