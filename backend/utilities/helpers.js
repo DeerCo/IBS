@@ -6,9 +6,7 @@ const json2csv = require("json2csv");
 const bent = require("bent")
 const getJSON = bent("json")
 const transporter = require("../setup/email");
-const constants = require("../setup/constants");
 const db = require("../setup/db");
-const { tasks } = require("../setup/constants");
 
 function generateAccessToken(username, email, admin, roles) {
     return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
@@ -77,17 +75,25 @@ function time_validate(time) {
     }
 }
 
-//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-
 function password_validate(password) {
     let regex = new RegExp(".");
-// ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$
     if (!regex.test(password)) {
         return 1;
     } else {
         return 0;
     }
 }
+
+async function task_validate(course_id, task) {
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".task WHERE task = ($1) AND hidden = 'false'", [task]);
+
+    if (pg_res.rowCount <= 0) {
+        return "";
+    } else {
+        return task;
+    }
+}
+
 function query_filter(query, host) {
     let filter = "";
     if ("interview_id" in query && !isNaN(query["interview_id"]) && query["interview_id"].trim() != "") {
@@ -143,12 +149,13 @@ function send_email(email, subject, body) {
     transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
 }
 
-function search_files(keyword, sub_dir = "") {
-    let dir = __dirname + "/../files/" + sub_dir;
+function search_files(username, group_id, coure_id, sub_dir = "") {
+    let dir = __dirname + "/../files/course_" + coure_id + "/" + sub_dir;
     let result = [];
 
     if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+        // fs.mkdirSync(dir, { recursive: true });
+        return result;
     }
 
     let files = fs.readdirSync(dir);
@@ -158,8 +165,8 @@ function search_files(keyword, sub_dir = "") {
         let stat = fs.lstatSync(file_name);
 
         if (stat.isDirectory()) {
-            result = result.concat(search_files(keyword, sub_dir + files[i] + "/"));
-        } else if (file_name.indexOf(keyword) >= 0) {
+            result = result.concat(search_files(username, group_id, sub_dir + files[i] + "/"));
+        } else if (file_name.indexOf(username + "_") >= 0 || file_name.indexOf("group_" + group_id + "_")) {
             result.push(sub_dir + files[i]);
         };
     };
@@ -243,7 +250,6 @@ async function get_criteria(course_id, task){
         criteria["description"] = row["description"];
 
         all_criteria[row["criteria_id"]] = criteria;
-        total_out_of += row["total"];
     }
 
     return all_criteria;
@@ -435,7 +441,6 @@ function send_final_marks_csv(json, res, total = false) {
 
 module.exports = {
     generateAccessToken: generateAccessToken,
-    password_validate: password_validate,
     name_validate: name_validate,
     boolean_validate: boolean_validate,
     number_validate: number_validate,
@@ -443,13 +448,13 @@ module.exports = {
     date_validate: date_validate,
     time_validate: time_validate,
     email_validate: email_validate,
+    password_validate: password_validate,
+    task_validate: task_validate,
     query_filter: query_filter,
     query_set: query_set,
     send_email: send_email,
-    
     search_files: search_files,
     backup_marks: backup_marks,
-
     get_courses: get_courses,
     get_tasks: get_tasks,
     get_criteria_id: get_criteria_id,

@@ -19,18 +19,37 @@ router.use("/:course_id/", function (req, res, next) {
                     return;
                 }
 
-                if (!token_data["admin"] && token_data["roles"][req.params["course_id"]] !== "student") {
+                if (token_data["roles"][req.params["course_id"]] !== "student") {
                     res.status(403).json({ message: "You don't have permission to access." });
                     return;
                 }
 
-                res.locals["course_id"] = req.params["course_id"];
-                res.locals["username"] = token_data["username"];
-                res.locals["email"] = token_data["email"];
-                next();
+                retrieve_data(req).then(data => {
+                    res.locals["course_id"] = req.params["course_id"];
+                    res.locals["task"] = data["task"];
+                    res.locals["username"] = token_data["username"];
+                    res.locals["email"] = token_data["email"];
+                    next();
+                });
             }
         })
     }
 })
+
+async function retrieve_data(req){
+    let task = "";
+
+    if (req.method == "GET"){
+        if ("task" in req.query && !helpers.string_validate(req.query["task"])) {
+            task = await helpers.task_validate(req.params["course_id"], req.query["task"]);
+        }
+    } else{
+        if ("task" in req.body && !helpers.string_validate(req.body["task"])) {
+            task = await helpers.task_validate(req.params["course_id"], req.body["task"]);
+        }
+    }
+
+    return {task: task};
+}
 
 module.exports = router;

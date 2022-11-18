@@ -4,8 +4,8 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
-    if (!("task" in req.query) || helpers.string_validate(req.query["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
 
@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
                     "to_char(time AT TIME ZONE 'America/Toronto' + CONCAT(length,' minutes')::INTERVAL, 'YYYY-MM-DD HH24:MI:SS') AS end_time, " +
                     "COUNT(*) AS all_count, COUNT(group_id) AS booked_count, location FROM course_" + 
                     res.locals["course_id"] + ".interview WHERE task = ($1) AND time > now() GROUP BY time, length, location ORDER BY time";
-    client.query(sql_times, [req.query["task"]], (err, pgRes) => {
+    client.query(sql_times, [res.locals["task"]], (err, pgRes) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err)
@@ -29,9 +29,9 @@ router.get("/", (req, res) => {
                 }
             }
             if (Object.keys(interviews).length != 0) {
-                res.json({ task: req.query["task"], availability: interviews });
+                res.json({ task: res.locals["task"], availability: interviews });
             } else {
-                res.json({ task: req.query["task"], message: "No interview is available." });
+                res.json({ task: res.locals["task"], message: "No interview is available." });
             }
         }
     });

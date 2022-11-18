@@ -16,6 +16,8 @@ const check_interview = require("../module/interview/student/check");
 const book_interview = require("../module/interview/student/book");
 const change_interview = require("../module/interview/student/change");
 const cancel_interview = require("../module/interview/student/cancel");
+const all_file = require("../module/file/student/all");
+const retrieve_file = require("../module/file/student/retrieve");
 
 router.use("/", function (req, res, next) {
     next();
@@ -43,5 +45,9 @@ router.use("/course/:course_id/interview/check", check_interview);
 router.use("/course/:course_id/interview/book", book_interview);
 router.use("/course/:course_id/interview/change", change_interview);
 router.use("/course/:course_id/interview/cancel", cancel_interview);
+
+// Mark
+router.use("/course/:course_id/file/all", all_file);
+router.use("/course/:course_id/file/retrieve", retrieve_file);
 
 module.exports = router;

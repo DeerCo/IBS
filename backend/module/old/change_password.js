@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const constants = require("../../setup/constants");
 const rate_limit = require("../../setup/rate_limit");
 const helpers = require("../../utilities/helpers");
 const client = require("../../setup/db");
