@@ -3,7 +3,7 @@ const router = express.Router();
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
-router.post("/add", (req, res) => {
+router.post("/", (req, res) => {
     if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
         res.status(400).json({ message: "The task is missing or has invalid format." });
         return;

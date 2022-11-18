@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const middleware = require("../module/auth/student/middleware");
+const all_tasks = require("../module/task/student/all");
 const check_group = require("../module/group/student/check");
 const create_group = require("../module/group/student/create");
 const leave_group = require("../module/group/student/leave");
@@ -25,6 +26,9 @@ router.use("/", function (req, res, next) {
 
 // Middleware
 router.use("/course/", middleware);
+
+// Task
+router.use("/course/:course_id/task/all", all_tasks);
 
 // Group
 router.use("/course/:course_id/group/check", check_group);

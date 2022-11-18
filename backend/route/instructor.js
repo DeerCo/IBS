@@ -2,8 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const middleware = require("../module/auth/instructor/middleware");
+const all_criteria = require("../module/task/staff/all");
+const all_tasks = require("../module/task/staff/all");
 const add_task = require("../module/task/staff/add");
 const add_criteria = require("../module/criteria/staff/add");
+const upload_files = require("../module/file/staff/upload");
 const get_one_mark = require("../module/mark/staff/one");
 const get_all_marks = require("../module/mark/staff/all");
 const get_all_marks_csv = require("../module/mark/staff/all_csv");
@@ -23,10 +26,15 @@ router.use("/", function (req, res, next) {
 router.use("/course/", middleware);
 
 // Task
-router.use("/course/:course_id/task/", add_task);
+router.use("/course/:course_id/task/all", all_tasks);
+router.use("/course/:course_id/task/add", add_task);
 
 // Criteria
+router.use("/course/:course_id/criteria/all", all_criteria);
 router.use("/course/:course_id/criteria/add", add_criteria);
+
+// File
+router.use("/course/:course_id/file/upload", upload_files);
 
 // Mark
 router.use("/course/:course_id/mark/one", get_one_mark);

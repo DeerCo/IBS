@@ -24,13 +24,32 @@ router.use("/:course_id/", rate_limit.general_limiter, function (req, res, next)
                     return;
                 }
 
-                res.locals["course_id"] = req.params["course_id"];
-                res.locals["username"] = token_data["username"];
-                res.locals["email"] = token_data["email"];
-                next();
+                retrieve_data(req).then(data => {
+                    res.locals["course_id"] = req.params["course_id"];
+                    res.locals["task"] = data["task"];
+                    res.locals["username"] = token_data["username"];
+                    res.locals["email"] = token_data["email"];
+                    next();
+                });
             }
         })
     }
 })
+
+async function retrieve_data(req){
+    let task = "";
+
+    if (req.method === "GET"){
+        if ("task" in req.query && !helpers.string_validate(req.query["task"])) {
+            task = await helpers.task_validate(req.params["course_id"], req.query["task"], false);
+        }
+    } else{
+        if ("task" in req.body && !helpers.string_validate(req.body["task"])) {
+            task = await helpers.task_validate(req.params["course_id"], req.body["task"], false);
+        }
+    }
+
+    return {task: task};
+}
 
 module.exports = router;

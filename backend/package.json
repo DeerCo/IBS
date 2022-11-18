@@ -18,6 +18,7 @@
     "bent": "^7.3.12",
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
+    "decompress-zip": "^0.3.3",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
     "express-rate-limit": "^6.1.0",
@@ -30,6 +31,5 @@
     "nodemailer": "^6.7.2",
     "pg": "^8.7.1",
     "pg-format": "^1.0.4"
-  },
-  "devDependencies": {}
+  }
 }
