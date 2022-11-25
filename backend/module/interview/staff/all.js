@@ -9,11 +9,15 @@ router.get("/", (req, res) => {
         return;
     }
 
-    let filter = helpers.query_filter(req.query, res.locals["username"]);
+    let temp = helpers.query_filter(req.query, 2);
+    let filter = temp["filter"];
+    let data = temp["data"];
+
     let sql_times = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS toronto_time, * FROM course_" + res.locals["course_id"] + ".interview WHERE task = ($1)" + filter + " ORDER BY time";
-    client.query(sql_times, [req.query["task"]], (err, pg_res) => {
+    client.query(sql_times, [req.query["task"]].concat(data), (err, pg_res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
+            console.log(err)
         } else {
             res.status(200).json({ interviews: pg_res.rows });
         }

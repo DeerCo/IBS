@@ -3,8 +3,6 @@ const moment = require("moment");
 require("moment-timezone");
 const fs = require("fs");
 const json2csv = require("json2csv");
-const bent = require("bent")
-const getJSON = bent("json")
 const transporter = require("../setup/email");
 const db = require("../setup/db");
 
@@ -98,48 +96,75 @@ async function task_validate(course_id, task, student) {
     }
 }
 
-function query_filter(query, host) {
+function query_filter(query, start_data_id) {
     let filter = "";
+    let data = [];
+    let data_id = start_data_id;
+
     if ("interview_id" in query && !isNaN(query["interview_id"]) && query["interview_id"].trim() != "") {
-        filter = filter + " AND interview_id = " + query["interview_id"];
+        filter = filter + " AND interview_id = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["interview_id"]);
     }
     if ("time" in query && !time_validate(query["time"])) {
-        filter = filter + " AND time = '" + query["time"] + " America/Toronto'";
+        filter = filter + " AND time = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["time"] + " America/Toronto");
     }
     if ("date" in query && !date_validate(query["date"])) {
-        filter = filter + " AND time BETWEEN '" + query["date"] + " America/Toronto'::date AND '" + query["date"] + " America/Toronto'::date + INTERVAL '24 HOURS'";
+        filter = filter + " AND time BETWEEN ($" + data_id + ") AND ($" + data_id + ") + INTERVAL '24 HOURS'";
+        data_id += 1;
+        data.push(query["date"] + " America/Toronto");
     }
     if ("group_id" in query && !name_validate(query["group_id"])) {
-        filter = filter + " AND group_id = '" + query["group_id"] + "'";
+        filter = filter + " AND group_id = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["group_id"]);
     }
     if ("length" in query && !isNaN(query["length"]) && query["length"].trim() != "") {
-        filter = filter + " AND length = " + query["length"];
+        filter = filter + " AND length = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["length"]);
     }
     if ("location" in query && !string_validate(query["location"])) {
-        filter = filter + " AND location = '" + query["location"] + "'";
+        filter = filter + " AND location = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["location"]);
     }
     if ("note" in query && !string_validate(query["note"])) {
-        filter = filter + " AND note = '" + query["note"] + "'";
+        filter = filter + " AND note = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["note"]);
     }
-    filter = filter + " AND host = '" + host + "'";
-    return filter;
+    return {filter: filter, data: data, data_id: data_id};
 }
 
-function query_set(query) {
+function query_set(query, start_data_id) {
     let set = "";
+    let data = [];
+    let data_id = start_data_id;
+
     if ("set_time" in query && !time_validate(query["set_time"])) {
-        set = set + " time = '" + query["set_time"] + " America/Toronto',";
+        set = set + " time = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_time"] + " America/Toronto");
     }
     if ("set_length" in query && !isNaN(query["set_length"]) && query["set_length"].trim() != "") {
-        set = set + " length = " + query["set_length"] + ",";
+        set = set + " length = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_length"]);
     }
     if ("set_location" in query && !string_validate(query["set_location"])) {
-        set = set + " location = '" + query["set_location"] + "',";
+        set = set + " location = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_location"]);
     }
     if ("set_note" in query && !string_validate(query["set_note"])) {
-        set = set + " note = '" + query["set_note"] + "',";
+        set = set + " note = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_note"]);
     }
-    return set;
+    return {set: set, data: data, data_id: data_id};
 }
 
 function send_email(email, subject, body) {
@@ -158,7 +183,6 @@ function search_files(username, group_id, coure_id, sub_dir = "") {
     let result = [];
 
     if (!fs.existsSync(dir)) {
-        // fs.mkdirSync(dir, { recursive: true });
         return result;
     }
 
