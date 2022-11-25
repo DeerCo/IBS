@@ -16,9 +16,9 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The course session is missing or has invalid format." });
         return;
     }
-    if (!("hidden" in req.body) || (req.body["hidden"].toLowerCase() !== "true" && req.body["hidden"].toLowerCase() !== "false")) {
-        res.status(400).json({ message: "Hidden should be true or false." });
-        return;
+    if (!("hidden" in req.body) || helpers.boolean_validate(req.body["hidden"])) {
+        res.status(400).json({ message: "The hidden property is missing or not correct." });
+		return;
     }
 
     let sql_change = "UPDATE course SET course_code = ($1), course_session = ($2), hidden = ($3) WHERE course_id = ($4)";
@@ -28,12 +28,10 @@ router.put("/", (req, res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
-        } else {
-            if (pg_res.rowCount === 0){
-                res.status(400).json({ message: "There is no course associated with this course id." });
-            } else{
-                res.status(200).json({ message: "The course is changed." });
-            }
+        } else if (pg_res.rowCount === 0){
+            res.status(400).json({ message: "There is no course associated with this course id." });
+        } else{
+            res.status(200).json({ message: "The course is changed." });
         }
     });
 })
