@@ -46,7 +46,11 @@ const Login = () => {
         form.current.validateAll();
         AuthService.login(username, password).then(
           (result) => {
-            navigate("/frontPage", {state: result});
+            // update the token, roles and username inside localstorage
+            localStorage.setItem('username', username);
+            localStorage.setItem('token', result.token);
+            localStorage.setItem('roles', JSON.stringify(result));
+            navigate("/frontPage");
             window.location.reload();
           },
           (error) => {
