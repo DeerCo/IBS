@@ -3,10 +3,8 @@ const moment = require("moment");
 require("moment-timezone");
 const fs = require("fs");
 const json2csv = require("json2csv");
-const bent = require("bent")
-const getJSON = bent("json")
 const transporter = require("../setup/email");
-const constants = require("../setup/constants");
+const db = require("../setup/db");
 
 function generateAccessToken(username, email, admin, roles) {
     return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
@@ -75,81 +73,98 @@ function time_validate(time) {
     }
 }
 
-//Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-
 function password_validate(password) {
     let regex = new RegExp(".");
-// ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$
     if (!regex.test(password)) {
         return 1;
     } else {
         return 0;
     }
 }
-function query_filter(query, ta = "") {
-    let filter = "";
-    if ("id" in query && !isNaN(query["id"]) && query["id"].trim() != "") {
-        filter = filter + " AND id = " + query["id"];
+
+async function task_validate(course_id, task, student) {
+    if (student){
+        var pg_res = await db.query("SELECT * FROM course_" + course_id + ".task WHERE task = ($1) AND hidden = 'false'", [task]);
+    } else{
+        var pg_res = await db.query("SELECT * FROM course_" + course_id + ".task WHERE task = ($1)", [task]);
     }
-    if ("time" in query && !time_validate(query["time"])) {
-        filter = filter + " AND time = '" + query["time"] + " America/Toronto'";
+
+    if (pg_res.rowCount <= 0) {
+        return "";
+    } else {
+        return task;
     }
-    if ("date" in query && !date_validate(query["date"])) {
-        filter = filter + " AND time BETWEEN '" + query["date"] + " America/Toronto'::date AND '" + query["date"] + " America/Toronto'::date + INTERVAL '24 HOURS'";
-    }
-    if ("student" in query && !name_validate(query["student"])) {
-        filter = filter + " AND student = '" + query["student"] + "'";
-    }
-    if ("length" in query && !isNaN(query["length"]) && query["length"].trim() != "") {
-        filter = filter + " AND length = " + query["length"];
-    }
-    if ("location" in query && !string_validate(query["location"])) {
-        filter = filter + " AND location = '" + query["location"] + "'";
-    }
-    if ("cancelled" in query && (query["cancelled"].toLowerCase() === "true" || query["cancelled"].toLowerCase() === "false")) {
-        filter = filter + " AND cancelled = '" + query["cancelled"].toLowerCase() + "'";
-    }
-    if ("note" in query && !string_validate(query["note"])) {
-        filter = filter + " AND note = '" + query["note"] + "'";
-    }
-    if ("booked" in query) {
-        if (query["booked"].toLowerCase() === "true") {
-            filter = filter + " AND student IS NOT NULL";
-        } else if (query["booked"].toLowerCase() === "false") {
-            filter = filter + " AND student IS NULL";
-        }
-    }
-    // if (ta != "") {
-    //     if ("ta" in query && !name_validate(query["ta"])) {
-    //         if (query["ta"].toLowerCase() != "all") {
-    //             filter = filter + " AND ta = '" + query["ta"] + "'";
-    //         }
-    //     } else {
-    //         filter = filter + " AND ta = '" + ta + "'";
-    //     }
-    // }
-    filter = filter + " AND ta = '" + ta + "'";
-    return filter;
 }
 
-function query_set(query) {
+function query_filter(query, start_data_id) {
+    let filter = "";
+    let data = [];
+    let data_id = start_data_id;
+
+    if ("interview_id" in query && !isNaN(query["interview_id"]) && query["interview_id"].trim() != "") {
+        filter = filter + " AND interview_id = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["interview_id"]);
+    }
+    if ("time" in query && !time_validate(query["time"])) {
+        filter = filter + " AND time = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["time"] + " America/Toronto");
+    }
+    if ("date" in query && !date_validate(query["date"])) {
+        filter = filter + " AND time BETWEEN ($" + data_id + ") AND ($" + data_id + ") + INTERVAL '24 HOURS'";
+        data_id += 1;
+        data.push(query["date"] + " America/Toronto");
+    }
+    if ("group_id" in query && !name_validate(query["group_id"])) {
+        filter = filter + " AND group_id = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["group_id"]);
+    }
+    if ("length" in query && !isNaN(query["length"]) && query["length"].trim() != "") {
+        filter = filter + " AND length = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["length"]);
+    }
+    if ("location" in query && !string_validate(query["location"])) {
+        filter = filter + " AND location = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["location"]);
+    }
+    if ("note" in query && !string_validate(query["note"])) {
+        filter = filter + " AND note = ($" + data_id + ")";
+        data_id += 1;
+        data.push(query["note"]);
+    }
+    return {filter: filter, data: data, data_id: data_id};
+}
+
+function query_set(query, start_data_id) {
     let set = "";
+    let data = [];
+    let data_id = start_data_id;
+
     if ("set_time" in query && !time_validate(query["set_time"])) {
-        set = set + " time = '" + query["set_time"] + " America/Toronto',";
+        set = set + " time = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_time"] + " America/Toronto");
     }
     if ("set_length" in query && !isNaN(query["set_length"]) && query["set_length"].trim() != "") {
-        set = set + " length = " + query["set_length"] + ",";
+        set = set + " length = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_length"]);
     }
     if ("set_location" in query && !string_validate(query["set_location"])) {
-        set = set + " location = '" + query["set_location"] + "',";
-    }
-    if ("set_cancelled" in query && (query["set_cancelled"].toLowerCase() === "true" || query["set_cancelled"].toLowerCase() === "false")) {
-        set = set + " cancelled = '" + query["set_cancelled"].toLowerCase() + "',";
+        set = set + " location = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_location"]);
     }
     if ("set_note" in query && !string_validate(query["set_note"])) {
-        set = set + " note = '" + query["set_note"] + "',";
+        set = set + " note = ($" + data_id + "),";
+        data_id += 1;
+        data.push(query["set_note"]);
     }
-    return set;
+    return {set: set, data: data, data_id: data_id};
 }
 
 function send_email(email, subject, body) {
@@ -163,49 +178,12 @@ function send_email(email, subject, body) {
     transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
 }
 
-function send_interviews_csv(json, res, backup, note = "") {
-    if (JSON.stringify(json) === "[]") {
-        res.status(200).json({ message: "No data is available." });
-        return;
-    }
-
-    let current_time = moment().tz("America/Toronto");
-    let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
-
-    if (backup) {
-        var dir = __dirname + "/../backup/" + dir_date;
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-    } else {
-        var dir = __dirname + "/../tmp/" + dir_date;
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-    }
-
-    let json2csvParser = new json2csv.Parser();
-    let file_name = "interviews_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
-    let csv = json2csvParser.parse(json);
-    fs.writeFile(dir + file_name, csv, (err) => {
-        if (err) {
-            res.status(404).json({ message: "Unknown error." });
-        } else {
-            if (backup) {
-                res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
-            } else {
-                res.sendFile(file_name, { root: "./tmp/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
-            }
-        }
-    });
-}
-
-function search_files(keyword, sub_dir = "") {
-    let dir = __dirname + "/../files/" + sub_dir;
+function search_files(username, group_id, coure_id, sub_dir = "") {
+    let dir = __dirname + "/../files/course_" + coure_id + "/" + sub_dir;
     let result = [];
 
     if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+        return result;
     }
 
     let files = fs.readdirSync(dir);
@@ -215,8 +193,8 @@ function search_files(keyword, sub_dir = "") {
         let stat = fs.lstatSync(file_name);
 
         if (stat.isDirectory()) {
-            result = result.concat(search_files(keyword, sub_dir + files[i] + "/"));
-        } else if (file_name.indexOf(keyword) >= 0) {
+            result = result.concat(search_files(username, group_id, sub_dir + files[i] + "/"));
+        } else if (file_name.indexOf(username + "_") >= 0 || file_name.indexOf("group_" + group_id + "_")) {
             result.push(sub_dir + files[i]);
         };
     };
@@ -245,45 +223,125 @@ function backup_marks(json, note = "") {
     });
 }
 
-function calculate_marks(json) {
-    let marks = { summary: {} };
+async function get_courses(){
+    let pg_res = await db.query("SELECT * FROM course ORDER BY task_order", []);
+
+    let courses = {};
+    for (let row of pg_res.rows){
+        let course = {};
+        course["course_code"] = row["course_code"];
+        course["course_session"] = row["course_session"];
+
+        courses[row["course_id"]] = course;
+    }
+
+    return courses;
+}
+
+async function get_tasks(course_id){
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".task ORDER BY task_order", []);
+
+    let tasks = {};
+    for (let row of pg_res.rows){
+        let task = {};
+        task["due_date"] = row["due_date"];
+        task["hidden"] = row["hidden"];
+        task["min_member"] = row["min_member"];
+        task["max_member"] = row["max_member"];
+
+        tasks[row["task"]] = task;
+    }
+
+    return tasks;
+}
+
+async function get_criteria_id(course_id, task, criteria){
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".criteria WHERE task = ($1) AND criteria = ($2)", [task, criteria]);
+
+    if (pg_res.rowCount === 0){
+        return -1;
+    } else{
+        return pg_res.rows[0]["criteria_id"];
+    }
+    
+}
+
+async function get_criteria(course_id, task){
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".criteria WHERE task = ($1)", [task]);
+
+    let all_criteria = {};
+    for (let row of pg_res.rows){
+        let criteria = {};
+        criteria["task"] = row["task"];
+        criteria["criteria"] = row["criteria"];
+        criteria["total"] = row["total"];
+        criteria["description"] = row["description"];
+
+        all_criteria[row["criteria_id"]] = criteria;
+    }
+
+    return all_criteria;
+}
+
+async function get_total_out_of(course_id){
+    let pg_res = await db.query("SELECT task, SUM(total) AS sum FROM course_" + course_id + ".criteria GROUP BY task", []);
+
+    let total_out_of = {};
+    for (let row of pg_res.rows){
+        total_out_of[row["task"]] = row["sum"];
+    }
+
+    return total_out_of;
+}
+
+async function get_group_id(course_id, task, username){
+    let pg_res = await db.query("SELECT group_id FROM course_" + course_id + ".group_user WHERE task = ($1) AND username= ($2) AND status = 'confirmed'", [task, username]);
+
+    if (pg_res.rowCount == 0){
+        return -1;
+    } else{
+        return pg_res.rows[0]["group_id"];
+    }
+}
+
+async function format_marks_one_task(json, course_id, task) {
+    let marks = {};
+    let all_criteria = await get_criteria(course_id, task);
 
     for (let row of json) {
-        let temp_mark = parseFloat(row["mark"]);
-        let temp_total = parseFloat(row["total"]);
-
-        if (row["description"]) {
-            var temp_data = { criteria: row["criteria"], mark: temp_mark, out_of: temp_total, description: row["description"] };
-        } else {
-            var temp_data = { criteria: row["criteria"], mark: temp_mark, out_of: temp_total };
+        let username = row["username"];
+        if (!(username in marks)){
+            marks[username] = {};
+            for (let criteria in all_criteria){
+                marks[username][all_criteria[criteria]["criteria"]] = {mark: 0, out_of: all_criteria[criteria]["total"]};
+            }
         }
-
-        if (row["task"] in marks) {
-            marks[row["task"]].push(temp_data);
-            marks["summary"][row["task"]]["total"] += temp_mark;
-            marks["summary"][row["task"]]["out_of"] += temp_total;
-        } else {
-            marks[row["task"]] = [temp_data];
-            marks["summary"][row["task"]] = { total: temp_mark, out_of: temp_total };
-        }
+        
+        let criteria_name = all_criteria[row["criteria_id"]]["criteria"];
+        marks[username][criteria_name]["mark"] = parseFloat(row["mark"]);
     }
-
-    let final_mark = 0;
-    for (let task in marks["summary"]) {
-        if (task in constants["max"] && marks["summary"][task]["total"] > constants["max"][task]) {
-            marks["summary"][task]["total"] = constants["max"][task];
-        }
-        if (marks["summary"][task]["out_of"] != 0) {
-            let weighted_mark = marks["summary"][task]["total"] / marks["summary"][task]["out_of"] * constants["weights"][task];
-            final_mark += weighted_mark;
-        }
-    }
-    marks["summary"]["final"] = { total: final_mark, out_of: 100 };
-
     return marks;
 }
 
-function send_marks_csv(json, res, note = "", total = false) {
+async function format_marks_all_tasks(json, course_id) {
+    let marks = {};
+    let total_out_of = await get_total_out_of(course_id);
+
+    for (let row of json) {
+        let username = row["username"];
+        if (!(username in marks)){
+            marks[username] = {};
+            for (let task in total_out_of){
+                marks[username][task] = {mark: 0, out_of: total_out_of[task]};
+            }
+        }
+
+        marks[username][row["task"]]["mark"] = parseFloat(row["sum"]);
+    }
+    return marks;
+}
+
+async function format_marks_one_task_csv(json, course_id, task, res, note = "", total = false) {
     if (JSON.stringify(json) === "[]") {
         res.status(200).json({ message: "No data is available." });
         return;
@@ -291,27 +349,34 @@ function send_marks_csv(json, res, note = "", total = false) {
 
     let current_time = moment().tz("America/Toronto");
     let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
-
     let dir = __dirname + "/../backup/" + dir_date;
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
     }
 
     let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
-    let file_name = "marks_readable_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
-
-    let header = { Student: "/" };
+    let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
+    let header = { Student: "Out Of" };
     let parsed_json = {};
+    let marks = await format_marks_one_task(json, course_id, task);
 
-    for (let mark of json) {
-        if (!(mark["criteria"] in header)) {
-            header[mark["criteria"]] = parseFloat(mark["total"]);
-        }
+    if (Object.keys(marks).length === 0){
+        res.status(200).json({ message: "No mark is available." });
+        return;
+    }
 
-        if (mark["student"] in parsed_json) {
-            parsed_json[mark["student"]][mark["criteria"]] = parseFloat(mark["mark"]);
-        } else {
-            parsed_json[mark["student"]] = { Student: mark["student"], [mark["criteria"]]: parseFloat(mark["mark"]) };
+    for (let student in marks) {
+        for (let criteria in marks[student]){
+            if (!(criteria in header)) {
+                header[criteria] = parseFloat(marks[student][criteria]["out_of"]);
+            }
+
+            let mark = parseFloat(marks[student][criteria]["mark"]);
+            if (student in parsed_json) {
+                parsed_json[student][criteria] = parseFloat(mark);
+            } else {
+                parsed_json[student] = { Student: student, [criteria]: parseFloat(mark) };
+            }
         }
     }
 
@@ -401,101 +466,9 @@ function send_final_marks_csv(json, res, total = false) {
     });
 }
 
-async function get_user_information(username) {
-    try {
-        let user = {};
-
-        let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let temp_user of users) {
-            if (temp_user["user_name"] === username) {
-                user = temp_user;
-            }
-        }
-
-        return { status: true, user: user };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
-async function get_all_usernames() {
-    try {
-        let usernames = [];
-
-        let users = await getJSON(process.env.MARKUS_API + "roles.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let temp_user of users) {
-            usernames.push(temp_user["user_name"]);
-        }
-
-        return { status: true, usernames: usernames };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
-async function get_group_information_by_user(user_id, markus_id) {
-    try {
-        let index = 0;
-        let found_index = -1;
-        let users_requests = [];
-
-        // Get the group index
-        let groups = await getJSON(process.env.MARKUS_API + "assignments/" + markus_id + "/groups.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let group of groups) {
-            for (let member of group["members"]) {
-                if (member["role_id"] === user_id) {
-                    found_index = index;
-                }
-            }
-            index += 1;
-        }
-        if (found_index === -1) {
-            return { status: true, users: [], group: "" };
-        }
-
-        // Get the group information based on the group index
-        for (let member of groups[found_index]["members"]) {
-            if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["role_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
-            }
-        }
-        let users_info = await Promise.all(users_requests);
-        return { status: true, users: users_info, group: groups[found_index]["group_name"] };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
-async function get_group_information_by_group_name(group_name, markus_id) {
-    try {
-        let users_requests = [];
-
-        let groups = await getJSON(process.env.MARKUS_API + "assignments/" + markus_id + "/groups.json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH });
-        for (let group of groups) {
-            if (group["group_name"] === group_name) {
-                for (let member of group["members"]) {
-                    if (member["membership_status"] === "accepted" || member["membership_status"] === "inviter") {
-                        users_requests.push(await getJSON(process.env.MARKUS_API + "roles/" + member["role_id"] + ".json", null, { "Authorization": "MarkUsAuth " + process.env.MARKUS_AUTH }));
-                    }
-                }
-            }
-        }
-
-        let users_info = await Promise.all(users_requests);
-        return { status: true, users: users_info };
-    } catch (e) {
-        console.log(e);
-        return { status: false };
-    }
-}
-
 
 module.exports = {
     generateAccessToken: generateAccessToken,
-    password_validate: password_validate,
     name_validate: name_validate,
     boolean_validate: boolean_validate,
     number_validate: number_validate,
@@ -503,17 +476,21 @@ module.exports = {
     date_validate: date_validate,
     time_validate: time_validate,
     email_validate: email_validate,
+    password_validate: password_validate,
+    task_validate: task_validate,
     query_filter: query_filter,
     query_set: query_set,
     send_email: send_email,
-    send_interviews_csv: send_interviews_csv,
     search_files: search_files,
     backup_marks: backup_marks,
-    calculate_marks: calculate_marks,
-    send_marks_csv: send_marks_csv,
+    get_courses: get_courses,
+    get_tasks: get_tasks,
+    get_criteria_id: get_criteria_id,
+    get_criteria: get_criteria,
+    get_total_out_of: get_total_out_of,
+    get_group_id: get_group_id,
+    format_marks_one_task: format_marks_one_task,
+    format_marks_all_tasks: format_marks_all_tasks,
+    format_marks_one_task_csv: format_marks_one_task_csv,
     send_final_marks_csv: send_final_marks_csv,
-    get_user_information: get_user_information,
-    get_all_usernames: get_all_usernames,
-    get_group_information_by_user: get_group_information_by_user,
-    get_group_information_by_group_name: get_group_information_by_group_name
 }

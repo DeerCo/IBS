@@ -27,8 +27,7 @@ const multer = require('multer');
 var upload = multer({});
 
 app.use(function (req, res, next) {
-    let url_allow_upload = ["/admin/marks/upload", "/a1/submit/"];
-    if (url_allow_upload.includes(req.url)) {
+    if (req.url.includes("upload")) {
         next();
     } else {
         let cb = upload.none();
@@ -44,22 +43,22 @@ dotenv.config();
 
 // Routes
 const rate_limit = require("./setup/rate_limit");
-const adminRouter = require('./routes/admin');
-const instructorRouter = require('./routes/instructor');
-const taRouter = require('./routes/ta');
-const studentRouter = require('./routes/student');
-const authRouter = require('./routes/auth');
+const general = require('./route/general');
+const admin = require('./route/admin');
+const instructor = require('./route/instructor');
+const ta = require('./route/ta');
+const student = require('./route/student');
 
 app.use(rate_limit.general_limiter);
 
 app.get("/", (req, res) => {
     res.status(418).json({ message: "Why are you here??? LOL --Howie" });
 })
-app.use('/auth', authRouter);
-app.use('/admin', adminRouter);
-app.use('/instructor', instructorRouter);
-app.use('/ta', taRouter);
-app.use('/', studentRouter);
+app.use('/', general);
+app.use('/admin/', admin);
+app.use('/instructor/', instructor);
+app.use('/ta/', ta);
+app.use('/', student);
 
 
 // Error handling

@@ -15,6 +15,7 @@
   "author": "Han Xian Xu Huang",
   "license": "ISC",
   "dependencies": {
+    "adm-zip": "^0.5.9",
     "bent": "^7.3.12",
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
@@ -30,6 +31,5 @@
     "nodemailer": "^6.7.2",
     "pg": "^8.7.1",
     "pg-format": "^1.0.4"
-  },
-  "devDependencies": {}
+  }
 }
