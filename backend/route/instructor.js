@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const middleware = require("../module/auth/instructor/middleware");
-const all_criteria = require("../module/task/staff/all");
 const all_tasks = require("../module/task/staff/all");
 const add_task = require("../module/task/staff/add");
+const all_criteria = require("../module/criteria/staff/all");
 const add_criteria = require("../module/criteria/staff/add");
+const change_criteria = require("../module/criteria/staff/change");
+const delete_criteria = require("../module/criteria/staff/delete");
 const upload_files = require("../module/file/staff/upload");
 const download_files = require("../module/file/staff/download");
 const delete_files = require("../module/file/staff/delete");
@@ -34,6 +36,8 @@ router.use("/course/:course_id/task/add", add_task);
 // Criteria
 router.use("/course/:course_id/criteria/all", all_criteria);
 router.use("/course/:course_id/criteria/add", add_criteria);
+router.use("/course/:course_id/criteria/change", change_criteria);
+router.use("/course/:course_id/criteria/delete", delete_criteria);
 
 // File
 router.use("/course/:course_id/file/upload", upload_files);
