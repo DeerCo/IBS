@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require('multer');
 const fs = require("fs");
-const Unzipper = require("decompress-zip");
+const AdmZip = require("adm-zip");
 const helpers = require("../../../utilities/helpers");
 
 const upload = multer({
@@ -20,26 +20,15 @@ router.post("/", upload.single("file"), (req, res) => {
     }
 
 	let zip_path = req.file.destination + req.file.filename;
-	let unzipper = new Unzipper(zip_path);
-
-	unzipper.on('error', function (log) {
-		console.log(log);
-		res.status(400).json({ message: "The zip file cannot be unzipped." });
-		return;
-	});
-
-	unzipper.on('extract', function () {
-		res.status(200).json({ message: "The files have been uploaded." });
-		return;
-	});
+	var zip = new AdmZip(zip_path);
 
 	let path = "./files/course_" + res.locals["course_id"] + "/" + req.body["task"];
-	console.log(path)
 	if (!fs.existsSync(path)) {
         fs.mkdirSync(path, { recursive: true });
     }
 
-	unzipper.extract({ path: path, restrict: false });
+	zip.extractAllTo(path, true);
+	res.status(400).json({ message: "The file has been uploaded." });
 })
 
 module.exports = router;

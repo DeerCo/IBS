@@ -7,6 +7,8 @@ const all_tasks = require("../module/task/staff/all");
 const add_task = require("../module/task/staff/add");
 const add_criteria = require("../module/criteria/staff/add");
 const upload_files = require("../module/file/staff/upload");
+const download_files = require("../module/file/staff/download");
+const delete_files = require("../module/file/staff/delete");
 const get_one_mark = require("../module/mark/staff/one");
 const get_all_marks = require("../module/mark/staff/all");
 const get_all_marks_csv = require("../module/mark/staff/all_csv");
@@ -35,6 +37,8 @@ router.use("/course/:course_id/criteria/add", add_criteria);
 
 // File
 router.use("/course/:course_id/file/upload", upload_files);
+router.use("/course/:course_id/file/download", download_files);
+router.use("/course/:course_id/file/delete", delete_files);
 
 // Mark
 router.use("/course/:course_id/mark/one", get_one_mark);
