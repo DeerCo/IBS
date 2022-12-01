@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const csv = require('csvtojson');
 const format = require('pg-format');
+const path = require('path');
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
@@ -15,6 +16,10 @@ router.post("/", upload.single("file"), (req, res) => {
         res.status(400).json({ message: "The file is missing or has invalid format." });
         return;
     }
+    if (path.extname(req.file.originalname) !== ".csv"){
+		res.status(200).json({ message: "The file must be a csv file." });
+		return;
+	}
     if (!("course_id" in req.body) || helpers.number_validate(req.body["course_id"])) {
         res.status(400).json({ message: "The course id is missing or has invalid format." });
         return;
@@ -30,6 +35,9 @@ router.post("/", upload.single("file"), (req, res) => {
         let students = [];
         for (let j = 1; j < csv_row.length; j++) {
             students.push([csv_row[j][0], req.body["course_id"], "student"]);
+        }
+        if (students.length === 0){
+            res.status(200).json({ message: "The file must contain at least 1 student." });
         }
     
         client.query(format(sql_upload, students), [], (err, pgRes) => {
