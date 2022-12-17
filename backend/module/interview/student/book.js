@@ -31,6 +31,10 @@ router.post("/", (req, res) => {
     }
 
     helpers.get_group_id(res.locals["course_id"], res.locals["task"], res.locals["username"]).then(group_id => {
+        if (group_id === -1){
+            res.status(400).json({ message: "You need to join a group before booking an interview." });
+            return;
+        }
         let sql_check = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS time FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2)";
         client.query(sql_check, [group_id, res.locals["task"]], (err, pgRes) => {
             if (err) {
