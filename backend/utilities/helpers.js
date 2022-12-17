@@ -194,7 +194,7 @@ function search_files(username, group_id, coure_id, sub_dir = "") {
 
         if (stat.isDirectory()) {
             result = result.concat(search_files(username, group_id, sub_dir + files[i] + "/"));
-        } else if (file_name.indexOf(username + "_") >= 0 || file_name.indexOf("group_" + group_id + "_")) {
+        } else if (file_name.indexOf(username + "_") >= 0 || file_name.indexOf("group_" + group_id + "_") >= 0) {
             result.push(sub_dir + files[i]);
         };
     };

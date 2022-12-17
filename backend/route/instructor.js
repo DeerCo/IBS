@@ -4,6 +4,7 @@ const router = express.Router();
 const middleware = require("../module/auth/instructor/middleware");
 const all_tasks = require("../module/task/staff/all");
 const add_task = require("../module/task/staff/add");
+const change_task = require("../module/task/staff/change");
 const all_criteria = require("../module/criteria/staff/all");
 const add_criteria = require("../module/criteria/staff/add");
 const change_criteria = require("../module/criteria/staff/change");
@@ -32,6 +33,7 @@ router.use("/course/", middleware);
 // Task
 router.use("/course/:course_id/task/all", all_tasks);
 router.use("/course/:course_id/task/add", add_task);
+router.use("/course/:course_id/task/change", change_task);
 
 // Criteria
 router.use("/course/:course_id/criteria/all", all_criteria);

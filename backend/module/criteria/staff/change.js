@@ -29,12 +29,10 @@ router.put("/", (req, res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
-        } else {
-            if (pg_res.rowCount === 0){
-                res.status(400).json({ message: "There is no criteria associated with this criteria id." });
-            } else{
-                res.status(200).json({ message: "The criteria is changed." });
-            }
+        } else if (pg_res.rowCount === 0){
+            res.status(400).json({ message: "There is no criteria associated with this criteria id." });
+        } else{
+            res.status(200).json({ message: "The criteria is changed." });
         }
     });
 })

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const csv = require('csvtojson');
 const format = require('pg-format');
+const path = require('path');
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
@@ -15,6 +16,10 @@ router.post("/", upload.single("file"), (req, res) => {
         res.status(400).json({ message: "The file is missing or has invalid format." });
         return;
     }
+    if (path.extname(req.file.originalname) !== ".csv"){
+		res.status(200).json({ message: "The file must be a csv file." });
+		return;
+	}
     if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
         res.status(400).json({ message: "The task is missing or has invalid format." });
         return;
@@ -63,6 +68,10 @@ router.post("/", upload.single("file"), (req, res) => {
 
                     marks_data.push([all_criteria[k], csv_row[j][0], mark, req.body["task"]]);
                 }
+            }
+            if (marks_data.length === 0){
+                res.status(200).json({ message: "The file must contain at least 1 mark." });
+                return;
             }
     
             client.query(format(sql_upload, marks_data), [], (err, pgRes) => {
