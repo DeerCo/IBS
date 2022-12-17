@@ -1,15 +1,15 @@
 import axios from "axios";
-const API_URL = "http://localhost:3000/";
+let API_URL = "http://localhost:3000/";
 
-const register = (username, password, email) => {
-    return axios.post(API_URL + "register", {
+let register = (username, password, email) => {
+    return axios.post(API_URL + "auth/register", {
       username,
       password,
       email,
     });
   };
 
-const login = (username, password) => {
+let login = (username, password) => {
   return axios
     .post(API_URL + "auth/login", {
       username,
@@ -24,11 +24,11 @@ const login = (username, password) => {
     });
 };
 
-const tasks = (courseid) => {
+let tasks = (courseid) => {
   // get the token
-  const token = localStorage.getItem("token"); 
+  let token = localStorage.getItem("token"); 
   // setting config
-  const config = {
+  let config = {
       headers: { Authorization: `Bearer ${token}` }
   };
   return axios
@@ -41,11 +41,11 @@ const tasks = (courseid) => {
     });
 };
 
-const grades = (courseid, curr_task) => {
+let grades = (courseid, curr_task) => {
   // get the token
-  const token = localStorage.getItem("token"); 
+  let token = localStorage.getItem("token"); 
   // setting config
-  const config = {
+  let config = {
       headers: { Authorization: `Bearer ${token}` },
       params: {task: curr_task},
   };
@@ -59,11 +59,11 @@ const grades = (courseid, curr_task) => {
     });
 };
 
-const files = (courseid, curr_task) => {
+let files = (courseid, curr_task) => {
   // get the token
-  const token = localStorage.getItem("token"); 
+  let token = localStorage.getItem("token"); 
   // setting config
-  const config = {
+  let config = {
       headers: { Authorization: `Bearer ${token}` },
       params: {task: curr_task},
   };
@@ -77,20 +77,38 @@ const files = (courseid, curr_task) => {
     });
 };
 
-
-
-const download = (courseid, task, file_id, file_name) => {
+let interviews = (courseid, curr_task) => {
   // get the token
-  const token = localStorage.getItem("token"); 
+  let token = localStorage.getItem("token"); 
   // setting config
-  const config = {
+  let config = {
+      headers: { Authorization: `Bearer ${token}` },
+      params: {task: curr_task},
+  };
+  return axios
+    .get(API_URL + "course/" + courseid + "/interview/all",  config)
+    .then((response) => {
+      // if (response.data.accessToken) {
+      //   localStorage.setItem("user", JSON.stringify(response.data));
+      // }
+      return response.data;
+    });
+};
+
+
+
+let download = (courseid, task, file_id, file_name) => {
+  // get the token
+  let token = localStorage.getItem("token"); 
+  // setting config
+  let config = {
       headers: { Authorization: `Bearer ${token}` },
       params: {task: task, file_id: file_id},
   };
   return axios.
   get(API_URL + "course/" + courseid + "/file/retrieve", config).then(response => {
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
+    let url = window.URL.createObjectURL(new Blob([response.data]));
+    let link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', file_name); //or any other extension
     document.body.appendChild(link);
@@ -100,13 +118,14 @@ const download = (courseid, task, file_id, file_name) => {
 
 
 
-const AuthService = {
+let AuthService = {
     register,
     login,
     tasks,
     grades,
     files,
     download,
+    interviews,
   };
   
   export default AuthService;

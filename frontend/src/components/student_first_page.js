@@ -9,21 +9,21 @@ import AuthService from "../services/auth_services";
 
 
 
-const Frist = () => {
+let Frist = () => {
     let navigate = useNavigate();
-    // const location = useLocation();
-    // const roles = location.state.roles;
+    // let location = useLocation();
+    // let roles = location.state.roles;
 
     // get all the json from localstorage
-    const fetch = JSON.parse(localStorage.getItem("roles")); 
-    const roles = fetch.roles;
+    let fetch = JSON.parse(localStorage.getItem("roles")); 
+    let roles = fetch.roles;
 
     // get username from localstorage
-    const username = localStorage.getItem("username");
+    let username = localStorage.getItem("username");
 
     // handle redirect to pages
 
-    const tasks = (courseid) => {
+    let tasks = (courseid) => {
 
         // update courseid in localstorage
         localStorage.setItem('courseid', courseid);
@@ -36,7 +36,7 @@ const Frist = () => {
             
           },
           (error) => {
-            const resMessage =
+            let resMessage =
               (error.response &&
                 error.response.data &&
                 error.response.data.message) ||
@@ -85,7 +85,6 @@ const Frist = () => {
                                     <div className="d-flex justify-content-between align-items-center">
                                         <div className="btn-group">
                                             <button type="button" onClick={() => {tasks(d.course_id)}} className="btn btn-sm btn-outline-secondary">Assignments</button>
-                                            <a href="student_interview_page.html"><button type="button" className="btn btn-sm btn-outline-secondary">Interview</button></a>
                                         </div>
                                         <small className="text-muted">course number {d.course_id}</small>
                                     </div>

@@ -14,23 +14,23 @@ import AuthService from "../services/auth_services";
 
 
 
-const Files = () => {
+let Files = () => {
     let navigate = useNavigate();
 
     // get username from localstorage
-    const username = localStorage.getItem("username");
+    let username = localStorage.getItem("username");
     
     // get all the json from localstorage
-    const fetch = JSON.parse(localStorage.getItem("files")); 
-    const files = fetch.files;
+    let fetch = JSON.parse(localStorage.getItem("files")); 
+    let files = fetch.files;
 
     // download the file
-    const download = (file_id, file_name) => {  
+    let download = (file_id, file_name) => {  
         // get courseid from localstorage
-        const courseid = localStorage.getItem("courseid");
+        let courseid = localStorage.getItem("courseid");
 
         // get task from localstorage
-        const task = localStorage.getItem("task");
+        let task = localStorage.getItem("task");
 
         // call the service function
         AuthService.download(courseid, task, file_id, file_name).then(
@@ -39,7 +39,7 @@ const Files = () => {
             
           },
           (error) => {
-            const resMessage =
+            let resMessage =
               (error.response &&
                 error.response.data &&
                 error.response.data.message) ||
@@ -53,7 +53,7 @@ const Files = () => {
       };
 
       // download all of the selected files
-      const download_all = () => {
+      let download_all = () => {
         console.log(check);
         check.map(check => {
             download(check.id, check.name);
@@ -63,14 +63,14 @@ const Files = () => {
       // storage for the cheked box
 
       // state holder
-      const initialState = [];
-      const [check, setCheck] = useState(initialState);
+      let initialState = [];
+      let [check, setCheck] = useState(initialState);
 
 
       // handle click
-      const handleClick = (id, name) => {
+      let handleClick = (id, name) => {
         // check if the value is stored already
-        const isFound = check.some(check => {
+        let isFound = check.some(check => {
             if (check.id === id) {
               return true;
             }
@@ -87,7 +87,7 @@ const Files = () => {
       };
 
       // update value
-      const updateState = (id) => {
+      let updateState = (id) => {
         setCheck((current) =>
         current.filter((curr) => curr.id !== id)
         );

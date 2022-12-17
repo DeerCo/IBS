@@ -7,7 +7,7 @@ import '../styles/style.css'
 
 import AuthService from "../services/auth_services";
 
-const required = (value) => {
+let required = (value) => {
     if (!value) {
       return (
         <div className="alert alert-danger" role="alert">
@@ -17,28 +17,28 @@ const required = (value) => {
     }
 };
 
-const Login = () => {
+let Login = () => {
   
 
     let navigate = useNavigate();
   
-    const form = useRef();
+    let form = useRef();
   
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [message, setMessage] = useState("");
+    let [username, setUsername] = useState("");
+    let [password, setPassword] = useState("");
+    let [message, setMessage] = useState("");
   
-    const onChangeUsername = (e) => {
-      const username = e.target.value;
+    let onChangeUsername = (e) => {
+      let username = e.target.value;
       setUsername(username);
     };
   
-    const onChangePassword = (e) => {
-      const password = e.target.value;
+    let onChangePassword = (e) => {
+      let password = e.target.value;
       setPassword(password);
     };
 
-    const handleLogin = (e) => {
+    let handleLogin = (e) => {
         e.preventDefault();
     
         setMessage("");
@@ -54,7 +54,7 @@ const Login = () => {
             window.location.reload();
           },
           (error) => {
-            const resMessage =
+            let resMessage =
               (error.response &&
                 error.response.data &&
                 error.response.data.message) ||

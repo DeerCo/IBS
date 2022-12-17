@@ -11,7 +11,7 @@ import { Bar } from "react-chartjs-2";
 
 import AuthService from "../services/auth_services";
 
-const code = String.raw`def __init__(self, weight, time):
+let code = String.raw`def __init__(self, weight, time):
 self.weight = weight
 self.time = time
 self.fraction = time / weight
@@ -55,15 +55,15 @@ print('sorting by weight: ' + str(processor_scheduling(z_copy)))`;
 
 
 
-const Grades = () => {
+let Grades = () => {
     let navigate = useNavigate();
 
     // get username from localstorage
-    const username = localStorage.getItem("username");
+    let username = localStorage.getItem("username");
     
     // get all the json from localstorage
-    const fetch = JSON.parse(localStorage.getItem("grades")); 
-    const marks = fetch.marks[username];
+    let fetch = JSON.parse(localStorage.getItem("grades")); 
+    let marks = fetch.marks[username];
     console.log(marks);
 
     // use effect on prism
@@ -75,9 +75,9 @@ const Grades = () => {
     // draw the char js
 
     // put value into list
-    const label = [];
-    const score = [];
-    const average = [];
+    let label = [];
+    let score = [];
+    let average = [];
 
     Object.keys(marks).map((e) => (label.push(e)));
     Object.keys(marks).map((e) => (score.push(marks[e].mark)));
@@ -85,7 +85,7 @@ const Grades = () => {
 
     console.log(score);
 
-    const data = {
+    let data = {
       labels: label,
       datasets: [
         {
@@ -127,11 +127,11 @@ const Grades = () => {
               <div className="divider"> </div>
 
               <div className="card-box row">
-                <div className= "col-5 tasks2">
+                <div className= "col-12 tasks2">
                   <ol className="list-group list-group-numbered">
                     <li className="d-flex justify-content-between flex-row mb-1">
                       <div className="ms-2 me-auto">
-                          <div className="fw-bold">Filename</div>
+                          <div className="fw-bold">Criteria</div>
                       </div>
                       <span className="fw-bold">Grades</span>
                      </li>
@@ -147,11 +147,11 @@ const Grades = () => {
                   </ol>
                 </div>
                 
-                <div className="col-7 tasks2">
+                {/* <div className="col-7 tasks2">
                 <pre><code className="language-python">
                     {code}
                 </code></pre>
-                </div>
+                </div> */}
               </div>
 
               <div className="divider2"></div>

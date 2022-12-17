@@ -9,23 +9,23 @@ import AuthService from "../services/auth_services";
 
 
 
-const Tasks = () => {
+let Tasks = () => {
     let navigate = useNavigate();
     
     // get all the json from localstorage
-    const fetch = JSON.parse(localStorage.getItem("tasks")); 
-    const tasks = fetch.task;
+    let fetch = JSON.parse(localStorage.getItem("tasks")); 
+    let tasks = fetch.task;
     
      // get username from localstorage
-     const username = localStorage.getItem("username");
+     let username = localStorage.getItem("username");
 
     // navigate to new page when student select a assignment
-    const grades = (task) => {  
+    let grades = (task) => {  
         // update task in localstorage
        localStorage.setItem('task', task);
 
         // get courseid from localstorage
-        const courseid = localStorage.getItem("courseid");
+        let courseid = localStorage.getItem("courseid");
 
         // call the service function
         AuthService.grades(courseid, task).then(
@@ -35,7 +35,7 @@ const Tasks = () => {
             
           },
           (error) => {
-            const resMessage =
+            let resMessage =
               (error.response &&
                 error.response.data &&
                 error.response.data.message) ||
@@ -49,12 +49,12 @@ const Tasks = () => {
       };
 
     // navigate to new page to get all the available files
-    const files = (task) => {  
+    let files = (task) => {  
        // update task in localstorage
        localStorage.setItem('task', task);
 
       // get courseid from localstorage
-      const courseid = localStorage.getItem("courseid");
+      let courseid = localStorage.getItem("courseid");
 
       // call the service function
       AuthService.files(courseid, task).then(
@@ -64,7 +64,7 @@ const Tasks = () => {
           
         },
         (error) => {
-          const resMessage =
+          let resMessage =
             (error.response &&
               error.response.data &&
               error.response.data.message) ||
@@ -76,6 +76,35 @@ const Tasks = () => {
       );
     
     };
+
+    // navigate to new page to get all the available interviews
+    let interviews = (task) => {  
+      // update task in localstorage
+      localStorage.setItem('task', task);
+
+     // get courseid from localstorage
+     let courseid = localStorage.getItem("courseid");
+
+     // call the service function
+     AuthService.interviews(courseid, task).then(
+       (result) => {
+         localStorage.setItem('interviews', JSON.stringify(result));
+         navigate("/interviewPage");
+         
+       },
+       (error) => {
+         let resMessage =
+           (error.response &&
+             error.response.data &&
+             error.response.data.message) ||
+           error.message ||
+           error.toString();
+
+         // setMessage(resMessage);
+       }
+     );
+   
+   };
 
       return (
         <>
@@ -113,6 +142,7 @@ const Tasks = () => {
                                             <div className="btn-group">
                                                 <button type="button" onClick={() => {files(d.task)}} className="btn btn-sm btn-outline-secondary">Details</button>
                                                 <button type="button" onClick={() => {grades(d.task)}} className="btn btn-sm btn-outline-secondary">Grades</button>
+                                                <button type="button" onClick={() => {interviews(d.task)}} className="btn btn-sm btn-outline-secondary">Interviews</button>
                                             </div>
                                             <small className="text-muted">max group members:{d.max_member}</small>
                                         </div>

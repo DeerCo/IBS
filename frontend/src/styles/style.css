@@ -362,3 +362,13 @@ input[type=text]:placeholder, input[type=password]{
     font-family: Poppins, sans-serif;
     font-size: 28px;
 }
+
+.popup{
+    z-index:99999;
+}
+
+.curtain{
+    z-index:99998;
+    --bs-bg-opacity: .5;
+    height: 850px;
+}
