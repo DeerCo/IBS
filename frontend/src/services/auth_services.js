@@ -95,6 +95,65 @@ let interviews = (courseid, curr_task) => {
     });
 };
 
+// get all the booked interviews
+let booked_interviews = (courseid, curr_task) => {
+  // get the token
+  let token = localStorage.getItem("token"); 
+  // setting config
+  let config = {
+      headers: { Authorization: `Bearer ${token}` },
+      params: {task: curr_task},
+  };
+  return axios
+    .get(API_URL + "course/" + courseid + "/interview/check",  config)
+    .then((response) => {
+      // if (response.data.accessToken) {
+      //   localStorage.setItem("user", JSON.stringify(response.data));
+      // }
+      return response.data;
+    });
+};
+
+// book an interview
+// time in formate of 2022-12-30 16:00:00
+let book_interviews = (courseid, curr_task, time, location) => {
+  // get the token
+  let token = localStorage.getItem("token"); 
+  // setting config
+  // let config = {
+  //     headers: { },
+  //     body: ,
+  // };
+  return axios
+    .post(API_URL + "course/" + courseid + "/interview/book", {curr_task, time, location}, `Bearer ${token}`)
+    .then((response) => {
+      // if (response.data.accessToken) {
+      //   localStorage.setItem("user", JSON.stringify(response.data));
+      // }
+      return response.data;
+    });
+};
+
+// cancel a currently booked interview
+// this is a delete request
+let cancel_interviews = (courseid, curr_task) => {
+  // get the token
+  let token = localStorage.getItem("token"); 
+  // setting config
+  let config = {
+      headers: { Authorization: `Bearer ${token}` },
+      params: {task: curr_task},
+  };
+  return axios
+    .delete(API_URL + "course/" + courseid + "/interview/cancel",  config)
+    .then((response) => {
+      // if (response.data.accessToken) {
+      //   localStorage.setItem("user", JSON.stringify(response.data));
+      // }
+      return response.data;
+    });
+};
+
 
 
 let download = (courseid, task, file_id, file_name) => {
@@ -126,6 +185,9 @@ let AuthService = {
     files,
     download,
     interviews,
+    booked_interviews,
+    book_interviews,
+    cancel_interviews,
   };
   
   export default AuthService;
