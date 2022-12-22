@@ -119,17 +119,11 @@ let booked_interviews = (courseid, curr_task) => {
 let book_interviews = (courseid, curr_task, time, location) => {
   // get the token
   let token = localStorage.getItem("token"); 
-  // setting config
-  // let config = {
-  //     headers: { },
-  //     body: ,
-  // };
+  console.log(curr_task, time, location);
+  
   return axios
-    .post(API_URL + "course/" + courseid + "/interview/book", {curr_task, time, location}, `Bearer ${token}`)
+    .post(API_URL + "course/" + courseid + "/interview/book", {curr_task, time, location}, { headers: {Authorization: `Bearer ${token}` }})
     .then((response) => {
-      // if (response.data.accessToken) {
-      //   localStorage.setItem("user", JSON.stringify(response.data));
-      // }
       return response.data;
     });
 };
@@ -140,12 +134,9 @@ let cancel_interviews = (courseid, curr_task) => {
   // get the token
   let token = localStorage.getItem("token"); 
   // setting config
-  let config = {
-      headers: { Authorization: `Bearer ${token}` },
-      params: {task: curr_task},
-  };
+
   return axios
-    .delete(API_URL + "course/" + courseid + "/interview/cancel",  config)
+    .delete(API_URL + "course/" + courseid + "/interview/cancel", {data: {task: curr_task},  headers: {Authorization: `Bearer ${token}` }} )
     .then((response) => {
       // if (response.data.accessToken) {
       //   localStorage.setItem("user", JSON.stringify(response.data));
