@@ -169,7 +169,7 @@ function query_set(query, start_data_id) {
 
 function send_email(email, subject, body) {
     let mailOptions = {
-        from: "Howie via CSC309 <csc309-noreply@teach.cs.toronto.edu>",
+        from: "a010103@yahoo.com",
         to: email,
         subject: subject,
         text: "(Please do not reply to this email, as no one monitors it. Post your question to Piazza instead.)\n\n" + body

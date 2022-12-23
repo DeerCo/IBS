@@ -7,6 +7,19 @@ CREATE TABLE user_info
     PRIMARY KEY (username)
 );
 
+CREATE TABLE user_verification
+(
+    username character varying NOT NULL,
+    code character varying NOT NULL,
+    created_at timestamp NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (username),
+    CONSTRAINT username FOREIGN KEY (username)
+        REFERENCES user_info (username) MATCH SIMPLE
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+        NOT VALID
+);
+
 CREATE TABLE course
 (
     course_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),

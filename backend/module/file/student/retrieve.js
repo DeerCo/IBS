@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const rate_limit = require("../../../setup/rate_limit");
 const helpers = require("../../../utilities/helpers");
 
-router.get("/", rate_limit.general_limiter, (req, res) => {
+router.get("/", (req, res) => {
     if (res.locals["task"] === "") {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;

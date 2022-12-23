@@ -31,6 +31,7 @@ router.post("/", (req, res) => {
         } else if (pgRes.rowCount === 1) {
             let course_id = pgRes.rows[0]["course_id"];
 
+            let user_table_name = "course_" + course_id + ".user";
             let task_table_name = "course_" + course_id + ".task";
             let criteria_table_name = "course_" + course_id + ".criteria";
             let mark_table_name = "course_" + course_id + ".mark";
@@ -39,6 +40,12 @@ router.post("/", (req, res) => {
             let interview_table_name = "course_" + course_id + ".interview";
 
             let sql_add_schema = "CREATE SCHEMA course_" + course_id + "; ";
+            let sql_add_user_table = 
+                "CREATE TABLE " + user_table_name + "(" +
+                "username character varying NOT NULL, PRIMARY KEY (username), " +
+                "CONSTRAINT username FOREIGN KEY (username) REFERENCES public.user_info (username) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
+                ");";
             let sql_add_task_table = 
                 "CREATE TABLE " + task_table_name + " (" + 
                 "task character varying NOT NULL, due_date timestamp with time zone NOT NULL, " +
@@ -60,7 +67,7 @@ router.post("/", (req, res) => {
                 "old_mark numeric, task character varying NOT NULL, hidden boolean NOT NULL DEFAULT true, PRIMARY KEY (criteria_id, username), " +
                 "CONSTRAINT criteria_id FOREIGN KEY (criteria_id) REFERENCES " + criteria_table_name + " (criteria_id) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
-                "CONSTRAINT username FOREIGN KEY (username) REFERENCES public.user_info (username) MATCH SIMPLE " +
+                "CONSTRAINT username FOREIGN KEY (username) REFERENCES " + user_table_name + " (username) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
             let sql_add_group_table = 
@@ -76,7 +83,7 @@ router.post("/", (req, res) => {
                 "status character varying NOT NULL, PRIMARY KEY (task, username),  " +
                 "CONSTRAINT group_id FOREIGN KEY (group_id) REFERENCES " + group_table_name + " (group_id) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID," +
-                "CONSTRAINT username FOREIGN KEY (username) REFERENCES public.user_info (username) MATCH SIMPLE " +
+                "CONSTRAINT username FOREIGN KEY (username) REFERENCES " + user_table_name + " (username) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
             let sql_add_interview_table = 
@@ -90,11 +97,11 @@ router.post("/", (req, res) => {
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
                 "CONSTRAINT group_id FOREIGN KEY (group_id) REFERENCES " + group_table_name + " (group_id) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
-                "CONSTRAINT username FOREIGN KEY (host) REFERENCES public.user_info (username) MATCH SIMPLE " +
+                "CONSTRAINT username FOREIGN KEY (host) REFERENCES " + user_table_name + " (username) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
 
-            let sql_all = sql_add_schema + sql_add_task_table + sql_add_criteria_table + sql_add_mark_table + 
+            let sql_all = sql_add_schema + sql_add_user_table + sql_add_task_table + sql_add_criteria_table + sql_add_mark_table + 
                             sql_add_group_table + sql_add_group_user_table + sql_add_interview_table;
                         
             client.query(sql_all, [], (err, pgRes) => {

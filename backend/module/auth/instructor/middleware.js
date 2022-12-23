@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const rate_limit = require("../../../setup/rate_limit");
 const helpers = require("../../../utilities/helpers");
 
-router.use("/:course_id/", rate_limit.general_limiter, function (req, res, next) {
+router.use("/:course_id/", function (req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     if (token == null) {

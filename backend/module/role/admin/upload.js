@@ -25,32 +25,51 @@ router.post("/", upload.single("file"), (req, res) => {
         return;
     }
 
-    let sql_upload = "INSERT INTO course_role (username, course_id, role) VALUES %L ON CONFLICT (username, course_id) DO NOTHING";
+    let sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO NOTHING";
+    let sql_upload = "INSERT INTO course_role (username, course_id, role) VALUES %L ON CONFLICT (username, course_id) DO NOTHING; "
+        + "INSERT INTO course_" + req.body["course_id"]+ ".user (username) VALUES %L ON CONFLICT (username) DO NOTHING";
 
     const csv_path = req.file.destination + req.file.filename;
     csv({
         noheader: true,
         output: "csv"
     }).fromFile(csv_path).then((csv_row) => {
-        let students = [];
+        let upload_data_all = [];
+        let upload_data_users = [];
+        let register_data = [["test", "initial", "test@utoronto.ca"]];
         for (let j = 1; j < csv_row.length; j++) {
-            students.push([csv_row[j][0], req.body["course_id"], "student"]);
+            if (csv_row[j].length >= 1 && csv_row[j][0] != ""){
+                upload_data_users.push([csv_row[j][0]]);
+                upload_data_all.push([csv_row[j][0], req.body["course_id"], "student"]);
+                if (csv_row[j].length >= 2 && csv_row[j][1] != ""){
+                    register_data.push([csv_row[j][0], 'initial', csv_row[j][1]]);
+                }
+            }
         }
-        if (students.length === 0){
+        if (upload_data_users.length === 0){
             res.status(200).json({ message: "The file must contain at least 1 student." });
         }
     
-        client.query(format(sql_upload, students), [], (err, pgRes) => {
+        client.query(format(sql_register, register_data), [], (err, pg_res_register) => {
             if (err) {
-                if (err.code === "23503" && err.constraint === "username") {
-                    let username = err.detail.match(/Key \(username\)=\((.*)\) is not present in table "user_info"\./);
-                    res.status(400).json({ message: "The username " + username[1] + " is not found in the database." });
-                } else {
-                    res.status(404).json({ message: "Unknown error." });
-                    console.log(err);
-                }
+                res.status(404).json({ message: "Unknown error." });
+                console.log(err);
             } else{
-                res.status(200).json({ message: "All students are added." });
+                client.query(format(sql_upload, upload_data_all, upload_data_users), [], (err, pg_res_upload) => {
+                    if (err) {
+                        if (err.code === "23503" && err.constraint === "username") {
+                            let username = err.detail.match(/Key \(username\)=\((.*)\) is not present in table "user_info"\./);
+                            res.status(400).json({ message: "The username " + username[1] + " is not found in the database and an email is not provided." });
+                        } else {
+                            res.status(404).json({ message: "Unknown error." });
+                            console.log(err);
+                        }
+                    } else{
+                        console.log(pg_res_upload);
+                        let message = pg_res_register.rowCount + " students are registered. " + pg_res_upload[0].rowCount + " students are added to the course.";
+                        res.status(200).json({ message: message });
+                    }
+                });
             }
         });
     });

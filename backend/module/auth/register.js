@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const rate_limit = require("../../setup/rate_limit");
 const helpers = require("../../utilities/helpers");
 const client = require("../../setup/db");
 
-router.post("/", rate_limit.token_limiter, (req, res) => {
+router.post("/", (req, res) => {
     if (!("username" in req.body) || helpers.name_validate(req.body["username"])) {
         res.status(400).json({ message: "Your username is missing or has invalid format." });
         return;
