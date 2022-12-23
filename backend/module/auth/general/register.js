@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const helpers = require("../../utilities/helpers");
-const client = require("../../setup/db");
+const helpers = require("../../../utilities/helpers");
+const client = require("../../../setup/db");
 
 router.post("/", (req, res) => {
     if (!("username" in req.body) || helpers.name_validate(req.body["username"])) {

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const client = require("../../setup/db"); 
+const client = require("../../../setup/db"); 
 
 router.post("/", (req, res) => {
     if (!("username" in req.body) || req.body["username"] === "") {
