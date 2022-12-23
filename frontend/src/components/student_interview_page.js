@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useNavigate, Link, useLocation} from 'react-router-dom';
-import Form from "react-validation/build/form";
+import { Link} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/style.css';
 import '../styles/tab.css';
@@ -123,10 +122,10 @@ let Interview = () => {
                     location: loc
                 }
             };
-            if (interviews[loc][time] == 1){
+            if (interviews[loc][time] === 1){
                 let string = time.split(" - ");
                 // set the defualt date for calender display
-                if (first == ""){
+                if (first === ""){
                     first = string[0].split(" ")[0];
                 }
                 let start = string[0].replace(" ", "T");
