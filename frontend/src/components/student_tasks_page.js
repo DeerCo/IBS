@@ -31,7 +31,7 @@ let Tasks = () => {
         AuthService.grades(courseid, task).then(
           (result) => {
             localStorage.setItem('grades', JSON.stringify(result));
-            navigate("/gradePage");
+            navigate("/mark");
             
           },
           (error) => {
