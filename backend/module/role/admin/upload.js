@@ -65,7 +65,6 @@ router.post("/", upload.single("file"), (req, res) => {
                             console.log(err);
                         }
                     } else{
-                        console.log(pg_res_upload);
                         let message = pg_res_register.rowCount + " students are registered. " + pg_res_upload[0].rowCount + " students are added to the course.";
                         res.status(200).json({ message: message });
                     }

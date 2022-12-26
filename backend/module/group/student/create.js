@@ -31,7 +31,20 @@ router.post("/", (req, res) => {
 						console.log(err);
 					}
 				} else if (pgRes.rowCount === 1) {
-					res.status(200).json({ message: "Group has been created." });
+					helpers.gitlab_create_group_and_project(res.locals["course_id"], group_id, res.locals["username"]).then(result => {
+						if (result["success"] === true){
+							let message = "Group and Gitlab repo have been created. User has been added to the Gitlab project.";
+							res.status(200).json({ message: message, group_id: group_id, url: result["url"] });
+						} else if (result["code"] === "failed_create_project"){
+							res.status(404).json({ message: "Unable to create the Gitlab project. Please contact system admin." });
+						} else if (result["code"] === "failed_add_user"){
+							res.status(404).json({ message: "Unable to add the user to the Gitlab group. Please contact system admin." });
+						} else if (result["code"] === "gitlab_invalid_username"){
+							res.status(404).json({ message: "User cannot be found on Gitlab. Please contact system admin to be added to Gitlab." });
+						} else{
+							res.status(404).json({ message: "Unknown error. Please contact system admin." });
+						}
+					});
 				}
 			});
         }

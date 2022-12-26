@@ -23,8 +23,9 @@ CREATE TABLE user_verification
 CREATE TABLE course
 (
     course_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
-    course_code character varying(256) NOT NULL,
-    course_session character varying(256) NOT NULL,
+    course_code character varying NOT NULL,
+    course_session character varying NOT NULL,
+    gitlab_group_id character varying UNIQUE,
     hidden boolean NOT NULL DEFAULT false,
     PRIMARY KEY (course_id),
     UNIQUE (course_code, course_session)
