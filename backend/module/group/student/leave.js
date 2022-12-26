@@ -19,7 +19,7 @@ router.delete("/", (req, res) => {
 			console.log(err);
 		} else {
 			if (pr_res_leave.rowCount === 1){
-				helpers.gitlab_remove_user(res.locals["course_id"], req.body["group_id"], res.locals["username"]).then(data => console.log(data));
+				helpers.gitlab_remove_user(res.locals["course_id"], req.body["group_id"], res.locals["username"]);
 				res.status(200).json({ message: "You have left the group." });
 			} else {
 				res.status(400).json({ message: "You were not in the group." });

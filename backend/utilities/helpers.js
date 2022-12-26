@@ -500,6 +500,7 @@ async function gitlab_create_group_and_project(course_id, group_id, username) {
         };
         let res_create_project = await axios.post(process.env.GITLAB_URL + "projects/", data_create_project, config);
         var gitlab_url = res_create_project["data"]["web_url"];
+        var gitlab_project_id = res_create_project["data"]["id"];
     } catch (err) {
         console.log(err);
         if ("response" in err && "data" in err["response"]){
@@ -509,8 +510,8 @@ async function gitlab_create_group_and_project(course_id, group_id, username) {
     }
 
     // Store the Gitlab info in the db
-    let sql_add_gitlab_info = "UPDATE course_" + course_id + ".group SET gitlab_group_id = ($1), gitlab_url = ($2) WHERE group_id = ($3)";
-    await db.query(sql_add_gitlab_info, [gitlab_subgroup_id, gitlab_url, group_id]);
+    let sql_add_gitlab_info = "UPDATE course_" + course_id + ".group SET gitlab_group_id = ($1), gitlab_project_id = ($2), gitlab_url = ($3) WHERE group_id = ($4)";
+    await db.query(sql_add_gitlab_info, [gitlab_subgroup_id, gitlab_project_id, gitlab_url, group_id]);
 
     // Add the user to the subgroup
     return await gitlab_add_user_with_gitlab_group_id(gitlab_subgroup_id, gitlab_url, username);
