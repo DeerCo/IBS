@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
 						console.log(err);
 					}
 				} else if (pgRes.rowCount === 1) {
-					helpers.gitlab_create_group_and_project(res.locals["course_id"], group_id, res.locals["username"]).then(result => {
+					helpers.gitlab_create_group_and_project(res.locals["course_id"], group_id, res.locals["username"], res.locals["task"]).then(result => {
 						if (result["success"] === true){
 							let message = "Group and Gitlab repo have been created. User has been added to the Gitlab project.";
 							res.status(200).json({ message: message, group_id: group_id, url: result["url"] });

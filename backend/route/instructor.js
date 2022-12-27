@@ -5,6 +5,10 @@ const middleware = require("../module/auth/instructor/middleware");
 const all_tasks = require("../module/task/staff/all");
 const add_task = require("../module/task/staff/add");
 const change_task = require("../module/task/staff/change");
+const all_task_group = require("../module/task_group/staff/all");
+const add_task_group = require("../module/task_group/staff/add");
+const change_task_group = require("../module/task_group/staff/change");
+const delete_task_group = require("../module/task_group/staff/delete");
 const all_criteria = require("../module/criteria/staff/all");
 const add_criteria = require("../module/criteria/staff/add");
 const change_criteria = require("../module/criteria/staff/change");
@@ -22,6 +26,7 @@ const today_interviews = require("../module/interview/staff/today");
 const schedule_interview = require("../module/interview/staff/schedule");
 const change_interview = require("../module/interview/staff/change");
 const delete_interview = require("../module/interview/staff/delete");
+const collect_submission = require("../module/submission/staff/collect");
 
 router.use("/", function (req, res, next) {
     next();
@@ -29,6 +34,12 @@ router.use("/", function (req, res, next) {
 
 // Middleware
 router.use("/course/", middleware);
+
+// Task Group
+router.use("/course/:course_id/task_group/all", all_task_group);
+router.use("/course/:course_id/task_group/add", add_task_group);
+router.use("/course/:course_id/task_group/change", change_task_group);
+router.use("/course/:course_id/task_group/delete", delete_task_group);
 
 // Task
 router.use("/course/:course_id/task/all", all_tasks);
@@ -59,5 +70,8 @@ router.use("/course/:course_id/interview/today", today_interviews);
 router.use("/course/:course_id/interview/schedule", schedule_interview);
 router.use("/course/:course_id/interview/change", change_interview);
 router.use("/course/:course_id/interview/delete", delete_interview);
+
+// Submission
+router.use("/course/:course_id/submission/collect", collect_submission);
 
 module.exports = router;

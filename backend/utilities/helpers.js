@@ -21,7 +21,7 @@ function name_validate(name) {
 }
 
 function string_validate(string) {
-    let regex_string = new RegExp("^[0-9a-zA-Z_ \.]{1,500}$");
+    let regex_string = new RegExp("^[0-9a-zA-Z:_ \.\/\-]{1,500}$");
 
     if (!regex_string.test(string)) {
         return 1;
@@ -46,7 +46,7 @@ function number_validate(number) {
 }
 
 function email_validate(email) {
-    let regex_email = new RegExp(".");
+    let regex_email = new RegExp(".@.");
     ///^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     if (!regex_email.test(email)) {
         return 1;
@@ -468,11 +468,18 @@ async function gitlab_get_user_id(username) {
     }
 }
 
-async function gitlab_create_group_and_project(course_id, group_id, username) {
+async function gitlab_create_group_and_project(course_id, group_id, username, task) {
     // Get the gitlab group id
     let pg_res_gitlab_course_group_id = await db.query("SELECT gitlab_group_id FROM course WHERE course_id = ($1)", [course_id])
     if (pg_res_gitlab_course_group_id.rowCount !== 1){
         return { success: false, code: "invalid_gitlab_group" }
+    }
+
+    // Get the starter code url
+    let pg_res_starter_code_url = await db.query("SELECT starter_code_url FROM course_ " + course_id + ".task WHERE task = ($1)", [task])
+    let start_code_url = null;
+    if (pg_res_starter_code_url.rowCount === 1 && pg_res_starter_code_url.rows[0]["starter_code_url"] !== null && pg_res_starter_code_url.rows[0]["starter_code_url"] !== ""){
+        start_code_url = pg_res_starter_code_url.rows[0]["starter_code_url"];
     }
 
     try {
@@ -495,8 +502,9 @@ async function gitlab_create_group_and_project(course_id, group_id, username) {
 
         // Create a new project in the subgroup
         let data_create_project = {
-            path: "project",
+            path: task,
             namespace_id: gitlab_subgroup_id,
+            import_url: start_code_url
         };
         let res_create_project = await axios.post(process.env.GITLAB_URL + "projects/", data_create_project, config);
         var gitlab_url = res_create_project["data"]["web_url"];
@@ -603,6 +611,36 @@ async function gitlab_remove_user(course_id, group_id, username) {
     return { success: true };
 }
 
+async function gitlab_get_commits(course_id, group_id){
+    // Get gitlab_project_id
+    let pg_res = await db.query("SELECT gitlab_project_id FROM course_" + course_id + ".group WHERE group_id = ($1)", [group_id]);
+    if (pg_res.rowCount !== 1){
+        return [];
+    }
+    let data = pg_res.rows[0];
+    if (data["gitlab_project_id"] === null || data["gitlab_project_id"] === ""){
+        return [];
+    }
+    let gitlab_project_id = data["gitlab_project_id"];
+
+    try {
+        let config = {
+            headers: {
+                "Authorization": "Bearer " + process.env.GITLAB_TOKEN,
+            }
+        };
+
+        let res = await axios.get(process.env.GITLAB_URL + "projects/" + gitlab_project_id + "/repository/commits", config);
+        return res["data"];
+    } catch (err) {
+        console.log(err)
+        if ("response" in err && "data" in err["response"]){
+            console.log(err["response"]["data"]["message"]);
+        }
+        return [];
+    }
+}
+
 
 module.exports = {
     generateAccessToken: generateAccessToken,
@@ -643,5 +681,6 @@ module.exports = {
     gitlab_create_group_and_project: gitlab_create_group_and_project,
     gitlab_add_user_with_gitlab_group_id: gitlab_add_user_with_gitlab_group_id,
     gitlab_add_user_without_gitlab_group_id: gitlab_add_user_without_gitlab_group_id,
-    gitlab_remove_user: gitlab_remove_user
+    gitlab_remove_user: gitlab_remove_user,
+    gitlab_get_commits: gitlab_get_commits,
 }

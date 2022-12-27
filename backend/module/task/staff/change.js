@@ -24,10 +24,34 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The max member is missing or invalid." });
         return;
     }
+    if (!("max_token" in req.body) || helpers.number_validate(req.body["max_token"])) {
+        res.status(400).json({ message: "The max token is missing or invalid." });
+        return;
+    }
+
+    let task_group_id = null;
+    if ("task_group_id" in req.body) {
+        if (helpers.number_validate(req.body["task_group_id"])){
+            res.status(400).json({ message: "The token group id is invalid." });
+            return;
+        } else{
+            task_group_id = req.body["task_group_id"];
+        }
+    }
+
+    let starter_code_url = null;
+    if ("starter_code_url" in req.body) {
+        if (helpers.string_validate(req.body["starter_code_url"])){
+            res.status(400).json({ message: "The starter code url is invalid." });
+            return;
+        } else{
+            starter_code_url = req.body["starter_code_url"];
+        }
+    }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) WHERE task = ($5)";
-    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["task"]];
+    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), task_group_id = ($6), starter_code_url = ($7) WHERE task = ($8)";
+    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], max_token, task_group_id, starter_code_url, req.body["task"]];
 
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {

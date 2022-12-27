@@ -17,16 +17,24 @@ router.put("/", (req, res) => {
         return;
     }
     if (!("gitlab_group_id" in req.body) || (req.body["gitlab_group_id"] !== "" && helpers.number_validate(req.body["gitlab_group_id"]))) {
-        res.status(400).json({ message: "The Gitlab group id is not correct." });
+        res.status(400).json({ message: "The Gitlab group id is missing or not correct." });
 		return;
+    }
+    if (!("default_token_count" in req.body) || helpers.number_validate(req.body["default_token_count"])) {
+        res.status(400).json({ message: "The default token count is missing or has invalid format." });
+        return;
+    }
+    if (!("default_token_length" in req.body) || helpers.name_validate(req.body["default_token_length"])) {
+        res.status(400).json({ message: "The default token length is missing or has invalid format." });
+        return;
     }
     if (!("hidden" in req.body) || helpers.boolean_validate(req.body["hidden"])) {
         res.status(400).json({ message: "The hidden property is missing or not correct." });
 		return;
     }
 
-    let sql_change = "UPDATE course SET course_code = ($1), course_session = ($2), gitlab_group_id = ($3), hidden = ($4) WHERE course_id = ($5)";
-    let sql_change_data = [req.body["course_code"], req.body["course_session"], req.body["gitlab_group_id"], req.body["hidden"], req.body["course_id"]];
+    let sql_change = "UPDATE course SET course_code = ($1), course_session = ($2), gitlab_group_id = ($3), default_token_count = ($4), default_token_length = ($5), hidden = ($6) WHERE course_id = ($7)";
+    let sql_change_data = [req.body["course_code"], req.body["course_session"], req.body["gitlab_group_id"], req.body["default_token_count"], req.body["default_token_length"], req.body["hidden"], req.body["course_id"]];
 
     client.query(sql_change, sql_change_data, (err, pg_res) => {
         if (err) {

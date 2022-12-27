@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
+const e = require("express");
 
 router.post("/", (req, res) => {
     if (!("course_code" in req.body) || helpers.name_validate(req.body["course_code"])) {
@@ -12,20 +13,53 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The course session is missing or has invalid format." });
         return;
     }
+
     let hidden = false;
-    if ("hidden" in req.body && req.body["hidden"].toLowerCase() === "true") {
-        hidden = true;
-    }
-    
-    if ("gitlab_group_id" in req.body && !(helpers.number_validate(req.body["gitlab_group_id"]))){
-        var sql_add_course = "INSERT INTO course (course_code, course_session, gitlab_group_id, hidden) VALUES (($1), ($2), ($3), ($4)) RETURNING course_id";
-        var sql_add_data = [req.body["course_code"], req.body["course_session"], req.body["gitlab_group_id"], hidden];
-    } else{
-        var sql_add_course = "INSERT INTO course (course_code, course_session, hidden) VALUES (($1), ($2), ($3)) RETURNING course_id";
-        var sql_add_data = [req.body["course_code"], req.body["course_session"], hidden];
+    if ("hidden" in req.body) {
+        if (req.body["hidden"].toLowerCase() === "true"){
+            hidden = true;
+        } else if (req.body["hidden"].toLowerCase() === "false"){
+            hidden = false;
+        } else{
+            res.status(400).json({ message: "The hidden property is invalid." });
+            return;
+        }
     }
 
-    client.query(sql_add_course, sql_add_data, (err, pgRes) => {
+    let default_token_count = 0;
+    if ("default_token_count" in req.body) {
+        if (helpers.number_validate(req.body["default_token_count"])){
+            res.status(400).json({ message: "The default token count is invalid." });
+            return;
+        } else{
+            default_token_count = req.body["default_token_count"];
+        }
+    }
+
+    let default_token_length = 0;
+    if ("default_token_length" in req.body) {
+        if (helpers.number_validate(req.body["default_token_length"])){
+            res.status(400).json({ message: "The default token length is invalid." });
+            return;
+        } else{
+            default_token_length = req.body["default_token_length"];
+        }
+    }
+
+    let gitlab_group_id = null;
+    if ("gitlab_group_id" in req.body) {
+        if (helpers.number_validate(req.body["gitlab_group_id"])){
+            res.status(400).json({ message: "The gitlab group id is invalid." });
+            return;
+        } else{
+            gitlab_group_id = req.body["gitlab_group_id"];
+        }
+    }
+    
+    let sql_add_course = "INSERT INTO course (course_code, course_session, gitlab_group_id, default_token_count, default_token_length, hidden) VALUES (($1), ($2), ($3), ($4), ($5), ($6)) RETURNING course_id";
+    let sql_add_data = [req.body["course_code"], req.body["course_session"], gitlab_group_id, default_token_count, default_token_length, hidden];
+
+    client.query(sql_add_course, sql_add_data, (err, pg_res_add_course) => {
         if (err) {
             if (err.code === "23505" && err.constraint === "course_course_code_course_session_key") {
                 res.status(409).json({ message: "The course must have unique course code and session." });
@@ -35,30 +69,40 @@ router.post("/", (req, res) => {
                 res.status(404).json({ message: "Unknown error." });
                 console.log(err);
             }
-        } else if (pgRes.rowCount === 1) {
-            let course_id = pgRes.rows[0]["course_id"];
+        } else if (pg_res_add_course.rowCount === 1) {
+            var course_id = pg_res_add_course.rows[0]["course_id"];
 
             let user_table_name = "course_" + course_id + ".user";
+            let toekn_group_table_name = "course_" + course_id + ".task_group";
             let task_table_name = "course_" + course_id + ".task";
             let criteria_table_name = "course_" + course_id + ".criteria";
             let mark_table_name = "course_" + course_id + ".mark";
             let group_table_name = "course_" + course_id + ".group";
             let group_user_table_name = "course_" + course_id + ".group_user";
+            let submission_table_name = "course_" + course_id + ".submission";
             let interview_table_name = "course_" + course_id + ".interview";
 
             let sql_add_schema = "CREATE SCHEMA course_" + course_id + "; ";
             let sql_add_user_table = 
                 "CREATE TABLE " + user_table_name + "(" +
-                "username character varying NOT NULL, PRIMARY KEY (username), " +
+                "username character varying NOT NULL, token_count integer NOT NULL DEFAULT -1, " +
+                "token_length integer NOT NULL DEFAULT -1, PRIMARY KEY (username), " +
                 "CONSTRAINT username FOREIGN KEY (username) REFERENCES public.user_info (username) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
+                ");";
+            let sql_add_task_group_table = 
+                "CREATE TABLE " + toekn_group_table_name + "(" +
+                "task_group_id integer NOT NULL GENERATED BY DEFAULT AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ), " +
+                "max_token integer NOT NULL DEFAULT 0, PRIMARY KEY (task_group_id)" +
                 ");";
             let sql_add_task_table = 
                 "CREATE TABLE " + task_table_name + " (" + 
                 "task character varying NOT NULL, due_date timestamp with time zone NOT NULL, " +
-                "hidden boolean NOT NULL DEFAULT true,  min_member integer NOT NULL DEFAULT 1, max_member integer NOT NULL DEFAULT 1, " +
-                "created_time timestamp with time zone DEFAULT current_timestamp, " +
-                "PRIMARY KEY (task), UNIQUE (task)" +
+                "hidden boolean NOT NULL DEFAULT true,  min_member integer NOT NULL DEFAULT 1, " +
+                "max_member integer NOT NULL DEFAULT 1, max_token integer NOT NULL DEFAULT 0, " +
+                "task_group_id integer, starter_code_url character varying, PRIMARY KEY (task), UNIQUE (task), " +
+                "CONSTRAINT task_group_id FOREIGN KEY (task_group_id) REFERENCES " + toekn_group_table_name + " (task_group_id) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
             let sql_add_criteria_table = 
                 "CREATE TABLE " + criteria_table_name + "(" +
@@ -88,10 +132,21 @@ router.post("/", (req, res) => {
             let sql_add_group_user_table = 
                 "CREATE TABLE " + group_user_table_name + "(" +
                 "task character varying NOT NULL, username character varying NOT NULL, group_id integer NOT NULL, " +
-                "status character varying NOT NULL, PRIMARY KEY (task, username),  " +
+                "status character varying NOT NULL, PRIMARY KEY (task, username), " +
                 "CONSTRAINT group_id FOREIGN KEY (group_id) REFERENCES " + group_table_name + " (group_id) MATCH SIMPLE " +
-                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID," +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
                 "CONSTRAINT username FOREIGN KEY (username) REFERENCES " + user_table_name + " (username) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
+                "CONSTRAINT task FOREIGN KEY (task) REFERENCES " + task_table_name +" (task) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" + 
+                ");";
+            let sql_add_submission_table = 
+                "CREATE TABLE " + submission_table_name + "(" +
+                "task character varying NOT NULL, group_id integer NOT NULL, commit_id character varying NOT NULL," +
+                "token_used integer NOT NULL DEFAULT 0, PRIMARY KEY (group_id), " +
+                "CONSTRAINT task FOREIGN KEY (task) REFERENCES " + task_table_name +" (task) MATCH SIMPLE " +
+                "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " + 
+                "CONSTRAINT group_id FOREIGN KEY (group_id) REFERENCES " + group_table_name + " (group_id) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
             let sql_add_interview_table = 
@@ -101,7 +156,7 @@ router.post("/", (req, res) => {
                 "host character varying NOT NULL, group_id integer, length integer, " +
                 "location character varying DEFAULT 'Zoom', note character varying, " +
                 'PRIMARY KEY (interview_id), UNIQUE(task, "time", host), ' +
-                "CONSTRAINT task FOREIGN KEY (task) REFERENCES " + task_table_name +" (task) MATCH SIMPLE " +
+                "CONSTRAINT task FOREIGN KEY (task) REFERENCES " + task_table_name + " (task) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
                 "CONSTRAINT group_id FOREIGN KEY (group_id) REFERENCES " + group_table_name + " (group_id) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +
@@ -109,15 +164,16 @@ router.post("/", (req, res) => {
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
 
-            let sql_all = sql_add_schema + sql_add_user_table + sql_add_task_table + sql_add_criteria_table + sql_add_mark_table + 
-                            sql_add_group_table + sql_add_group_user_table + sql_add_interview_table;
+            let sql_all = sql_add_schema + sql_add_user_table + sql_add_task_group_table + sql_add_task_table + sql_add_criteria_table + 
+                            sql_add_mark_table + sql_add_group_table + sql_add_group_user_table + sql_add_submission_table 
+                            + sql_add_interview_table;
                         
-            client.query(sql_all, [], (err, pgRes) => {
-                if (err) {
-                    console.log(err);
-                    res.status(404).json({ message: "The course is added but the course specific tables cannot be created." });
+            client.query(sql_all, [], (err_add_tables, pg_res_add_tables) => {
+                if (err_add_tables) {
+                    console.log(err_add_tables);
+                    res.status(404).json({ message: "The course is added but the course specific tables cannot be created.", course_id: course_id});
                 } else {
-                    res.status(200).json({ message: "The course is added and the course specific tables have been created." });
+                    res.status(200).json({ message: "The course is added and the course specific tables have been created.", course_id: course_id });
                 }
             });
         }

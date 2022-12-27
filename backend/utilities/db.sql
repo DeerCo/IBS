@@ -26,6 +26,8 @@ CREATE TABLE course
     course_code character varying NOT NULL,
     course_session character varying NOT NULL,
     gitlab_group_id character varying UNIQUE,
+    default_token_count integer NOT NULL DEFAULT 0,
+    default_token_length integer NOT NULL DEFAULT 0,
     hidden boolean NOT NULL DEFAULT false,
     PRIMARY KEY (course_id),
     UNIQUE (course_code, course_session)

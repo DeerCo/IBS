@@ -14,8 +14,13 @@ router.post("/", (req, res) => {
     }
 
     let email = "test@utoronto.ca";
-    if ("email" in req.body && !(helpers.email_validate(req.body["email"]))) {
-        email = req.body["email"];
+    if ("email" in req.body) {
+        if (helpers.email_validate(req.body["email"])){
+            res.status(400).json({ message: "The email has invalid format." });
+            return;
+        } else{
+            email = req.body["email"];
+        }
     }
 
     let roles = ["instructor", "ta", "student"];
@@ -52,7 +57,7 @@ router.post("/", (req, res) => {
                             res.status(404).json({ message: "Unknown error." });
                             console.log(err);
                         } else {
-                            res.status(200).json({ message: "The role is added." });
+                            res.status(200).json({ message: "The user is registered if applicable. The role is added." });
                         }
                     });
                 }

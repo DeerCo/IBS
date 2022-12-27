@@ -6,6 +6,7 @@ const format = require('pg-format');
 const path = require('path');
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
+const e = require("express");
 
 const upload = multer({
     dest: './tmp/upload/'
@@ -34,20 +35,29 @@ router.post("/", upload.single("file"), (req, res) => {
         noheader: true,
         output: "csv"
     }).fromFile(csv_path).then((csv_row) => {
+        let invalid_username = 0;
+        let invalid_email = 0;
         let upload_data_all = [];
         let upload_data_users = [];
         let register_data = [["test", "initial", "test@utoronto.ca"]];
+
         for (let j = 1; j < csv_row.length; j++) {
-            if (csv_row[j].length >= 1 && csv_row[j][0] != ""){
+            if (csv_row[j].length >= 1 && !(helpers.name_validate(csv_row[j][0]))){
                 upload_data_users.push([csv_row[j][0]]);
                 upload_data_all.push([csv_row[j][0], req.body["course_id"], "student"]);
                 if (csv_row[j].length >= 2 && csv_row[j][1] != ""){
-                    register_data.push([csv_row[j][0], 'initial', csv_row[j][1]]);
+                    if (helpers.email_validate(csv_row[j][1])){
+                        invalid_email += 1;
+                    } else{
+                        register_data.push([csv_row[j][0], 'initial', csv_row[j][1]]);
+                    }
                 }
+            } else{
+                invalid_username += 1;
             }
         }
         if (upload_data_users.length === 0){
-            res.status(200).json({ message: "The file must contain at least 1 student." });
+            res.status(200).json({ message: "The file must contain at least 1 valid username." });
         }
     
         client.query(format(sql_register, register_data), [], (err, pg_res_register) => {
@@ -59,14 +69,14 @@ router.post("/", upload.single("file"), (req, res) => {
                     if (err) {
                         if (err.code === "23503" && err.constraint === "username") {
                             let username = err.detail.match(/Key \(username\)=\((.*)\) is not present in table "user_info"\./);
-                            res.status(400).json({ message: "The username " + username[1] + " is not found in the database and an email is not provided." });
+                            res.status(400).json({ message: "The username " + username[1] + " is not found in the database and a valid email is not provided." });
                         } else {
                             res.status(404).json({ message: "Unknown error." });
                             console.log(err);
                         }
                     } else{
-                        let message = pg_res_register.rowCount + " students are registered. " + pg_res_upload[0].rowCount + " students are added to the course.";
-                        res.status(200).json({ message: message });
+                        let message = pg_res_upload[0].rowCount + " students are added to the course.";
+                        res.status(200).json({ message: message, added: pg_res_upload[0].rowCount, registered: pg_res_register.rowCount, invalid_username: invalid_username, invalid_email: invalid_email});
                     }
                 });
             }
