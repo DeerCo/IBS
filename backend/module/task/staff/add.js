@@ -4,7 +4,7 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
-    if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
+    if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
         res.status(400).json({ message: "The task is missing or has invalid format." });
         return;
     }
@@ -42,8 +42,8 @@ router.post("/", (req, res) => {
 
     let starter_code_url = null;
     if ("starter_code_url" in req.body) {
-        if (helpers.string_validate(req.body["starter_code_url"])){
-            res.status(400).json({ message: "The starter code url is invalid." });
+        if (helpers.string_validate(req.body["starter_code_url"]) || !req.body["starter_code_url"].includes(".git")){
+            res.status(400).json({ message: "The starter code url is invalid. It should start with https:// and end with .git" });
             return;
         } else{
             starter_code_url = req.body["starter_code_url"];

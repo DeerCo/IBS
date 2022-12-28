@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const middleware = require("../module/auth/instructor/middleware");
+const get_token = require("../module/token/staff/get");
+const change_token = require("../module/token/staff/change");
 const all_tasks = require("../module/task/staff/all");
 const add_task = require("../module/task/staff/add");
 const change_task = require("../module/task/staff/change");
@@ -34,6 +36,10 @@ router.use("/", function (req, res, next) {
 
 // Middleware
 router.use("/course/", middleware);
+
+// Task Group
+router.use("/course/:course_id/token/get", get_token);
+router.use("/course/:course_id/token/change", change_token);
 
 // Task Group
 router.use("/course/:course_id/task_group/all", all_task_group);

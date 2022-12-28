@@ -9,8 +9,8 @@ router.post("/", (req, res) => {
 		return;
 	}
 
-	helpers.gitlab_get_commits(res.locals["course_id"], req.body["group_id"]).then(result => {
-		res.status(200).json({ message: "ok", commits: result });
+	helpers.collect_submissions(res.locals["course_id"], req.body["group_id"]).then(result => {
+		res.status(200).json({ message: "ok", result: result });
 	});
 })
 

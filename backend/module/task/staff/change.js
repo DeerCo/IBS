@@ -51,12 +51,16 @@ router.put("/", (req, res) => {
 
     let due_date = req.body["due_date"] + " America/Toronto";
     let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), task_group_id = ($6), starter_code_url = ($7) WHERE task = ($8)";
-    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], max_token, task_group_id, starter_code_url, req.body["task"]];
+    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], task_group_id, starter_code_url, req.body["task"]];
 
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {
-            res.status(404).json({ message: "Unknown error." });
-            console.log(err);
+            if (err.code === "23503") {
+                res.status(409).json({ message: "The task_group_id is not found in the database." });
+            } else {
+                res.status(404).json({ message: "Unknown error." });
+                console.log(err);
+            }
         } else if (pg_res.rowCount === 0){
             res.status(400).json({ message: "There is no task associated with this task id." });
         } else{
