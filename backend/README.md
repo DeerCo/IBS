@@ -22,6 +22,7 @@ sudo -u postgres createdb ibs
 sudo -u ibs psql
 \password
 \i backend/utilities/db.sql
+INSERT INTO user_info (username, password, email, admin) VALUES ('admin', crypt('pass', gen_salt('md5')), 'admin@utoronto.ca', true);
 quit
 ```
 
@@ -30,6 +31,7 @@ quit
 cd ~/DeerCo/backend
 npm install
 cp utilities/env_template.txt .env
+vim .env
 ```
 
 # Run the backend
