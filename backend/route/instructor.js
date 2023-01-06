@@ -28,7 +28,8 @@ const today_interviews = require("../module/interview/staff/today");
 const schedule_interview = require("../module/interview/staff/schedule");
 const change_interview = require("../module/interview/staff/change");
 const delete_interview = require("../module/interview/staff/delete");
-const collect_submission = require("../module/submission/staff/collect");
+const collect_one_submission = require("../module/submission/staff/collect_one");
+const collect_all_submissions = require("../module/submission/staff/collect_all");
 
 router.use("/", function (req, res, next) {
     next();
@@ -78,6 +79,7 @@ router.use("/course/:course_id/interview/change", change_interview);
 router.use("/course/:course_id/interview/delete", delete_interview);
 
 // Submission
-router.use("/course/:course_id/submission/collect", collect_submission);
+router.use("/course/:course_id/submission/collect/one", collect_one_submission);
+router.use("/course/:course_id/submission/collect/all", collect_all_submissions);
 
 module.exports = router;

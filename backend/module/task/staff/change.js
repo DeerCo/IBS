@@ -31,7 +31,9 @@ router.put("/", (req, res) => {
 
     let task_group_id = null;
     if ("task_group_id" in req.body) {
-        if (helpers.number_validate(req.body["task_group_id"])){
+        if (req.body["task_group_id"] === ""){
+            task_group_id = null;
+        } else if (helpers.number_validate(req.body["task_group_id"])){
             res.status(400).json({ message: "The token group id is invalid." });
             return;
         } else{
@@ -41,7 +43,9 @@ router.put("/", (req, res) => {
 
     let starter_code_url = null;
     if ("starter_code_url" in req.body) {
-        if (helpers.string_validate(req.body["starter_code_url"])){
+        if (req.body["starter_code_url"] === ""){
+            starter_code_url = null;
+        } else if (helpers.string_validate(req.body["starter_code_url"])){
             res.status(400).json({ message: "The starter code url is invalid." });
             return;
         } else{

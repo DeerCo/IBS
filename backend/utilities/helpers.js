@@ -641,97 +641,260 @@ async function gitlab_get_commits(course_id, group_id) {
 	}
 }
 
-async function get_available_tokens(course_id, username) {
-	let token_count = -1;
-	let token_length = -1;
-
-	let pg_res_default_tokens = await db.query("SELECT default_token_count, default_token_length FROM course WHERE course_id = ($1)", [course_id]);
-	let pg_res_user_tokens = await db.query("SELECT token_count, token_length FROM course_" + course_id + ".user WHERE username = ($1)", [username]);
+async function get_max_user_tokens(course_id, username) {
+	let pg_res_default_tokens = await db.query("SELECT default_token_count, token_length FROM course WHERE course_id = ($1)", [course_id]);
+	let pg_res_user_tokens = await db.query("SELECT token_count FROM course_" + course_id + ".user WHERE username = ($1)", [username]);
 	if (pg_res_default_tokens.rowCount !== 1 || pg_res_user_tokens.rowCount !== 1) {
-		return { token_count: token_count, token_length: token_length };
+		return { token_count: -1, token_length: -1 };
 	}
 
+	let token_count = -1;
 	if (pg_res_user_tokens.rows[0]["token_count"] !== -1) {
 		token_count = pg_res_user_tokens.rows[0]["token_count"];
 	} else {
 		token_count = pg_res_default_tokens.rows[0]["default_token_count"];
 	}
 
-	if (pg_res_user_tokens.rows[0]["token_length"] !== -1) {
-		token_length = pg_res_user_tokens.rows[0]["token_length"];
-	} else {
-		token_length = pg_res_default_tokens.rows[0]["default_token_length"];
-	}
+	let token_length = pg_res_default_tokens.rows[0]["token_length"];
 
 	return { token_count: token_count, token_length: token_length, total: token_count * token_length };
 }
 
-async function get_due_date(course_id, group_id) {
-	let due_date = null;
-	let due_date_with_extensions = null;
+async function get_user_token_usage(course_id, username) {
+	let groups = [];
+	let usage = {};
 
-	// Get task and group extension
-	let group_extension = 0;
+	let pg_res_groups = await db.query("SELECT group_id FROM course_" + course_id + ".group_user WHERE username = ($1)", [username]);
+	for (let row of pg_res_groups.rows) {
+		groups.push(row["group_id"]);
+	}
+
+	let pg_res_submission = await db.query("SELECT * FROM course_" + course_id + ".submission WHERE group_id = ANY($1::int[])", [groups]);
+	for (let row of pg_res_submission.rows) {
+		usage[row["task"]] = row["token_used"];
+	}
+
+	return usage;
+}
+
+async function get_due_date(course_id, group_id) {
+	let max_token = 0;
+	let token_length = 0;
+	let due_date = null;
+	let due_date_with_extension = null;
+	let due_date_with_extension_and_token = null;
+
+	// Get task
 	let pg_res_group = await db.query("SELECT task, extension FROM course_" + course_id + ".group WHERE group_id = ($1)", [group_id]);
 	if (pg_res_group.rowCount !== 1) {
-		return { due_date: due_date };
+		return { due_date: null };
 	}
+	let task = pg_res_group.rows[0]["task"];
+
+	// Get original due date
+	let pg_res_due_date = await db.query("SELECT due_date, max_token, task_group_id FROM course_" + course_id + ".task WHERE task = ($1)", [task]);
+	if (pg_res_due_date.rowCount !== 1) {
+		return { due_date: null };
+	}
+	due_date = moment(pg_res_due_date.rows[0]["due_date"]).tz("America/Toronto");
+
+	// Apply group extension to due date if applicable
+	let group_extension = 0;
 	if (pg_res_group.rows[0]["extension"] !== null) {
 		group_extension = pg_res_group.rows[0]["extension"];
 	}
-
-	let task = pg_res_group.rows[0]["task"];
-
-	// Get original due date and max token
-	let pg_res_due_date = await db.query("SELECT due_date, max_token FROM course_" + course_id + ".task WHERE task = ($1)", [task]);
-	if (pg_res_due_date.rowCount !== 1) {
-		return { due_date: due_date };
-	}
-	due_date = moment(pg_res_due_date.rows[0]["due_date"]).tz("America/Toronto");
-	due_date_with_extensions = moment(pg_res_due_date.rows[0]["due_date"]).tz("America/Toronto").add(group_extension, "minutes");
+	due_date_with_extension = moment(pg_res_due_date.rows[0]["due_date"]).tz("America/Toronto").add(group_extension, "minutes");
 
 	// Get max token of the task group if applicable
-	let max_task_group_token = 0;
+	let max_task_group_token = Infinity;
+	let task_group_id = pg_res_due_date.rows[0]["task_group_id"];
+	if (task_group_id !== null) {
+		let pg_res_task_group = await db.query("SELECT max_token FROM course_" + course_id + ".task_group WHERE task_group_id = ($1)", [task_group_id]);
+		if (pg_res_task_group.rowCount !== 1) {
+			return { due_date: null };
+		}
+		max_task_group_token = pg_res_task_group.rows[0]["max_token"];
+	}
+
+	// Get all tasks that are in the task group
+	let task_group_all_tasks = [];
+	if (task_group_id !== null) {
+		let pg_res_task_group_all_tasks = await db.query("SELECT task FROM course_" + course_id + ".task WHERE task_group_id = ($1)", [task_group_id]);
+		if (pg_res_task_group_all_tasks.rowCount < 1) {
+			return { due_date: null };
+		}
+		for (let row of pg_res_task_group_all_tasks.rows) {
+			task_group_all_tasks.push(row["task"]);
+		}
+	}
 
 	// Get all group members
 	let members = [];
 	let pg_res_members = await db.query("SELECT username FROM course_" + course_id + ".group_user WHERE group_id = ($1)", [group_id]);
 	if (pg_res_members.rowCount < 1) {
-		return { due_date: due_date };
+		return {
+			task: task,
+			due_date: due_date.format("YYYY-MM-DD HH:mm:ss"),
+			due_date_with_extension: due_date_with_extension.format("YYYY-MM-DD HH:mm:ss"),
+			due_date_with_extension_and_token: due_date_with_extension.format("YYYY-MM-DD HH:mm:ss"),
+			token_length: -1
+		};
 	}
 	for (let row of pg_res_members.rows) {
 		members.push(row["username"]);
 	}
 
 	// Get how long the task can be extended by token
-	let max_token = pg_res_due_date.rows[0]["max_token"];
-	let token_length = 0;
 	for (let user of members) {
-		let user_token_extension = await get_available_tokens(course_id, user);
-		token_length = user_token_extension["token_length"];
-		if (user_token_extension["token_count"] < max_token) {
-			max_token = user_token_extension["token_count"];
-		}
-	}
-	due_date_with_extensions.add(max_token * token_length, "minutes");
+		// Get max token the task allows
+		let max_task_token = pg_res_due_date.rows[0]["max_token"];
 
-	return { due_date: due_date.format("YYYY-MM-DD HH:mm:ss"), due_date_with_extensions: due_date_with_extensions.format("YYYY-MM-DD HH:mm:ss"), due_date_utc: due_date, due_date_with_extensions_utc: due_date_with_extensions };
+		// Get max token the user has
+		let max_user_token_data = await get_max_user_tokens(course_id, user);
+		let max_user_token = max_user_token_data["token_count"]
+		token_length = max_user_token_data["token_length"];
+
+		// Get user's token usage
+		let used_user_token = 0;
+		let used_task_group_token = 0;
+		let usage = await get_user_token_usage(course_id, user);
+		for (let task in usage) {
+			used_user_token += usage[task];
+			if (task_group_all_tasks.includes(task)) {
+				used_task_group_token += usage[task];
+			}
+		}
+
+		max_token = Math.min(max_task_token, max_user_token - used_user_token, max_task_group_token - used_task_group_token);
+
+		// console.log(max_task_token);
+		// console.log(max_user_token - used_user_token);
+		// console.log(max_task_group_token - used_task_group_token);
+	}
+	due_date_with_extension_and_token = due_date_with_extension.clone().add(max_token * token_length, "minutes");
+
+	return {
+		task: task,
+		due_date: due_date.format("YYYY-MM-DD HH:mm:ss"),
+		due_date_with_extension: due_date_with_extension.format("YYYY-MM-DD HH:mm:ss"),
+		due_date_with_extension_and_token: due_date_with_extension_and_token.format("YYYY-MM-DD HH:mm:ss"),
+		max_token: max_token,
+		token_length: token_length,
+	};
 }
 
-async function collect_submissions(course_id, group_id) {
+async function get_submission_before_due_date(course_id, group_id) {
 	let commits = await gitlab_get_commits(course_id, group_id);
-	let due_dates = await get_due_date(course_id, group_id);
-	let due_date_with_extensions = due_dates["due_date_with_extensions"];
-	let due_date_with_extensions_utc = due_dates["due_date_with_extensions_utc"];
-	let collected_commit = "";
+	let due_date_data = await get_due_date(course_id, group_id);
+	let task = due_date_data["task"];
+	let due_date = due_date_data["due_date"];
+	if (due_date === null) {
+		return { due_date: null };
+	}
+	let due_date_with_extension = due_date_data["due_date_with_extension"];
+	let due_date_with_extension_and_token = due_date_data["due_date_with_extension_and_token"];
+	let token_length = due_date_data["token_length"];
 
-	for (let commit of commits){
-		if (collected_commit === "" && moment(commit["created_at"]).isBefore(moment(due_date_with_extensions_utc))){
-			collected_commit = commit["id"];
+	let collected_commit_id = null;
+	let collected_commit_time = null;
+	let collected_commit_time_utc = null;
+	let collected_commit_message = null;
+
+	for (let commit of commits) {
+		if (collected_commit_id === null && moment(commit["created_at"]).isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
+			collected_commit_id = commit["id"];
+			collected_commit_time = moment(commit["created_at"]).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
+			collected_commit_time_utc = moment(commit["created_at"]);
+			collected_commit_message = commit["message"];
 		}
 	}
 
-	return {due_date: due_dates["due_date"], due_date_with_extensions: due_date_with_extensions, commit: collected_commit};
+	let token_used = 0;
+	if (collected_commit_time_utc !== "") {
+		let minutes_past_due_date_with_extension = moment.duration(collected_commit_time_utc.diff(moment.tz(due_date_with_extension, "America/Toronto"))).asMinutes();
+		if (minutes_past_due_date_with_extension > 0) {
+			token_used = Math.ceil(minutes_past_due_date_with_extension / token_length);
+		}
+	}
+
+	return {
+		task: task,
+		due_date: due_date,
+		due_date_with_extension: due_date_with_extension,
+		due_date_with_extension_and_token: due_date_with_extension_and_token,
+		commit_id: collected_commit_id,
+		commit_time: collected_commit_time,
+		commit_message: collected_commit_message,
+		token_used: token_used
+	};
+}
+
+async function collect_one_submission(course_id, group_id, overwrite) {
+	let submission_data = await get_submission_before_due_date(course_id, group_id);
+	if (submission_data["due_date"] === null) {
+		return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
+	}
+	if (submission_data["commit_id"] === null) {
+		return { message: "No submission is found for this group.", group_id: group_id, code: "no_submission", submission: submission_data };
+	}
+
+	let sql_add_submission = "INSERT INTO course_" + course_id + ".submission (task, group_id, commit_id, token_used) VALUES (($1), ($2), ($3), ($4))";
+	let sql_add_submission_data = [submission_data["task"], group_id, submission_data["commit_id"], submission_data["token_used"]];
+
+	if (overwrite) {
+		sql_add_submission += " ON CONFLICT (group_id) DO UPDATE SET commit_id = EXCLUDED.commit_id, token_used = EXCLUDED.token_used";
+	} else {
+		sql_add_submission += " ON CONFLICT (group_id) DO NOTHING";
+	}
+
+	let err_add_submission, pg_res_add_submission = await db.query(sql_add_submission, sql_add_submission_data);
+	if (err_add_submission) {
+		return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
+	} else if (pg_res_add_submission.rowCount === 0) {
+		return { message: "The new submission is not collected as an old submission is found and overwrite is false.", group_id: group_id, code: "submission_exists", submission: submission_data };
+	} else {
+		return { message: "The new submission is collected.", group_id: group_id, code: "submission_collected", submission: submission_data };
+	}
+}
+
+async function collect_all_submissions(course_id, task, overwrite) {
+	collect_processes = [];
+	let pg_res = await db.query("SELECT group_id FROM course_" + course_id + ".group WHERE task = ($1)", [task]);
+	for (let row of pg_res.rows) {
+		collect_processes.push(collect_one_submission(course_id, row["group_id"], overwrite));
+	}
+
+	let results = await Promise.all(collect_processes);
+
+	let collected_count = 0;
+	let empty_count = 0;
+	let ignore_count = 0;
+	let error_count = 0;
+	let collected_groups = [];
+	let empty_groups = [];
+	let ignore_groups = [];
+	let error_groups = [];
+
+	for (let result of results) {
+		let code = result["code"];
+		let group_id = result["group_id"];
+
+		if (code === "submission_collected") {
+			collected_count += 1;
+			collected_groups.push(group_id);
+		} else if (code === "submission_exists") {
+			ignore_count += 1;
+			ignore_groups.push(group_id);
+		} else if (code === "no_submission") {
+			empty_count += 1;
+			empty_groups.push(group_id);
+		} else if (code === "unknown_error") {
+			error_count += 1;
+			error_groups.push(group_id);
+		}
+	}
+
+	return { collected_count, empty_count, ignore_count, error_count, collected_groups, empty_groups, ignore_groups, error_groups };
 }
 
 
@@ -770,14 +933,17 @@ module.exports = {
 	search_files: search_files,
 
 	// Token related
-	get_available_tokens: get_available_tokens,
+	get_max_user_tokens: get_max_user_tokens,
+	get_user_token_usage: get_user_token_usage,
 	get_due_date: get_due_date,
 
 	// Submission related,
-	collect_submissions: collect_submissions,
+	get_submission_before_due_date: get_submission_before_due_date,
+	collect_one_submission: collect_one_submission,
+	collect_all_submissions: collect_all_submissions,
 
-    // Gitlab related
-    gitlab_get_user_id: gitlab_get_user_id,
+	// Gitlab related
+	gitlab_get_user_id: gitlab_get_user_id,
 	gitlab_create_group_and_project: gitlab_create_group_and_project,
 	gitlab_add_user_with_gitlab_group_id: gitlab_add_user_with_gitlab_group_id,
 	gitlab_add_user_without_gitlab_group_id: gitlab_add_user_without_gitlab_group_id,

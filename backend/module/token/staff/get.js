@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
         return;
     }
 
-    helpers.get_available_tokens(res.locals["course_id"], req.query["username"]).then(data => {
+    helpers.get_max_user_tokens(res.locals["course_id"], req.query["username"]).then(data => {
         res.status(200).json(data);
     });
 })

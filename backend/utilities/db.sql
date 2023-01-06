@@ -27,7 +27,7 @@ CREATE TABLE course
     course_session character varying NOT NULL,
     gitlab_group_id character varying UNIQUE,
     default_token_count integer NOT NULL DEFAULT 0,
-    default_token_length integer NOT NULL DEFAULT 0,
+    token_length integer NOT NULL DEFAULT 0,
     hidden boolean NOT NULL DEFAULT false,
     PRIMARY KEY (course_id),
     UNIQUE (course_code, course_session)
@@ -46,22 +46,6 @@ CREATE TABLE course_role
         NOT VALID,
     CONSTRAINT course_id FOREIGN KEY (course_id)
         REFERENCES course (course_id) MATCH SIMPLE
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT
-        NOT VALID
-);
-
-CREATE TABLE ddah
-(
-    username character varying NOT NULL,
-    duty character varying NOT NULL,
-    "time" integer NOT NULL,
-    supervisor_prepared timestamp with time zone,
-    chair_approved timestamp with time zone,
-    ta_accepted timestamp with time zone,
-    PRIMARY KEY (username, duty),
-    CONSTRAINT username FOREIGN KEY (username)
-        REFERENCES user_info (username) MATCH SIMPLE
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
         NOT VALID

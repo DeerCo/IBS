@@ -36,13 +36,13 @@ router.post("/", (req, res) => {
         }
     }
 
-    let default_token_length = 0;
-    if ("default_token_length" in req.body) {
-        if (helpers.number_validate(req.body["default_token_length"])){
+    let token_length = 0;
+    if ("token_length" in req.body) {
+        if (helpers.number_validate(req.body["token_length"])){
             res.status(400).json({ message: "The default token length is invalid." });
             return;
         } else{
-            default_token_length = req.body["default_token_length"];
+            token_length = req.body["token_length"];
         }
     }
 
@@ -56,8 +56,8 @@ router.post("/", (req, res) => {
         }
     }
     
-    let sql_add_course = "INSERT INTO course (course_code, course_session, gitlab_group_id, default_token_count, default_token_length, hidden) VALUES (($1), ($2), ($3), ($4), ($5), ($6)) RETURNING course_id";
-    let sql_add_data = [req.body["course_code"], req.body["course_session"], gitlab_group_id, default_token_count, default_token_length, hidden];
+    let sql_add_course = "INSERT INTO course (course_code, course_session, gitlab_group_id, default_token_count, token_length, hidden) VALUES (($1), ($2), ($3), ($4), ($5), ($6)) RETURNING course_id";
+    let sql_add_data = [req.body["course_code"], req.body["course_session"], gitlab_group_id, default_token_count, token_length, hidden];
 
     client.query(sql_add_course, sql_add_data, (err, pg_res_add_course) => {
         if (err) {
@@ -85,8 +85,7 @@ router.post("/", (req, res) => {
             let sql_add_schema = "CREATE SCHEMA course_" + course_id + "; ";
             let sql_add_user_table = 
                 "CREATE TABLE " + user_table_name + "(" +
-                "username character varying NOT NULL, token_count integer NOT NULL DEFAULT -1, " +
-                "token_length integer NOT NULL DEFAULT -1, PRIMARY KEY (username), " +
+                "username character varying NOT NULL, token_count integer NOT NULL DEFAULT -1, PRIMARY KEY (username), " +
                 "CONSTRAINT username FOREIGN KEY (username) REFERENCES public.user_info (username) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
