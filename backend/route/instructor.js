@@ -30,8 +30,9 @@ const change_interview = require("../module/interview/staff/change");
 const delete_interview = require("../module/interview/staff/delete");
 const collect_one_submission = require("../module/submission/staff/collect_one");
 const collect_all_submissions = require("../module/submission/staff/collect_all");
-const manual_collect_submissions = require("../module/submission/staff/manual");
+const manual_collect_submission = require("../module/submission/staff/collect_manual");
 const download_submissions = require("../module/submission/staff/download");
+const check_submission = require("../module/submission/staff/check");
 
 router.use("/", function (req, res, next) {
     next();
@@ -83,7 +84,8 @@ router.use("/course/:course_id/interview/delete", delete_interview);
 // Submission
 router.use("/course/:course_id/submission/collect/one", collect_one_submission);
 router.use("/course/:course_id/submission/collect/all", collect_all_submissions);
-router.use("/course/:course_id/submission/collect/manual", manual_collect_submissions);
-router.use("/course/:course_id/submission/collect/download", download_submissions);
+router.use("/course/:course_id/submission/collect/manual", manual_collect_submission);
+router.use("/course/:course_id/submission/download", download_submissions);
+router.use("/course/:course_id/submission/check", check_submission);
 
 module.exports = router;
