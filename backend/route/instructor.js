@@ -23,6 +23,8 @@ const get_all_marks = require("../module/mark/staff/all");
 const get_all_marks_csv = require("../module/mark/staff/all_csv");
 const submit_mark = require("../module/mark/staff/submit");
 const upload_marks = require("../module/mark/staff/upload");
+const release_marks = require("../module/mark/staff/release");
+const hide_marks = require("../module/mark/staff/hide");
 const all_interviews = require("../module/interview/staff/all");
 const today_interviews = require("../module/interview/staff/today");
 const schedule_interview = require("../module/interview/staff/schedule");
@@ -73,6 +75,8 @@ router.use("/course/:course_id/mark/all", get_all_marks);
 router.use("/course/:course_id/mark/all_csv", get_all_marks_csv);
 router.use("/course/:course_id/mark/submit", submit_mark);
 router.use("/course/:course_id/mark/upload", upload_marks);
+router.use("/course/:course_id/mark/release", release_marks);
+router.use("/course/:course_id/mark/hide", hide_marks);
 
 // Interview
 router.use("/course/:course_id/interview/all", all_interviews);

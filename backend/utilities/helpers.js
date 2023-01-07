@@ -970,7 +970,12 @@ async function download_all_submissions(course_id, task) {
 		let pg_res_gitlab_url = await db.query("SELECT gitlab_url FROM course_" + course_id + ".group WHERE group_id = ($1)", [group_id]);
 		let pg_res_commit_id = await db.query("SELECT commit_id FROM course_" + course_id + ".submission WHERE group_id = ($1)", [group_id]);
 		if (pg_res_gitlab_url.rowCount === 1 && pg_res_commit_id.rowCount === 1) {
-			groups.push({ group_id: group_id, gitlab_url: pg_res_gitlab_url.rows[0]["gitlab_url"], commit_id: pg_res_commit_id.rows[0]["commit_id"] });
+			groups.push({ 
+				group_name: "group_" + group_id,
+				group_id: group_id, 
+				gitlab_url: pg_res_gitlab_url.rows[0]["gitlab_url"], 
+				commit_id: pg_res_commit_id.rows[0]["commit_id"] 
+			});
 		}
 	}
 
