@@ -47,7 +47,7 @@ router.use("/", function (req, res, next) {
 // Middleware
 router.use("/course/", middleware);
 
-// Task Group
+// Token
 router.use("/course/:course_id/token/get", get_token);
 router.use("/course/:course_id/token/change", change_token);
 

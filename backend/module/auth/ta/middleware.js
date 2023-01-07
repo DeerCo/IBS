@@ -18,7 +18,7 @@ router.use("/:course_id/", function (req, res, next) {
                     return;
                 }
 
-                if (token_data["roles"][req.params["course_id"]] !== "instructor") {
+                if (token_data["roles"][req.params["course_id"]] !== "ta") {
                     res.status(403).json({ message: "You don't have permission to access." });
                     return;
                 }
