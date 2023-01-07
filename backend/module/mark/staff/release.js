@@ -3,6 +3,11 @@ const router = express.Router();
 const client = require("../../../setup/db");
 
 router.put("/", (req, res) => {
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
+        return;
+    }
+    
     let sql_release = "UPDATE course_" + res.locals["course_id"] + ".mark SET hidden = false WHERE task = ($1)";
 
     client.query(sql_release, [res.locals["task"]], (err, pgRes) => {

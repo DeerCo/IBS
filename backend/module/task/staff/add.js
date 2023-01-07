@@ -4,8 +4,8 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
-    if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
     if (!("due_date" in req.body) || helpers.time_validate(req.body["due_date"])) {
@@ -52,7 +52,7 @@ router.post("/", (req, res) => {
 
     let due_date = req.body["due_date"] + " America/Toronto";
     let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".task (task, due_date, hidden, min_member, max_member, max_token, task_group_id, starter_code_url) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8))";
-    let sql_add_data = [req.body["task"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], task_group_id, starter_code_url];
+    let sql_add_data = [res.locals["task"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], task_group_id, starter_code_url];
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {
         if (err) {

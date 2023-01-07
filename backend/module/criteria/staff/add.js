@@ -4,8 +4,8 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
-    if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
     if (!("criteria" in req.body) || helpers.name_validate(req.body["criteria"])) {
@@ -23,11 +23,11 @@ router.post("/", (req, res) => {
             return;
         } else{
             var sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".criteria (task, criteria, total, description) VALUES (($1), ($2), ($3), ($4))";
-            var sql_add_data = [req.body["task"], req.body["criteria"], req.body["total"], req.body["description"]];
+            var sql_add_data = [res.locals["task"], req.body["criteria"], req.body["total"], req.body["description"]];
         }
     } else {
         var sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".criteria (task, criteria, total) VALUES (($1), ($2), ($3))";
-        var sql_add_data = [req.body["task"], req.body["criteria"], req.body["total"]];
+        var sql_add_data = [res.locals["task"], req.body["criteria"], req.body["total"]];
     }
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {

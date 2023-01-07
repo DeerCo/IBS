@@ -298,10 +298,10 @@ async function get_all_group_users(course_id, task) {
 	let results = {};
 	let pg_res = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [task]);
 
-	for (let row of pg_res.rows){
-		if (row["group_id"] in results){
+	for (let row of pg_res.rows) {
+		if (row["group_id"] in results) {
 			results[row["group_id"]].push(row["username"]);
-		} else{
+		} else {
 			results[row["group_id"]] = [row["username"]];
 		}
 	}
@@ -970,11 +970,11 @@ async function download_all_submissions(course_id, task) {
 		let pg_res_gitlab_url = await db.query("SELECT gitlab_url FROM course_" + course_id + ".group WHERE group_id = ($1)", [group_id]);
 		let pg_res_commit_id = await db.query("SELECT commit_id FROM course_" + course_id + ".submission WHERE group_id = ($1)", [group_id]);
 		if (pg_res_gitlab_url.rowCount === 1 && pg_res_commit_id.rowCount === 1) {
-			groups.push({ 
+			groups.push({
 				group_name: "group_" + group_id,
-				group_id: group_id, 
-				gitlab_url: pg_res_gitlab_url.rows[0]["gitlab_url"], 
-				commit_id: pg_res_commit_id.rows[0]["commit_id"] 
+				group_id: group_id,
+				gitlab_url: pg_res_gitlab_url.rows[0]["gitlab_url"],
+				commit_id: pg_res_commit_id.rows[0]["commit_id"]
 			});
 		}
 	}

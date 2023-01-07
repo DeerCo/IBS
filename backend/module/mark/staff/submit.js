@@ -4,8 +4,8 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
-    if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
     if (!("criteria" in req.body) || helpers.string_validate(req.body["criteria"])) {
@@ -21,9 +21,9 @@ router.post("/", (req, res) => {
         return;
     }
 
-    helpers.get_criteria_id(res.locals["course_id"], req.body["task"], req.body["criteria"]).then(criteria_id => {
+    helpers.get_criteria_id(res.locals["course_id"], res.locals["task"], req.body["criteria"]).then(criteria_id => {
         let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".mark (criteria_id, username, mark, task) VALUES (($1), ($2), ($3), ($4))";
-        let sql_add_data = [criteria_id, req.body["username"], req.body["mark"], req.body["task"]];
+        let sql_add_data = [criteria_id, req.body["username"], req.body["mark"], res.locals["task"]];
 
         if ("overwrite" in req.body && req.body["overwrite"].toLowerCase() === "true") {
             sql_add += " ON CONFLICT (criteria_id, username) DO UPDATE SET mark = EXCLUDED.mark";

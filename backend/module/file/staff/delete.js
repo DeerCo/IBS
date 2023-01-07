@@ -5,12 +5,12 @@ const fs = require("fs");
 const helpers = require("../../../utilities/helpers");
 
 router.delete("/", (req, res) => {
-    if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
 
-    let path = "./files/course_" + res.locals["course_id"] + "/" + req.body["task"];
+    let path = "./files/course_" + res.locals["course_id"] + "/" + res.locals["task"];
 
     if (!fs.existsSync(path)) {
         res.status(200).json({ message: "This task has no file." });

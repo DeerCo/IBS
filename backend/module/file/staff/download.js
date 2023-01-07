@@ -5,14 +5,14 @@ const fs = require("fs");
 const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
-    if (!("task" in req.query) || helpers.name_validate(req.query["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
 
-    let original_path = "./files/course_" + res.locals["course_id"] + "/" + req.query["task"];
+    let original_path = "./files/course_" + res.locals["course_id"] + "/" + res.locals["task"];
     let zip_root = "./tmp/download/";
-    let zip_file_name = req.query["task"] + ".zip";
+    let zip_file_name = res.locals["task"] + ".zip";
 	if (!fs.existsSync(original_path)) {
         res.status(200).json({ message: "This task has no file." });
         return;

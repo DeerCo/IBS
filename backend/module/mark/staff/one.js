@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
         return;
     }
 
-    if (!("task" in req.query) || helpers.string_validate(req.query["task"])) {
+    if (res.locals["task"] === "") {
         let sql_mark = "SELECT username, task, SUM(mark) AS sum FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) GROUP BY (username, task)";
         client.query(sql_mark, [req.query["username"]], (err, pgRes) => {
             if (err) {
@@ -22,11 +22,11 @@ router.get("/", (req, res) => {
         });
     } else {
         let sql_mark = "SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) AND task = ($2) ORDER BY criteria_id";
-        client.query(sql_mark, [req.query["username"], req.query["task"]], (err, pgRes) => {
+        client.query(sql_mark, [req.query["username"], res.locals["task"]], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });
             } else {
-                helpers.format_marks_one_task(pgRes.rows, res.locals["course_id"], req.query["task"]).then(marks => {
+                helpers.format_marks_one_task(pgRes.rows, res.locals["course_id"], res.locals["task"]).then(marks => {
                     res.json({ marks: marks });
                 });
             }

@@ -4,8 +4,8 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.put("/", (req, res) => {
-    if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
     if (!("due_date" in req.body) || helpers.time_validate(req.body["due_date"])) {
@@ -55,7 +55,7 @@ router.put("/", (req, res) => {
 
     let due_date = req.body["due_date"] + " America/Toronto";
     let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), task_group_id = ($6), starter_code_url = ($7) WHERE task = ($8)";
-    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], task_group_id, starter_code_url, req.body["task"]];
+    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], task_group_id, starter_code_url, res.locals["task"]];
 
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {

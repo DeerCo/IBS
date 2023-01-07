@@ -4,8 +4,8 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.put("/", (req, res) => {
-	if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+	if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
 
@@ -32,7 +32,7 @@ router.put("/", (req, res) => {
 		var sql_change = "UPDATE course_" + res.locals["course_id"] + ".interview SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND host = ($2) AND group_id IS NULL" + filter;
 	}
 
-	client.query(sql_change, [req.body["task"], res.locals["username"]].concat(set_data).concat(filter_data), (err, pgRes) => {
+	client.query(sql_change, [res.locals["task"], res.locals["username"]].concat(set_data).concat(filter_data), (err, pgRes) => {
 		if (err) {
 			if (err.code === "23505") {
 				res.status(400).json({ message: "You have another interview at the same time." });

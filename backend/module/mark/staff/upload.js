@@ -16,12 +16,12 @@ router.post("/", upload.single("file"), (req, res) => {
         res.status(400).json({ message: "The file is missing or has invalid format." });
         return;
     }
-    if (path.extname(req.file.originalname) !== ".csv"){
-		res.status(200).json({ message: "The file must be a csv file." });
-		return;
-	}
-    if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (path.extname(req.file.originalname) !== ".csv") {
+        res.status(200).json({ message: "The file must be a csv file." });
+        return;
+    }
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
 
@@ -40,8 +40,8 @@ router.post("/", upload.single("file"), (req, res) => {
         let all_criteria = [];
         let marks_data = [];
 
-        helpers.get_criteria(res.locals["course_id"], req.body["task"]).then(db_all_criteria => {
-            if (csv_row[0].length <= 1){
+        helpers.get_criteria(res.locals["course_id"], res.locals["task"]).then(db_all_criteria => {
+            if (csv_row[0].length <= 1) {
                 res.status(400).json({ message: "At least one criteria is required." });
                 return;
             }
@@ -49,19 +49,19 @@ router.post("/", upload.single("file"), (req, res) => {
             // Validate all criteria
             for (let i = 1; i < csv_row[0].length; i++) {
                 let found = false;
-                for (let temp_criteria in db_all_criteria){
-                    if (db_all_criteria[temp_criteria]["criteria"] === csv_row[0][i]){
+                for (let temp_criteria in db_all_criteria) {
+                    if (db_all_criteria[temp_criteria]["criteria"] === csv_row[0][i]) {
                         all_criteria.push(temp_criteria);
                         found = true;
                     }
                 }
-                if (!found){
-                    res.status(400).json({ message: "Criteria " + csv_row[0][i]+ " is not found in the database." });
+                if (!found) {
+                    res.status(400).json({ message: "Criteria " + csv_row[0][i] + " is not found in the database." });
                     return;
                 }
             }
 
-            helpers.get_all_group_users(res.locals["course_id"], req.body["task"]).then(groups => {
+            helpers.get_all_group_users(res.locals["course_id"], res.locals["task"]).then(groups => {
                 // Process the csv file
                 for (let j = 2; j < csv_row.length; j++) {
                     let user = csv_row[j][0];
@@ -71,22 +71,22 @@ router.post("/", upload.single("file"), (req, res) => {
                             mark = 0;
                         }
 
-                        if (user.startsWith("group_") && (user.replace("group_", "") in groups)){ // The user is a group so add the mark for all confirmed members
+                        if (user.startsWith("group_") && (user.replace("group_", "") in groups)) { // The user is a group so add the mark for all confirmed members
                             let group_id = user.replace("group_", "");
-                            for (let temp_user of groups[group_id]){
-                                marks_data.push([all_criteria[k], temp_user, mark, req.body["task"]]);
+                            for (let temp_user of groups[group_id]) {
+                                marks_data.push([all_criteria[k], temp_user, mark, res.locals["task"]]);
                             }
-                        } else{ // The user is just a single user
-                            marks_data.push([all_criteria[k], user, mark, req.body["task"]]);
+                        } else { // The user is just a single user
+                            marks_data.push([all_criteria[k], user, mark, res.locals["task"]]);
                         }
                     }
                 }
 
-                if (marks_data.length === 0){
+                if (marks_data.length === 0) {
                     res.status(200).json({ message: "The file must contain at least 1 valid mark." });
                     return;
                 }
-        
+
                 client.query(format(sql_upload, marks_data), [], (err, pgRes) => {
                     if (err) {
                         if (err.code === "23503" && err.constraint === "username") {
@@ -99,7 +99,7 @@ router.post("/", upload.single("file"), (req, res) => {
                             res.status(404).json({ message: "Unknown error." });
                             console.log(err);
                         }
-                    } else{
+                    } else {
                         let message = pgRes.rowCount + " marks are changed. " + (marks_data.length - pgRes.rowCount) + " marks are unchanged.";
                         res.status(200).json({ message: message });
                     }

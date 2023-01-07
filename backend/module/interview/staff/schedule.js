@@ -4,8 +4,8 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
-	if (!("task" in req.body) || helpers.string_validate(req.body["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+	if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
 	if (!("length" in req.body) || isNaN(req.body["length"]) || req.body["length"].trim() === "") {
@@ -30,7 +30,7 @@ router.post("/", (req, res) => {
 	let time = req.body["time"] + " America/Toronto";
 
 	let sql_schedule = "INSERT INTO course_" + res.locals["course_id"] + ".interview (task, time, host, location, length) VALUES (($1), ($2), ($3), ($4), ($5))";
-	let sql_schedule_data = [req.body["task"], time, res.locals["username"], location, req.body["length"]];
+	let sql_schedule_data = [res.locals["task"], time, res.locals["username"], location, req.body["length"]];
 	client.query(sql_schedule, sql_schedule_data, (err, pgRes) => {
 		if (err) {
 			if (err.code === "23503" && err.constraint === "task") {
@@ -43,7 +43,7 @@ router.post("/", (req, res) => {
 				res.status(404).json({ message: "Unknown error." });
 			}
 		} else {
-			let message = "You have scheduled an interview for " + req.body["task"] + " at " + req.body["time"] + " successfully.";
+			let message = "You have scheduled an interview for " + res.locals["task"] + " at " + req.body["time"] + " successfully.";
 			res.status(200).json({ message: message });
 		}
 	});

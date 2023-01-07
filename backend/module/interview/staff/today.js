@@ -6,13 +6,13 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
-    if (!("task" in req.query) || helpers.string_validate(req.query["task"])) {
-        res.status(400).json({ message: "The task is missing or has invalid format." });
+    if (res.locals["task"] === "") {
+        res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
 
     let sql_times = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS toronto_time, * FROM course_" + res.locals["course_id"] + ".interview WHERE task = ($1) AND host = ($2) AND time BETWEEN ($3) AND ($3) + INTERVAL '24 HOURS' ORDER BY time";
-    client.query(sql_times, [req.query["task"], res.locals["username"], moment().tz("America/Toronto").format("YYYY-MM-DD") + " America/Toronto"], (err, pg_res) => {
+    client.query(sql_times, [res.locals["task"], res.locals["username"], moment().tz("America/Toronto").format("YYYY-MM-DD") + " America/Toronto"], (err, pg_res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {

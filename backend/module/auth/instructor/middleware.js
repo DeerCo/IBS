@@ -39,11 +39,11 @@ async function retrieve_data(req){
     let task = "";
 
     if (req.method === "GET"){
-        if ("task" in req.query && !helpers.string_validate(req.query["task"])) {
+        if ("task" in req.query && !helpers.name_validate(req.query["task"])) {
             task = await helpers.task_validate(req.params["course_id"], req.query["task"], false);
         }
     } else{
-        if ("task" in req.body && !helpers.string_validate(req.body["task"])) {
+        if ("task" in req.body && !helpers.name_validate(req.body["task"])) {
             task = await helpers.task_validate(req.params["course_id"], req.body["task"], false);
         }
     }
