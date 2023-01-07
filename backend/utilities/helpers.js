@@ -294,6 +294,20 @@ async function get_group_id(course_id, task, username) {
 	}
 }
 
+async function get_all_group_users(course_id, task) {
+	let results = {};
+	let pg_res = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [task]);
+
+	for (let row of pg_res.rows){
+		if (row["group_id"] in results){
+			results[row["group_id"]].push(row["username"]);
+		} else{
+			results[row["group_id"]] = [row["username"]];
+		}
+	}
+	return results;
+}
+
 async function format_marks_one_task(json, course_id, task) {
 	let marks = {};
 	let all_criteria = await get_criteria(course_id, task);
@@ -989,6 +1003,7 @@ module.exports = {
 	get_total_out_of: get_total_out_of,
 	get_group_task: get_group_task,
 	get_group_id: get_group_id,
+	get_all_group_users: get_all_group_users,
 
 	// Mark related
 	format_marks_one_task: format_marks_one_task,

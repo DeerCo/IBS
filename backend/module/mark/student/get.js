@@ -5,7 +5,7 @@ const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
     if (res.locals["task"] === "") {
-        let sql_mark = "SELECT username, task, SUM(mark) AS sum FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) GROUP BY (username, task)";
+        let sql_mark = "SELECT username, task, SUM(mark) AS sum FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) AND hidden = false GROUP BY (username, task)";
         client.query(sql_mark, [res.locals["username"]], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });
@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
             }
         });
     } else {
-        let sql_mark = "SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) AND task = ($2) ORDER BY criteria_id";
+        let sql_mark = "SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) AND task = ($2) AND hidden = false ORDER BY criteria_id";
         client.query(sql_mark, [res.locals["username"], res.locals["task"]], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });

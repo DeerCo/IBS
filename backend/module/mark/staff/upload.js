@@ -45,6 +45,8 @@ router.post("/", upload.single("file"), (req, res) => {
                 res.status(400).json({ message: "At least one criteria is required." });
                 return;
             }
+
+            // Validate all criteria
             for (let i = 1; i < csv_row[0].length; i++) {
                 let found = false;
                 for (let temp_criteria in db_all_criteria){
@@ -58,37 +60,50 @@ router.post("/", upload.single("file"), (req, res) => {
                     return;
                 }
             }
-    
-            for (let j = 2; j < csv_row.length; j++) {
-                for (let k = 0; k < all_criteria.length; k++) {
-                    let mark = parseFloat(csv_row[j][k + 1]);
-                    if (isNaN(parseFloat(csv_row[j][k + 1]))) {
-                        mark = 0;
-                    }
 
-                    marks_data.push([all_criteria[k], csv_row[j][0], mark, req.body["task"]]);
-                }
-            }
-            if (marks_data.length === 0){
-                res.status(200).json({ message: "The file must contain at least 1 mark." });
-                return;
-            }
-    
-            client.query(format(sql_upload, marks_data), [], (err, pgRes) => {
-                if (err) {
-                    if (err.code === "23503" && err.constraint === "username") {
-                        let username = err.detail.match(/Key \(username\)=\((.*)\) is not present in table "user_info"\./);
-                        res.status(400).json({ message: "The username " + username[1] + " is not found in the database." });
-                    } else if (err.code === "21000") {
-                        res.status(400).json({ message: "Rows must have unique username." });
-                    } else {
-                        res.status(404).json({ message: "Unknown error." });
-                        console.log(err);
+            helpers.get_all_group_users(res.locals["course_id"], req.body["task"]).then(groups => {
+                // Process the csv file
+                for (let j = 2; j < csv_row.length; j++) {
+                    let user = csv_row[j][0];
+                    for (let k = 0; k < all_criteria.length; k++) {
+                        let mark = parseFloat(csv_row[j][k + 1]);
+                        if (isNaN(parseFloat(csv_row[j][k + 1]))) {
+                            mark = 0;
+                        }
+
+                        if (user.startsWith("group_") && (user.replace("group_", "") in groups)){ // The user is a group so add the mark for all confirmed members
+                            let group_id = user.replace("group_", "");
+                            for (let temp_user of groups[group_id]){
+                                marks_data.push([all_criteria[k], temp_user, mark, req.body["task"]]);
+                            }
+                        } else{ // The user is just a single user
+                            marks_data.push([all_criteria[k], user, mark, req.body["task"]]);
+                        }
                     }
-                } else{
-                    let message = pgRes.rowCount + " marks are changed. " + (marks_data.length - pgRes.rowCount) + " marks are unchanged.";
-                    res.status(200).json({ message: message });
                 }
+
+                if (marks_data.length === 0){
+                    res.status(200).json({ message: "The file must contain at least 1 valid mark." });
+                    return;
+                }
+        
+                client.query(format(sql_upload, marks_data), [], (err, pgRes) => {
+                    if (err) {
+                        if (err.code === "23503" && err.constraint === "username") {
+                            console.log(err)
+                            let regex = err.detail.match(/Key \(username\)=\((.*)\) is not present in table "user"\./);
+                            res.status(400).json({ message: "The username " + regex[1] + " is not found in the database." });
+                        } else if (err.code === "21000") {
+                            res.status(400).json({ message: "Rows must have unique username." });
+                        } else {
+                            res.status(404).json({ message: "Unknown error." });
+                            console.log(err);
+                        }
+                    } else{
+                        let message = pgRes.rowCount + " marks are changed. " + (marks_data.length - pgRes.rowCount) + " marks are unchanged.";
+                        res.status(200).json({ message: message });
+                    }
+                });
             });
         });
     });
