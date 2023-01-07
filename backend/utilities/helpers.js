@@ -408,68 +408,6 @@ async function format_marks_one_task_csv(json, course_id, task, res, note = "", 
 	});
 }
 
-function send_final_marks_csv(json, res, total = false) {
-	if (JSON.stringify(json) === "[]") {
-		res.status(200).json({ message: "No data is available." });
-		return;
-	}
-
-	let current_time = moment().tz("America/Toronto");
-	let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
-
-	let dir = __dirname + "/../backup/" + dir_date;
-	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir, { recursive: true });
-	}
-
-	let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
-	let file_name = "marks_final_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ".csv";
-
-	let header = Object.assign({ Student: "/" }, constants["weights"]);
-	let parsed_json = {};
-
-	for (let mark of json) {
-		if (mark["task"] in constants["max"] && parseFloat(mark["marks_sum"]) > constants["max"][mark["task"]]) {
-			mark["marks_sum"] = constants["max"][mark["task"]];
-		}
-
-		if (parseFloat(mark["totals_sum"]) != 0) {
-			var weighted_mark = parseFloat(mark["marks_sum"]) / parseFloat(mark["totals_sum"]) * constants["weights"][mark["task"]];
-		} else {
-			var weighted_mark = 0;
-		}
-
-		if (mark["student"] in parsed_json) {
-			parsed_json[mark["student"]][mark["task"]] = weighted_mark;
-		} else {
-			parsed_json[mark["student"]] = { Student: mark["student"], [mark["task"]]: weighted_mark };
-		}
-	}
-
-	let rows = [header].concat(Object.values(parsed_json));
-
-	if (total) {
-		for (let row of rows) {
-			let row_total = 0;
-			for (let task of Object.keys(row)) {
-				if (task != "Student") {
-					row_total += row[task];
-				}
-			}
-			row["Total"] = row_total;
-		}
-	}
-
-	let csv = json2csvParser.parse(rows);
-	fs.writeFile(dir + file_name, csv, (err) => {
-		if (err) {
-			res.status(404).json({ message: "Unknown error." });
-		} else {
-			res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
-		}
-	});
-}
-
 async function gitlab_get_user_id(username) {
 	try {
 		let config_get_user_id = {
@@ -485,7 +423,7 @@ async function gitlab_get_user_id(username) {
 		return res["data"][0]["id"];
 	} catch (err) {
 		console.log(err)
-		if ("response" in err && "data" in err["response"]) {
+		if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
 			console.log(err["response"]["data"]["message"]);
 		}
 		return -1;
@@ -535,7 +473,7 @@ async function gitlab_create_group_and_project(course_id, group_id, username, ta
 		var gitlab_project_id = res_create_project["data"]["id"];
 	} catch (err) {
 		console.log(err);
-		if ("response" in err && "data" in err["response"]) {
+		if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
 			console.log(err["response"]["data"]["message"]);
 		}
 		return { success: false, code: "failed_create_project" }
@@ -571,7 +509,7 @@ async function gitlab_add_user_with_gitlab_group_id(gitlab_group_id, gitlab_url,
 		await axios.post(process.env.GITLAB_URL + "groups/" + gitlab_group_id + "/members", data_add_user, config_add_user);
 	} catch (err) {
 		console.log(err);
-		if ("response" in err && "data" in err["response"]) {
+		if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
 			console.log(err["response"]["data"]["message"]);
 		}
 		return { success: false, code: "failed_add_user" };
@@ -626,7 +564,7 @@ async function gitlab_remove_user(course_id, group_id, username) {
 		await axios.delete(process.env.GITLAB_URL + "groups/" + gitlab_group_id + "/members/" + user_id, config);
 	} catch (err) {
 		console.log(err);
-		if ("response" in err && "data" in err["response"]) {
+		if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
 			console.log(err["response"]["data"]["message"]);
 		}
 		return { success: false, code: "failed_remove_user" };
@@ -658,7 +596,7 @@ async function gitlab_get_commits(course_id, group_id) {
 		return res["data"];
 	} catch (err) {
 		console.log(err)
-		if ("response" in err && "data" in err["response"]) {
+		if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
 			console.log(err["response"]["data"]["message"]);
 		}
 		return [];
@@ -1014,7 +952,6 @@ module.exports = {
 	format_marks_one_task: format_marks_one_task,
 	format_marks_all_tasks: format_marks_all_tasks,
 	format_marks_one_task_csv: format_marks_one_task_csv,
-	send_final_marks_csv: send_final_marks_csv,
 
 	// File related
 	search_files: search_files,
