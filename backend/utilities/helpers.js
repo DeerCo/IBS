@@ -91,9 +91,9 @@ async function task_validate(course_id, task, student) {
 	}
 
 	if (pg_res.rowCount <= 0) {
-		return "";
+		return {task: ""};
 	} else {
-		return task;
+		return {task: task, change_group: pg_res.rows[0]["change_group"], interview_group: pg_res.rows[0]["interview_group"]};
 	}
 }
 
@@ -170,13 +170,24 @@ function query_set(query, start_data_id) {
 
 function send_email(email, subject, body) {
 	let mailOptions = {
-		from: "a010103@yahoo.com",
+		from: "IBS <" + process.env.EMAIL_USER + ">",
 		to: email,
 		subject: subject,
-		text: "(Please do not reply to this email, as no one monitors it. Post your question to Piazza instead.)\n\n" + body
+		text: body + "\n\n(Please do not reply to this email, as no one monitors it. Post your question to Piazza instead.)"
 	};
 
 	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
+}
+
+async function send_email_by_group(course_id, group_id, subject, body){
+	let group_emails = "";
+	let pg_res_user = await db.query("SELECT username FROM course_" + course_id + ".group_user WHERE group_id = ($1) AND status = 'confirmed'", [group_id]);
+	for (let row of pg_res_user.rows){
+		let pg_res_email = await db.query("SELECT email FROM user_info WHERE username = ($1)", [row["username"]]);
+		group_emails = group_emails + pg_res_email.rows[0]["email"] + ", "
+	}
+
+	await send_email(group_emails, subject, body);
 }
 
 function search_files(username, group_id, coure_id, sub_dir = "") {
@@ -939,6 +950,7 @@ module.exports = {
 	query_filter: query_filter,
 	query_set: query_set,
 	send_email: send_email,
+	send_email_by_group: send_email_by_group,
 	get_courses: get_courses,
 	get_tasks: get_tasks,
 	get_criteria_id: get_criteria_id,

@@ -30,7 +30,13 @@ router.post("/", (req, res) => {
         }
     }
 
-    helpers.get_group_id(res.locals["course_id"], res.locals["task"], res.locals["username"]).then(group_id => {
+    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
+        var task = res.locals["interview_group"];
+    } else{
+        var task = res.locals["task"];
+    }
+
+    helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
         if (group_id === -1){
             res.status(400).json({ message: "You need to join a group before booking an interview." });
             return;
@@ -54,7 +60,7 @@ router.post("/", (req, res) => {
                     } else {
                         let message = "You have booked your interview for " + res.locals["task"] + " at " + req.body["time"] + " successfully. The location is " + location + ".";
                         res.status(200).json({ message: message });
-                        helpers.send_email(res.locals["group_emails"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
+                        helpers.send_email_by_group(res.locals["course_id"], group_id, "IBS Interview Confirmation", message);
                     }
                 });
             }

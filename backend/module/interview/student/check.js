@@ -9,7 +9,13 @@ router.get("/", (req, res) => {
         return;
     }
 
-    helpers.get_group_id(res.locals["course_id"], res.locals["task"], res.locals["username"]).then(group_id => {
+    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
+        var task = res.locals["interview_group"];
+    } else{
+        var task = res.locals["task"];
+    }
+
+    helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
         if (group_id === -1){
             res.status(400).json({ message: "You need to join a group before checking." });
             return;

@@ -13,7 +13,13 @@ router.get("/", (req, res) => {
 	let sql_select_members = "SELECT username, status FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1)";
 	let sql_select_gitlab_url = "SELECT * FROM course_" + res.locals["course_id"] + ".group WHERE group_id = ($1)";
 
-	client.query(sql_select_group, [res.locals["username"], res.locals["task"]], (err, pg_res_group) => {
+	if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
+        var task = res.locals["interview_group"];
+    } else{
+        var task = res.locals["task"];
+    }
+
+	client.query(sql_select_group, [res.locals["username"], task], (err, pg_res_group) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);

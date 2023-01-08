@@ -1,7 +1,7 @@
 {
-  "name": "csc309-server",
+  "name": "ibs",
   "version": "1.0.0",
-  "description": "A backend server for CSC309 (Winter 2022) at University of Toronto Mississauga",
+  "description": "A backend server for forming groups, handling marks, managing interviews and distributing files.",
   "main": "app.js",
   "scripts": {
     "start": "node app",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/hanxianxuhuang/csc309-server.git"
+    "url": "https://github.com/DeerCo/DeerCo.git"
   },
   "author": "Han Xian Xu Huang",
   "license": "ISC",

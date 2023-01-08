@@ -29,6 +29,8 @@ router.use("/:course_id/", function (req, res, next) {
                     res.locals["task"] = data["task"];
                     res.locals["username"] = token_data["username"];
                     res.locals["email"] = token_data["email"];
+                    res.locals["change_group"] = data["change_group"];
+                    res.locals["interview_group"] = data["interview_group"];
                     next();
                 });
             }
@@ -36,20 +38,22 @@ router.use("/:course_id/", function (req, res, next) {
     }
 })
 
-async function retrieve_data(req){
-    let task = "";
-
-    if (req.method === "GET"){
+async function retrieve_data(req) {
+    if (req.method === "GET") {
         if ("task" in req.query && !helpers.name_validate(req.query["task"])) {
-            task = await helpers.task_validate(req.params["course_id"], req.query["task"], true);
+            var data = await helpers.task_validate(req.params["course_id"], req.query["task"], true);
+        } else {
+            return { task: "", change_group: true, interview_group: null };
         }
-    } else{
+    } else {
         if ("task" in req.body && !helpers.name_validate(req.body["task"])) {
-            task = await helpers.task_validate(req.params["course_id"], req.body["task"], true);
+            var data = await helpers.task_validate(req.params["course_id"], req.body["task"], true);
+        } else {
+            return { task: "", change_group: true, interview_group: null };
         }
     }
 
-    return {task: task};
+    return { task: data["task"], change_group: data["change_group"], interview_group: data["interview_group"] };
 }
 
 module.exports = router;

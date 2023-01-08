@@ -4,6 +4,11 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
+	if (res.locals["change_group"] === false || (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null)){
+		res.status(400).json({ message: "Changing group is not allowed for this task." });
+        return;
+	}
+	
 	if (res.locals["task"] === "") {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;

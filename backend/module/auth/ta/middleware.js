@@ -35,20 +35,22 @@ router.use("/:course_id/", function (req, res, next) {
     }
 })
 
-async function retrieve_data(req){
-    let task = "";
-
-    if (req.method === "GET"){
+async function retrieve_data(req) {
+    if (req.method === "GET") {
         if ("task" in req.query && !helpers.name_validate(req.query["task"])) {
-            task = await helpers.task_validate(req.params["course_id"], req.query["task"], false);
+            var data = await helpers.task_validate(req.params["course_id"], req.query["task"], false);
+        } else {
+            return { task: ""};
         }
-    } else{
+    } else {
         if ("task" in req.body && !helpers.name_validate(req.body["task"])) {
-            task = await helpers.task_validate(req.params["course_id"], req.body["task"], false);
+            var data = await helpers.task_validate(req.params["course_id"], req.body["task"], false);
+        } else {
+            return { task: "" };
         }
     }
 
-    return {task: task};
+    return { task: data["task"] };
 }
 
 module.exports = router;

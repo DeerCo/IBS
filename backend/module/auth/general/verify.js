@@ -19,7 +19,7 @@ router.post("/", (req, res) => {
         } else{
             if (pg_res_email.rowCount === 1){
                 let code = Math.floor(100000 + Math.random() * 900000);
-                helpers.send_email(pg_res_email.rows[0]["email"], "Password Reset Request", "We received a request to reset your password. If this was you, please enter code " + code + ". The code will expire in 5 minutes.");
+                helpers.send_email(pg_res_email.rows[0]["email"], "IBS Password Reset Request", "We received a request to reset your password. If this was you, please enter code " + code + ". The code will expire in 5 minutes.");
                 client.query(sql_verify, [req.body["username"], code.toString()]);
             }
             

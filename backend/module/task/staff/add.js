@@ -28,7 +28,20 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The max token is missing or invalid." });
         return;
     }
+    if (!("change_group" in req.body) || helpers.boolean_validate(req.body["change_group"])) {
+        res.status(400).json({ message: "The change group property is missing or not correct." });
+		return;
+    }
     
+    let interview_group = null;
+    if ("interview_group" in req.body) {
+        if (helpers.name_validate(req.body["interview_group"])){
+            res.status(400).json({ message: "The interview group is invalid." });
+            return;
+        } else{
+            interview_group = req.body["interview_group"];
+        }
+    }
 
     let task_group_id = null;
     if ("task_group_id" in req.body) {
@@ -51,13 +64,13 @@ router.post("/", (req, res) => {
     }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".task (task, due_date, hidden, min_member, max_member, max_token, task_group_id, starter_code_url) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8))";
-    let sql_add_data = [req.body["task"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], task_group_id, starter_code_url];
+    let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".task (task, due_date, hidden, min_member, max_member, max_token, change_group, interview_group, task_group_id, starter_code_url) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8), ($9), ($10))";
+    let sql_add_data = [req.body["task"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], interview_group, task_group_id, starter_code_url];
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {
         if (err) {
             if (err.code === "23503") {
-                res.status(409).json({ message: "The task_group_id is not found in the database." });
+                res.status(404).json({ message: "The task_group_id is not found in the database." });
             } else if (err.code === "23505") {
                 res.status(409).json({ message: "Task must have unique name for each course." });
             } else {

@@ -28,13 +28,29 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The max token is missing or invalid." });
         return;
     }
+    if (!("change_group" in req.body) || helpers.boolean_validate(req.body["change_group"])) {
+        res.status(400).json({ message: "The change group property is missing or not correct." });
+		return;
+    }
+    
+    let interview_group = null;
+    if ("interview_group" in req.body) {
+        if (req.body["interview_group"] === ""){
+            interview_group = null;
+        } else if (helpers.name_validate(req.body["interview_group"])){
+            res.status(400).json({ message: "The interview group is invalid." });
+            return;
+        } else{
+            interview_group = req.body["interview_group"];
+        }
+    }
 
     let task_group_id = null;
     if ("task_group_id" in req.body) {
         if (req.body["task_group_id"] === ""){
             task_group_id = null;
         } else if (helpers.number_validate(req.body["task_group_id"])){
-            res.status(400).json({ message: "The token group id is invalid." });
+            res.status(400).json({ message: "The task group id is invalid." });
             return;
         } else{
             task_group_id = req.body["task_group_id"];
@@ -54,8 +70,8 @@ router.put("/", (req, res) => {
     }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), task_group_id = ($6), starter_code_url = ($7) WHERE task = ($8)";
-    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], task_group_id, starter_code_url, res.locals["task"]];
+    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), change_group = ($6), interview_group = ($7), task_group_id = ($8), starter_code_url = ($9) WHERE task = ($10)";
+    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], interview_group, task_group_id, starter_code_url, res.locals["task"]];
 
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {
@@ -66,7 +82,7 @@ router.put("/", (req, res) => {
                 console.log(err);
             }
         } else if (pg_res.rowCount === 0){
-            res.status(400).json({ message: "There is no task associated with this task id." });
+            res.status(400).json({ message: "There is no task associated with this task." });
         } else{
             res.status(200).json({ message: "The task is changed." });
         }

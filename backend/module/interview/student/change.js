@@ -30,7 +30,13 @@ router.put("/", (req, res) => {
         }
     }
 
-    helpers.get_group_id(res.locals["course_id"], res.locals["task"], res.locals["username"]).then(group_id => {
+    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
+        var task = res.locals["interview_group"];
+    } else{
+        var task = res.locals["task"];
+    }
+
+    helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
         if (group_id === -1){
             res.status(400).json({ message: "You need to join a group before changing an interview." });
             return;
@@ -60,7 +66,7 @@ router.put("/", (req, res) => {
                     } else {
                         let message = "You have changed your interview for " + res.locals["task"] + " from " + pg_res_check.rows[0]["time"] + " to " + req.body["time"] + " successfully. The new location is " + location + ".";
                         res.status(200).json({ message: message });
-                        helpers.send_email(res.locals["group_emails"], "Your CSC309 Interview Confirmation", message + "\n\nCongratulations!");
+                        helpers.send_email_by_group(res.locals["course_id"], group_id, "IBS Interview Confirmation", message);
                         
                         let sql_cancel = "UPDATE course_" + res.locals["course_id"] + ".interview SET group_id = NULL WHERE interview_id = ($1)";
                         client.query(sql_cancel, [pg_res_check.rows[0]["interview_id"]]);
