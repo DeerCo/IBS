@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect} from "react";
 import { Link} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/style.css';
@@ -25,28 +25,47 @@ let Interview = () => {
      // get course_id form localstorage
      let course_id = localStorage.getItem("courseid");
 
-     // store the booked interview
-     let booked = {};
 
     // call the service function
     //let result=await AuthService.booked_interviews(course_id, curr_task);
 
-    AuthService.booked_interviews(course_id, curr_task).then(
-        (result) => {
-            // print out book sucessful message on the screen
-          booked = result;
-        },
-        (error) => {
-          let resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
- 
-          // setMessage(resMessage);
-        }
-      );
+    let [s, sets] = useState({});
+    let [e, sete] = useState({});
+    let [l, setl] = useState({});
+    let [message, setMessage] = useState("");
+    let [booked, setb] = useState(false);
+    let [selected, setSelect] = useState(false);
+
+    let [fetch, setFetch] = useState("");
+
+
+	useEffect(() => {
+		AuthService.booked_interviews(course_id, curr_task).then(
+			(result) => {
+
+                AuthService.interviews(course_id, curr_task).then(
+                    (result2) => {
+                        if (result.message !== "You don't have a booked interview for a1 yet."){
+                            sets(result.start_time);
+                            sete(result.end_time);
+                            setl(result.location);
+                            setb(true);
+                        }else{
+                            setb(false);
+                        }
+
+                        
+                        
+                        if (result2.message !== "No interview is available."){
+                            setFetch(result2);
+                        }
+                    }
+                )
+			},
+			(error) => {
+			})
+
+	}, []);
 
 
 
@@ -55,14 +74,14 @@ let Interview = () => {
 
         // some issue with the time parsing since it converts it into 12 hours
         
-        let parse = moment(time).format('YYYY-MM-DD hh:mm:ss');
-        console.log(parse);
+        let parse = moment(time).format('YYYY-MM-DD HH:mm:ss');
   
        // call the service function
        AuthService.book_interviews(course_id, task, parse, location).then(
          (result) => {
              // print out book sucessful message on the screen
            console.log(result);
+           window.location.reload(false);
          },
          (error) => {
            let resMessage =
@@ -72,22 +91,23 @@ let Interview = () => {
              error.message ||
              error.toString();
   
-           // setMessage(resMessage);
+           setMessage(resMessage);
          }
        );
      
      };  
 
 
+
     // the cancel interview function 
     let cancel_interviews = (task) => {  
-        console.log(booked);
   
         // call the service function
         AuthService.cancel_interviews(course_id, task).then(
             (result) => {
                 // print out cancel sucessful message on the screen
                 console.log(result);
+                window.location.reload(false);
             },
             (error) => {
             let resMessage =
@@ -97,21 +117,22 @@ let Interview = () => {
                 error.message ||
                 error.toString();
 
-            // setMessage(resMessage);
+            setMessage(resMessage);
             }
         );
+        
     
     }; 
 
 
     // get all the json from localstorage
-    let fetch = JSON.parse(localStorage.getItem("interviews")); 
     let interviews = fetch.availability;
-    //console.log(interviews);
+    console.log(interviews);
 
     // create the json array
     let times = [];
     let first = "";
+
 
     for(var loc in interviews) {
         for (var time in interviews[loc]) {
@@ -120,25 +141,38 @@ let Interview = () => {
                 end: '', 
                 extendedProps: {
                     location: loc
-                }
+                },
+                backgroundColor: 'green'
             };
-            if (interviews[loc][time] === 1){
-                let string = time.split(" - ");
-                // set the defualt date for calender display
-                if (first === ""){
-                    first = string[0].split(" ")[0];
-                }
-                let start = string[0].replace(" ", "T");
-                let end = string[1].replace(" ", "T");
-                curr.start = start;
-                curr.end = end;
-                times.push(curr);
+            let string = time.split(" - ");
+            // set the defualt date for calender display
+            if (first === ""){
+                first = string[0].split(" ")[0];
             }
+            let start = string[0].replace(" ", "T");
+            let end = string[1].replace(" ", "T");
+            curr.start = start;
+            curr.end = end;
+            times.push(curr);
         }
     }
 
     // push the booked interview in to the times array with a different color
-
+    if (booked){
+        let b_start = s.replace(" ", "T");
+        let b_end = e.replace(" ", "T");
+        let curr = { 
+            start: b_start, 
+            end: b_end, 
+            extendedProps: {
+                location: l
+            },
+            backgroundColor: 'red'
+        };
+    
+        times.push(curr);
+    }
+   
 
     // track the time, location and task being selected.
     let [start, setStart] = useState("");
@@ -174,8 +208,9 @@ let Interview = () => {
                     <div className="col-7" id='calendar'>
                         <FullCalendar
                         plugins={[ dayGridPlugin, interactionPlugin]}
-                        initialView="dayGridWeek"
-                        initialDate={first}
+                        initialView="dayGridMonth"
+                        // comment this back when the interview is there
+                        // initialDate={first}
                         headerToolbar= {{
                             left: 'prev,next',
                             center: 'title',
@@ -195,19 +230,32 @@ let Interview = () => {
                             setLocation(info.event.extendedProps.location);
                             setTask(info.event.extendedProps.assignemnt);
                             // open the popup
+                            setMessage("");
                             setOpen(!open);
-                            info.el.style.borderColor = 'red';
+                            if (info.event.backgroundColor == 'red'){
+                                setSelect(true);
+                            }else{
+                                setSelect(false);
+                            }
                             
                         }
                         }
                             />
                     </div>
                     <div className="col-1"></div>
-                    <div className="col-3 mt-5 row">    
+                    <div className="col-3 row">   
+
+                    {booked && (
+                        <p className="pb-3 mb-3 mt-2 small lh-sm border-bottom w-100">
+                        <strong className="d-block text-gray-dark">You Already Booked an Interview at </strong>
+                        {s} at {l}
+                        </p>
+                    )}
+                     
                         
                     {open && (
     
-                        <div class="col-12 rounded">
+                        <div class="col-12 rounded  mt-2 ">
                             
                             <div>
                                 <h5 className="border-bottom pb-2 mb-2">Information</h5>
@@ -244,17 +292,26 @@ let Interview = () => {
                                         You must arrive at the zoom meeting on time
                                     </p>
                                 </div>
-                                <div className="d-flex justify-content-between">
-                                    <button type="button" className="btn btn-primary mt-4 col-5" onClick={() => {book_interviews(curr_task, start, location)}}>
+                                <div className="d-flex">
+                                    {!selected && (
+                                    <button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => {book_interviews(curr_task, start, location)}}>
                                         Book
                                     </button>
-                                    <button type="button" className="btn btn-primary mt-4 col-5" onClick={() => {cancel_interviews(curr_task)}}>
+                                    )}
+
+                                    {selected && (
+                                    <button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => {cancel_interviews(curr_task)}}>
                                         Cancel
                                     </button>
+                                    )}
                                 </div>
+                                <p  className="pb-3 mt-3 mb-0 small lh-sm border-bottom w-100">
+                                {message}
+                                </p>
                             </div>
                         </div>
                     )}
+
                         
                     </div>
                 </div>

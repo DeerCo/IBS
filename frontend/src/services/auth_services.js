@@ -1,11 +1,19 @@
+import { identity } from "@fullcalendar/react";
 import axios from "axios";
-let API_URL = "http://localhost:3000/";
+let API_URL = "http://44.203.185.151:3000/";
+//let API_URL = "http://localhost:3000/";
 
-let register = (username, password, email) => {
-	return axios.post(API_URL + "auth/register", {
+let register = (username, password, code) => {
+	return axios.post(API_URL + "auth/change_password", {
 		username,
 		password,
-		email,
+		code,
+	});
+};
+
+let sendCode = (username) => {
+	return axios.post(API_URL + "auth/verify", {
+		username,
 	});
 };
 
@@ -81,7 +89,7 @@ let interviews = (courseid, curr_task) => {
 		params: { task: curr_task },
 	};
 	return axios
-		.get(API_URL + "course/" + courseid + "/interview/all", config)
+		.get(API_URL + "course/" + courseid + "/interview/available", config)
 		.then((response) => {
 			// if (response.data.accessToken) {
 			//   localStorage.setItem("user", JSON.stringify(response.data));
@@ -114,10 +122,16 @@ let booked_interviews = (courseid, curr_task) => {
 let book_interviews = (courseid, curr_task, time, location) => {
 	// get the token
 	let token = localStorage.getItem("token");
-	console.log(curr_task, time, location);
+	console.log(courseid, curr_task, time, location);
+
+  const data ={
+    task: curr_task, 
+    time: time, 
+    location: location
+  }
 
 	return axios
-		.post(API_URL + "course/" + courseid + "/interview/book", { curr_task, time, location }, { headers: { Authorization: `Bearer ${token}` } })
+		.post(API_URL + "course/" + courseid + "/interview/book", data, {headers: { Authorization: `Bearer ${token}` }} )
 		.then((response) => {
 			return response.data;
 		});
@@ -160,10 +174,71 @@ let download = (courseid, task, file_id, file_name) => {
 		});
 };
 
+// print out all the interview for ta
+let all_interviews = (courseid, curr_task) => {
+	// get the token
+	let token = localStorage.getItem("token");
+	// setting config
+	let config = {
+		headers: { Authorization: `Bearer ${token}` },
+		params: { task: curr_task },
+	};
+	return axios
+		.get(API_URL + "instructor/course/" + courseid + "/interview/all", config)
+		.then((response) => {
+			// if (response.data.accessToken) {
+			//   localStorage.setItem("user", JSON.stringify(response.data));
+			// }
+			return response.data;
+		});
+};
+
+//delete a interveiw
+let delete_interviews = (courseid, curr_task, id) => {
+	// get the token
+	let token = localStorage.getItem("ta_token");
+	// setting config
+	let config = {
+		data: {task: curr_task, interview_id: id.toString()},
+		headers: { Authorization: `Bearer ${token}` },
+	};
+
+	return axios
+		.delete(API_URL + "instructor/course/" + courseid + "/interview/delete", config)
+		.then((response) => {
+			// if (response.data.accessToken) {
+			//   localStorage.setItem("user", JSON.stringify(response.data));
+			// }
+			return response.data;
+		});
+};
+
+//schedule a interveiw
+let schedule_interviews = (courseid, curr_task, length, time) => {
+	// get the token
+	let token = localStorage.getItem("ta_token");
+	// setting config
+
+	const data ={
+		task: curr_task, 
+		length: length.toString(), 
+		time: time.toString()
+	}
+
+	return axios
+		.post(API_URL + "instructor/course/" + courseid + "/interview/schedule", data, {headers: { Authorization: `Bearer ${token}` }})
+		.then((response) => {
+			// if (response.data.accessToken) {
+			//   localStorage.setItem("user", JSON.stringify(response.data));
+			// }
+			return response.data;
+		});
+};
 
 
 let AuthService = {
 	register,
+	sendCode,
 	login,
 	tasks,
 	grades,
@@ -173,6 +248,9 @@ let AuthService = {
 	booked_interviews,
 	book_interviews,
 	cancel_interviews,
+	all_interviews,
+	delete_interviews,
+	schedule_interviews,
 };
 
 export default AuthService;

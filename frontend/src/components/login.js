@@ -116,7 +116,7 @@ let Login = () => {
                   </Form>
 
                   <div id="formFooter">
-                    <Link className="underlineHover" to="/Register"> Register </Link>
+                    <Link className="underlineHover" to="/Register"> Reset Password </Link>
                   </div>
 
               </div>
