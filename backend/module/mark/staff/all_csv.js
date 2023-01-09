@@ -9,10 +9,11 @@ router.get("/", (req, res) => {
         return;
     }
     
-    let total = false;
-    if ("total" in req.query && req.query["total"].toLowerCase() === "true") {
-        total = true;
-    }
+    if (req.query["total"] === true || req.query["total"] === "true"){
+		var total = true;
+	} else{
+		var total = false;
+	}
 
     client.query("SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE task = ($1) ORDER BY username DESC", [res.locals["task"]], (err, pgRes) => {
         if (err) {

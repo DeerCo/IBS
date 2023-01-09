@@ -26,9 +26,9 @@ router.put("/", (req, res) => {
 		return;
 	}
 
-	if ("force" in req.body && (req.body["force"].toLowerCase() === "true")) {
+	if (req.body["force"] === true || req.body["force"] === "true"){
 		var sql_change = "UPDATE course_" + res.locals["course_id"] + ".interview SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND host = ($2)" + filter;
-	} else {
+	} else{
 		var sql_change = "UPDATE course_" + res.locals["course_id"] + ".interview SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND host = ($2) AND group_id IS NULL" + filter;
 	}
 

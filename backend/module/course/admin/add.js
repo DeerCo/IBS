@@ -14,17 +14,11 @@ router.post("/", (req, res) => {
         return;
     }
 
-    let hidden = false;
-    if ("hidden" in req.body) {
-        if (req.body["hidden"].toLowerCase() === "true"){
-            hidden = true;
-        } else if (req.body["hidden"].toLowerCase() === "false"){
-            hidden = false;
-        } else{
-            res.status(400).json({ message: "The hidden property is invalid." });
-            return;
-        }
-    }
+    if (req.body["hidden"] === true || req.body["hidden"] === "true"){
+		var hidden = true;
+	} else{
+		var hidden = false;
+	}
 
     let default_token_count = 0;
     if ("default_token_count" in req.body) {

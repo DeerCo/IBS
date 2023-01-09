@@ -25,9 +25,9 @@ router.post("/", (req, res) => {
         let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".mark (criteria_id, username, mark, task) VALUES (($1), ($2), ($3), ($4))";
         let sql_add_data = [criteria_id, req.body["username"], req.body["mark"], res.locals["task"]];
 
-        if ("overwrite" in req.body && req.body["overwrite"].toLowerCase() === "true") {
+        if (req.body["overwrite"] === true || req.body["overwrite"] === "true"){
             sql_add += " ON CONFLICT (criteria_id, username) DO UPDATE SET mark = EXCLUDED.mark";
-        } else {
+        } else{
             sql_add += " ON CONFLICT (criteria_id, username) DO NOTHING";
         }
 

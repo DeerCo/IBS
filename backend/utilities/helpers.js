@@ -30,7 +30,7 @@ function string_validate(string) {
 }
 
 function boolean_validate(string) {
-	if (string !== "true" && string !== "false") {
+	if (string !== true && string !== false && string !== "true" && string !== "false") {
 		return 1;
 	}
 	return 0;

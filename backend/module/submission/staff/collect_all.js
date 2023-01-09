@@ -12,7 +12,7 @@ router.post("/", (req, res) => {
 		return;
 	}
 
-	if (req.body["overwrite"] === "true"){
+	if (req.body["overwrite"] === true || req.body["overwrite"] === "true"){
 		var overwrite = true;
 	} else{
 		var overwrite = false;
