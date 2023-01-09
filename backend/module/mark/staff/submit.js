@@ -16,7 +16,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The username is missing or has invalid format." });
         return;
     }
-    if (!("mark" in req.body) || isNaN(req.body["mark"]) || isNaN(parseFloat(req.body["mark"]))) {
+    if (!("mark" in req.body) || helpers.number_validate(req.body["mark"])) {
         res.status(400).json({ message: "The mark is missing or has invalid format." });
         return;
     }

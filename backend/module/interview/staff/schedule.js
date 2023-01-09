@@ -8,7 +8,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
-	if (!("length" in req.body) || isNaN(req.body["length"]) || req.body["length"].trim() === "") {
+	if (!("length" in req.body) || helpers.number_validate(req.body["length"])) {
 		res.status(400).json({ message: "The length is missing or has invalid format." });
 		return;
 	}

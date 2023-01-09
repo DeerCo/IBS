@@ -37,9 +37,7 @@ function boolean_validate(string) {
 }
 
 function number_validate(number) {
-	let regex_number = new RegExp("^[0-9]+$");
-
-	if (!regex_number.test(number)) {
+	if (number === null || isNaN(Number(number))) {
 		return 1;
 	}
 	return 0;
@@ -75,7 +73,7 @@ function time_validate(time) {
 }
 
 function password_validate(password) {
-	let regex = new RegExp(".");
+	let regex = new RegExp(".+");
 	if (!regex.test(password)) {
 		return 1;
 	} else {
@@ -102,7 +100,7 @@ function query_filter(query, start_data_id) {
 	let data = [];
 	let data_id = start_data_id;
 
-	if ("interview_id" in query && !isNaN(query["interview_id"]) && query["interview_id"].trim() != "") {
+	if (!("interview_id" in query) || helpers.number_validate(query["interview_id"])) {
 		filter = filter + " AND interview_id = ($" + data_id + ")";
 		data_id += 1;
 		data.push(query["interview_id"]);
@@ -122,7 +120,7 @@ function query_filter(query, start_data_id) {
 		data_id += 1;
 		data.push(query["group_id"]);
 	}
-	if ("length" in query && !isNaN(query["length"]) && query["length"].trim() != "") {
+	if ("length" in query && !number_validate(query["length"])) {
 		filter = filter + " AND length = ($" + data_id + ")";
 		data_id += 1;
 		data.push(query["length"]);
@@ -150,7 +148,7 @@ function query_set(query, start_data_id) {
 		data_id += 1;
 		data.push(query["set_time"] + " America/Toronto");
 	}
-	if ("set_length" in query && !isNaN(query["set_length"]) && query["set_length"].trim() != "") {
+	if ("set_length" in query && !number_validate(query["set_length"])) {
 		set = set + " length = ($" + data_id + "),";
 		data_id += 1;
 		data.push(query["set_length"]);

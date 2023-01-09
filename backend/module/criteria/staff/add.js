@@ -12,7 +12,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The criteria is missing or has invalid format." });
         return;
     }
-    if (!("total" in req.body) || isNaN(req.body["total"]) || isNaN(parseFloat(req.body["total"]))) {
+    if (!("total" in req.body) || helpers.number_validate(req.body["total"])) {
         res.status(400).json({ message: "The total is missing or has invalid format." });
         return;
     }

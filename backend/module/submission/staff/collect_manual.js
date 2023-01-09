@@ -12,7 +12,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The commit id is missing or has invalid format." });
         return;
     }
-    if (!("token_used" in req.body) || isNaN(req.body["token_used"]) || isNaN(parseFloat(req.body["token_used"]))) {
+    if (!("token_used" in req.body) || helpers.number_validate(req.body["token_used"])) {
         res.status(400).json({ message: "The token used is missing or has invalid format." });
         return;
 	}

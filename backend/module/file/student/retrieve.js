@@ -8,8 +8,7 @@ router.get("/", (req, res) => {
         return;
     }
 
-    let id = req.query["file_id"];
-    if (isNaN(id) || !(parseInt(Number(id)) == id) || isNaN(parseInt(id, 10))) {
+    if (!("id" in req.query) || helpers.number_validate(req.query["id"])) {
         res.status(400).json({ message: "The file id is not a valid integer." });
         return;
     }
@@ -17,12 +16,12 @@ router.get("/", (req, res) => {
     helpers.get_group_id(res.locals["course_id"], res.locals["task"], res.locals["username"]).then(group_id => {
         let files = helpers.search_files(res.locals["username"], group_id, res.locals["course_id"], res.locals["task"] + "/");
 
-        if (parseInt(id) >= files.length || parseInt(id) < 0) {
+        if (parseInt(req.query["file_id"]) >= files.length || parseInt(req.query["file_id"]) < 0) {
             res.status(404).json({ message: "There is no file associated with this id." });
             return;
         }
 
-        let name_with_path = files[parseInt(id)];
+        let name_with_path = files[parseInt(req.query["file_id"])];
         let last_index = name_with_path.lastIndexOf('/');
         let sub_dir_path = "";
         let file_name = "";
