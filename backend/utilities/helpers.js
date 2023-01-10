@@ -679,7 +679,7 @@ async function get_due_date(course_id, group_id) {
 	// Get max token of the task group if applicable
 	let max_task_group_token = Infinity;
 	let task_group_id = pg_res_due_date.rows[0]["task_group_id"];
-	if (task_group_id !== null) {q
+	if (task_group_id !== null) {
 		let pg_res_task_group = await db.query("SELECT max_token FROM course_" + course_id + ".task_group WHERE task_group_id = ($1)", [task_group_id]);
 		if (pg_res_task_group.rowCount !== 1) {
 			return { due_date: null };
