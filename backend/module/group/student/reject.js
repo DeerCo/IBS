@@ -4,15 +4,15 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.delete("/", (req, res) => {
-	if (res.locals["change_group"] === false || (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null)){
+	if (res.locals["change_group"] === false || (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null)) {
 		res.status(400).json({ message: "Changing group is not allowed for this task." });
-        return;
+		return;
 	}
-	
+
 	if (!("group_id" in req.body) || helpers.number_validate(req.body["group_id"])) {
-        res.status(400).json({ message: "The group id is missing or invalid." });
-        return;
-    }
+		res.status(400).json({ message: "The group id is missing or invalid." });
+		return;
+	}
 
 	let sql_reject = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
 
@@ -25,7 +25,7 @@ router.delete("/", (req, res) => {
 		} else if (pgRes.rowCount === 0) {
 			res.status(400).json({ message: "Invitation doesn't exist." });
 		}
-    });
+	});
 })
 
 module.exports = router;

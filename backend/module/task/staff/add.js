@@ -9,12 +9,12 @@ router.post("/", (req, res) => {
         return;
     }
     if (!("due_date" in req.body) || helpers.time_validate(req.body["due_date"])) {
-		res.status(400).json({ message: "The due date is missing or not correct." });
-		return;
-	}
+        res.status(400).json({ message: "The due date is missing or not correct." });
+        return;
+    }
     if (!("hidden" in req.body) || helpers.boolean_validate(req.body["hidden"])) {
         res.status(400).json({ message: "The hidden property is missing or not correct." });
-		return;
+        return;
     }
     if (!("min_member" in req.body) || helpers.number_validate(req.body["min_member"])) {
         res.status(400).json({ message: "The min member is missing or invalid." });
@@ -30,35 +30,35 @@ router.post("/", (req, res) => {
     }
     if (!("change_group" in req.body) || helpers.boolean_validate(req.body["change_group"])) {
         res.status(400).json({ message: "The change group property is missing or not correct." });
-		return;
+        return;
     }
-    
+
     let interview_group = null;
     if ("interview_group" in req.body) {
-        if (helpers.name_validate(req.body["interview_group"])){
+        if (helpers.name_validate(req.body["interview_group"])) {
             res.status(400).json({ message: "The interview group is invalid." });
             return;
-        } else{
+        } else {
             interview_group = req.body["interview_group"];
         }
     }
 
     let task_group_id = null;
     if ("task_group_id" in req.body) {
-        if (helpers.number_validate(req.body["task_group_id"])){
+        if (helpers.number_validate(req.body["task_group_id"])) {
             res.status(400).json({ message: "The token group id is invalid." });
             return;
-        } else{
+        } else {
             task_group_id = req.body["task_group_id"];
         }
     }
 
     let starter_code_url = null;
     if ("starter_code_url" in req.body) {
-        if (helpers.string_validate(req.body["starter_code_url"]) || !req.body["starter_code_url"].includes(".git")){
+        if (helpers.string_validate(req.body["starter_code_url"]) || !req.body["starter_code_url"].includes(".git")) {
             res.status(400).json({ message: "The starter code url is invalid. It should start with https:// and end with .git" });
             return;
-        } else{
+        } else {
             starter_code_url = req.body["starter_code_url"];
         }
     }

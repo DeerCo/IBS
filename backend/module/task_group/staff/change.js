@@ -12,7 +12,7 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The max token is missing or has invalid format." });
         return;
     }
-        
+
     var sql_change = "UPDATE course_" + res.locals["course_id"] + ".task_group SET max_token = ($1) WHERE task_group_id = ($2)";
     var sql_change_data = [req.body["max_token"], req.body["task_group_id"]];
 
@@ -20,9 +20,9 @@ router.put("/", (req, res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
-        } else if (pg_res.rowCount === 0){
+        } else if (pg_res.rowCount === 0) {
             res.status(400).json({ message: "There is no task group associated with this task group id." });
-        } else{
+        } else {
             res.status(200).json({ message: "The task group is changed." });
         }
     });

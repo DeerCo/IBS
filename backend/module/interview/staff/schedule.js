@@ -5,9 +5,9 @@ const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
 	if (res.locals["task"] === "") {
-        res.status(400).json({ message: "The task is missing or invalid." });
-        return;
-    }
+		res.status(400).json({ message: "The task is missing or invalid." });
+		return;
+	}
 	if (!("length" in req.body) || helpers.number_validate(req.body["length"])) {
 		res.status(400).json({ message: "The length is missing or has invalid format." });
 		return;
@@ -39,7 +39,7 @@ router.post("/", (req, res) => {
 				res.status(400).json({ message: "The username is not found in the database." });
 			} else if (err.code === "23505") {
 				res.status(400).json({ message: "You have another interview at the same time." });
-			} else{
+			} else {
 				res.status(404).json({ message: "Unknown error." });
 			}
 		} else {

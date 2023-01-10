@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const client = require("../../../setup/db"); 
+const client = require("../../../setup/db");
 
 router.post("/", (req, res) => {
     if (!("username" in req.body) || req.body["username"] === "") {
@@ -25,16 +25,16 @@ router.post("/", (req, res) => {
 
         if (err_verify) {
             res.status(404).json({ message: "Unknown error." });
-        } else if (pg_res_verify.rowCount === 1){
+        } else if (pg_res_verify.rowCount === 1) {
             client.query(sql_change_password, [req.body["password"], req.body["username"]], (err_change_password, pg_res_change_password) => {
                 if (err_change_password) {
                     res.status(404).json({ message: "Unknown error." });
                     console.log(err_change_password)
-                } else{
+                } else {
                     res.status(200).json({ message: "Your password is changed." });
                 }
             });
-        } else{
+        } else {
             res.status(404).json({ message: "Your username or code is invalid." });
         }
     });

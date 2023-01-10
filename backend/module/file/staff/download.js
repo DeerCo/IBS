@@ -13,13 +13,13 @@ router.get("/", (req, res) => {
     let original_path = "./files/course_" + res.locals["course_id"] + "/" + res.locals["task"];
     let zip_root = "./tmp/download/";
     let zip_file_name = res.locals["task"] + ".zip";
-	if (!fs.existsSync(original_path)) {
+    if (!fs.existsSync(original_path)) {
         res.status(200).json({ message: "This task has no file." });
         return;
     }
 
     var zip = new AdmZip();
-	zip.addLocalFolder(original_path);
+    zip.addLocalFolder(original_path);
     zip.writeZip(zip_root + zip_file_name);
     res.sendFile(zip_file_name, { root: zip_root, headers: { "Content-Disposition": "attachment; filename=" + zip_file_name } });
 })

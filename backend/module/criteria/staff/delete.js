@@ -8,7 +8,7 @@ router.delete("/", (req, res) => {
         res.status(400).json({ message: "The criteria id is missing or has invalid format." });
         return;
     }
-    
+
     let sql_delete_marks = "DELETE FROM course_" + res.locals["course_id"] + ".mark WHERE criteria_id = ($1)";
     let sql_delete_criteria = "DELETE FROM course_" + res.locals["course_id"] + ".criteria WHERE criteria_id = ($1)";
 
@@ -22,9 +22,9 @@ router.delete("/", (req, res) => {
                     res.status(404).json({ message: "Unknown error." });
                     console.log(err);
                 } else {
-                    if (pg_res.rowCount === 0){
+                    if (pg_res.rowCount === 0) {
                         res.status(400).json({ message: "There is no criteria associated with this criteria id." });
-                    } else{
+                    } else {
                         res.status(200).json({ message: "The criteria is deleted." });
                     }
                 }

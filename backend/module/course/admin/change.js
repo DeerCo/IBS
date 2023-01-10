@@ -18,19 +18,19 @@ router.put("/", (req, res) => {
     }
     if (!("gitlab_group_id" in req.body) || (req.body["gitlab_group_id"] !== "" && helpers.number_validate(req.body["gitlab_group_id"]))) {
         res.status(400).json({ message: "The Gitlab group id is missing or not correct." });
-		return;
+        return;
     }
     if (!("default_token_count" in req.body) || helpers.number_validate(req.body["default_token_count"])) {
         res.status(400).json({ message: "The default token count is missing or has invalid format." });
         return;
     }
     if (!("token_length" in req.body) || helpers.name_validate(req.body["token_length"])) {
-        res.status(400).json({ message: "The default token length is missing or has invalid format." });
+        res.status(400).json({ message: "The token length is missing or has invalid format." });
         return;
     }
     if (!("hidden" in req.body) || helpers.boolean_validate(req.body["hidden"])) {
         res.status(400).json({ message: "The hidden property is missing or not correct." });
-		return;
+        return;
     }
 
     let sql_change = "UPDATE course SET course_code = ($1), course_session = ($2), gitlab_group_id = ($3), default_token_count = ($4), token_length = ($5), hidden = ($6) WHERE course_id = ($7)";
@@ -46,9 +46,9 @@ router.put("/", (req, res) => {
                 res.status(404).json({ message: "Unknown error." });
                 console.log(err);
             }
-        } else if (pg_res.rowCount === 0){
+        } else if (pg_res.rowCount === 0) {
             res.status(400).json({ message: "There is no course associated with this course id." });
-        } else{
+        } else {
             res.status(200).json({ message: "The course is changed." });
         }
     });

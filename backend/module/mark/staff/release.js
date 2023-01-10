@@ -7,17 +7,17 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
-    
+
     let sql_release = "UPDATE course_" + res.locals["course_id"] + ".mark SET hidden = false WHERE task = ($1)";
 
     client.query(sql_release, [res.locals["task"]], (err, pgRes) => {
         if (err) {
-                res.status(404).json({ message: "Unknown error." });
-                console.log(err);
+            res.status(404).json({ message: "Unknown error." });
+            console.log(err);
         } else {
             if (pgRes.rowCount <= 1) {
                 res.status(200).json({ message: pgRes.rowCount + " mark is released." });
-            } else{
+            } else {
                 res.status(200).json({ message: pgRes.rowCount + " marks are released." });
             }
         }

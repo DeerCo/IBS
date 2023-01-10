@@ -4,23 +4,23 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
-    if (!("group_id" in req.body) || helpers.number_validate(req.body["group_id"])) {
-        res.status(400).json({ message: "The group id missing or has invalid format." });
-        return;
-    }
-    if (!("commit_id" in req.body) || helpers.string_validate(req.body["commit_id"])) {
-        res.status(400).json({ message: "The commit id is missing or has invalid format." });
-        return;
-    }
-    if (!("token_used" in req.body) || helpers.number_validate(req.body["token_used"])) {
-        res.status(400).json({ message: "The token used is missing or has invalid format." });
-        return;
+	if (!("group_id" in req.body) || helpers.number_validate(req.body["group_id"])) {
+		res.status(400).json({ message: "The group id missing or has invalid format." });
+		return;
+	}
+	if (!("commit_id" in req.body) || helpers.string_validate(req.body["commit_id"])) {
+		res.status(400).json({ message: "The commit id is missing or has invalid format." });
+		return;
+	}
+	if (!("token_used" in req.body) || helpers.number_validate(req.body["token_used"])) {
+		res.status(400).json({ message: "The token used is missing or has invalid format." });
+		return;
 	}
 
 	helpers.get_group_task(res.locals["course_id"], req.body["group_id"]).then(task => {
-		if (task === ""){
+		if (task === "") {
 			res.status(400).json({ message: "The group id is not found in the database." });
-        	return;
+			return;
 		}
 
 		let sql_add_submission = "INSERT INTO course_" + res.locals["course_id"] + ".submission (task, group_id, commit_id, token_used) VALUES (($1), ($2), ($3), ($4))  ON CONFLICT (group_id) DO UPDATE SET commit_id = EXCLUDED.commit_id, token_used = EXCLUDED.token_used";

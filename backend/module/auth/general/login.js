@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const helpers = require("../../../utilities/helpers");
-const client = require("../../../setup/db"); 
+const client = require("../../../setup/db");
 
 router.post("/", (req, res) => {
     if (!("username" in req.body) || req.body["username"] === "") {
@@ -20,8 +20,8 @@ router.post("/", (req, res) => {
         if (err_login) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err_login);
-        } 
-        
+        }
+
         if (pg_res_login.rowCount === 0) {
             res.status(401).json({ message: "Your username or password is incorrect." });
         } else if (pg_res_login.rows[0]["authenticated"] === true) {
@@ -31,16 +31,16 @@ router.post("/", (req, res) => {
                     console.log(err_roles);
                     return;
                 }
-                
+
                 let roles = {};
                 let roles_with_details = [];
-                for (let row of pg_res_roles.rows){
+                for (let row of pg_res_roles.rows) {
                     roles[row["course_id"]] = row["role"];
-                    roles_with_details.push({course_id: row["course_id"], course_code: row["course_code"], course_session: row["course_session"], role: row["role"]});
+                    roles_with_details.push({ course_id: row["course_id"], course_code: row["course_code"], course_session: row["course_session"], role: row["role"] });
                 }
 
                 let token = helpers.generateAccessToken(req.body["username"], req.body["email"], pg_res_login.rows[0]["admin"], roles);
-                res.json({ token: token, roles: roles_with_details});
+                res.json({ token: token, roles: roles_with_details });
             });
         } else {
             res.status(401).json({ message: "Your username or password is incorrect." });

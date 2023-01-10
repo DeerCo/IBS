@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const helpers = require("../../../utilities/helpers");
-const client = require("../../../setup/db"); 
+const client = require("../../../setup/db");
 
 router.post("/", (req, res) => {
     if (!("username" in req.body) || req.body["username"] === "") {
@@ -16,13 +16,13 @@ router.post("/", (req, res) => {
         if (err_email) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err_email);
-        } else{
-            if (pg_res_email.rowCount === 1){
+        } else {
+            if (pg_res_email.rowCount === 1) {
                 let code = Math.floor(100000 + Math.random() * 900000);
                 helpers.send_email(pg_res_email.rows[0]["email"], "IBS Password Reset Request", "We received a request to reset your password. If this was you, please enter code " + code + ". The code will expire in 5 minutes.");
                 client.query(sql_verify, [req.body["username"], code.toString()]);
             }
-            
+
             res.status(200).json({ message: "An email has been sent if the username is valid." });
         }
     });

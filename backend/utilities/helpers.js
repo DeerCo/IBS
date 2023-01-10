@@ -89,9 +89,9 @@ async function task_validate(course_id, task, student) {
 	}
 
 	if (pg_res.rowCount <= 0) {
-		return {task: ""};
+		return { task: "" };
 	} else {
-		return {task: task, change_group: pg_res.rows[0]["change_group"], interview_group: pg_res.rows[0]["interview_group"]};
+		return { task: task, change_group: pg_res.rows[0]["change_group"], interview_group: pg_res.rows[0]["interview_group"] };
 	}
 }
 
@@ -177,10 +177,10 @@ function send_email(email, subject, body) {
 	transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
 }
 
-async function send_email_by_group(course_id, group_id, subject, body){
+async function send_email_by_group(course_id, group_id, subject, body) {
 	let group_emails = "";
 	let pg_res_user = await db.query("SELECT username FROM course_" + course_id + ".group_user WHERE group_id = ($1) AND status = 'confirmed'", [group_id]);
-	for (let row of pg_res_user.rows){
+	for (let row of pg_res_user.rows) {
 		let pg_res_email = await db.query("SELECT email FROM user_info WHERE username = ($1)", [row["username"]]);
 		group_emails = group_emails + pg_res_email.rows[0]["email"] + ", "
 	}

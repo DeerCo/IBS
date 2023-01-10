@@ -10,9 +10,9 @@ router.get("/", (req, res) => {
     }
 
     let sql_times = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS start_time, " +
-                    "to_char(time AT TIME ZONE 'America/Toronto' + CONCAT(length,' minutes')::INTERVAL, 'YYYY-MM-DD HH24:MI:SS') AS end_time, " +
-                    "COUNT(*) AS all_count, COUNT(group_id) AS booked_count, location FROM course_" + 
-                    res.locals["course_id"] + ".interview WHERE task = ($1) AND time > now() GROUP BY time, length, location ORDER BY time";
+        "to_char(time AT TIME ZONE 'America/Toronto' + CONCAT(length,' minutes')::INTERVAL, 'YYYY-MM-DD HH24:MI:SS') AS end_time, " +
+        "COUNT(*) AS all_count, COUNT(group_id) AS booked_count, location FROM course_" +
+        res.locals["course_id"] + ".interview WHERE task = ($1) AND time > now() GROUP BY time, length, location ORDER BY time";
     client.query(sql_times, [res.locals["task"]], (err, pgRes) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });

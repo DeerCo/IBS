@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 router.use("/", function (req, res, next) {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
-    
+
     if (token == null) {
         res.status(401).json({ message: "You need to provide a valid token." });
     } else {

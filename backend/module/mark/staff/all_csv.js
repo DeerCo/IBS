@@ -8,12 +8,12 @@ router.get("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
-    
-    if (req.query["total"] === true || req.query["total"] === "true"){
-		var total = true;
-	} else{
-		var total = false;
-	}
+
+    if (req.query["total"] === true || req.query["total"] === "true") {
+        var total = true;
+    } else {
+        var total = false;
+    }
 
     client.query("SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE task = ($1) ORDER BY username DESC", [res.locals["task"]], (err, pgRes) => {
         if (err) {

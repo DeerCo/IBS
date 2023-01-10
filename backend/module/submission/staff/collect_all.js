@@ -4,17 +4,17 @@ const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
 	if (res.locals["task"] === "") {
-        res.status(400).json({ message: "The task is missing or invalid." });
-        return;
-    }
+		res.status(400).json({ message: "The task is missing or invalid." });
+		return;
+	}
 	if (!("overwrite" in req.body) || helpers.boolean_validate(req.body["overwrite"])) {
 		res.status(400).json({ message: "The overwrite property is missing or invalid." });
 		return;
 	}
 
-	if (req.body["overwrite"] === true || req.body["overwrite"] === "true"){
+	if (req.body["overwrite"] === true || req.body["overwrite"] === "true") {
 		var overwrite = true;
-	} else{
+	} else {
 		var overwrite = false;
 	}
 

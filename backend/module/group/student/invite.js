@@ -4,19 +4,19 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", (req, res) => {
-	if (res.locals["change_group"] === false || (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null)){
+	if (res.locals["change_group"] === false || (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null)) {
 		res.status(400).json({ message: "Changing group is not allowed for this task." });
-        return;
+		return;
 	}
-	
+
 	if (!("group_id" in req.body) || helpers.number_validate(req.body["group_id"])) {
-        res.status(400).json({ message: "The group id is missing or invalid." });
-        return;
-    }
-    if (!("username" in req.body) || helpers.name_validate(req.body["username"])) {
-        res.status(400).json({ message: "The username is missing or has invalid format." });
-        return;
-    }
+		res.status(400).json({ message: "The group id is missing or invalid." });
+		return;
+	}
+	if (!("username" in req.body) || helpers.name_validate(req.body["username"])) {
+		res.status(400).json({ message: "The username is missing or has invalid format." });
+		return;
+	}
 
 	let sql_select_users = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1)";
 	let sql_select_max_member = "SELECT max_member FROM course_" + res.locals["course_id"] + ".task WHERE task = ($1)";
@@ -29,12 +29,12 @@ router.post("/", (req, res) => {
 		}
 
 		let has_access = false;
-		for (let row of pg_res_select_users.rows){
-			if (row["username"] === res.locals["username"] && row["status"] === "confirmed"){
+		for (let row of pg_res_select_users.rows) {
+			if (row["username"] === res.locals["username"] && row["status"] === "confirmed") {
 				has_access = true;
 			}
 		}
-		if (!has_access){
+		if (!has_access) {
 			res.status(400).json({ message: "You don't have access to invite." });
 			return;
 		}
@@ -47,7 +47,7 @@ router.post("/", (req, res) => {
 			}
 
 			let max_member = pg_res_max_member.rows[0]["max_member"];
-			if (pg_res_select_users.rowCount >= max_member){
+			if (pg_res_select_users.rowCount >= max_member) {
 				res.status(400).json({ message: "No more user can be invited as the maximum has been reached." });
 				return;
 			}

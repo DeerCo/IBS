@@ -5,19 +5,19 @@ const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
 	if (res.locals["task"] === "") {
-        res.status(400).json({ message: "The task is missing or invalid." });
-        return;
-    }
+		res.status(400).json({ message: "The task is missing or invalid." });
+		return;
+	}
 
 	let sql_select_group = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE username = ($1) AND task = ($2)";
 	let sql_select_members = "SELECT username, status FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1)";
 	let sql_select_gitlab_url = "SELECT * FROM course_" + res.locals["course_id"] + ".group WHERE group_id = ($1)";
 
-	if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
-        var task = res.locals["interview_group"];
-    } else{
-        var task = res.locals["task"];
-    }
+	if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null) {
+		var task = res.locals["interview_group"];
+	} else {
+		var task = res.locals["task"];
+	}
 
 	client.query(sql_select_group, [res.locals["username"], task], (err, pg_res_group) => {
 		if (err) {
@@ -34,11 +34,11 @@ router.get("/", (req, res) => {
 						if (err) {
 							res.status(404).json({ message: "Unknown error." });
 							console.log(err);
-						} else{
-							if (pg_res_group.rows[0]["status"] === "pending"){
+						} else {
+							if (pg_res_group.rows[0]["status"] === "pending") {
 								let message = "You have been invited to join a group.";
 								res.status(200).json({ message: message, group_id: group_id, members: pg_res_members.rows });
-							} else{
+							} else {
 								let gitlab_url = pg_res_url.rows[0]["gitlab_url"];
 								let message = "You have joined a group.";
 								res.status(200).json({ message: message, group_id: group_id, members: pg_res_members.rows, gitlab_url: gitlab_url });
@@ -50,7 +50,7 @@ router.get("/", (req, res) => {
 		} else if (pg_res_group.rowCount === 0) {
 			res.status(200).json({ message: "You are not in a group." });
 		}
-    });
+	});
 })
 
 module.exports = router;

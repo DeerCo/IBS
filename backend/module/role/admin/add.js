@@ -15,10 +15,10 @@ router.post("/", (req, res) => {
 
     let email = "test@utoronto.ca";
     if ("email" in req.body) {
-        if (helpers.email_validate(req.body["email"])){
+        if (helpers.email_validate(req.body["email"])) {
             res.status(400).json({ message: "The email has invalid format." });
             return;
-        } else{
+        } else {
             email = req.body["email"];
         }
     }
@@ -28,7 +28,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The role is missing or invalid." });
         return;
     }
-    
+
     let sql_register = "INSERT INTO user_info (username, password, email) VALUES (($1), ($2), ($3)) ON CONFLICT (username) DO NOTHING";
     let sql_register_data = [req.body["username"], "initial", email];
     let sql_add_1 = "INSERT INTO course_role (username, course_id, role) VALUES (($1), ($2), ($3))";

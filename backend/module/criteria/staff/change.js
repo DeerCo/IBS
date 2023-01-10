@@ -20,7 +20,7 @@ router.put("/", (req, res) => {
     if ("description" in req.body && (req.body["description"] === "" || !helpers.string_validate(req.body["description"]))) {
         var sql_change = "UPDATE course_" + res.locals["course_id"] + ".criteria SET criteria = ($1), total = ($2), description = ($3) WHERE criteria_id = ($4)";
         var sql_change_data = [req.body["criteria"], req.body["total"], req.body["description"], req.body["criteria_id"]];
-    } else{
+    } else {
         res.status(400).json({ message: "The description is missing or has invalid format." });
         return;
     }
@@ -29,9 +29,9 @@ router.put("/", (req, res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
-        } else if (pg_res.rowCount === 0){
+        } else if (pg_res.rowCount === 0) {
             res.status(400).json({ message: "There is no criteria associated with this criteria id." });
-        } else{
+        } else {
             res.status(200).json({ message: "The criteria is changed." });
         }
     });

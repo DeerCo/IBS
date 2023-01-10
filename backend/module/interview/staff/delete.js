@@ -5,9 +5,9 @@ const helpers = require("../../../utilities/helpers");
 
 router.delete("/", (req, res) => {
 	if (res.locals["task"] === "") {
-        res.status(400).json({ message: "The task is missing or invalid." });
-        return;
-    }
+		res.status(400).json({ message: "The task is missing or invalid." });
+		return;
+	}
 	if (!("interview_id" in req.body) || helpers.number_validate(req.body["interview_id"])) {
 		res.status(404).json({ message: "The interview id is missing or has invalid format." });
 		return;

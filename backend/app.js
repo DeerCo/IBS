@@ -11,14 +11,14 @@ app.use(express.json());
 // Take down the server
 app.use(function (req, res, next) {
     let server_down = false;
-    
-    if (server_down){
-        if (req.ip !== "127.0.0.1" && req.ip.substring(7) !== "127.0.0.1"){
-            res.status(503).json({message: "We are making the server better! Please try again later."});
+
+    if (server_down) {
+        if (req.ip !== "127.0.0.1" && req.ip.substring(7) !== "127.0.0.1") {
+            res.status(503).json({ message: "We are making the server better! Please try again later." });
             return;
         }
     }
-    
+
     next();
 });
 

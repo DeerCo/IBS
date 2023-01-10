@@ -12,13 +12,13 @@ router.post("/", (req, res) => {
     if (!("password" in req.body) || helpers.password_validate(req.body["password"])) {
         res.status(400).json({ message: "The password is missing or has invalid format." });
         return;
-    } 
+    }
 
     if (!("email" in req.body) || helpers.email_validate(req.body["email"])) {
         res.status(400).json({ message: "The email is missing or has invalid format." });
         return;
     }
-    
+
     let sql_add = "INSERT INTO user_info (username, password, email) VALUES (($1), crypt(($2), gen_salt('md5')), ($3))";
     let sql_add_data = [req.body["username"], req.body["password"], req.body["email"]];
 

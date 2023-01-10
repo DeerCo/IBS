@@ -18,10 +18,10 @@ router.post("/", (req, res) => {
     }
 
     if ("description" in req.body && req.body["description"] !== "") {
-        if (helpers.string_validate(req.body["description"])){
+        if (helpers.string_validate(req.body["description"])) {
             res.status(400).json({ message: "The description has invalid format." });
             return;
-        } else{
+        } else {
             var sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".criteria (task, criteria, total, description) VALUES (($1), ($2), ($3), ($4))";
             var sql_add_data = [res.locals["task"], req.body["criteria"], req.body["total"], req.body["description"]];
         }

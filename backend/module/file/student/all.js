@@ -13,7 +13,7 @@ router.get("", (req, res) => {
         let files_list = [];
 
         for (let i = 0; i < files.length; i++) {
-            files_list.push({file_id: i, file_name: "/" + files[i]});
+            files_list.push({ file_id: i, file_name: "/" + files[i] });
         }
 
         if (files.length === 0) {

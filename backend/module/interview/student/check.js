@@ -9,21 +9,21 @@ router.get("/", (req, res) => {
         return;
     }
 
-    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
+    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null) {
         var task = res.locals["interview_group"];
-    } else{
+    } else {
         var task = res.locals["task"];
     }
 
     helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
-        if (group_id === -1){
+        if (group_id === -1) {
             res.status(400).json({ message: "You need to join a group before checking." });
             return;
         }
 
         let sql_check = "SELECT interview_id, to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS start_time, " +
-        "to_char(time AT TIME ZONE 'America/Toronto' + CONCAT(length,' minutes')::INTERVAL, 'YYYY-MM-DD HH24:MI:SS') AS end_time, " +
-        "location FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2)";
+            "to_char(time AT TIME ZONE 'America/Toronto' + CONCAT(length,' minutes')::INTERVAL, 'YYYY-MM-DD HH24:MI:SS') AS end_time, " +
+            "location FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2)";
         client.query(sql_check, [group_id, res.locals["task"]], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });

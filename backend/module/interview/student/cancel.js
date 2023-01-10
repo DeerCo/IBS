@@ -11,14 +11,14 @@ router.delete("/", (req, res) => {
         return;
     }
 
-    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
+    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null) {
         var task = res.locals["interview_group"];
-    } else{
+    } else {
         var task = res.locals["task"];
     }
 
     helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
-        if (group_id === -1){
+        if (group_id === -1) {
             res.status(400).json({ message: "You need to join a group before cancelling an interview." });
             return;
         }

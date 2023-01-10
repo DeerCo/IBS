@@ -30,14 +30,14 @@ router.post("/", (req, res) => {
         }
     }
 
-    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null){
+    if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null) {
         var task = res.locals["interview_group"];
-    } else{
+    } else {
         var task = res.locals["task"];
     }
 
     helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
-        if (group_id === -1){
+        if (group_id === -1) {
             res.status(400).json({ message: "You need to join a group before booking an interview." });
             return;
         }
@@ -46,7 +46,7 @@ router.post("/", (req, res) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });
                 return;
-            } 
+            }
 
             if (pgRes.rowCount === 1) {
                 res.status(400).json({ message: "You already have an existing interview for " + res.locals["task"] + " at " + pgRes.rows[0]["time"] + "." });

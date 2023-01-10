@@ -8,7 +8,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The max token is missing or has invalid format." });
         return;
     }
-        
+
     let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".task_group (max_token) VALUES (($1))";
     let sql_add_data = [req.body["max_token"]];
 

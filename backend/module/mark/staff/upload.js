@@ -27,11 +27,11 @@ router.post("/", upload.single("file"), (req, res) => {
 
     let sql_upload = "INSERT INTO course_" + res.locals["course_id"] + ".mark (criteria_id, username, mark, task) VALUES %L";
 
-    if (req.body["overwrite"] === true || req.body["overwrite"] === "true"){
-		sql_upload += " ON CONFLICT (criteria_id, username) DO UPDATE SET mark = EXCLUDED.mark";
-	} else{
-		sql_upload += " ON CONFLICT (criteria_id, username) DO NOTHING";
-	}
+    if (req.body["overwrite"] === true || req.body["overwrite"] === "true") {
+        sql_upload += " ON CONFLICT (criteria_id, username) DO UPDATE SET mark = EXCLUDED.mark";
+    } else {
+        sql_upload += " ON CONFLICT (criteria_id, username) DO NOTHING";
+    }
 
     const csv_path = req.file.destination + req.file.filename;
     csv({

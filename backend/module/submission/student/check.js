@@ -15,10 +15,10 @@ router.get("/", (req, res) => {
 			client.query(sql_criteria, [group_id], (err_collected, pg_res_collected) => {
 				if (err_collected) {
 					res.status(404).json({ message: "Unknown error." });
-				} else if (pg_res_collected.rowCount === 0){
+				} else if (pg_res_collected.rowCount === 0) {
 					res.status(200).json({ before_due_date: result });
-				} else{
-					res.status(200).json({ before_due_date: result , collected: pg_res_collected.rows[0]});
+				} else {
+					res.status(200).json({ before_due_date: result, collected: pg_res_collected.rows[0] });
 				}
 			});
 		});
