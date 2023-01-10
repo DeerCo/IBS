@@ -1,9 +1,7 @@
 
 /* BASIC */
 
-html {
-    background-color: #56baed;
-}
+
 
 body {
     font-family: "Poppins", sans-serif;
@@ -103,11 +101,11 @@ input[type=button], input[type=submit], input[type=reset]  {
     transition: all 0.3s ease-in-out;
 }
 
-input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover  {
+input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover, code {
     background-color: #39ace7;
 }
 
-input[type=button]:active, input[type=submit]:active, input[type=reset]:active  {
+input[type=button]:active, input[type=submit]:active, input[type=reset]:active, code {
     -moz-transform: scale(0.95);
     -webkit-transform: scale(0.95);
     -o-transform: scale(0.95);
@@ -363,4 +361,14 @@ input[type=text]:placeholder, input[type=password]{
 .book {
     font-family: Poppins, sans-serif;
     font-size: 28px;
+}
+
+.popup{
+    z-index:99999;
+}
+
+.curtain{
+    z-index:99998;
+    --bs-bg-opacity: .5;
+    height: 850px;
 }

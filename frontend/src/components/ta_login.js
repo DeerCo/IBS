@@ -17,7 +17,7 @@ let required = (value) => {
     }
 };
 
-let Login = () => {
+let Login_TA = () => {
   
 
     let navigate = useNavigate();
@@ -48,9 +48,9 @@ let Login = () => {
           (result) => {
             // update the token, roles and username inside localstorage
             localStorage.setItem('username', username);
-            localStorage.setItem('token', result.token);
+            localStorage.setItem('ta_token', result.token);
             localStorage.setItem('roles', JSON.stringify(result));
-            navigate("/frontPage");
+            navigate("/interviewPage_ta");
             window.location.reload();
           },
           (error) => {
@@ -79,7 +79,7 @@ let Login = () => {
 
                   <br/>
                   <div className="fadeIn first mt-2 logo">
-                      <p>IBS</p>
+                      <p>ADMIN</p>
                   </div>
 
 
@@ -126,4 +126,4 @@ let Login = () => {
 };
 
   
-export default Login;
+export default Login_TA;

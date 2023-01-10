@@ -24,7 +24,7 @@ const Register = () => {
   
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const [code, setCode] = useState("");
     const [message, setMessage] = useState("");
   
     const onChangeUsername = (e) => {
@@ -37,9 +37,9 @@ const Register = () => {
       setPassword(password);
     };
 
-    const onChangeEmail = (e) => {
-        const email = e.target.value;
-        setEmail(email);
+    const onChangeCode = (e) => {
+        const code = e.target.value;
+        setCode(code);
     };
 
     const handleLogin = (e) => {
@@ -48,7 +48,7 @@ const Register = () => {
         setMessage("");
     
         form.current.validateAll();
-        AuthService.register(username, password, email).then(
+        AuthService.register(username, password, code).then(
           () => {
             navigate("/login");
             window.location.reload();
@@ -66,6 +66,32 @@ const Register = () => {
         );
       
       };
+
+      const handleCode = (e) => {
+        e.preventDefault();
+    
+        setMessage("");
+    
+        form.current.validateAll();
+        AuthService.sendCode(username).then(
+          () => {
+            console.log("code sent");
+            setMessage("code sent");
+          },
+          (error) => {
+            const resMessage =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+  
+            setMessage(resMessage);
+          }
+        );
+      
+      };
+
 
       return (
         <div>
@@ -91,27 +117,32 @@ const Register = () => {
                       onChange={onChangeUsername}
                       validations={[required]} />
 
-                      <input type="password" 
-                      id="password" 
-                      className="mt-3 fadeIn third" 
-                      name="password" 
-                      placeholder="password"
-                      value={password}
-                      onChange={onChangePassword}
-                      validations={[required]}
-                      />
-
+                    <div className="d-flex justify-content-between m-4 fadeIn fourth"> 
                      <input type="text" 
-                     id="email" 
-                     className="mt-3 fadeIn third" 
-                     name="email" 
-                     placeholder="email"
-                     value={email}
-                     onChange={onChangeEmail}
+                     id="code" 
+                     className="w-75 fadeIn third" 
+                     name="code" 
+                     placeholder="code"
+                     value={code}
+                     onChange={onChangeCode}
                      validations={[required]}
                      />
 
-                      <input type="submit" className="m-4 fadeIn fourth" value="Register"/>
+                     <input type="button" onClick={handleCode} className=" m-2" value="send code"/>
+                    </div> 
+
+                    
+                    <input type="password" 
+                    id="password" 
+                    className="mt-3 fadeIn third" 
+                    name="password" 
+                    placeholder="password"
+                    value={password}
+                    onChange={onChangePassword}
+                    validations={[required]}
+                    />
+
+                      <input type="submit" className="m-4 fadeIn fourth" value="reset password"/>
 
                       {message && (
                       <div className="form-group">
