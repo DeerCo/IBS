@@ -24,7 +24,7 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The default token count is missing or has invalid format." });
         return;
     }
-    if (!("default_token_length" in req.body) || helpers.name_validate(req.body["default_token_length"])) {
+    if (!("token_length" in req.body) || helpers.name_validate(req.body["token_length"])) {
         res.status(400).json({ message: "The default token length is missing or has invalid format." });
         return;
     }
@@ -33,8 +33,8 @@ router.put("/", (req, res) => {
 		return;
     }
 
-    let sql_change = "UPDATE course SET course_code = ($1), course_session = ($2), gitlab_group_id = ($3), default_token_count = ($4), default_token_length = ($5), hidden = ($6) WHERE course_id = ($7)";
-    let sql_change_data = [req.body["course_code"], req.body["course_session"], req.body["gitlab_group_id"], req.body["default_token_count"], req.body["default_token_length"], req.body["hidden"], req.body["course_id"]];
+    let sql_change = "UPDATE course SET course_code = ($1), course_session = ($2), gitlab_group_id = ($3), default_token_count = ($4), token_length = ($5), hidden = ($6) WHERE course_id = ($7)";
+    let sql_change_data = [req.body["course_code"], req.body["course_session"], req.body["gitlab_group_id"], req.body["default_token_count"], req.body["token_length"], req.body["hidden"], req.body["course_id"]];
 
     client.query(sql_change, sql_change_data, (err, pg_res) => {
         if (err) {
