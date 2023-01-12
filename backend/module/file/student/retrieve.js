@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
         return;
     }
 
-    if (!("id" in req.query) || helpers.number_validate(req.query["id"])) {
+    if (!("file_id" in req.query) || helpers.number_validate(req.query["file_id"])) {
         res.status(400).json({ message: "The file id is not a valid integer." });
         return;
     }

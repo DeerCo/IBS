@@ -29,10 +29,10 @@ router.get("/", (req, res) => {
                 res.status(404).json({ message: "Unknown error." });
             } else {
                 if (pgRes.rowCount === 0) {
-                    res.status(200).json({ message: "You don't have a booked interview for " + res.locals["task"] + " yet." });
+                    res.status(200).json({ message: "You don't have a booked interview for " + res.locals["task"] + " yet.", booked: false });
                 } else {
                     let message = "Your interview for " + res.locals["task"] + " is from " + pgRes.rows[0]["start_time"] + " to " + pgRes.rows[0]["end_time"] + ". The location is " + pgRes.rows[0]["location"] + ".";
-                    res.status(200).json({ message: message, start_time: pgRes.rows[0]["start_time"], end_time: pgRes.rows[0]["end_time"], location: pgRes.rows[0]["location"] });
+                    res.status(200).json({ message: message, booked: true, start_time: pgRes.rows[0]["start_time"], end_time: pgRes.rows[0]["end_time"], location: pgRes.rows[0]["location"] });
                 }
             }
         });

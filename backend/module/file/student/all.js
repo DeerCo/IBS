@@ -13,13 +13,13 @@ router.get("", (req, res) => {
         let files_list = [];
 
         for (let i = 0; i < files.length; i++) {
-            files_list.push({ file_id: i, file_name: "/" + files[i] });
+            files_list.push({ file_id: i, file_name: files[i].replace(res.locals["task"], "") });
         }
 
         if (files.length === 0) {
-            res.json({ message: "You don't have any files for this task." });
+            res.json({ message: "You don't have any files for this task.", files: [] });
         } else {
-            res.json({ files: files_list });
+            res.json({ message: "Files are returned", files: files_list });
         }
     });
 })
