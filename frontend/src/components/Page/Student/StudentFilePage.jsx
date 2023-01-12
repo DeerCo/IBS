@@ -1,64 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import AuthService from "../../../services/auth_services";
 import NavBar from "../../Module/Navigation/NavBar";
 import '../../../styles/style.css';
 
 let StudentFilePage = () => {
-	// get all the json from localstorage
-	let fetch = JSON.parse(localStorage.getItem("files"));
-	let files = fetch.files;
+	let { course_id, task } = useParams();
+
+	let [files, setFiles] = useState([]);
+	let [checkboxes, setCheckboxes] = useState([]);
+
+	useEffect(() => {
+		AuthService.all_files(course_id, task).then(
+			(result) => {
+				setFiles(result["files"]);
+			},
+			(error) => {
+				console.log(error);
+			})
+	}, []);
 
 	// download the file
 	let download = (file_id, file_name) => {
-		// get courseid from localstorage
-		let courseid = localStorage.getItem("courseid");
-
-		// get task from localstorage
-		let task = localStorage.getItem("task");
-
 		// call the service function
-		AuthService.download(courseid, task, file_id, file_name).then(
+		AuthService.download_file(course_id, task, file_id, file_name).then(
 			(result) => {
-				console.log("downloaded");
+				
 			}
 		);
 	};
 
 	// download all of the selected files
 	let download_all = () => {
-		check.map(check => {
-			download(check.id, check.name);
+		checkboxes.map(checkbox => {
+			download(checkbox.file_id, checkbox.file_name);
 		})
 	}
 
-	// state holder
-	let initialState = [];
-	let [check, setCheck] = useState(initialState);
-
-
 	// handle click
-	let handleClick = (id, name) => {
+	let handleClick = (file_id, file_name) => {
+		let last_slash = file_name.lastIndexOf('/');
+		file_name = file_name.substring(last_slash + 1);
+
 		// check if the value is stored already
-		let isFound = check.some(check => {
-			if (check.id === id) {
+		let isFound = checkboxes.some(checkbox => {
+			if (checkbox.file_id === file_id) {
 				return true;
 			}
 			return false;
 		});
+
 		// update the states
 		if (!isFound) { // this click was to check the box
-			setCheck(current => [...current, { id: id, name: name }]);
+			setCheckboxes(current => [...current, { file_id: file_id, file_name: file_name }]);
 		} else {
-			updateState(id);
+			updateState(file_id);
 		}
-		console.log(check);
-
 	};
 
 	// update value
-	let updateState = (id) => {
-		setCheck((current) =>
-			current.filter((curr) => curr.id !== id)
+	let updateState = (file_id) => {
+		setCheckboxes((current) =>
+			current.filter((curr) => curr.file_id !== file_id)
 		);
 	};
 
@@ -78,17 +81,17 @@ let StudentFilePage = () => {
 								</div>
 								<span className="fw-bold">Download</span>
 							</li>
-							{files.map((e) => (
-								<li className="list-group-item flex-row" key={e.file_id}>
+							{files.map((file) => (
+								<li className="list-group-item flex-row" key={file.file_id}>
 									<div className=" d-flex justify-content-between">
-										<span className="badge bg-success rounded-pill mt-1">{e.file_name.split("/")[2]}</span>
+										<span className="badge bg-success rounded-pill mt-1">{file.file_name}</span>
 										<div className="form-check form-switch">
-											<input className="form-check-input" type="checkbox" onChange={() => { handleClick(e.file_id, e.file_name) }} />
+											<input className="form-check-input" type="checkbox" onChange={() => { handleClick(file.file_id, file.file_name) }} />
 										</div>
 									</div>
 								</li>
 							))}
-							<button type="button" onClick={download_all} className="btn mt-2 btn-sm btn-outline-secondary">download</button>
+							<button type="button" onClick={download_all} className="btn mt-2 btn-sm btn-outline-secondary">Download</button>
 						</ol>
 					</div>
 				</div>

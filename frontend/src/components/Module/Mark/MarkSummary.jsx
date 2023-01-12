@@ -2,7 +2,6 @@ import React from "react";
 
 let MarkSummary = (props) => {
 	let marks = props.marks;
-	console.log(marks)
 
 	if (Object.keys(marks).length > 0) {
 		return (

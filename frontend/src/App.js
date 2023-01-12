@@ -19,12 +19,12 @@ function App() {
 				<Route path="/reset" element={<ResetPasswordPage />}></Route>
 				<Route path="/home" element={<Home />}></Route>
 
-				<Route path="/task" element={<StudentTaskPage />}></Route>
-				<Route path="/mark" element={<StudentMarkPage />}></Route>
-				<Route path="/file" element={<StudentFilePage />}></Route>
-				<Route path="/interview" element={<StudentInterviewPage />}></Route>
+				<Route path="/course/:course_id/task" element={<StudentTaskPage />}></Route>
+				<Route path="/course/:course_id/task/:task/mark" element={<StudentMarkPage />}></Route>
+				<Route path="/course/:course_id/task/:task/file" element={<StudentFilePage />}></Route>
+				<Route path="/course/:course_id/task/:task/interview" element={<StudentInterviewPage />}></Route>
 
-				<Route path="/ta/interview" element={<TaInterviewPage />}></Route>
+				<Route path="/ta/course/:course_id/task/:task/interview" element={<TaInterviewPage />}></Route>
 				
 				<Route path="/" element={<LoginPage />}></Route>
 			</Routes>

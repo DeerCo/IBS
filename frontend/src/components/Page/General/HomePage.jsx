@@ -11,18 +11,13 @@ let Home = () => {
 	let fetch = JSON.parse(localStorage.getItem("roles"));
 	let roles = fetch.roles;
 
-	// get username from localstorage
-	let username = localStorage.getItem("username");
 
-	let tasks = (courseid) => {
-		// update courseid in localstorage
-		localStorage.setItem('courseid', courseid);
-
-		navigate("/task");
+	let choose_task = (courseid) => {
+		navigate("/course/" + courseid + "/task");
 	};
 
 	return (
-		<>
+		<div>
 			<div>
 				<NavBar />
 
@@ -31,16 +26,14 @@ let Home = () => {
 						<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
 							{roles.map(data => (
 								<div className="col" key={data.course_id}>
-									<div className="card shadow-sm m-3">
+									<div className="card shadow-sm m-3" onClick={() => { choose_task(data.course_id) }}>
 										<img src={require("../../../images/general.png")} alt="course image" />
 
 										<div className="card-body">
 											<p className="card-text">{data.course_code}</p>
 											<div className="d-flex justify-content-between align-items-center">
-												<div className="btn-group">
-													<button type="button" onClick={() => { tasks(data.course_id) }} className="btn btn-sm btn-outline-secondary">Assignments</button>
-												</div>
-												<small className="text-muted">Session: {data.course_session.replaceAll("_", " ")}</small>
+												<small className="text-muted">{data.course_session.replaceAll("_", " ")}</small>
+												<small className="text-muted">{data.role.charAt(0).toUpperCase() + data.role.slice(1)}</small>
 											</div>
 										</div>
 									</div>
@@ -51,7 +44,7 @@ let Home = () => {
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
