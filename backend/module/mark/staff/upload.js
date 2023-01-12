@@ -20,7 +20,7 @@ router.post("/", upload.single("file"), (req, res) => {
         res.status(200).json({ message: "The file must be a csv file." });
         return;
     }
-    if (res.locals["task"] === "") {
+    if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
@@ -41,7 +41,7 @@ router.post("/", upload.single("file"), (req, res) => {
         let all_criteria = [];
         let marks_data = [];
 
-        helpers.get_criteria(res.locals["course_id"], res.locals["task"]).then(db_all_criteria => {
+        helpers.get_criteria(res.locals["course_id"], req.body["task"]).then(db_all_criteria => {
             if (csv_row[0].length <= 1) {
                 res.status(400).json({ message: "At least one criteria is required." });
                 return;
@@ -62,7 +62,7 @@ router.post("/", upload.single("file"), (req, res) => {
                 }
             }
 
-            helpers.get_all_group_users(res.locals["course_id"], res.locals["task"]).then(groups => {
+            helpers.get_all_group_users(res.locals["course_id"], req.body["task"]).then(groups => {
                 // Process the csv file
                 for (let j = 2; j < csv_row.length; j++) {
                     let user = csv_row[j][0];
@@ -75,10 +75,10 @@ router.post("/", upload.single("file"), (req, res) => {
                         if (user.startsWith("group_") && (user.replace("group_", "") in groups)) { // The user is a group so add the mark for all confirmed members
                             let group_id = user.replace("group_", "");
                             for (let temp_user of groups[group_id]) {
-                                marks_data.push([all_criteria[k], temp_user, mark, res.locals["task"]]);
+                                marks_data.push([all_criteria[k], temp_user, mark, req.body["task"]]);
                             }
                         } else { // The user is just a single user
-                            marks_data.push([all_criteria[k], user, mark, res.locals["task"]]);
+                            marks_data.push([all_criteria[k], user, mark, req.body["task"]]);
                         }
                     }
                 }

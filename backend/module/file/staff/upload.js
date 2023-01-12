@@ -19,7 +19,7 @@ router.post("/", upload.single("file"), (req, res) => {
 		res.status(200).json({ message: "The file must be a zip file." });
 		return;
 	}
-	if (res.locals["task"] === "") {
+	if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
 		res.status(400).json({ message: "The task is missing or invalid." });
 		return;
 	}
@@ -27,7 +27,7 @@ router.post("/", upload.single("file"), (req, res) => {
 	let zip_path = req.file.destination + req.file.filename;
 	var zip = new AdmZip(zip_path);
 
-	let dest_path = "./files/course_" + res.locals["course_id"] + "/" + res.locals["task"];
+	let dest_path = "./files/course_" + res.locals["course_id"] + "/" + req.body["task"];
 	if (!fs.existsSync(dest_path)) {
 		fs.mkdirSync(dest_path, { recursive: true });
 	}
