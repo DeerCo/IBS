@@ -18,14 +18,14 @@ let StudentFilePage = () => {
 			(error) => {
 				console.log(error);
 			})
-	}, []);
+	}, [course_id, task]);
 
 	// download the file
 	let download = (file_id, file_name) => {
 		// call the service function
 		AuthService.download_file(course_id, task, file_id, file_name).then(
 			(result) => {
-				
+
 			}
 		);
 	};
@@ -34,6 +34,7 @@ let StudentFilePage = () => {
 	let download_all = () => {
 		checkboxes.map(checkbox => {
 			download(checkbox.file_id, checkbox.file_name);
+			return 0;
 		})
 	}
 
@@ -65,39 +66,51 @@ let StudentFilePage = () => {
 		);
 	};
 
-	return (
-		<div>
+	if (files.length === 0) {
+		return (
 			<div>
-				<NavBar />
+				<div>
+					<NavBar />
 
-				<div className="divider"> </div>
+					<h1>No file is available</h1>
+				</div>
+			</div>
+		);
+	} else {
+		return (
+			<div>
+				<div>
+					<NavBar />
 
-				<div className="card-box row">
-					<div className="col-5 tasks2">
-						<ol className="list-group list-unstyled">
-							<li className="d-flex justify-content-between flex-row mb-1">
-								<div className="ms-2 me-auto">
-									<div className="fw-bold">File name</div>
-								</div>
-								<span className="fw-bold">Download</span>
-							</li>
-							{files.map((file) => (
-								<li className="list-group-item flex-row" key={file.file_id}>
-									<div className=" d-flex justify-content-between">
-										<span className="badge bg-success rounded-pill mt-1">{file.file_name}</span>
-										<div className="form-check form-switch">
-											<input className="form-check-input" type="checkbox" onChange={() => { handleClick(file.file_id, file.file_name) }} />
-										</div>
+					<div className="divider"> </div>
+
+					<div className="card-box row">
+						<div className="col-5 tasks2">
+							<ol className="list-group list-unstyled">
+								<li className="d-flex justify-content-between flex-row mb-1">
+									<div className="ms-2 me-auto">
+										<div className="fw-bold">File name</div>
 									</div>
+									<span className="fw-bold">Download</span>
 								</li>
-							))}
-							<button type="button" onClick={download_all} className="btn mt-2 btn-sm btn-outline-secondary">Download</button>
-						</ol>
+								{files.map((file) => (
+									<li className="list-group-item flex-row" key={file.file_id}>
+										<div className=" d-flex justify-content-between">
+											<span className="badge bg-success rounded-pill mt-1">{file.file_name}</span>
+											<div className="form-check form-switch">
+												<input className="form-check-input" type="checkbox" onChange={() => { handleClick(file.file_id, file.file_name) }} />
+											</div>
+										</div>
+									</li>
+								))}
+								<button type="button" onClick={download_all} className="btn mt-2 btn-sm btn-outline-secondary">Download</button>
+							</ol>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	);
+		);
+	}
 };
 
 

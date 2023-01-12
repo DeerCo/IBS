@@ -12,7 +12,6 @@ let StudentInterviewPage = () => {
 	let { course_id, task } = useParams();
 
 	let [calendarData, setCalendarData] = useState([]);
-	let initial_date = "";
 
 	let [bookedStart, setBookedStart] = useState("");
 	let [bookedEnd, setBookedEnd] = useState("");
@@ -33,7 +32,6 @@ let StudentInterviewPage = () => {
 			(result) => {
 				AuthService.available_interviews(course_id, task).then(
 					(result2) => {
-						initial_date = "";
 						let temp_data = [];
 						let interviews = result2.availability;
 
@@ -71,10 +69,6 @@ let StudentInterviewPage = () => {
 									backgroundColor: 'green'
 								};
 								let string = time.split(" - ");
-								// set the defualt date for calender display
-								if (initial_date === "") {
-									initial_date = string[0].split(" ")[0];
-								}
 								let start = string[0].replace(" ", "T");
 								let end = string[1].replace(" ", "T");
 								curr.start = start;
@@ -87,7 +81,7 @@ let StudentInterviewPage = () => {
 					}
 				)
 			})
-	}, [version]);
+	}, [course_id, task, version]);
 
 	// the book interview function
 	let book_interview = (task, time, location) => {
@@ -133,8 +127,6 @@ let StudentInterviewPage = () => {
 						<FullCalendar
 							plugins={[dayGridPlugin, interactionPlugin]}
 							initialView="dayGridMonth"
-							// comment this back when the interview is there
-							// initialDate={initial_date}
 							headerToolbar={{
 								left: 'prev,next',
 								center: 'title',
@@ -156,7 +148,7 @@ let StudentInterviewPage = () => {
 								// open the popup
 								setMessage("");
 								setOpen(!open);
-								if (info.event.backgroundColor == 'red') {
+								if (info.event.backgroundColor === 'red') {
 									setSelect(true);
 								} else {
 									setSelect(false);
@@ -171,6 +163,7 @@ let StudentInterviewPage = () => {
 							<p className="pb-3 mb-3 mt-2 border-bottom w-100">
 								<strong className="d-block text-gray-dark"> You have booked an interview </strong>
 								<strong className="d-block text-gray-dark"> Start time: {bookedStart} </strong>
+								<strong className="d-block text-gray-dark"> End time: {bookedEnd} </strong>
 								<strong className="d-block text-gray-dark"> Location: {bookedLocation} </strong>
 							</p>
 						)}
@@ -203,15 +196,8 @@ let StudentInterviewPage = () => {
 											<strong className="d-block text-gray-dark">Location</strong>
 											<ul className="list-unstyled my-1">
 												<li>{selectedLocation}</li>
-												<li>https://utoronto.zoom.us/j/88160719150 (Passcode: 608000)</li>
 											</ul>
 										</div>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Notes</strong>
-											You must arrive at the zoom meeting on time
-										</p>
 									</div>
 									<div className="d-flex">
 										{!selected && (

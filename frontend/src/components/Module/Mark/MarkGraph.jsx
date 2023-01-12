@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Bar } from "react-chartjs-2";
 
 let MarkGraph = (props) => {

@@ -5,28 +5,18 @@
 
 
 body {
-    font-family: "Poppins", sans-serif;
+    font-family: 'Silkscreen', cursive;
     height: 100vh;
+    justify-content: center;
+    text-align: center;
 }
 
 a {
-    color: #92badd;
+    color: #088cd4;
     display:inline-block;
     text-decoration: none;
     font-weight: 400;
 }
-
-h2 {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    display:inline-block;
-    margin: 40px 8px 10px 8px;
-    color: #cccccc;
-}
-
-
 
 /* STRUCTURE */
 
@@ -62,20 +52,6 @@ h2 {
     -webkit-border-radius: 0 0 10px 10px;
     border-radius: 0 0 10px 10px;
 }
-
-
-
-/* TABS */
-
-h2.inactive {
-    color: #cccccc;
-}
-
-h2.active {
-    color: #0d0d0d;
-    border-bottom: 2px solid #5fbae9;
-}
-
 
 
 /* FORM TYPOGRAPHY*/
@@ -260,9 +236,8 @@ input[type=text]:placeholder, input[type=password]{
 }
 
 .logo{
-    font-family: 'Silkscreen', cursive;
     font-size: 40pt;
-    color: #61bded;
+    color: #088cd4;
 }
 
 #navbar{
@@ -272,40 +247,17 @@ input[type=text]:placeholder, input[type=password]{
     position: fixed;
     display: block;
     width: 100%;
-    height: 45px;
-    background-color: rgb(54, 53, 53);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 #inner{
     width: 90%;
-    height: 45px;
     margin-left: auto;
     margin-right: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 13px;
-}
-
-#inner a{
-    text-decoration: none;
-    color: #e5e5e5;
-}
-
-#inner a:hover{
-    color: white;
-}
-
-.logo2{
-    font-family: 'Silkscreen', cursive;
     font-size: 20pt;
-    color: #e5e5e5;
-    margin-top: 12px;
-    cursor: pointer;
-}
-
-.logo2:hover{
-    color: white;
 }
 
 .second{
@@ -344,8 +296,7 @@ input[type=text]:placeholder, input[type=password]{
 }
 
 .tasks2{
-    overflow: scroll;
-    height: 300px;
+    min-height: 300px;
 }
 
 .chartBox {
@@ -360,7 +311,6 @@ input[type=text]:placeholder, input[type=password]{
 }
 
 .book {
-    font-family: Poppins, sans-serif;
     font-size: 28px;
 }
 

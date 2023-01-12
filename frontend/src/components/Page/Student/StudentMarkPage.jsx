@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import AuthService from "../../../services/auth_services";
 import NavBar from "../../Module/Navigation/NavBar";
 import MarkSummary from "../../Module/Mark/MarkSummary";
-import MarkGraph from "../../Module/Mark/MarkGraph";
 
 
 let StudentMarkPage = () => {
@@ -21,17 +20,27 @@ let StudentMarkPage = () => {
 			(error) => {
 				console.log(error);
 			})
-	}, []);
+	}, [course_id, task, username]);
 
-	return (
-		<div>
-			<NavBar />
+	if (!username) {
+		return (
+			<div>
+				<NavBar login={false} />
 
-			<MarkSummary marks={marks} />
+				<h1> You need to login again.</h1>
+			</div>
+		);
+	} else {
+		return (
+			<div>
+				<NavBar />
 
-		</div>
+				<MarkSummary marks={marks} />
 
-	);
+			</div>
+
+		);
+	}
 };
 
 

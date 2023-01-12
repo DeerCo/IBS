@@ -41,9 +41,8 @@ let LoginPage = () => {
 				// update the token, roles and username inside localstorage
 				localStorage.setItem('username', username);
 				localStorage.setItem('token', result.token);
-				localStorage.setItem('roles', JSON.stringify(result));
+				localStorage.setItem('roles', JSON.stringify(result.roles));
 				navigate("/home");
-				window.location.reload();
 			},
 			(error) => {
 				let resMessage =
@@ -107,7 +106,7 @@ let LoginPage = () => {
 					</form>
 
 					<div id="formFooter">
-						<Link className="underlineHover" to="/reset"> Reset Password </Link>
+						<Link className="underlineHover" to="/reset"> First Time Login / Reset Password </Link>
 					</div>
 
 				</div>
