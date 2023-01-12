@@ -6,7 +6,6 @@ import moment from "moment";
 import AuthService from "../../../services/auth_services";
 import NavBar from "../../Module/Navigation/NavBar";
 import '../../../styles/style.css';
-import '../../../styles/tab.css';
 
 let TaInterviewPage = () => {
 
@@ -44,7 +43,7 @@ let TaInterviewPage = () => {
 
 	// the book interview function
 	// add task later into the ta input
-	let schedule_interviews = (length, time) => {
+	let schedule_interview = (length, time) => {
 
 		// get course_id form localstorage
 		let course_id = localStorage.getItem("courseid");
@@ -53,7 +52,7 @@ let TaInterviewPage = () => {
 		let curr_task = localStorage.getItem("task");
 
 		// call the service function
-		AuthService.schedule_interviews(course_id, curr_task, length, time).then(
+		AuthService.schedule_interview(course_id, curr_task, length, time).then(
 			(result) => {
 				// print out book sucessful message on the screen
 				console.log(result);
@@ -76,10 +75,10 @@ let TaInterviewPage = () => {
 
 
 	// the cancel interview function 
-	let delete_interviews = (task, id) => {
+	let delete_interview = (task, id) => {
 
 		// call the service function
-		AuthService.delete_interviews(course_id, task, id).then(
+		AuthService.delete_interview(course_id, task, id).then(
 			(result) => {
 				// print out cancel sucessful message on the screen
 				console.log(result);
@@ -185,7 +184,7 @@ let TaInterviewPage = () => {
 							value={length}
 							onChange={onChangeLength} />
 
-						<input type="submit" className="m-2" value="Schedule" onClick={() => schedule_interviews(length, time)} />
+						<input type="submit" className="m-2" value="Schedule" onClick={() => schedule_interview(length, time)} />
 
 					</div>
 				</div>
@@ -285,7 +284,7 @@ let TaInterviewPage = () => {
 
 									<div className="d-flex">
 										{!selected && (
-											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interviews(task, id) }}>
+											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interview(task, id) }}>
 												Delete
 											</button>
 										)}

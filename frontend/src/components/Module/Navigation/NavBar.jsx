@@ -8,10 +8,10 @@ let NavBar = () => {
 		<div>
 			<nav id="navbar">
 				<div id="inner">
-					<Link className="logo2" to="/frontPage">IBS</Link>
+					<Link className="logo2" to="/home">IBS</Link>
 
 					<div className="d-flex justify-content-end">
-						<Link className="button mx-5" to="/frontPage"> {username} </Link>
+						<Link className="button mx-5"> {username} </Link>
 						<Link className="button" to="/Login"> Logout </Link>
 					</div>
 

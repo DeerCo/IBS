@@ -18,21 +18,7 @@ let Home = () => {
 		// update courseid in localstorage
 		localStorage.setItem('courseid', courseid);
 
-		AuthService.tasks(courseid).then(
-			(result) => {
-				localStorage.setItem('tasks', JSON.stringify(result));
-				navigate("/taskPage");
-
-			},
-			(error) => {
-				let resMessage =
-					(error.response &&
-						error.response.data &&
-						error.response.data.message) ||
-					error.message ||
-					error.toString();
-			}
-		);
+		navigate("/task");
 	};
 
 	return (

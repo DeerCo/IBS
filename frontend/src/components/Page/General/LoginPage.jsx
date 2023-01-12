@@ -36,7 +36,6 @@ let LoginPage = () => {
 
 		setMessage("");
 
-		form.current.validateAll();
 		AuthService.login(username, password).then(
 			(result) => {
 				// update the token, roles and username inside localstorage

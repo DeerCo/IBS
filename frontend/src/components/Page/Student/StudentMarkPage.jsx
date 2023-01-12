@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Prism from "prismjs";
 import AuthService from "../../../services/auth_services";
 import NavBar from "../../Module/Navigation/NavBar";
 import MarkSummary from "../../Module/Mark/MarkSummary";
@@ -14,15 +13,13 @@ let StudentMarkPage = () => {
 	let [marks, setMarks] = useState({});
 
 	useEffect(() => {
-		AuthService.grades(course_id, task).then(
+		AuthService.get_mark(course_id, task).then(
 			(result) => {
-				setMarks(result.marks[username])
+				setMarks(result.marks[username] || result.marks)
 			},
 			(error) => {
 
 			})
-
-		Prism.highlightAll();
 	}, []);
 
 	return (
@@ -31,7 +28,6 @@ let StudentMarkPage = () => {
 
 			<MarkSummary marks={marks} />
 
-			<MarkGraph marks={marks} />
 		</div>
 
 	);

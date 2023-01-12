@@ -25,10 +25,9 @@ let StudentInterviewPage = () => {
 
 
 	useEffect(() => {
-		AuthService.booked_interviews(course_id, curr_task).then(
+		AuthService.check_interview(course_id, curr_task).then(
 			(result) => {
-
-				AuthService.interviews(course_id, curr_task).then(
+				AuthService.available_interviews(course_id, curr_task).then(
 					(result2) => {
 						if (result.message !== "You don't have a booked interview for a1 yet.") {
 							sets(result.start_time);
@@ -50,11 +49,11 @@ let StudentInterviewPage = () => {
 
 
 	// the book interview function
-	let book_interviews = (task, time, location) => {
+	let book_interview = (task, time, location) => {
 		let parse = moment(time).format('YYYY-MM-DD HH:mm:ss');
 
 		// call the service function
-		AuthService.book_interviews(course_id, task, parse, location).then(
+		AuthService.book_interview(course_id, task, parse, location).then(
 			(result) => {
 				// print out book sucessful message on the screen
 				console.log(result);
@@ -72,10 +71,10 @@ let StudentInterviewPage = () => {
 
 
 	// the cancel interview function 
-	let cancel_interviews = (task) => {
+	let cancel_interview = (task) => {
 
 		// call the service function
-		AuthService.cancel_interviews(course_id, task).then(
+		AuthService.cancel_interview(course_id, task).then(
 			(result) => {
 				// print out cancel sucessful message on the screen
 				console.log(result);
@@ -246,13 +245,13 @@ let StudentInterviewPage = () => {
 									</div>
 									<div className="d-flex">
 										{!selected && (
-											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { book_interviews(curr_task, start, location) }}>
+											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { book_interview(curr_task, start, location) }}>
 												Book
 											</button>
 										)}
 
 										{selected && (
-											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { cancel_interviews(curr_task) }}>
+											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { cancel_interview(curr_task) }}>
 												Cancel
 											</button>
 										)}

@@ -69,7 +69,7 @@ const ResetPasswordPage = () => {
 		setMessage("");
 
 		form.current.validateAll();
-		AuthService.sendCode(username).then(
+		AuthService.send_code(username).then(
 			() => {
 				console.log("code sent");
 				setMessage("code sent");

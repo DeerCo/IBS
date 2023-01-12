@@ -16,14 +16,14 @@ let MarkGraph = (props) => {
 		labels: label,
 		datasets: [
 			{
-				label: "marks",
+				label: "Mark",
 				backgroundColor: "rgb(255, 99, 132)",
 				borderColor: "rgb(255, 99, 132)",
 				borderWidth: 1,
 				borderRadius: 3,
 				data: score,
 			}, {
-				label: 'average',
+				label: 'Outof',
 				data: average,
 				backgroundColor: "rgba(187,204,227,0.2)",
 				borderColor: "rgb(109,144,196)",

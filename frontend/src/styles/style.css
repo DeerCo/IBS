@@ -1,6 +1,7 @@
 
 /* BASIC */
 @import "bootstrap/dist/css/bootstrap.min.css";
+@import "./tab.css";
 
 
 body {
