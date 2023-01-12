@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "IBS",
+  "name": "Groups, marks, files, interviews, ..., all in one place!",
   "icons": [
     {
       "src": "favicon.ico",

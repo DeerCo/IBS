@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from 'react-router-dom';
 import Prism from "prismjs";
+import AuthService from "../../../services/auth_services";
+import NavBar from "../../Module/Navigation/NavBar";
+import MarkSummary from "../../Module/Mark/MarkSummary";
+import MarkGraph from "../../Module/Mark/MarkGraph";
 
-import NavBar from "../Module/Navigation/NavBar";
-import MarkSummary from "../Module/Mark/MarkSummary";
-import MarkGraph from "../Module/Mark/MarkGraph";
-import AuthService from "../../services/auth_services";
 
-
-let MarkPage = () => {
-	let navigate = useNavigate();
-
+let StudentMarkPage = () => {
 	let username = localStorage.getItem("username");
 	let course_id = localStorage.getItem("courseid"); // TODO: Get this from URL
 	let task = localStorage.getItem("task"); // TODO: Get this from URL
@@ -42,4 +38,4 @@ let MarkPage = () => {
 };
 
 
-export default MarkPage;
+export default StudentMarkPage;

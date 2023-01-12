@@ -1,5 +1,5 @@
 {
-  "name": "ibs",
+  "name": "ibs-backend",
   "version": "1.0.0",
   "description": "A backend server for forming groups, handling marks, managing interviews and distributing files.",
   "main": "app.js",
