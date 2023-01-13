@@ -73,7 +73,7 @@ function time_validate(time) {
 }
 
 function password_validate(password) {
-	let regex = new RegExp(".+");
+	let regex = new RegExp(".{8,}");
 	if (!regex.test(password)) {
 		return 1;
 	} else {
@@ -95,7 +95,7 @@ async function task_validate(course_id, task, student) {
 	}
 }
 
-function query_filter(query, start_data_id) {
+function interview_data_filter(query, start_data_id, others_interview, username) {
 	let filter = "";
 	let data = [];
 	let data_id = start_data_id;
@@ -135,10 +135,23 @@ function query_filter(query, start_data_id) {
 		data_id += 1;
 		data.push(query["note"]);
 	}
+
+	if (others_interview && "host" in query && !name_validate(query["host"])) { // potentially return other's interview
+		if (query["host"] !== "all") {
+			filter = filter + " AND host = ($" + data_id + ")";
+			data_id += 1;
+			data.push(query["host"]);
+		}
+	} else { // restrict to user's interview
+		filter = filter + " AND host = ($" + data_id + ")";
+		data_id += 1;
+		data.push(username);
+	}
+
 	return { filter: filter, data: data, data_id: data_id };
 }
 
-function query_set(query, start_data_id) {
+function interview_data_set_new(query, start_data_id) {
 	let set = "";
 	let data = [];
 	let data_id = start_data_id;
@@ -945,8 +958,8 @@ module.exports = {
 	task_validate: task_validate,
 
 	// Utility
-	query_filter: query_filter,
-	query_set: query_set,
+	interview_data_filter: interview_data_filter,
+	interview_data_set_new: interview_data_set_new,
 	send_email: send_email,
 	send_email_by_group: send_email_by_group,
 	get_courses: get_courses,

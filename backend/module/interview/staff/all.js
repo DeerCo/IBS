@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
         return;
     }
 
-    let temp = helpers.query_filter(req.query, 2);
+    let temp = helpers.interview_data_filter(req.query, 2, true, res.locals["username"]);
     let filter = temp["filter"];
     let data = temp["data"];
 

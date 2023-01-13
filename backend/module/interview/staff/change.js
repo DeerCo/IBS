@@ -9,7 +9,7 @@ router.put("/", (req, res) => {
 		return;
 	}
 
-	let temp_set = helpers.query_set(req.body, 3);
+	let temp_set = helpers.interview_data_set_new(req.body, 3);
 	let set = temp_set["set"];
 	let set_data = temp_set["data"];
 	let set_data_id = temp_set["data_id"];
@@ -18,7 +18,7 @@ router.put("/", (req, res) => {
 		return;
 	}
 
-	let temp_filter = helpers.query_filter(req.body, set_data_id);
+	let temp_filter = helpers.interview_data_filter(req.body, set_data_id, false, res.locals["username"]);
 	let filter = temp_filter["filter"];
 	let filter_data = temp_filter["data"];
 	if (filter === "") {
