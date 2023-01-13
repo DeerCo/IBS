@@ -26,7 +26,7 @@ let StudentInterviewPage = () => {
 
 	let [open, setOpen] = useState(false);
 	let [booked, setBooked] = useState(false);
-	let [version, setVersion] = useState(0);
+	let [version, setVersion] = useState(0); // data is refreshed if version is changed
 
 	useEffect(() => {
 		AuthService.check_interview(course_id, task).then(
@@ -36,16 +36,19 @@ let StudentInterviewPage = () => {
 						if (!response_1 || !("status" in response_1) || !response_2 || !("status" in response_2)) {
 							toast.error("Unknown error", { theme: "colored" });
 							navigate("/login");
+							return;
 						} else if (response_1["status"] === 200 && response_2["status"] === 200) {
 
-						} else if (response_1["status"] === 401 || response_2["status"] === 403) {
+						} else if (response_1["status"] === 401 || response_1["status"] === 403 || response_2["status"] === 401 || response_2["status"] === 403) {
 							toast.warn("You need to login again", { theme: "colored" });
 							navigate("/login");
+							return;
 						} else if (response_1["status"] === 400) {
 							toast.info("You need to join a group before booking an interview", { theme: "colored" });
 						} else {
 							toast.warn("Unknown error", { theme: "colored" });
 							navigate("/login");
+							return;
 						}
 
 						let response_1_data = response_1["data"];
@@ -189,8 +192,6 @@ let StudentInterviewPage = () => {
 			<div>
 				<NavBar page="Interview" />
 
-				<div className="divider"> </div>
-
 				<div className="row card-box mt-3">
 					<div className="col-7" id='calendar'>
 						<FullCalendar
@@ -221,6 +222,7 @@ let StudentInterviewPage = () => {
 					</div>
 
 					<div className="col-1"></div>
+					
 					<div className="col-3 row">
 						{booked && (
 							<div>

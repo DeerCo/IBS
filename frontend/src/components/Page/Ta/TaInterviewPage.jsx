@@ -1,184 +1,202 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import moment from "moment";
 import AuthService from "../../../services/auth_services";
-import NavBar from "../../Module/Navigation/NavBar";
+import TaNavBar from "../../Module/Navigation/TaNavBar";
 import '../../../styles/style.css';
 
 let TaInterviewPage = () => {
+	let navigate = useNavigate();
 
 	let { course_id, task } = useParams();
 
+	let [calendarData, setCalendarData] = useState([]);
 
-	// call the service function
-	//let result=await AuthService.booked_interviews(course_id, task);
+	// track data of the interview being selected
+	let [selectedId, setSelectedId] = useState("");
+	let [selectedStart, setSelectedStart] = useState("");
+	let [selectedEnd, setSelectedEnd] = useState("");
+	let [selectedLocation, setSelectedLocation] = useState("");
+	let [selectedGroupId, setSelectedGroupId] = useState("");
+	let [selectedHost, setSelectedHost] = useState("");
+	let [selectedLength, setSelectedLength] = useState("");
+	let [selectedNote, setSelectedNote] = useState("");
 
-	let [message, setMessage] = useState("");
-	let [message2, setMessage2] = useState("");
-	let [selected, setSelect] = useState(false);
+	// track the entered
+	let [enteredTime, setEnteredTime] = useState("");
+	let [enteredLength, setEnteredLength] = useState("");
+	let [enteredLocation, setEnteredLocation] = useState("");
 
-	let [fetch, setFetch] = useState("");
-
+	let [open, setOpen] = useState(false);
+	let [version, setVersion] = useState(0); // data is refreshed if version is changed
 
 	useEffect(() => {
 		AuthService.all_interviews(course_id, task).then(
-			(result) => {
-				setFetch(result.interviews);
-			},
-			(error) => {
-			})
+			(response) => {
+				if (!response || !("status" in response)) {
+					toast.error("Unknown error", { theme: "colored" });
+					navigate("/login");
+					return;
+				} else if (response["status"] === 200) {
 
-	}, [course_id, task]);
+				} else if (response["status"] === 401 || response["status"] === 403) {
+					toast.warn("You need to login again", { theme: "colored" });
+					navigate("/login");
+					return;
+				} else {
+					toast.warn("Unknown error", { theme: "colored" });
+					navigate("/login");
+					return;
+				}
 
+				let temp_data = [];
+				let interviews = response["data"]["interviews"];
 
+				for (let interview of interviews) {
+					let colour = (interview.group_id === null ? "green" : "red");
+					let curr = {
+						start: '',
+						end: '',
+						extendedProps: {
+							id: interview.interview_id,
+							task: interview.task,
+							host: interview.host,
+							group_id: interview.group_id,
+							length: interview.length,
+							location: interview.location,
+							note: interview.note
+						},
+						backgroundColor: colour
+					};
+					curr.start = interview.start_time.replace(" ", "T");
+					curr.end = interview.end_time.replace(" ", "T");
+					temp_data.push(curr);
+				}
+
+				if (temp_data.length === 0) {
+					toast.info("You haven't scheduled any interview", { theme: "colored" });
+				}
+
+				setCalendarData(temp_data);
+			}
+		)
+	}, [course_id, task, version, navigate]);
 
 	// the book interview function
 	// add task later into the ta input
-	let schedule_interview = (length, time) => {
-
-		// get course_id form localstorage
-		let course_id = localStorage.getItem("courseid");
-
-		// get task from localstorage
-		let task = localStorage.getItem("task");
-
-		// call the service function
-		AuthService.schedule_interview(course_id, task, length, time).then(
-			(result) => {
-				// print out book sucessful message on the screen
-				console.log(result);
-				window.location.reload(false);
-			},
-			(error) => {
-				let resMessage =
-					(error.response &&
-						error.response.data &&
-						error.response.data.message) ||
-					error.message ||
-					error.toString();
-
-				setMessage2(resMessage);
-			}
-		);
-
+	let schedule_interview = (time, length, location) => {
+		if (time === "") {
+			toast.error("The time cannot be empty", { theme: "colored" });
+		} else if (length === "") {
+			toast.error("The length cannot be empty", { theme: "colored" });
+		} else if (location === "") {
+			toast.error("The location cannot be empty", { theme: "colored" });
+		} else {
+			AuthService.schedule_interview(course_id, task, length, time).then(
+				(response) => {
+					if (!response || !("status" in response)) {
+						toast.error("Unknown error", { theme: "colored" });
+						navigate("/login");
+					} else if (response["status"] === 200) {
+						setOpen(false);
+						setVersion(version + 1);
+						toast.success("You have scheduled the interview successfully", { theme: "colored" });
+					} else if (response["status"] === 400 || response["status"] === 409) {
+						toast.error(response["data"]["message"], { theme: "colored" });
+					} else if (response["status"] === 401 || response["status"] === 403) {
+						toast.warn("You need to login again", { theme: "colored" });
+						navigate("/login");
+					} else if (response["status"] === 429) {
+						toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
+					} else {
+						toast.error("Unknown error", { theme: "colored" });
+						navigate("/login");
+					}
+				}
+			);
+		}
 	};
-
-
 
 	// the cancel interview function 
 	let delete_interview = (task, id) => {
-
-		// call the service function
 		AuthService.delete_interview(course_id, task, id).then(
-			(result) => {
-				// print out cancel sucessful message on the screen
-				console.log(result);
-				window.location.reload(false);
-			},
-			(error) => {
-				let resMessage =
-					(error.response &&
-						error.response.data &&
-						error.response.data.message) ||
-					error.message ||
-					error.toString();
-
-				setMessage(resMessage);
+			(response) => {
+				if (!response || !("status" in response)) {
+					toast.error("Unknown error", { theme: "colored" });
+					navigate("/login");
+				} else if (response["status"] === 200) {
+					setOpen(false);
+					setVersion(version + 1);
+					toast.success("You have deleted the interview successfully", { theme: "colored" });
+				} else if (response["status"] === 400 || response["status"] === 409) {
+					toast.error(response["data"]["message"], { theme: "colored" });
+				} else if (response["status"] === 401 || response["status"] === 403) {
+					toast.warn("You need to login again", { theme: "colored" });
+					navigate("/login");
+				} else if (response["status"] === 429) {
+					toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
+				} else {
+					toast.error("Unknown error", { theme: "colored" });
+					navigate("/login");
+				}
 			}
 		);
-
-
-	};
-
-
-	// get all data
-	//console.log(fetch);
-
-	// create the json array
-	let times = [];
-
-	for (let item in fetch) {
-		let now = fetch[item];
-		let curr = {
-			start: '',
-			end: '',
-			extendedProps: {
-				assignment: now.task,
-				location: now.location,
-				host: now.host,
-				group_id: now.group_id,
-				note: now.note,
-				id: now.interview_id,
-			},
-			backgroundColor: 'green'
-		};
-		let start = now.toronto_time;
-		start = start.replace(" ", "T");
-		// let end = string[1].replace(" ", "T");
-		curr.start = start;
-		curr.end = start;
-		times.push(curr);
-	}
-
-
-
-	// track the time, location and task being selected.
-	let [start, setStart] = useState("");
-	let [end, setEnd] = useState("");
-	let [location, setLocation] = useState("");
-	let [host, setHost] = useState("");
-	let [note, setNote] = useState("");
-	let [id, setId] = useState("");
-
-	// the popup state
-	let [open, setOpen] = useState(false);
-
-	// track the schedule time and date
-	let [length, setLength] = useState("30");
-	let [time, setTime] = useState("2023-01-18 16:00:00");
-
-	let onChangeLength = (e) => {
-		let length = e.target.value;
-		setLength(length);
 	};
 
 	let onChangeTime = (e) => {
-		let Time = e.target.value;
-		setTime(Time);
+		let time = e.target.value;
+		setEnteredTime(time);
 	};
 
+	let onChangeLength = (e) => {
+		let length = e.target.value;
+		setEnteredLength(length);
+	};
+
+	let onChangeLocation = (e) => {
+		let location = e.target.value;
+		setEnteredLocation(location);
+	};
 
 	return (
 		<div>
 			<div>
-				<NavBar />
+				<TaNavBar page="Interview" />
 
-				<div className="divider"> </div>
-
-				<div className="wrapper px-5 mx-3 w-75">
-
+				<div className="wrapper">
 					<div className="input-group">
 						<input type="text"
 							id="time"
 							className="m-2 w-25 h-25"
 							name="time"
-							placeholder="time eg.2023-01-18 16:00:00"
-							value={time}
-							onChange={onChangeTime} />
+							placeholder="time (YYYY-MM-DD HH:mm:ss)"
+							value={enteredTime}
+							onChange={onChangeTime} 
+						/>
 
 						<input type="text"
 							id="length"
 							className="m-2 w-25 h-25"
 							name="length"
-							placeholder="length eg.30"
-							value={length}
-							onChange={onChangeLength} />
+							placeholder="length (minutes)"
+							value={enteredLength}
+							onChange={onChangeLength} 
+						/>
 
-						<input type="submit" className="m-2" value="Schedule" onClick={() => schedule_interview(length, time)} />
+						<input type="text"
+							id="location"
+							className="m-2 w-25 h-25"
+							name="location"
+							placeholder="location"
+							value={enteredLocation}
+							onChange={onChangeLocation} 
+						/>
 
+						<input type="submit" className="m-2" value="Schedule" onClick={() => schedule_interview(enteredTime, enteredLength, enteredLocation)} />
 					</div>
 				</div>
 
@@ -194,7 +212,7 @@ let TaInterviewPage = () => {
 								center: 'title',
 								right: 'dayGridWeek,dayGridMonth'
 							}}
-							events={times}
+							events={calendarData}
 
 							eventTimeFormat={{// like '14:30:00'
 								hour: '2-digit',
@@ -202,89 +220,37 @@ let TaInterviewPage = () => {
 								meridiem: true
 							}}
 							eventClick={function (info) {
-								// when click, update the value
-								setStart(info.event.start);
-								setEnd(info.event.end);
-								setLocation(info.event.extendedProps.location);
-								setHost(info.event.extendedProps.host);
-								setNote(info.event.extendedProps.note);
-								setId(info.event.extendedProps.id);
-								// open the popup
-								setMessage("");
+								setSelectedId(info.event.extendedProps.id);
+								setSelectedStart(info.event.start);
+								setSelectedEnd(info.event.end);
+								setSelectedLocation(info.event.extendedProps.location);
+								setSelectedGroupId(info.event.extendedProps.group_id);
+								setSelectedHost(info.event.extendedProps.host);
+								setSelectedLength(info.event.extendedProps.length);
+								setSelectedNote(info.event.extendedProps.note);
+
 								setOpen(!open);
-								if (info.event.backgroundColor === 'red') {
-									setSelect(true);
-								} else {
-									setSelect(false);
-								}
-
 							}
-							}
-						/>
+							} />
 					</div>
+
 					<div className="col-1"></div>
+
 					<div className="col-3 row">
-						<p className="pb-3 mt-3 mb-0 small lh-sm w-100">
-							{message2}
-						</p>
-
-
 						{open && (
-
-							<div class="col-12 rounded  mt-2 ">
-
-								<div>
-									<h5 className="border-bottom pb-2 mb-2">Information</h5>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Assignment</strong>
-											{task}
-										</p>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Start Time</strong>
-											{moment(start).format('MM/DD/YYYY, h:mm:ss a')}
-										</p>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">End Time</strong>
-											{moment(end).format('MM/DD/YYYY, h:mm:ss a')}
-										</p>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<div className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Location</strong>
-											<ul className="list-unstyled my-1">
-												<li >{location}</li>
-											</ul>
-										</div>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Host</strong>
-											{host}
-										</p>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Notes</strong>
-											{note}
-										</p>
-									</div>
-
-									<div className="d-flex">
-										{!selected && (
-											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interview(task, id) }}>
-												Delete
-											</button>
-										)}
-									</div>
-									<p className="pb-3 mt-3 mb-0 small lh-sm border-bottom w-100">
-										{message}
-									</p>
-								</div>
+							<div>
+								<h4 className="border-bottom pb-2 mb-2">Selected Interview</h4>
+								<strong className="d-block text-gray-dark"> Interview ID: {selectedId} </strong>
+								<strong className="d-block text-gray-dark"> Start time: {moment(selectedStart).format('MM/DD/YYYY, h:mm:ss a')} </strong>
+								<strong className="d-block text-gray-dark"> End time: {moment(selectedEnd).format('MM/DD/YYYY, h:mm:ss a')} </strong>
+								<strong className="d-block text-gray-dark"> Location: {selectedLocation} </strong>
+								<strong className="d-block text-gray-dark"> Group ID: {selectedGroupId === null ? "null" : selectedGroupId} </strong>
+								<strong className="d-block text-gray-dark"> Host: {selectedHost} </strong>
+								<strong className="d-block text-gray-dark"> Length: {selectedLength.toString()} </strong>
+								<strong className="d-block text-gray-dark"> Note: {selectedNote === null ? "null" : selectedNote} </strong>
+								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interview(task, selectedId) }}>
+									Delete
+								</button>
 							</div>
 						)}
 					</div>
@@ -292,7 +258,7 @@ let TaInterviewPage = () => {
 			</div>
 		</div>
 	);
-};
+}
 
 
 export default TaInterviewPage;

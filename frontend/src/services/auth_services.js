@@ -167,6 +167,20 @@ let download_file = async (course_id, task, file_id, file_name) => {
 	}
 };
 
+let ta_all_tasks = async (course_id) => {
+	let token = localStorage.getItem("token");
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(API_URL + "/ta/course/" + course_id + "/task/all", config);
+	} catch (err) {
+		return err.response;
+	}
+};
+
 // print out all the interview for ta
 let all_interviews = async (course_id, curr_task) => {
 	let token = localStorage.getItem("token");
@@ -177,7 +191,7 @@ let all_interviews = async (course_id, curr_task) => {
 	};
 
 	try {
-		return await axios.get(API_URL + "/instructor/course/" + course_id + "/interview/all", config);
+		return await axios.get(API_URL + "/ta/course/" + course_id + "/interview/all", config);
 	} catch (err) {
 		return err.response;
 	}
@@ -185,7 +199,7 @@ let all_interviews = async (course_id, curr_task) => {
 
 //delete a interveiw
 let delete_interview = async (course_id, curr_task, id) => {
-	let token = localStorage.getItem("ta_token");
+	let token = localStorage.getItem("token");
 
 	let config = {
 		data: { task: curr_task, interview_id: id.toString() },
@@ -193,7 +207,7 @@ let delete_interview = async (course_id, curr_task, id) => {
 	};
 
 	try {
-		return await axios.delete(API_URL + "/instructor/course/" + course_id + "/interview/delete", config);
+		return await axios.delete(API_URL + "/ta/course/" + course_id + "/interview/delete", config);
 	} catch (err) {
 		return err.response;
 	}
@@ -201,7 +215,7 @@ let delete_interview = async (course_id, curr_task, id) => {
 
 //schedule a interveiw
 let schedule_interview = async (course_id, curr_task, length, time) => {
-	let token = localStorage.getItem("ta_token");
+	let token = localStorage.getItem("token");
 
 	const data = {
 		task: curr_task,
@@ -210,7 +224,7 @@ let schedule_interview = async (course_id, curr_task, length, time) => {
 	}
 
 	try {
-		return await axios.post(API_URL + "/instructor/course/" + course_id + "/interview/schedule", data, { headers: { Authorization: `Bearer ${token}` } });
+		return await axios.post(API_URL + "/ta/course/" + course_id + "/interview/schedule", data, { headers: { Authorization: `Bearer ${token}` } });
 	} catch (err) {
 		return err.response;
 	}
@@ -234,6 +248,7 @@ let AuthService = {
 	cancel_interview,
 
 	// Ta
+	ta_all_tasks,
 	all_interviews,
 	schedule_interview,
 	delete_interview,

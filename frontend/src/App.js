@@ -10,6 +10,7 @@ import StudentFilePage from "./components/Page/Student/StudentFilePage";
 import StudentInterviewPage from "./components/Page/Student/StudentInterviewPage";
 import StudentTaskPage from "./components/Page/Student/StudentTaskPage";
 
+import TaTaskPage from "./components/Page/Ta/TaTaskPage";
 import TaInterviewPage from "./components/Page/Ta/TaInterviewPage";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
 					<Route path="/course/:course_id/task/:task/file" element={<StudentFilePage />}></Route>
 					<Route path="/course/:course_id/task/:task/interview" element={<StudentInterviewPage />}></Route>
 
+					<Route path="/ta/course/:course_id/task" element={<TaTaskPage />}></Route>
 					<Route path="/ta/course/:course_id/task/:task/interview" element={<TaInterviewPage />}></Route>
 
 					<Route path="/" element={<LoginPage />}></Route>
