@@ -76,7 +76,7 @@ router.put("/", (req, res) => {
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {
             if (err.code === "23503") {
-                res.status(409).json({ message: "The task_group_id is not found in the database." });
+                res.status(400).json({ message: "The task_group_id is not found in the database." });
             } else {
                 res.status(404).json({ message: "Unknown error." });
                 console.log(err);

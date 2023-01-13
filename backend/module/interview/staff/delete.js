@@ -9,7 +9,7 @@ router.delete("/", (req, res) => {
 		return;
 	}
 	if (!("interview_id" in req.body) || helpers.number_validate(req.body["interview_id"])) {
-		res.status(404).json({ message: "The interview id is missing or has invalid format." });
+		res.status(400).json({ message: "The interview id is missing or has invalid format." });
 		return;
 	}
 
@@ -17,9 +17,12 @@ router.delete("/", (req, res) => {
 	client.query(sql_delete, [res.locals["task"], res.locals["username"], req.body["interview_id"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
-		} else {
-			let message = pgRes.rowCount + " row has been deleted.";
+		} else if (pgRes.rowCount === 1){
+			let message = "The interview is deleted";
 			res.status(200).json({ message: message });
+		} else{
+			let message = "The interview cannot be deleted";
+			res.status(400).json({ message: message });
 		}
 	});
 })

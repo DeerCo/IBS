@@ -52,7 +52,7 @@ const student = require('./route/student');
 app.use(rate_limit.general_limiter);
 
 app.get("/", (req, res) => {
-    res.status(418).json({ message: "Why are you here??? LOL --Howie" });
+    res.status(418).json({ message: "Why are you here? We have a UI now :) --Howie" });
 })
 app.use('/', general);
 app.use('/admin/', admin);
@@ -69,7 +69,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         if (err.code === "LIMIT_FILE_SIZE") {
-            res.status(406).json({ message: "File is too large." });
+            res.status(400).json({ message: "File is too large." });
         } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
             res.status(400).json({ message: "Unexpected file is uploaded. Please check if your URL is correct." });
         } else {

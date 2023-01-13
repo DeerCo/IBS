@@ -35,7 +35,7 @@ router.post("/", (req, res) => {
             if (err.code === "23503") {
                 res.status(400).json({ message: "The task is not found in the database." });
             } else if (err.code === "23505") {
-                res.status(400).json({ message: "Criteria must have unique name for each task." });
+                res.status(409).json({ message: "Criteria must have unique name for each task." });
             } else {
                 res.status(404).json({ message: "Unknown error." });
                 console.log(err);

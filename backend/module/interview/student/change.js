@@ -62,7 +62,7 @@ router.put("/", (req, res) => {
                     }
 
                     if (pg_res_book.rowCount === 0) {
-                        res.status(409).json({ message: "No available interview exists for " + res.locals["task"] + " at " + req.body["time"] + " at location " + location + ". Please choose a different time." });
+                        res.status(400).json({ message: "No available interview exists for " + res.locals["task"] + " at " + req.body["time"] + " at location " + location + ". Please choose a different time." });
                     } else {
                         let message = "You have changed your interview for " + res.locals["task"] + " from " + pg_res_check.rows[0]["time"] + " to " + req.body["time"] + " successfully. The new location is " + location + ".";
                         res.status(200).json({ message: message });

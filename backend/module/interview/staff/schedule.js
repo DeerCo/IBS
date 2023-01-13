@@ -38,7 +38,7 @@ router.post("/", (req, res) => {
 			} else if (err.code === "23503" && err.constraint === "username") {
 				res.status(400).json({ message: "The username is not found in the database." });
 			} else if (err.code === "23505") {
-				res.status(400).json({ message: "You have another interview at the same time." });
+				res.status(409).json({ message: "You have another interview at the same time." });
 			} else {
 				res.status(404).json({ message: "Unknown error." });
 			}

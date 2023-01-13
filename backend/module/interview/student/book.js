@@ -49,14 +49,14 @@ router.post("/", (req, res) => {
             }
 
             if (pgRes.rowCount === 1) {
-                res.status(400).json({ message: "You already have an existing interview for " + res.locals["task"] + " at " + pgRes.rows[0]["time"] + "." });
+                res.status(409).json({ message: "You already have an existing interview for " + res.locals["task"] + " at " + pgRes.rows[0]["time"] + "." });
             } else {
                 let sql_book = "UPDATE course_" + res.locals["course_id"] + ".interview SET group_id = ($1) WHERE interview_id = (SELECT interview_id FROM course_" + res.locals["course_id"] + ".interview WHERE task = ($2) AND time = ($3) AND group_id IS NULL AND location = ($4) LIMIT 1 FOR UPDATE)";
                 client.query(sql_book, [group_id, res.locals["task"], time, location], (err, pgRes) => {
                     if (err) {
                         res.status(404).json({ message: "Unknown error." });
                     } else if (pgRes.rowCount === 0) {
-                        res.status(409).json({ message: "No available interview exists for " + res.locals["task"] + " at " + req.body["time"] + " at location " + location + ". Please choose a different time." });
+                        res.status(400).json({ message: "No available interview exists for " + res.locals["task"] + " at " + req.body["time"] + " at location " + location + ". Please choose a different time." });
                     } else {
                         let message = "You have booked your interview for " + res.locals["task"] + " at " + req.body["time"] + " successfully. The location is " + location + ".";
                         res.status(200).json({ message: message });

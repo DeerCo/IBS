@@ -95,7 +95,7 @@ router.post("/", upload.single("file"), (req, res) => {
                             let regex = err.detail.match(/Key \(username\)=\((.*)\) is not present in table "user"\./);
                             res.status(400).json({ message: "The username " + regex[1] + " is not found in the database." });
                         } else if (err.code === "21000") {
-                            res.status(400).json({ message: "Rows must have unique username." });
+                            res.status(409).json({ message: "Rows must have unique username." });
                         } else {
                             res.status(404).json({ message: "Unknown error." });
                             console.log(err);

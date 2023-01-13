@@ -35,7 +35,7 @@ router.put("/", (req, res) => {
 	client.query(sql_change, [res.locals["task"], res.locals["username"]].concat(set_data).concat(filter_data), (err, pgRes) => {
 		if (err) {
 			if (err.code === "23505") {
-				res.status(400).json({ message: "You have another interview at the same time." });
+				res.status(409).json({ message: "You have another interview at the same time." });
 			} else {
 				res.status(404).json({ message: "Unknown error." });
 			}
