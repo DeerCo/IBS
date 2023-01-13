@@ -11,7 +11,7 @@ router.post("/", (req, res) => {
         return;
     }
     if (!("time" in req.body) || helpers.time_validate(req.body["time"])) {
-        res.status(400).json({ message: "The time is missing or has invalid format. (YYYY-MM-DD HH:MM:SS)" });
+        res.status(400).json({ message: "The time is missing or has invalid format. (YYYY-MM-DD HH:mm:ss)" });
         return;
     }
     if (moment.tz(req.body["time"], "America/Toronto").subtract(30, "minutes") < moment().tz("America/Toronto")) {
