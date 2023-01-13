@@ -1,28 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import AuthService from "../../../services/auth_services";
 import NavBar from "../../Module/Navigation/NavBar";
 import '../../../styles/style.css';
 
 
 let StudentTaskPage = () => {
+	let navigate = useNavigate();
+
 	let { course_id } = useParams();
 	let [tasks, setTasks] = useState([]);
 
 	useEffect(() => {
 		AuthService.get_task(course_id).then(
-			(result) => {
-				setTasks(result["task"]);
-			},
-			(error) => {
-				console.log(error);
+			(response) => {
+				if (!response || !("status" in response)){
+					toast.error("Unknown error", {theme: "colored"});
+					navigate("/login");
+				} else if (response["status"] === 200){
+					setTasks(response["data"]["task"]);
+				} else if (response["status"] === 401 || response["status"] === 403){
+					toast.warn("You need to login again", {theme: "colored"});
+					navigate("/login");
+				} else{
+					toast.error("Unknown error", {theme: "colored"});
+					navigate("/login");
+				}
 			})
-	}, [course_id]);
+	}, [course_id, navigate]);
 
 	return (
 		<div>
 			<div>
-
 				<NavBar />
 
 				<div className="album py-5 bg-white">

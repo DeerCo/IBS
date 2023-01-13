@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -9,6 +10,8 @@ import NavBar from "../../Module/Navigation/NavBar";
 
 
 let StudentInterviewPage = () => {
+	let navigate = useNavigate();
+
 	let { course_id, task } = useParams();
 
 	let [calendarData, setCalendarData] = useState([]);
@@ -22,33 +25,45 @@ let StudentInterviewPage = () => {
 	let [selectedLocation, setSelectedLocation] = useState("");
 
 	let [open, setOpen] = useState(false);
-	let [message, setMessage] = useState("");
 	let [booked, setBooked] = useState(false);
 	let [selected, setSelect] = useState(false);
 	let [version, setVersion] = useState(0);
 
 	useEffect(() => {
 		AuthService.check_interview(course_id, task).then(
-			(result) => {
+			(response_1) => {
 				AuthService.available_interviews(course_id, task).then(
-					(result2) => {
+					(response_2) => {
+						if (!response_1 || !("status" in response_1) || !response_2 || !("status" in response_2)){
+							toast.error("Unknown error", {theme: "colored"});
+							navigate("/login");
+						} else if (response_1["status"] === 200 && response_2["status"] === 200){
+							
+						} else if (response_1["status"] === 401 || response_2["status"] === 403){
+							toast.warn("You need to login again", {theme: "colored"});
+							navigate("/login");
+						} else if (response_1["status"] === 400){
+							toast.info("You need to join a group before booking an interview", {theme: "colored"});
+						} else {
+							toast.warn("Unknown error", {theme: "colored"});
+							navigate("/login");
+						}
+
+						let response_1_data = response_1["data"];
 						let temp_data = [];
-						let interviews = result2.availability;
+						let availability = response_2["data"]["availability"];
 
-						if (result.booked) {
-							setBookedStart(result.start_time);
-							setBookedEnd(result.end_time);
-							setBookedLocation(result.location);
+						if (response_1_data["booked"]) {
+							setBookedStart(response_1_data["start_time"]);
+							setBookedEnd(response_1_data["end_time"]);
+							setBookedLocation(response_1_data["location"]);
 							setBooked(true);
-
-							let b_start = result.start_time.replace(" ", "T");
-							let b_end = result.end_time.replace(" ", "T");
 							
 							let curr = {
-								start: b_start,
-								end: b_end,
+								start: response_1_data["start_time"].replace(" ", "T"),
+								end: response_1_data["end_time"].replace(" ", "T"),
 								extendedProps: {
-									location: result.location
+									location: response_1_data["location"]
 								},
 								backgroundColor: 'red'
 							};
@@ -58,8 +73,8 @@ let StudentInterviewPage = () => {
 							setBooked(false);
 						}
 
-						for (let location in interviews) {
-							for (let time in interviews[location]) {
+						for (let location in availability) {
+							for (let time in availability[location]) {
 								let curr = {
 									start: '',
 									end: '',
@@ -77,39 +92,62 @@ let StudentInterviewPage = () => {
 							}
 						}
 
+						if (temp_data.length === 0){
+							toast.info("No interview can be booked at this time", {theme: "colored"});
+						}
+
 						setCalendarData(temp_data);
 					}
 				)
 			})
-	}, [course_id, task, version]);
+	}, [course_id, task, version, navigate]);
 
 	// the book interview function
 	let book_interview = (task, time, location) => {
 		let parse = moment(time).format('YYYY-MM-DD HH:mm:ss');
 
 		AuthService.book_interview(course_id, task, parse, location).then(
-			(result) => {
-				setOpen(false);
-				setVersion(version + 1);
-			},
-			(error) => {
-				let resMessage = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-				setMessage(resMessage);
+			(response) => {
+				if (!response || !("status" in response)){
+					toast.error("Unknown error", {theme: "colored"});
+					navigate("/login");
+				} else if (response["status"] === 200){
+					setOpen(false);
+					setVersion(version + 1);
+					toast.success("You have booked the interview successfully", {theme: "colored"});
+				} else if (response["status"] === 400 || response["status"] === 409){
+					toast.error(response["data"]["message"], {theme: "colored"});
+				} else if (response["status"] === 401 || response["status"] === 403){
+					toast.warn("You need to login again", {theme: "colored"});
+					navigate("/login");
+				} else{
+					toast.error("Unknown error", {theme: "colored"});
+					navigate("/login");
+				}
 			}
 		);
-
 	};
 
 	// the cancel interview function 
 	let cancel_interview = (task) => {
 		AuthService.cancel_interview(course_id, task).then(
-			(result) => {
-				setOpen(false);
-				setVersion(version + 1);
-			},
-			(error) => {
-				let resMessage = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-				setMessage(resMessage);
+			(response) => {
+				if (!response || !("status" in response)){
+					toast.error("Unknown error", {theme: "colored"});
+					navigate("/login");
+				} else if (response["status"] === 200){
+					setOpen(false);
+					setVersion(version + 1);
+					toast.success("You have cancelled your interview", {theme: "colored"});
+				} else if (response["status"] === 400 || response["status"] === 409){
+					toast.error(response["data"]["message"], {theme: "colored"});
+				} else if (response["status"] === 401 || response["status"] === 403){
+					toast.warn("You need to login again", {theme: "colored"});
+					navigate("/login");
+				} else{
+					toast.error("Unknown error", {theme: "colored"});
+					navigate("/login");
+				}
 			}
 		);
 	};
@@ -146,7 +184,6 @@ let StudentInterviewPage = () => {
 								setSelectedLocation(info.event.extendedProps.location);
 
 								// open the popup
-								setMessage("");
 								setOpen(!open);
 								if (info.event.backgroundColor === 'red') {
 									setSelect(true);
@@ -212,9 +249,6 @@ let StudentInterviewPage = () => {
 											</button>
 										)}
 									</div>
-									<p className="pb-3 mt-3 mb-0 small lh-sm border-bottom w-100">
-										{message}
-									</p>
 								</div>
 							</div>
 						)}

@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import FullCalendar, { identity } from '@fullcalendar/react';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import moment from "moment";
@@ -9,18 +10,11 @@ import '../../../styles/style.css';
 
 let TaInterviewPage = () => {
 
-	// get username from localstorage
-	let username = localStorage.getItem("username");
-
-	// get task from localstorage
-	let curr_task = localStorage.getItem("task");
-
-	// get course_id form localstorage
-	let course_id = localStorage.getItem("courseid");
+	let { course_id, task } = useParams();
 
 
 	// call the service function
-	//let result=await AuthService.booked_interviews(course_id, curr_task);
+	//let result=await AuthService.booked_interviews(course_id, task);
 
 	let [message, setMessage] = useState("");
 	let [message2, setMessage2] = useState("");
@@ -30,14 +24,14 @@ let TaInterviewPage = () => {
 
 
 	useEffect(() => {
-		AuthService.all_interviews(course_id, curr_task).then(
+		AuthService.all_interviews(course_id, task).then(
 			(result) => {
 				setFetch(result.interviews);
 			},
 			(error) => {
 			})
 
-	}, []);
+	}, [course_id, task]);
 
 
 
@@ -49,10 +43,10 @@ let TaInterviewPage = () => {
 		let course_id = localStorage.getItem("courseid");
 
 		// get task from localstorage
-		let curr_task = localStorage.getItem("task");
+		let task = localStorage.getItem("task");
 
 		// call the service function
-		AuthService.schedule_interview(course_id, curr_task, length, time).then(
+		AuthService.schedule_interview(course_id, task, length, time).then(
 			(result) => {
 				// print out book sucessful message on the screen
 				console.log(result);
@@ -135,7 +129,6 @@ let TaInterviewPage = () => {
 	let [start, setStart] = useState("");
 	let [end, setEnd] = useState("");
 	let [location, setLocation] = useState("");
-	let [task, setTask] = useState("");
 	let [host, setHost] = useState("");
 	let [note, setNote] = useState("");
 	let [id, setId] = useState("");
@@ -213,14 +206,13 @@ let TaInterviewPage = () => {
 								setStart(info.event.start);
 								setEnd(info.event.end);
 								setLocation(info.event.extendedProps.location);
-								setTask(info.event.extendedProps.assignment);
 								setHost(info.event.extendedProps.host);
 								setNote(info.event.extendedProps.note);
 								setId(info.event.extendedProps.id);
 								// open the popup
 								setMessage("");
 								setOpen(!open);
-								if (info.event.backgroundColor == 'red') {
+								if (info.event.backgroundColor === 'red') {
 									setSelect(true);
 								} else {
 									setSelect(false);

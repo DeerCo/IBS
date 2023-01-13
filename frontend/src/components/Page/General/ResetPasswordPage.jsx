@@ -1,28 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import AuthService from "../../../services/auth_services";
 import '../../../styles/style.css'
-
-
-const required = (value) => {
-	if (!value) {
-		return (
-			<div className="alert alert-danger" role="alert">
-				This field is required!
-			</div>
-		);
-	}
-};
 
 const ResetPasswordPage = () => {
 	let navigate = useNavigate();
 
-	const form = useRef();
-
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [code, setCode] = useState("");
-	const [message, setMessage] = useState("");
 
 	const onChangeUsername = (e) => {
 		const username = e.target.value;
@@ -42,50 +29,50 @@ const ResetPasswordPage = () => {
 	const handleLogin = (e) => {
 		e.preventDefault();
 
-		setMessage("");
-
-		form.current.validateAll();
-		AuthService.reset_password(username, password, code).then(
-			() => {
-				navigate("/login");
-			},
-			(error) => {
-				const resMessage =
-					(error.response &&
-						error.response.data &&
-						error.response.data.message) ||
-					error.message ||
-					error.toString();
-
-				setMessage(resMessage);
-			}
-		);
-
+		if (username === "") {
+			toast.error("The username cannot be empty", { theme: "colored" });
+		} else if (code === "") {
+			toast.error("The verification code cannot be empty", { theme: "colored" });
+		} else if (password.length < 8) {
+			toast.error("The password should contain at least 8 characters", { theme: "colored" });
+		} else {
+			AuthService.reset_password(username, password, code).then(
+				(response) => {
+					if (!response || !("status" in response)) {
+						toast.error("Unknown error", { theme: "colored" });
+					} else if (response["status"] === 200) {
+						toast.success("Your password has been changed", { theme: "colored" });
+						navigate("/login");
+					} else if (response["status"] === 400) {
+						toast.error("The username or verification code is not valid", { theme: "colored" });
+					} else if (response["status"] === 400) {
+						toast.error("You've sent too many requests", { theme: "colored" });
+					} else {
+						toast.error("Unknown error", { theme: "colored" });
+					}
+				}
+			);
+		}
 	};
 
 	const handleCode = (e) => {
 		e.preventDefault();
 
-		setMessage("");
-
-		form.current.validateAll();
-		AuthService.send_code(username).then(
-			() => {
-				console.log("code sent");
-				setMessage("code sent");
-			},
-			(error) => {
-				const resMessage =
-					(error.response &&
-						error.response.data &&
-						error.response.data.message) ||
-					error.message ||
-					error.toString();
-
-				setMessage(resMessage);
-			}
-		);
-
+		if (username === "") {
+			toast.error("Username cannot be empty", { theme: "colored" });
+		} else{
+			AuthService.send_code(username).then(
+				(response) => {
+					if (!response || !("status" in response)) {
+						toast.error("Unknown error", { theme: "colored" });
+					} else if (response["status"] === 200) {
+						toast.success("A code has been sent to your email", { theme: "colored" });
+					} else {
+						toast.error("Unknown error", { theme: "colored" });
+					}
+				}
+			);
+		}
 	};
 
 
@@ -103,7 +90,7 @@ const ResetPasswordPage = () => {
 					</div>
 
 
-					<form onSubmit={handleLogin} ref={form}>
+					<form onSubmit={handleLogin}>
 						<input type="text"
 							id="login"
 							className="mt-1 fadeIn second"
@@ -111,7 +98,7 @@ const ResetPasswordPage = () => {
 							placeholder="username"
 							value={username}
 							onChange={onChangeUsername}
-							validations={[required]} />
+						/>
 
 						<div className="d-flex justify-content-between m-4 fadeIn fourth">
 							<input type="text"
@@ -121,7 +108,6 @@ const ResetPasswordPage = () => {
 								placeholder="code"
 								value={code}
 								onChange={onChangeCode}
-								validations={[required]}
 							/>
 
 							<input type="button" onClick={handleCode} className=" m-2" value="send code" />
@@ -130,24 +116,14 @@ const ResetPasswordPage = () => {
 
 						<input type="password"
 							id="password"
-							className="mt-3 fadeIn third"
+							className="mt-3 fadeIn fourth"
 							name="password"
 							placeholder="password"
 							value={password}
 							onChange={onChangePassword}
-							validations={[required]}
 						/>
 
 						<input type="submit" className="m-4 fadeIn fourth" value="reset password" />
-
-						{message && (
-							<div className="form-group">
-								<div className="alert alert-danger" role="alert">
-									{message}
-								</div>
-							</div>
-						)}
-
 					</form>
 
 					<div id="formFooter">
