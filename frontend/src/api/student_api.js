@@ -50,6 +50,7 @@ let download_file = async (course_id, task, file_id, file_name) => {
 	let config = {
 		headers: { Authorization: `Bearer ${token}` },
 		params: { task: task, file_id: file_id },
+		responseType: "blob"
 	};
 
 	try {
