@@ -5,7 +5,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import moment from "moment";
-import AuthService from "../../../services/auth_services";
+import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
 
 
@@ -29,9 +29,9 @@ let StudentInterviewPage = () => {
 	let [version, setVersion] = useState(0); // data is refreshed if version is changed
 
 	useEffect(() => {
-		AuthService.check_interview(course_id, task).then(
+		StudentApi.check_interview(course_id, task).then(
 			(response_1) => {
-				AuthService.available_interviews(course_id, task).then(
+				StudentApi.available_interviews(course_id, task).then(
 					(response_2) => {
 						if (!response_1 || !("status" in response_1) || !response_2 || !("status" in response_2)) {
 							toast.error("Unknown error", { theme: "colored" });
@@ -108,7 +108,7 @@ let StudentInterviewPage = () => {
 	let book_interview = (task, time, location) => {
 		let formatted_time = moment(time).format('YYYY-MM-DD HH:mm:ss');
 
-		AuthService.book_interview(course_id, task, formatted_time, location).then(
+		StudentApi.book_interview(course_id, task, formatted_time, location).then(
 			(response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });
@@ -136,7 +136,7 @@ let StudentInterviewPage = () => {
 	let change_interview = (task, time, location) => {
 		let formatted_time = moment(time).format('YYYY-MM-DD HH:mm:ss');
 
-		AuthService.change_interview(course_id, task, formatted_time, location).then(
+		StudentApi.change_interview(course_id, task, formatted_time, location).then(
 			(response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });
@@ -162,7 +162,7 @@ let StudentInterviewPage = () => {
 
 	// the cancel interview function 
 	let cancel_interview = (task) => {
-		AuthService.cancel_interview(course_id, task).then(
+		StudentApi.cancel_interview(course_id, task).then(
 			(response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });

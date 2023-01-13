@@ -5,7 +5,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import moment from "moment";
-import AuthService from "../../../services/auth_services";
+import TaApi from "../../../api/ta_api";
 import TaNavBar from "../../Module/Navigation/TaNavBar";
 import '../../../styles/style.css';
 
@@ -35,7 +35,7 @@ let TaInterviewPage = () => {
 	let [version, setVersion] = useState(0); // data is refreshed if version is changed
 
 	useEffect(() => {
-		AuthService.all_interviews(course_id, task).then(
+		TaApi.all_interviews(course_id, task).then(
 			(response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });
@@ -96,7 +96,7 @@ let TaInterviewPage = () => {
 		} else if (location === "") {
 			toast.error("The location cannot be empty", { theme: "colored" });
 		} else {
-			AuthService.schedule_interview(course_id, task, length, time).then(
+			TaApi.schedule_interview(course_id, task, length, time).then(
 				(response) => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });
@@ -123,7 +123,7 @@ let TaInterviewPage = () => {
 
 	// the cancel interview function 
 	let delete_interview = (task, id) => {
-		AuthService.delete_interview(course_id, task, id).then(
+		TaApi.delete_interview(course_id, task, id).then(
 			(response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });

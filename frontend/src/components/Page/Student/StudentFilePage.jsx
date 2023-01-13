@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import AuthService from "../../../services/auth_services";
+import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
 import '../../../styles/style.css';
 
@@ -14,7 +14,7 @@ let StudentFilePage = () => {
 	let [checkboxes, setCheckboxes] = useState([]);
 
 	useEffect(() => {
-		AuthService.all_files(course_id, task).then(
+		StudentApi.all_files(course_id, task).then(
 			(response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });
@@ -32,7 +32,7 @@ let StudentFilePage = () => {
 	}, [course_id, task, navigate]);
 
 	let download = (file_id, file_name) => {
-		AuthService.download_file(course_id, task, file_id, file_name).then(
+		StudentApi.download_file(course_id, task, file_id, file_name).then(
 			(response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });

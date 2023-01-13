@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
-import AuthService from "../../../services/auth_services";
+import GeneralApi from "../../../api/general_api";
 
 let LoginPage = () => {
 	let navigate = useNavigate();
@@ -27,7 +27,7 @@ let LoginPage = () => {
 		} else if (password === "") {
 			toast.error("The password cannot be empty", { theme: "colored" });
 		} else {
-			AuthService.login(username, password).then(
+			GeneralApi.login(username, password).then(
 				(response) => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });

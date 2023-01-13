@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import AuthService from "../../../services/auth_services";
+import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
 import MarkSummary from "../../Module/Mark/MarkSummary";
 
@@ -16,7 +16,7 @@ let StudentMarkPage = () => {
 	useEffect(() => {
 		let username = localStorage.getItem("username");
 
-		AuthService.get_mark(course_id, task).then(
+		StudentApi.get_mark(course_id, task).then(
 			(response) => {
 				if (!response || !("status" in response)){
 					toast.error("Unknown error", {theme: "colored"});

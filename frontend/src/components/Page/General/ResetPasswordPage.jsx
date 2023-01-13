@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import AuthService from "../../../services/auth_services";
+import GeneralApi from "../../../api/general_api";
 import '../../../styles/style.css'
 
 const ResetPasswordPage = () => {
@@ -36,7 +36,7 @@ const ResetPasswordPage = () => {
 		} else if (password.length < 8) {
 			toast.error("The password should contain at least 8 characters", { theme: "colored" });
 		} else {
-			AuthService.reset_password(username, password, code).then(
+			GeneralApi.reset_password(username, password, code).then(
 				(response) => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });
@@ -61,7 +61,7 @@ const ResetPasswordPage = () => {
 		if (username === "") {
 			toast.error("Username cannot be empty", { theme: "colored" });
 		} else{
-			AuthService.send_code(username).then(
+			GeneralApi.send_code(username).then(
 				(response) => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });

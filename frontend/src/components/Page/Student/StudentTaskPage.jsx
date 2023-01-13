@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import AuthService from "../../../services/auth_services";
+import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
 import '../../../styles/style.css';
 
@@ -13,7 +13,7 @@ let StudentTaskPage = () => {
 	let [tasks, setTasks] = useState([]);
 
 	useEffect(() => {
-		AuthService.get_task(course_id).then(
+		StudentApi.all_tasks(course_id).then(
 			(response) => {
 				if (!response || !("status" in response)){
 					toast.error("Unknown error", {theme: "colored"});
