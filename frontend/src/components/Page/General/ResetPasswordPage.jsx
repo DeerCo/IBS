@@ -45,8 +45,8 @@ const ResetPasswordPage = () => {
 						navigate("/login");
 					} else if (response["status"] === 400) {
 						toast.error("The username or verification code is not valid", { theme: "colored" });
-					} else if (response["status"] === 400) {
-						toast.error("You've sent too many requests", { theme: "colored" });
+					} else if (response["status"] === 429) {
+						toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
 					} else {
 						toast.error("Unknown error", { theme: "colored" });
 					}
@@ -78,13 +78,8 @@ const ResetPasswordPage = () => {
 
 	return (
 		<div>
-			<br />
-			<br />
-			<br />
-			<div className="wrapper fadeInDown">
+			<div className="wrapper fadeInDown center">
 				<div id="formContent">
-
-					<br />
 					<div className="fadeIn first mt-2 logo">
 						<p>IBS</p>
 					</div>

@@ -1,55 +1,53 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 let NavBar = (props) => {
-	let logged_in = true;
-	let username = localStorage.getItem("username");
-	if (!username){
-		logged_in = false;
-	}
+	let navigate = useNavigate();
 
-	let logout = (e) => {
+	let username = localStorage.getItem("username");
+	let roles = JSON.parse(localStorage.getItem("roles"));
+
+	let { course_id, task } = useParams();
+	
+	let course_code = null;
+	if (roles){
+		for (let role of roles){
+			if (role["course_id"].toString() === course_id){
+				course_code = role["course_code"];
+			}
+		}
+	} 
+
+	let logout = () => {
 		window.localStorage.clear();
+		navigate("/login");
+		navigate(0);
 	};
 	
-	if (props.login === false || !logged_in){
-		return (
-			<div>
-				<nav id="navbar">
-					<div id="inner">
-						<div className="d-flex justify-content-end">
-							<Link className="button" to="/home">IBS</Link>
-						</div>
-
-						<div className="d-flex justify-content-end">
-							<Link className="button" to="/login"> Login </Link>
-						</div>
+	return (
+		<div>
+			<nav id="navbar">
+				<div id="inner">
+					<div className="d-flex">
+						<Link className="button mx-3" to="/home">IBS</Link>
+						{course_code && <div className="button mx-3">{"->"}</div>}
+						{course_code && <Link className="button mx-3" to={"/course/" + course_id + "/task"}> {course_code}</Link>}
+						{task && <div className="button mx-3">{"->"}</div>}
+						{task && <Link className="button mx-3" to={"/course/" + course_id + "/task"}>{task}</Link>}
+						{task && props.page && <div className="button mx-3">{"->"}</div>}
+						{task && props.page && <Link className="button mx-3" to={"/course/" + course_id + "/task/" + task + "/" + props.page.toLowerCase()}>{props.page}</Link>}
 					</div>
-				</nav>
 
-				<div className="divider"> </div>
-			</div>
-		);
-	} else{
-		return (
-			<div>
-				<nav id="navbar">
-					<div id="inner">
-						<div className="d-flex justify-content-end">
-							<Link className="button" to="/home">IBS</Link>
-						</div>
-
-						<div className="d-flex justify-content-end">
-							<Link className="button mx-5"> {username} </Link>
-							<Link className="button" onClick={logout} to="/login"> Logout </Link>
-						</div>
+					<div className="d-flex justify-content-end">
+						<div className="button mx-3"> {username} </div>
+						<Link className="button mx-3" onClick={logout}> Logout </Link>
 					</div>
-				</nav>
+				</div>
+			</nav>
 
-				<div className="divider"> </div>
-			</div>
-		);
-	}
+			<div className="divider"> </div>
+		</div>
+	);
 };
 
 

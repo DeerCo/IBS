@@ -33,7 +33,7 @@ let StudentTaskPage = () => {
 	return (
 		<div>
 			<div>
-				<NavBar />
+				<NavBar page="Task"/>
 
 				<div className="album py-5 bg-white">
 					<div className="container mt-5">

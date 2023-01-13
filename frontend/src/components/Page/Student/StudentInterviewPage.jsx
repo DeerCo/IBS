@@ -26,7 +26,6 @@ let StudentInterviewPage = () => {
 
 	let [open, setOpen] = useState(false);
 	let [booked, setBooked] = useState(false);
-	let [selected, setSelect] = useState(false);
 	let [version, setVersion] = useState(0);
 
 	useEffect(() => {
@@ -34,18 +33,18 @@ let StudentInterviewPage = () => {
 			(response_1) => {
 				AuthService.available_interviews(course_id, task).then(
 					(response_2) => {
-						if (!response_1 || !("status" in response_1) || !response_2 || !("status" in response_2)){
-							toast.error("Unknown error", {theme: "colored"});
+						if (!response_1 || !("status" in response_1) || !response_2 || !("status" in response_2)) {
+							toast.error("Unknown error", { theme: "colored" });
 							navigate("/login");
-						} else if (response_1["status"] === 200 && response_2["status"] === 200){
-							
-						} else if (response_1["status"] === 401 || response_2["status"] === 403){
-							toast.warn("You need to login again", {theme: "colored"});
+						} else if (response_1["status"] === 200 && response_2["status"] === 200) {
+
+						} else if (response_1["status"] === 401 || response_2["status"] === 403) {
+							toast.warn("You need to login again", { theme: "colored" });
 							navigate("/login");
-						} else if (response_1["status"] === 400){
-							toast.info("You need to join a group before booking an interview", {theme: "colored"});
+						} else if (response_1["status"] === 400) {
+							toast.info("You need to join a group before booking an interview", { theme: "colored" });
 						} else {
-							toast.warn("Unknown error", {theme: "colored"});
+							toast.warn("Unknown error", { theme: "colored" });
 							navigate("/login");
 						}
 
@@ -58,7 +57,7 @@ let StudentInterviewPage = () => {
 							setBookedEnd(response_1_data["end_time"]);
 							setBookedLocation(response_1_data["location"]);
 							setBooked(true);
-							
+
 							let curr = {
 								start: response_1_data["start_time"].replace(" ", "T"),
 								end: response_1_data["end_time"].replace(" ", "T"),
@@ -92,8 +91,8 @@ let StudentInterviewPage = () => {
 							}
 						}
 
-						if (temp_data.length === 0){
-							toast.info("No interview can be booked at this time", {theme: "colored"});
+						if (temp_data.length === 0) {
+							toast.info("No interview can be booked at this time", { theme: "colored" });
 						}
 
 						setCalendarData(temp_data);
@@ -104,24 +103,54 @@ let StudentInterviewPage = () => {
 
 	// the book interview function
 	let book_interview = (task, time, location) => {
-		let parse = moment(time).format('YYYY-MM-DD HH:mm:ss');
+		let formatted_time = moment(time).format('YYYY-MM-DD HH:mm:ss');
 
-		AuthService.book_interview(course_id, task, parse, location).then(
+		AuthService.book_interview(course_id, task, formatted_time, location).then(
 			(response) => {
-				if (!response || !("status" in response)){
-					toast.error("Unknown error", {theme: "colored"});
+				if (!response || !("status" in response)) {
+					toast.error("Unknown error", { theme: "colored" });
 					navigate("/login");
-				} else if (response["status"] === 200){
+				} else if (response["status"] === 200) {
 					setOpen(false);
 					setVersion(version + 1);
-					toast.success("You have booked the interview successfully", {theme: "colored"});
-				} else if (response["status"] === 400 || response["status"] === 409){
-					toast.error(response["data"]["message"], {theme: "colored"});
-				} else if (response["status"] === 401 || response["status"] === 403){
-					toast.warn("You need to login again", {theme: "colored"});
+					toast.success("You have booked the interview successfully", { theme: "colored" });
+				} else if (response["status"] === 400 || response["status"] === 409) {
+					toast.error(response["data"]["message"], { theme: "colored" });
+				} else if (response["status"] === 401 || response["status"] === 403) {
+					toast.warn("You need to login again", { theme: "colored" });
 					navigate("/login");
-				} else{
-					toast.error("Unknown error", {theme: "colored"});
+				} else if (response["status"] === 429) {
+					toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
+				} else {
+					toast.error("Unknown error", { theme: "colored" });
+					navigate("/login");
+				}
+			}
+		);
+	};
+
+	// the change interview function
+	let change_interview = (task, time, location) => {
+		let formatted_time = moment(time).format('YYYY-MM-DD HH:mm:ss');
+
+		AuthService.change_interview(course_id, task, formatted_time, location).then(
+			(response) => {
+				if (!response || !("status" in response)) {
+					toast.error("Unknown error", { theme: "colored" });
+					navigate("/login");
+				} else if (response["status"] === 200) {
+					setOpen(false);
+					setVersion(version + 1);
+					toast.success("You have cancelled your old interview and booked the new interview successfully", { theme: "colored" });
+				} else if (response["status"] === 400 || response["status"] === 409) {
+					toast.error(response["data"]["message"], { theme: "colored" });
+				} else if (response["status"] === 401 || response["status"] === 403) {
+					toast.warn("You need to login again", { theme: "colored" });
+					navigate("/login");
+				} else if (response["status"] === 429) {
+					toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
+				} else {
+					toast.error("Unknown error", { theme: "colored" });
 					navigate("/login");
 				}
 			}
@@ -132,20 +161,22 @@ let StudentInterviewPage = () => {
 	let cancel_interview = (task) => {
 		AuthService.cancel_interview(course_id, task).then(
 			(response) => {
-				if (!response || !("status" in response)){
-					toast.error("Unknown error", {theme: "colored"});
+				if (!response || !("status" in response)) {
+					toast.error("Unknown error", { theme: "colored" });
 					navigate("/login");
-				} else if (response["status"] === 200){
+				} else if (response["status"] === 200) {
 					setOpen(false);
 					setVersion(version + 1);
-					toast.success("You have cancelled your interview", {theme: "colored"});
-				} else if (response["status"] === 400 || response["status"] === 409){
-					toast.error(response["data"]["message"], {theme: "colored"});
-				} else if (response["status"] === 401 || response["status"] === 403){
-					toast.warn("You need to login again", {theme: "colored"});
+					toast.success("You have cancelled your interview", { theme: "colored" });
+				} else if (response["status"] === 400 || response["status"] === 409) {
+					toast.error(response["data"]["message"], { theme: "colored" });
+				} else if (response["status"] === 401 || response["status"] === 403) {
+					toast.warn("You need to login again", { theme: "colored" });
 					navigate("/login");
-				} else{
-					toast.error("Unknown error", {theme: "colored"});
+				} else if (response["status"] === 429) {
+					toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
+				} else {
+					toast.error("Unknown error", { theme: "colored" });
 					navigate("/login");
 				}
 			}
@@ -156,7 +187,7 @@ let StudentInterviewPage = () => {
 	return (
 		<div>
 			<div>
-				<NavBar />
+				<NavBar page="Interview" />
 
 				<div className="divider"> </div>
 
@@ -185,11 +216,6 @@ let StudentInterviewPage = () => {
 
 								// open the popup
 								setOpen(!open);
-								if (info.event.backgroundColor === 'red') {
-									setSelect(true);
-								} else {
-									setSelect(false);
-								}
 							}}
 						/>
 					</div>
@@ -197,59 +223,38 @@ let StudentInterviewPage = () => {
 					<div className="col-1"></div>
 					<div className="col-3 row">
 						{booked && (
-							<p className="pb-3 mb-3 mt-2 border-bottom w-100">
-								<strong className="d-block text-gray-dark"> You have booked an interview </strong>
+							<div>
+								<h4 className="border-bottom pb-2 mb-2">Your Booked Interview</h4>
 								<strong className="d-block text-gray-dark"> Start time: {bookedStart} </strong>
 								<strong className="d-block text-gray-dark"> End time: {bookedEnd} </strong>
 								<strong className="d-block text-gray-dark"> Location: {bookedLocation} </strong>
-							</p>
+								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { cancel_interview(task) }}>
+									Cancel
+								</button>
+							</div>
 						)}
 
+						{open && !booked && (
+							<div>
+								<h4 className="border-bottom pb-2 mb-2">Selected Interview</h4>
+								<strong className="d-block text-gray-dark"> Start time: {moment(selectedStart).format('MM/DD/YYYY, h:mm:ss a')} </strong>
+								<strong className="d-block text-gray-dark"> End time: {moment(selectedEnd).format('MM/DD/YYYY, h:mm:ss a')} </strong>
+								<strong className="d-block text-gray-dark"> Location: {selectedLocation} </strong>
+								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { book_interview(task, selectedStart, selectedLocation) }}>
+									Book
+								</button>
+							</div>
+						)}
 
-						{open && (
-							<div className="col-12 rounded  mt-2 ">
-								<div>
-									<h5 className="border-bottom pb-2 mb-2">Information</h5>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Assignment</strong>
-											{task}
-										</p>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Start Time</strong>
-											{moment(selectedStart).format('MM/DD/YYYY, h:mm:ss a')}
-										</p>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">End Time</strong>
-											{moment(selectedEnd).format('MM/DD/YYYY, h:mm:ss a')}
-										</p>
-									</div>
-									<div className="d-flex text-muted pt-3">
-										<div className="pb-3 mb-0 small lh-sm border-bottom w-100">
-											<strong className="d-block text-gray-dark">Location</strong>
-											<ul className="list-unstyled my-1">
-												<li>{selectedLocation}</li>
-											</ul>
-										</div>
-									</div>
-									<div className="d-flex">
-										{!selected && (
-											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { book_interview(task, selectedStart, selectedLocation) }}>
-												Book
-											</button>
-										)}
-
-										{selected && (
-											<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { cancel_interview(task) }}>
-												Cancel
-											</button>
-										)}
-									</div>
-								</div>
+						{open && booked && (
+							<div>
+								<h4 className="border-bottom pb-2 mb-2">Selected Interview</h4>
+								<strong className="d-block text-gray-dark"> Start time: {moment(selectedStart).format('MM/DD/YYYY, h:mm:ss a')} </strong>
+								<strong className="d-block text-gray-dark"> End time: {moment(selectedEnd).format('MM/DD/YYYY, h:mm:ss a')} </strong>
+								<strong className="d-block text-gray-dark"> Location: {selectedLocation} </strong>
+								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { change_interview(task, selectedStart, selectedLocation) }}>
+									Cancel Existing Interview & Book
+								</button>
 							</div>
 						)}
 					</div>

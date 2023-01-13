@@ -14,7 +14,7 @@ let MarkSummary = (props) => {
 								<div className="ms-2 me-auto">
 									<div className="fw-bold">Criteria</div>
 								</div>
-								<span className="fw-bold">Mark</span>
+								<span className="fw-bold">Your Mark</span>
 							</li>
 
 							{Object.keys(marks).map((e) => (

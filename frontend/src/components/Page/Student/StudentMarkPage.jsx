@@ -35,10 +35,11 @@ let StudentMarkPage = () => {
 
 	return (
 		<div>
-			<NavBar />
+			<NavBar page="Mark"/>
 
-			<MarkSummary marks={marks} />
-
+			<main>
+				<MarkSummary marks={marks} />
+			</main>
 		</div>
 	);
 };

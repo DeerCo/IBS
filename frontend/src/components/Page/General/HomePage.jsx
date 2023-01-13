@@ -23,7 +23,7 @@ let Home = () => {
 	return (
 		<div>
 			<div>
-				<NavBar />
+				<NavBar page="Home"/>
 
 				<div className="album py-5 bg-white">
 					<div className="container mt-5">

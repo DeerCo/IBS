@@ -49,19 +49,11 @@ let LoginPage = () => {
 
 	return (
 		<div>
-			<br />
-			<br />
-			<br />
-			<br />
-			<br />
-			<div className="wrapper fadeInDown">
+			<div className="wrapper fadeInDown center">
 				<div id="formContent">
-
-					<br />
 					<div className="fadeIn first mt-2 logo">
 						<p>IBS</p>
 					</div>
-
 
 					<form onSubmit={handleLogin}>
 						<input type="text"

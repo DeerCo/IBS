@@ -35,7 +35,7 @@ router.post("/", (req, res) => {
                 }
             });
         } else {
-            res.status(404).json({ message: "Your username or code is invalid." });
+            res.status(400).json({ message: "Your username or code is invalid." });
         }
     });
 })

@@ -25,7 +25,7 @@ let send_code = async (username) => {
 	}
 };
 
-let get_task = async (courseid) => {
+let get_task = async (course_id) => {
 	let token = localStorage.getItem("token");
 
 	let config = {
@@ -33,7 +33,7 @@ let get_task = async (courseid) => {
 	};
 
 	try {
-		return await axios.get(API_URL + "/course/" + courseid + "/task/all", config);
+		return await axios.get(API_URL + "/course/" + course_id + "/task/all", config);
 	} catch (err) {
 		return err.response;
 	}
@@ -54,7 +54,7 @@ let get_mark = async (course_id, task) => {
 	}
 };
 
-let all_files = async (courseid, curr_task) => {
+let all_files = async (course_id, curr_task) => {
 	let token = localStorage.getItem("token");
 
 	let config = {
@@ -63,13 +63,13 @@ let all_files = async (courseid, curr_task) => {
 	};
 
 	try {
-		return await axios.get(API_URL + "/course/" + courseid + "/file/all", config);
+		return await axios.get(API_URL + "/course/" + course_id + "/file/all", config);
 	} catch (err) {
 		return err.response;
 	}
 };
 
-let available_interviews = async (courseid, curr_task) => {
+let available_interviews = async (course_id, curr_task) => {
 	let token = localStorage.getItem("token");
 
 	let config = {
@@ -78,14 +78,14 @@ let available_interviews = async (courseid, curr_task) => {
 	};
 
 	try {
-		return await axios.get(API_URL + "/course/" + courseid + "/interview/available", config);
+		return await axios.get(API_URL + "/course/" + course_id + "/interview/available", config);
 	} catch (err) {
 		return err.response;
 	}
 };
 
 // get all the booked interviews
-let check_interview = async (courseid, curr_task) => {
+let check_interview = async (course_id, curr_task) => {
 	let token = localStorage.getItem("token");
 
 	let config = {
@@ -94,14 +94,14 @@ let check_interview = async (courseid, curr_task) => {
 	};
 
 	try {
-		return await axios.get(API_URL + "/course/" + courseid + "/interview/check", config);
+		return await axios.get(API_URL + "/course/" + course_id + "/interview/check", config);
 	} catch (err) {
 		return err.response;
 	}
 };
 
 // book an interview
-let book_interview = async (courseid, curr_task, time, location) => {
+let book_interview = async (course_id, curr_task, time, location) => {
 	let token = localStorage.getItem("token");
 
 	const data = {
@@ -111,25 +111,41 @@ let book_interview = async (courseid, curr_task, time, location) => {
 	}
 
 	try {
-		return await axios.post(API_URL + "/course/" + courseid + "/interview/book", data, { headers: { Authorization: `Bearer ${token}` } });
+		return await axios.post(API_URL + "/course/" + course_id + "/interview/book", data, { headers: { Authorization: `Bearer ${token}` } });
+	} catch (err) {
+		return err.response;
+	}
+};
+
+// change to a interview
+let change_interview = async (course_id, curr_task, time, location) => {
+	let token = localStorage.getItem("token");
+
+	const data = {
+		task: curr_task,
+		time: time,
+		location: location
+	}
+
+	try {
+		return await axios.put(API_URL + "/course/" + course_id + "/interview/change", data, { headers: { Authorization: `Bearer ${token}` } });
 	} catch (err) {
 		return err.response;
 	}
 };
 
 // cancel a currently booked interview
-// this is a delete request
-let cancel_interview = async (courseid, curr_task) => {
+let cancel_interview = async (course_id, curr_task) => {
 	let token = localStorage.getItem("token");
 
 	try {
-		return await axios.delete(API_URL + "/course/" + courseid + "/interview/cancel", { data: { task: curr_task }, headers: { Authorization: `Bearer ${token}` } });
+		return await axios.delete(API_URL + "/course/" + course_id + "/interview/cancel", { data: { task: curr_task }, headers: { Authorization: `Bearer ${token}` } });
 	} catch (err) {
 		return err.response;
 	}
 };
 
-let download_file = async (courseid, task, file_id, file_name) => {
+let download_file = async (course_id, task, file_id, file_name) => {
 	let token = localStorage.getItem("token");
 
 	let config = {
@@ -138,7 +154,7 @@ let download_file = async (courseid, task, file_id, file_name) => {
 	};
 
 	try {
-		let response = await axios.get(API_URL + "/course/" + courseid + "/file/retrieve", config);
+		let response = await axios.get(API_URL + "/course/" + course_id + "/file/retrieve", config);
 		let temp_url = window.URL.createObjectURL(new Blob([response.data]));
 		let link = document.createElement('a');
 		link.href = temp_url;
@@ -152,7 +168,7 @@ let download_file = async (courseid, task, file_id, file_name) => {
 };
 
 // print out all the interview for ta
-let all_interviews = async (courseid, curr_task) => {
+let all_interviews = async (course_id, curr_task) => {
 	let token = localStorage.getItem("token");
 
 	let config = {
@@ -161,14 +177,14 @@ let all_interviews = async (courseid, curr_task) => {
 	};
 
 	try {
-		return await axios.get(API_URL + "/instructor/course/" + courseid + "/interview/all", config);
+		return await axios.get(API_URL + "/instructor/course/" + course_id + "/interview/all", config);
 	} catch (err) {
 		return err.response;
 	}
 };
 
 //delete a interveiw
-let delete_interview = async (courseid, curr_task, id) => {
+let delete_interview = async (course_id, curr_task, id) => {
 	let token = localStorage.getItem("ta_token");
 
 	let config = {
@@ -177,14 +193,14 @@ let delete_interview = async (courseid, curr_task, id) => {
 	};
 
 	try {
-		return await axios.delete(API_URL + "/instructor/course/" + courseid + "/interview/delete", config);
+		return await axios.delete(API_URL + "/instructor/course/" + course_id + "/interview/delete", config);
 	} catch (err) {
 		return err.response;
 	}
 };
 
 //schedule a interveiw
-let schedule_interview = async (courseid, curr_task, length, time) => {
+let schedule_interview = async (course_id, curr_task, length, time) => {
 	let token = localStorage.getItem("ta_token");
 
 	const data = {
@@ -194,7 +210,7 @@ let schedule_interview = async (courseid, curr_task, length, time) => {
 	}
 
 	try {
-		return await axios.post(API_URL + "/instructor/course/" + courseid + "/interview/schedule", data, { headers: { Authorization: `Bearer ${token}` } });
+		return await axios.post(API_URL + "/instructor/course/" + course_id + "/interview/schedule", data, { headers: { Authorization: `Bearer ${token}` } });
 	} catch (err) {
 		return err.response;
 	}
@@ -214,6 +230,7 @@ let AuthService = {
 	available_interviews,
 	check_interview,
 	book_interview,
+	change_interview,
 	cancel_interview,
 
 	// Ta
