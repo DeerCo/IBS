@@ -16,7 +16,10 @@ import TaInterviewPage from "./components/Page/Ta/TaInterviewPage";
 function App() {
 	return (
 		<div>
-			<ToastContainer />
+			<ToastContainer 
+				limit={3}
+				position="top-center"
+			/>
 
 			<BrowserRouter>
 				<Routes>

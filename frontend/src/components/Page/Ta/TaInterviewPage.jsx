@@ -223,7 +223,7 @@ let TaInterviewPage = () => {
 							eventTimeFormat={{// like '14:30:00'
 								hour: '2-digit',
 								minute: '2-digit',
-								meridiem: true
+								hour12: false
 							}}
 							eventClick={function (info) {
 								setSelectedId(info.event.extendedProps.id);

@@ -99,7 +99,7 @@ let StudentInterviewPage = () => {
 									extendedProps: {
 										location: location
 									},
-									backgroundColor: 'green'
+									backgroundColor: "green",
 								};
 								temp_data.push(curr);
 							}
@@ -222,7 +222,7 @@ let StudentInterviewPage = () => {
 							eventTimeFormat={{// like '14:30:00'
 								hour: '2-digit',
 								minute: '2-digit',
-								meridiem: true
+								hour12: false
 							}}
 							eventClick={function (info) {
 								// when click, update the value
