@@ -4,19 +4,12 @@ import StudentApi from "../../api/student_api";
 
 const Form = (props) => {
   const [username, setUsername] = useState("");
-  let { course_id, task } = useParams();
-
   const invite = "invite";
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (props.action === invite) {
-      axios
-        .post(
-          API_URL + props.url,
-          { group_id: props.group_id, username: username },
-          config
-        )
+      StudentApi.invite(props.course_id, props.group_id, username)
         .then((response) => {
           props.changeMsg(response.data.message);
           StudentApi.handleAddMembers(props.addMembers);
@@ -25,11 +18,7 @@ const Form = (props) => {
           props.changeMsg(error.response.data.message);
         });
     } else {
-      axios
-        .delete(API_URL + props.url, {
-          data: { group_id: props.group_id, username: username },
-          headers: { Authorization: `Bearer ${token}` },
-        })
+      StudentApi.uninvite(props.course_id, props.group_id, username)
         .then((response) => {
           props.changeMsg(response.data.message);
           StudentApi.handleAddMembers(props.addMembers);

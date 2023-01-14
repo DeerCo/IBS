@@ -44,6 +44,8 @@ const Group = () => {
         group_id={group_id}
         changeGroup={setGroup_id}
         addMembers={setMembers}
+        course_id={course_id}
+        task={task}
       />
     ),
     notJoined: <NotJoined changeGroup={setGroup_id} />,

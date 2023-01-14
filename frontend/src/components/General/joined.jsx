@@ -4,9 +4,6 @@ import "../styles/style.css";
 import { useState } from "react";
 
 const Joined = (props) => {
-  const course_id = localStorage.courseid;
-  const inviteUrl = "/course/" + course_id + "/group/invite";
-  const disinviteUrl = "/course/" + course_id + "/group/disinvite";
   const [msg, setMsg] = useState("");
 
   return (
@@ -18,6 +15,7 @@ const Joined = (props) => {
             group_id={props.group_id}
             changeMsg={setMsg}
             addMembers={props.addMembers}
+            course_id={props.course_id}
           />
 
           <Form
@@ -25,23 +23,12 @@ const Joined = (props) => {
             group_id={props.group_id}
             changeMsg={setMsg}
             addMembers={props.addMembers}
+            course_id={props.course_id}
           />
         </span>
         <div className="container">
           <div className="row">
-            <div className="col-3">
-              {/* <button
-                onClick={() => {
-                  StudentApi.handleLeaveGroup(
-                    props.group_id,
-                    props.changeGroup
-                  );
-                }}
-                className="btn btn-secondary mt-3 right groupbtn"
-              >
-                Leave Group
-              </button> */}
-            </div>
+            <div className="col-3"></div>
             <div className="col-9">
               {msg && (
                 <div className="form-group mt-3">

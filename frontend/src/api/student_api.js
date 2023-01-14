@@ -221,12 +221,28 @@ let details = async (course_id, curr_task) => {
   }
 };
 
-let invite = async (course_id, curr_task) => {
+let invite = async (course_id, group_id, username) => {
   let token = localStorage.getItem("token");
   try {
     return await axios.post(
       process.env.REACT_APP_API_URL + "/course/" + course_id + "/group/invite",
-      data,
+      { group_id: group_id, username: username },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+  } catch (err) {
+    return err.response;
+  }
+};
+
+let uninvite = async (course_id, group_id, username) => {
+  let token = localStorage.getItem("token");
+  try {
+    return await axios.post(
+      process.env.REACT_APP_API_URL +
+        "/course/" +
+        course_id +
+        "/group/disinvite",
+      { group_id: group_id, username: username },
       { headers: { Authorization: `Bearer ${token}` } }
     );
   } catch (err) {
@@ -255,6 +271,8 @@ let StudentApi = {
   //Group related
   check_group,
   details,
+  invite,
+  uninvite,
 };
 
 export default StudentApi;
