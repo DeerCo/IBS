@@ -37,7 +37,7 @@ function boolean_validate(string) {
 }
 
 function number_validate(number) {
-	if (number === null || isNaN(Number(number))) {
+	if (number === null || isNaN(Number(number)) || number.toString().trim() === "") {
 		return 1;
 	}
 	return 0;

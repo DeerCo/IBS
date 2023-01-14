@@ -19,6 +19,7 @@ const check_group = require("../module/group/staff/check");
 const create_group = require("../module/group/staff/create");
 const add_member = require("../module/group/staff/add");
 const remove_member = require("../module/group/staff/remove");
+const change_extension = require("../module/group/staff/extension");
 const upload_files = require("../module/file/staff/upload");
 const download_files = require("../module/file/staff/download");
 const delete_files = require("../module/file/staff/delete");
@@ -58,6 +59,7 @@ router.use("/course/:course_id/group/check", check_group);
 router.use("/course/:course_id/group/create", create_group);
 router.use("/course/:course_id/group/add", add_member);
 router.use("/course/:course_id/group/remove", remove_member);
+router.use("/course/:course_id/group/extension", change_extension);
 
 // File
 router.use("/course/:course_id/file/upload", upload_files);
