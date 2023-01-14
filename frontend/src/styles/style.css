@@ -1,11 +1,12 @@
 /* BASIC */
+@import url('https://fonts.googleapis.com/css2?family=Doppio+One&display=swap');
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "react-toastify/dist/ReactToastify.css";
 @import "./tab.css";
 
 
 body {
-    font-family: 'Silkscreen', cursive;
+    font-family: 'Doppio One', sans-serif;
     height: 100vh;
     justify-content: center;
     text-align: center;
@@ -16,6 +17,10 @@ a {
     display: inline-block;
     text-decoration: none;
     font-weight: 400;
+}
+
+img {
+    max-height: 25vh;
 }
 
 /* STRUCTURE */

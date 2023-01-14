@@ -30,13 +30,14 @@ let all_interviews = async (course_id, curr_task) => {
 };
 
 //schedule a interveiw
-let schedule_interview = async (course_id, curr_task, length, time) => {
+let schedule_interview = async (course_id, curr_task, length, time, location) => {
 	let token = localStorage.getItem("token");
 
 	const data = {
 		task: curr_task,
 		length: length.toString(),
-		time: time.toString()
+		time: time.toString(),
+		location: location,
 	}
 
 	try {

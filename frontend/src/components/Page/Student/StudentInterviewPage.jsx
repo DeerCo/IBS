@@ -61,7 +61,15 @@ let StudentInterviewPage = () => {
 							setBookedLocation(response_1_data["location"]);
 							setBooked(true);
 
+							let location_lower = response_1_data["location"].toLowerCase();
+							if (location_lower === "zoom" || location_lower === "online" || location_lower.startsWith("http")) {
+								var title = "💻";
+							} else {
+								var title = "🏫";
+							}
+
 							let curr = {
+								title: title,
 								start: response_1_data["start_time"].replace(" ", "T"),
 								end: response_1_data["end_time"].replace(" ", "T"),
 								extendedProps: {
@@ -77,19 +85,22 @@ let StudentInterviewPage = () => {
 
 						for (let location in availability) {
 							for (let time in availability[location]) {
+								let location_lower = location.toLowerCase();
+								if (location_lower === "zoom" || location_lower === "online" || location_lower.startsWith("http")) {
+									var title = "💻";
+								} else {
+									var title = "🏫";
+								}
+								let data = time.split(" - ");
 								let curr = {
-									start: '',
-									end: '',
+									title: title,
+									start: data[0].replace(" ", "T"),
+									end: data[1].replace(" ", "T"),
 									extendedProps: {
 										location: location
 									},
 									backgroundColor: 'green'
 								};
-								let string = time.split(" - ");
-								let start = string[0].replace(" ", "T");
-								let end = string[1].replace(" ", "T");
-								curr.start = start;
-								curr.end = end;
 								temp_data.push(curr);
 							}
 						}
@@ -135,6 +146,11 @@ let StudentInterviewPage = () => {
 	// the change interview function
 	let change_interview = (task, time, location) => {
 		let formatted_time = moment(time).format('YYYY-MM-DD HH:mm:ss');
+
+		if (formatted_time === bookedStart && location === bookedLocation) {
+			toast.warn("You have booked this interview", { theme: "colored" });
+			return;
+		}
 
 		StudentApi.change_interview(course_id, task, formatted_time, location).then(
 			(response) => {
@@ -203,7 +219,6 @@ let StudentInterviewPage = () => {
 								right: 'dayGridWeek,dayGridMonth'
 							}}
 							events={calendarData}
-
 							eventTimeFormat={{// like '14:30:00'
 								hour: '2-digit',
 								minute: '2-digit',
@@ -216,20 +231,20 @@ let StudentInterviewPage = () => {
 								setSelectedLocation(info.event.extendedProps.location);
 
 								// open the popup
-								setOpen(!open);
+								setOpen(true);
 							}}
 						/>
 					</div>
 
 					<div className="col-1"></div>
-					
+
 					<div className="col-3 row">
 						{booked && (
 							<div>
 								<h4 className="border-bottom pb-2 mb-2">Your Booked Interview</h4>
 								<strong className="d-block text-gray-dark"> Start time: {bookedStart} </strong>
 								<strong className="d-block text-gray-dark"> End time: {bookedEnd} </strong>
-								<strong className="d-block text-gray-dark"> Location: {bookedLocation} </strong>
+								<strong className="d-block text-gray-dark"> Location: {bookedLocation.startsWith("http") ? <a href={bookedLocation}>{bookedLocation}</a> : bookedLocation} </strong>
 								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { cancel_interview(task) }}>
 									Cancel
 								</button>
