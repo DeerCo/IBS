@@ -57,7 +57,7 @@ router.post("/", (req, res) => {
                             res.status(404).json({ message: "Unknown error." });
                             console.log(err);
                         } else {
-                            res.status(200).json({ message: "The user is registered if applicable. The role is added." });
+                            res.status(200).json({ message: "The user is registered if needed and the role is added." });
                         }
                     });
                 }
