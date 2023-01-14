@@ -26,7 +26,7 @@ router.post("/", upload.single("file"), (req, res) => {
         return;
     }
 
-    let sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO NOTHING";
+    let sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email";
     let sql_upload = "INSERT INTO course_role (username, course_id, role) VALUES %L ON CONFLICT (username, course_id) DO NOTHING; "
         + "INSERT INTO course_" + req.body["course_id"] + ".user (username) VALUES %L ON CONFLICT (username) DO NOTHING";
 
