@@ -252,7 +252,7 @@ let TaInterviewPage = () => {
 								<span className="d-block text-gray-dark"> Host: {selectedHost} </span>
 								<span className="d-block text-gray-dark"> Length: {selectedLength.toString()} </span>
 								<span className="d-block text-gray-dark"> Note: {selectedNote === null ? "null" : selectedNote} </span>
-								<strong className="d-block text-gray-dark"> Location: {selectedLocation.startsWith("http") ? <a href={selectedLocation}>{selectedLocation}</a> : selectedLocation} </strong>
+								<strong className="d-block text-gray-dark"> Location: {selectedLocation.startsWith("http") ? <a href={selectedLocation}>Link ✈</a> : selectedLocation} </strong>
 								<strong className="d-block text-gray-dark"> Group ID: {selectedGroupId === null ? "null" : selectedGroupId} </strong>
 								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interview(task, selectedId) }}>
 									Delete
