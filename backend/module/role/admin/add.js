@@ -54,8 +54,10 @@ router.post("/", (req, res) => {
                 } else {
                     client.query(sql_add_2, sql_add_2_data, (err, pgRes) => {
                         if (err) {
-                            res.status(404).json({ message: "Unknown error." });
-                            console.log(err);
+                            if (err.code !== "23505") {
+                                res.status(404).json({ message: "Unknown error." });
+                                console.log(err);
+                            }
                         } else {
                             res.status(200).json({ message: "The user is registered if needed and the role is added." });
                         }

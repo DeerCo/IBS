@@ -13,10 +13,10 @@ router.delete("/", (req, res) => {
         return;
     }
 
-    let sql_add = "DELETE FROM course_role WHERE username = ($1) and course_id = ($2)";
-    let sql_add_data = [req.body["username"], req.body["course_id"]];
+    let sql_delete = "DELETE FROM course_role WHERE username = ($1) and course_id = ($2)";
+    let sql_delete_data = [req.body["username"], req.body["course_id"]];
 
-    client.query(sql_add, sql_add_data, (err, pgRes) => {
+    client.query(sql_delete, sql_delete_data, (err, pgRes) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
