@@ -3,7 +3,7 @@ const router = express.Router();
 const client = require("../../../setup/db");
 
 router.get("/", (req, res) => {
-    let sql_task = "SELECT task, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, min_member, max_member, max_token, change_group, interview_group, task_group_id, starter_code_url FROM course_" + res.locals["course_id"] + ".task WHERE hidden = 'false' ORDER BY task";
+    let sql_task = "SELECT task, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, min_member, max_member, max_token, change_group, interview_group, starter_code_url FROM course_" + res.locals["course_id"] + ".task WHERE hidden = 'false' ORDER BY task";
     client.query(sql_task, [], (err, pg_res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });

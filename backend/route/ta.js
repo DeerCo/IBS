@@ -5,6 +5,7 @@ const middleware = require("../module/auth/ta/middleware");
 const get_token = require("../module/token/staff/get");
 const change_token = require("../module/token/staff/change");
 const all_tasks = require("../module/task/staff/all");
+const get_task = require("../module/task/staff/get");
 const add_task = require("../module/task/staff/add");
 const change_task = require("../module/task/staff/change");
 const all_task_group = require("../module/task_group/staff/all");
@@ -51,6 +52,7 @@ router.use("/course/", middleware);
 
 // Task
 router.use("/course/:course_id/task/all", all_tasks);
+router.use("/course/:course_id/task/get", get_task);
 
 // Criteria
 router.use("/course/:course_id/criteria/all", all_criteria);
