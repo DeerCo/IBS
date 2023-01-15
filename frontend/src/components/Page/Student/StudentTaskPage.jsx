@@ -47,9 +47,9 @@ let StudentTaskPage = () => {
 											<p className="card-text">Original Due Date: {data.due_date}</p>
 											<p className="card-text">Group Size: {data.min_member} {data.min_member === data.max_member ? "": " -- " + data.max_member}</p>
 											<div className="btn-group">
-												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/file"}>File</Link>
-												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/mark"}>Mark</Link>
 												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/interview"}>Interview</Link>
+												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/mark"}>Mark</Link>
+												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/file"}>Feedback File</Link>
 											</div>
 										</div>
 									</div>
