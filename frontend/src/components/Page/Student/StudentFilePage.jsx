@@ -90,7 +90,7 @@ let StudentFilePage = () => {
 				<div>
 					<NavBar page="File" />
 
-					<h1>No file is available</h1>
+					<h1>No feedback file is available</h1>
 				</div>
 			</div>
 		);

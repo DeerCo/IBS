@@ -44,12 +44,14 @@ let StudentTaskPage = () => {
 									<div className="card shadow-sm m-3">
 										<div className="card-body">
 											<h3 className="card-text mb-3">{data.task}</h3>
-											<p className="card-text">Original Due Date: {data.due_date}</p>
-											<p className="card-text">Group Size: {data.min_member} {data.min_member === data.max_member ? "": " -- " + data.max_member}</p>
+											{ data.interview_group === null && <p className="card-text">Original Due Date: {data.due_date}</p>}
+											{ data.interview_group === null && <p className="card-text">Group Size: {data.min_member} {data.min_member === data.max_member ? "": " -- " + data.max_member}</p>}
+											{ data.interview_group !== null && <p className="card-text">Interview Only</p>}
+											{ data.interview_group !== null && <p className="card-text">Using the Same Group as <i>{data.interview_group}</i></p>}
 											<div className="btn-group">
 												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/interview"}>Interview</Link>
-												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/mark"}>Mark</Link>
-												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/file"}>Feedback File</Link>
+												{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/mark"}>Mark</Link>}
+												{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/file"}>Feedback File</Link>}
 											</div>
 										</div>
 									</div>
