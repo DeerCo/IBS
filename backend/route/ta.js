@@ -17,6 +17,7 @@ const change_criteria = require("../module/criteria/staff/change");
 const delete_criteria = require("../module/criteria/staff/delete");
 const check_group = require("../module/group/staff/check");
 const create_group = require("../module/group/staff/create");
+const copy_groups = require("../module/group/staff/copy");
 const add_member = require("../module/group/staff/add");
 const remove_member = require("../module/group/staff/remove");
 const change_extension = require("../module/group/staff/extension");

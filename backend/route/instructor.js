@@ -17,6 +17,7 @@ const change_criteria = require("../module/criteria/staff/change");
 const delete_criteria = require("../module/criteria/staff/delete");
 const check_group = require("../module/group/staff/check");
 const create_group = require("../module/group/staff/create");
+const copy_groups = require("../module/group/staff/copy");
 const add_member = require("../module/group/staff/add");
 const remove_member = require("../module/group/staff/remove");
 const change_extension = require("../module/group/staff/extension");
@@ -72,6 +73,7 @@ router.use("/course/:course_id/criteria/delete", delete_criteria);
 // Group
 router.use("/course/:course_id/group/check", check_group);
 router.use("/course/:course_id/group/create", create_group);
+router.use("/course/:course_id/group/copy", copy_groups);
 router.use("/course/:course_id/group/add", add_member);
 router.use("/course/:course_id/group/remove", remove_member);
 router.use("/course/:course_id/group/extension", change_extension);

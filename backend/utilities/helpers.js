@@ -467,7 +467,7 @@ async function gitlab_get_user_id(username) {
 	}
 }
 
-async function gitlab_create_group_and_project(course_id, group_id, username, task) {
+async function gitlab_create_group_and_project_no_user(course_id, group_id, task) {
 	// Get the gitlab group id
 	let pg_res_gitlab_course_group_id = await db.query("SELECT gitlab_group_id FROM course WHERE course_id = ($1)", [course_id])
 	if (pg_res_gitlab_course_group_id.rowCount !== 1) {
@@ -520,8 +520,17 @@ async function gitlab_create_group_and_project(course_id, group_id, username, ta
 	let sql_add_gitlab_info = "UPDATE course_" + course_id + ".group SET gitlab_group_id = ($1), gitlab_project_id = ($2), gitlab_url = ($3) WHERE group_id = ($4)";
 	await db.query(sql_add_gitlab_info, [gitlab_subgroup_id, gitlab_project_id, gitlab_url, group_id]);
 
+	return { success: true, gitlab_group_id: gitlab_subgroup_id, gitlab_project_id: gitlab_project_id, gitlab_url: gitlab_url }
+}
+
+async function gitlab_create_group_and_project_with_user(course_id, group_id, username, task) {
+	let add_project = await gitlab_create_group_and_project_no_user(course_id, group_id, task);
+	if (add_project["success"] === false){
+		return add_project;
+	}
+
 	// Add the user to the subgroup
-	return await gitlab_add_user_with_gitlab_group_id(gitlab_subgroup_id, gitlab_url, username);
+	return await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], add_project["gitlab_url"], username);
 }
 
 async function gitlab_add_user_with_gitlab_group_id(gitlab_group_id, gitlab_url, username) {
@@ -964,6 +973,46 @@ async function download_all_submissions(course_id, task) {
 	return groups;
 }
 
+async function copy_groups(course_id, from_task, to_task) {
+	let results = [];
+	let group_user = {};
+
+	let pg_res_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
+	for (let row of pg_res_group_user.rows){
+		if (row["group_id"] in group_user){
+			group_user[row["group_id"]].push(row["username"]);
+		} else{
+			group_user[row["group_id"]] = [row["username"]];
+		}
+	}
+
+	for (let old_group_id in group_user){
+		// Add a new group in db
+		let pg_res_add_group = await db.query("INSERT INTO course_" + course_id + ".group (task) VALUES (($1)) RETURNING group_id", [to_task]);
+		let new_group_id = pg_res_add_group.rows[0]["group_id"];
+
+		// Create a new project on gitlab for the new group
+		let add_project = await gitlab_create_group_and_project_no_user(course_id, new_group_id, to_task);
+		if (add_project["success"] === false){
+			results.push({group_id: old_group_id, code: add_project["code"]});
+		} else{
+			for (let user of group_user[old_group_id]){
+				// Add user to the new group in db
+				let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
+				if (!err_add_user){
+					// Add user to the new project on gitlab
+					add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
+					if (add_user["success"] === false){
+						results.push({username: user, code: add_user["code"]});
+					}
+				}
+			}
+		}
+	}
+
+	return results;
+}
+
 
 module.exports = {
 	generateAccessToken: generateAccessToken,
@@ -1014,9 +1063,13 @@ module.exports = {
 
 	// Gitlab related
 	gitlab_get_user_id: gitlab_get_user_id,
-	gitlab_create_group_and_project: gitlab_create_group_and_project,
+	gitlab_create_group_and_project_no_user: gitlab_create_group_and_project_no_user,
+	gitlab_create_group_and_project_with_user: gitlab_create_group_and_project_with_user,
 	gitlab_add_user_with_gitlab_group_id: gitlab_add_user_with_gitlab_group_id,
 	gitlab_add_user_without_gitlab_group_id: gitlab_add_user_without_gitlab_group_id,
 	gitlab_remove_user: gitlab_remove_user,
 	gitlab_get_commits: gitlab_get_commits,
+
+	// Group related
+	copy_groups: copy_groups,
 }
