@@ -15,6 +15,7 @@ const Joined = (props) => {
             changeMsg={setMsg}
             addMembers={props.addMembers}
             course_id={props.course_id}
+            task={props.task}
           />
 
           <Form
@@ -23,6 +24,7 @@ const Joined = (props) => {
             changeMsg={setMsg}
             addMembers={props.addMembers}
             course_id={props.course_id}
+            task={props.task}
           />
         </span>
         <div className="container">

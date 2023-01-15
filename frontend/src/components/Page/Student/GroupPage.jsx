@@ -58,6 +58,7 @@ const GroupPage = () => {
   };
   // set the details on the page
   useEffect(() => {
+    console.log("here");
     if (FIRST === 0) {
       StudentApi.details(course_id, task).then((response) => {
         setDue(response.data.before_due_date.due_date);
@@ -77,46 +78,46 @@ const GroupPage = () => {
         }
       });
     }
+    console.log(task);
+    StudentApi.check_group(course_id, task).then((response) => {
+      const msg = response.data.message;
 
-    StudentApi.check_group(course_id, task).then(
-      (response) => {
-        const msg = response.data.message;
-
-        if (msg === msg1) {
-          if (FIRST === 0) {
-            FIRST += 1;
-            setGroup_id(response.data.group_id);
-          }
-          let mem = response.data.members;
-          setMembers(mem);
-          setIsMembers(true);
-          setGit(response.data.gitlab_url);
-          setComp(ENUM_STATES["joined"]);
-        } else if (msg === msg2) {
-          if (FIRST === 0) {
-            FIRST += 1;
-            // no groupid since not in group
-            setGroup_id("");
-          }
-          setMembers("");
-          setIsMembers(false);
-          setGit(null);
-          setComp(ENUM_STATES["notJoined"]);
-        } else if (msg === msg3) {
-          if (FIRST === 0) {
-            FIRST += 1;
-            setGroup_id("");
-          }
-          let mem = response.data.members;
-          setMembers(mem);
-          setIsMembers(true);
-          setGit(null);
-          setComp(ENUM_STATES["invited"]);
+      if (msg === msg1) {
+        if (FIRST === 0) {
+          FIRST += 1;
+          setGroup_id(response.data.group_id);
         }
-      },
-      [group_id]
-    );
-  });
+        let mem = response.data.members;
+        setMembers(mem);
+        setIsMembers(true);
+        setGit(response.data.gitlab_url);
+        setComp(ENUM_STATES["joined"]);
+      } else if (msg === msg2) {
+        console.log("I'm msg 1");
+        if (FIRST === 0) {
+          FIRST += 1;
+          // no groupid since not in group
+          setGroup_id("");
+        }
+        setMembers("");
+        setIsMembers(false);
+        setGit(null);
+        setComp(ENUM_STATES["notJoined"]);
+        console.log("I'm msg 2");
+      } else if (msg === msg3) {
+        if (FIRST === 0) {
+          FIRST += 1;
+          setGroup_id("");
+        }
+        let mem = response.data.members;
+        setMembers(mem);
+        setIsMembers(true);
+        setGit(null);
+        setComp(ENUM_STATES["invited"]);
+        console.log("I'm msg 3");
+      }
+    });
+  }, [group_id]);
 
   return (
     <div id="code_page">

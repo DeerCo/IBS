@@ -237,7 +237,7 @@ let invite = async (course_id, group_id, username) => {
 let uninvite = async (course_id, group_id, username) => {
   let token = localStorage.getItem("token");
   try {
-    return await axios.post(
+    return await axios.delete(
       process.env.REACT_APP_API_URL +
         "/course/" +
         course_id +
