@@ -25,6 +25,7 @@ let TaInterviewPage = () => {
 	let [selectedHost, setSelectedHost] = useState("");
 	let [selectedLength, setSelectedLength] = useState("");
 	let [selectedNote, setSelectedNote] = useState("");
+	let [selectedCancelled, setSelectedCancelled] = useState("");
 
 	// track the entered
 	let [enteredTime, setEnteredTime] = useState("");
@@ -76,7 +77,8 @@ let TaInterviewPage = () => {
 							group_id: interview.group_id,
 							length: interview.length,
 							location: interview.location,
-							note: interview.note
+							note: interview.note,
+							cancelled: interview.cancelled
 						},
 						backgroundColor: colour
 					};
@@ -234,6 +236,7 @@ let TaInterviewPage = () => {
 								setSelectedHost(info.event.extendedProps.host);
 								setSelectedLength(info.event.extendedProps.length);
 								setSelectedNote(info.event.extendedProps.note);
+								setSelectedCancelled(info.event.extendedProps.cancelled);
 
 								setOpen(true);
 							}
@@ -252,6 +255,7 @@ let TaInterviewPage = () => {
 								<span className="d-block text-gray-dark"> Host: {selectedHost} </span>
 								<span className="d-block text-gray-dark"> Length: {selectedLength.toString()} </span>
 								<span className="d-block text-gray-dark"> Note: {selectedNote === null ? "null" : selectedNote} </span>
+								<span className="d-block text-gray-dark"> Cancelled: {selectedCancelled.toString()} </span>
 								<strong className="d-block text-gray-dark"> Location: {selectedLocation.startsWith("http") ? <a href={selectedLocation}>Link ✈</a> : selectedLocation} </strong>
 								<strong className="d-block text-gray-dark"> Group ID: {selectedGroupId === null ? "null" : selectedGroupId} </strong>
 								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interview(task, selectedId) }}>
