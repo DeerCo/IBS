@@ -148,7 +148,7 @@ router.post("/", (req, res) => {
                 "interview_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 0 MINVALUE 0 ), " +
                 'task character varying NOT NULL, "time" timestamp with time zone NOT NULL, ' +
                 "host character varying NOT NULL, group_id integer, length integer, " +
-                "location character varying DEFAULT 'Zoom', note character varying, " +
+                "location character varying DEFAULT 'Zoom', note character varying, cancelled boolean NOT NULL DEFAULT false, " +
                 'PRIMARY KEY (interview_id), UNIQUE(task, "time", host), ' +
                 "CONSTRAINT task FOREIGN KEY (task) REFERENCES " + task_table_name + " (task) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID, " +

@@ -23,7 +23,7 @@ router.delete("/", (req, res) => {
             return;
         }
 
-        let sql_check = "SELECT interview_id, to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS time, location FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2)";
+        let sql_check = "SELECT interview_id, to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS time, location FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2) AND cancelled = false";
         client.query(sql_check, [group_id, res.locals["task"]], (err, pg_res_check) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });

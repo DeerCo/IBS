@@ -41,7 +41,7 @@ router.post("/", (req, res) => {
             res.status(400).json({ message: "You need to join a group before booking an interview." });
             return;
         }
-        let sql_check = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS time FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2)";
+        let sql_check = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS time FROM course_" + res.locals["course_id"] + ".interview WHERE group_id = ($1) AND task = ($2) AND cancelled = false";
         client.query(sql_check, [group_id, res.locals["task"]], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });
@@ -51,7 +51,7 @@ router.post("/", (req, res) => {
             if (pgRes.rowCount === 1) {
                 res.status(409).json({ message: "You already have an existing interview for " + res.locals["task"] + " at " + pgRes.rows[0]["time"] + "." });
             } else {
-                let sql_book = "UPDATE course_" + res.locals["course_id"] + ".interview SET group_id = ($1) WHERE interview_id = (SELECT interview_id FROM course_" + res.locals["course_id"] + ".interview WHERE task = ($2) AND time = ($3) AND group_id IS NULL AND location = ($4) LIMIT 1 FOR UPDATE)";
+                let sql_book = "UPDATE course_" + res.locals["course_id"] + ".interview SET group_id = ($1) WHERE interview_id = (SELECT interview_id FROM course_" + res.locals["course_id"] + ".interview WHERE task = ($2) AND time = ($3) AND group_id IS NULL AND location = ($4) AND cancelled = false LIMIT 1 FOR UPDATE)";
                 client.query(sql_book, [group_id, res.locals["task"], time, location], (err, pgRes) => {
                     if (err) {
                         res.status(404).json({ message: "Unknown error." });

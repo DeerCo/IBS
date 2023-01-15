@@ -115,7 +115,7 @@ function interview_data_filter(query, start_data_id, others_interview, username)
 		data_id += 1;
 		data.push(query["date"] + " America/Toronto");
 	}
-	if ("group_id" in query && !name_validate(query["group_id"])) {
+	if ("group_id" in query && !number_validate(query["group_id"])) {
 		filter = filter + " AND group_id = ($" + data_id + ")";
 		data_id += 1;
 		data.push(query["group_id"]);
@@ -134,6 +134,11 @@ function interview_data_filter(query, start_data_id, others_interview, username)
 		filter = filter + " AND note = ($" + data_id + ")";
 		data_id += 1;
 		data.push(query["note"]);
+	}
+	if ("cancelled" in query && !boolean_validate(query["cancelled"])) {
+		filter = filter + " AND cancelled = ($" + data_id + ")";
+		data_id += 1;
+		data.push(query["cancelled"]);
 	}
 
 	if (others_interview && "host" in query && !name_validate(query["host"])) { // potentially return other's interview
@@ -161,6 +166,11 @@ function interview_data_set_new(query, start_data_id) {
 		data_id += 1;
 		data.push(query["set_time"] + " America/Toronto");
 	}
+	if ("set_group_id" in query && !number_validate(query["set_group_id"])) {
+		set = set + " group_id = ($" + data_id + "),";
+		data_id += 1;
+		data.push(query["set_group_id"]);
+	}
 	if ("set_length" in query && !number_validate(query["set_length"])) {
 		set = set + " length = ($" + data_id + "),";
 		data_id += 1;
@@ -175,6 +185,11 @@ function interview_data_set_new(query, start_data_id) {
 		set = set + " note = ($" + data_id + "),";
 		data_id += 1;
 		data.push(query["set_note"]);
+	}
+	if ("set_cancelled" in query && !boolean_validate(query["set_cancelled"])) {
+		set = set + " cancelled = ($" + data_id + "),";
+		data_id += 1;
+		data.push(query["set_cancelled"]);
 	}
 	return { set: set, data: data, data_id: data_id };
 }
