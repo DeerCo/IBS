@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import StudentApi from "../../api/student_api";
 
 const Form = (props) => {
@@ -12,7 +11,11 @@ const Form = (props) => {
       StudentApi.invite(props.course_id, props.group_id, username)
         .then((response) => {
           props.changeMsg(response.data.message);
-          StudentApi.handleAddMembers(props.addMembers);
+          StudentApi.check_group(props.course_id, props.task).then(
+            (response) => {
+              props.addMembers(response.data.members);
+            }
+          );
         })
         .catch((error) => {
           props.changeMsg(error.response.data.message);
@@ -21,7 +24,11 @@ const Form = (props) => {
       StudentApi.uninvite(props.course_id, props.group_id, username)
         .then((response) => {
           props.changeMsg(response.data.message);
-          StudentApi.handleAddMembers(props.addMembers);
+          StudentApi.check_group(props.course_id, props.task).then(
+            (response) => {
+              props.addMembers(response.data.members);
+            }
+          );
         })
         .catch((error) => {
           props.changeMsg(error.response.data.message);

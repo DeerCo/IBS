@@ -48,65 +48,74 @@ const Group = () => {
         task={task}
       />
     ),
-    notJoined: <NotJoined changeGroup={setGroup_id} />,
-    invited: <Invited changeGroup={setGroup_id} />,
+    notJoined: (
+      <NotJoined changeGroup={setGroup_id} course_id={course_id} task={task} />
+    ),
+    invited: (
+      <Invited changeGroup={setGroup_id} course_id={course_id} task={task} />
+    ),
   };
-
+  // set the details on the page
   useEffect(() => {
     if (FIRST === 0) {
-      let details = StudentApi.details(course_id, task);
-      setDue(details.data.before_due_date.due_date);
-      setDueEx(details.data.before_due_date.due_date_with_extension);
-      setDueExTo(
-        details.data.before_due_date.due_date_with_extension_and_token
-      );
-      setMaxToken(details.data.before_due_date.max_token);
-      setTokenLen(details.data.before_due_date.token_length);
-      setCommit(details.data.before_due_date.commit_id);
-      setCommitTime(details.data.before_due_date.commit_time);
-      setCommitMsg(details.data.before_due_date.commit_message);
-      setTokenUsed(details.data.before_due_date.token_used);
-      if ("collected" in details.data) {
-        setCollectCommit(details.data.collected.commit_id);
-        setCollectTokenUsed(details.data.collected.token_used);
-      }
+      StudentApi.details(course_id, task).then((response) => {
+        setDue(response.data.before_due_date.due_date);
+        setDueEx(response.data.before_due_date.due_date_with_extension);
+        setDueExTo(
+          response.data.before_due_date.due_date_with_extension_and_token
+        );
+        setMaxToken(response.data.before_due_date.max_token);
+        setTokenLen(response.data.before_due_date.token_length);
+        setCommit(response.data.before_due_date.commit_id);
+        setCommitTime(response.data.before_due_date.commit_time);
+        setCommitMsg(response.data.before_due_date.commit_message);
+        setTokenUsed(response.data.before_due_date.token_used);
+        if ("collected" in response.data) {
+          setCollectCommit(response.data.collected.commit_id);
+          setCollectTokenUsed(response.data.collected.token_used);
+        }
+      });
     }
 
-    let res = StudentApi.check_group(course_id, task);
-    const msg = res.data.message;
+    StudentApi.check_group(course_id, task).then(
+      (response) => {
+        const msg = response.data.message;
 
-    if (msg === msg1) {
-      if (FIRST === 0) {
-        FIRST += 1;
-        setGroup_id(res.data.group_id);
-      }
-      let mem = res.data.members;
-      setMembers(mem);
-      setIsMembers(true);
-      setGit(res.data.gitlab_url);
-      setComp(ENUM_STATES["joined"]);
-    } else if (msg === msg2) {
-      if (FIRST === 0) {
-        FIRST += 1;
-        // no groupid since not in group
-        setGroup_id("");
-      }
-      setMembers("");
-      setIsMembers(false);
-      setGit(null);
-      setComp(ENUM_STATES["notJoined"]);
-    } else if (msg === msg3) {
-      if (FIRST === 0) {
-        FIRST += 1;
-        setGroup_id("");
-      }
-      let mem = res.data.members;
-      setMembers(mem);
-      setIsMembers(true);
-      setGit(null);
-      setComp(ENUM_STATES["invited"]);
-    }
-  }, [group_id]);
+        if (msg === msg1) {
+          if (FIRST === 0) {
+            FIRST += 1;
+            setGroup_id(response.data.group_id);
+          }
+          let mem = response.data.members;
+          setMembers(mem);
+          setIsMembers(true);
+          setGit(response.data.gitlab_url);
+          setComp(ENUM_STATES["joined"]);
+        } else if (msg === msg2) {
+          if (FIRST === 0) {
+            FIRST += 1;
+            // no groupid since not in group
+            setGroup_id("");
+          }
+          setMembers("");
+          setIsMembers(false);
+          setGit(null);
+          setComp(ENUM_STATES["notJoined"]);
+        } else if (msg === msg3) {
+          if (FIRST === 0) {
+            FIRST += 1;
+            setGroup_id("");
+          }
+          let mem = response.data.members;
+          setMembers(mem);
+          setIsMembers(true);
+          setGit(null);
+          setComp(ENUM_STATES["invited"]);
+        }
+      },
+      [group_id]
+    );
+  });
 
   return (
     <div id="code_page">

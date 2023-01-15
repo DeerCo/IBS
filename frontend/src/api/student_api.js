@@ -250,6 +250,72 @@ let uninvite = async (course_id, group_id, username) => {
   }
 };
 
+const handleCreate = async (course_id, curr_task) => {
+  let token = localStorage.getItem("token");
+  try {
+    return await axios.post(
+      process.env.REACT_APP_API_URL + "/course/" + course_id + "/group/create",
+      { task: curr_task },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+  } catch (err) {
+    return err.response;
+  }
+};
+
+let accept = async (course_id, group_id) => {
+  let token = localStorage.getItem("token");
+  try {
+    return await axios.put(
+      process.env.REACT_APP_API_URL + "course/" + course_id + "/group/accept",
+      {
+        course_id: course_id,
+        group_id: group_id,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+  } catch (err) {
+    return err.response;
+  }
+};
+
+let reject = async (course_id, group_id) => {
+  let token = localStorage.getItem("token");
+  try {
+    return await axios.delete(
+      process.env.REACT_APP_API_URL + "course/" + course_id + "/group/reject",
+      {
+        course_id: course_id,
+        group_id: group_id,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+  } catch (err) {
+    return err.response;
+  }
+};
+
+// axios
+//   .post(
+//     API_URL + "course/" + course_id + "/group/create",
+//     { task: "a1" },
+//     config
+//   )
+//   .then((response) => {
+//     axios
+//       .get(
+//         API_URL + "course/" + course_id + "/group/check?task=" + "a1",
+//         config
+//       )
+//       .then((response) => {
+//         changeGroup(response.data.group_id);
+//       });
+//   });
+
 let StudentApi = {
   // Task related
   all_tasks,
@@ -273,6 +339,9 @@ let StudentApi = {
   details,
   invite,
   uninvite,
+  handleCreate,
+  accept,
+  reject,
 };
 
 export default StudentApi;
