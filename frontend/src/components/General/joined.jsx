@@ -1,6 +1,5 @@
-import StudentApi from "../services/auth_services";
 import Form from "./form";
-import "../styles/style.css";
+import "../../styles/style.css";
 import { useState } from "react";
 
 const Joined = (props) => {

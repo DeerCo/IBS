@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "../../../styles/style.css";
+import { useParams } from "react-router-dom";
 import Invited from "../../General/invited";
 import NotJoined from "../../General/notJoined";
 import Joined from "../../General/joined";
@@ -8,7 +9,7 @@ import StudentApi from "../../../api/student_api";
 // allows for certain behaviours to only happen on first render
 let FIRST = 0;
 
-const Group = () => {
+const GroupPage = () => {
   let { course_id, task } = useParams();
 
   const [comp, setComp] = useState("");
@@ -339,4 +340,4 @@ const Group = () => {
   );
 };
 
-export default Group;
+export default GroupPage;

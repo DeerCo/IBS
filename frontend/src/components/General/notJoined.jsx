@@ -1,4 +1,4 @@
-import StudentApi from "../services/auth_services";
+import StudentApi from "../../api/student_api";
 
 const NotJoined = (props) => {
   return (
@@ -9,7 +9,7 @@ const NotJoined = (props) => {
             (response) => {
               StudentApi.check_group(props.course_id, props.task).then(
                 (response) => {
-                  changeGroup(response.data.group_id);
+                  props.changeGroup(response.data.group_id);
                 }
               );
             }

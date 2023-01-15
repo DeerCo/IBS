@@ -1,4 +1,4 @@
-import StudentApi from "../services/auth_services";
+import StudentApi from "../../api/student_api";
 
 const Invited = (props) => {
   return (
