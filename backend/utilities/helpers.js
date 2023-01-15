@@ -7,8 +7,13 @@ const axios = require("axios");
 const transporter = require("../setup/email");
 const db = require("../setup/db");
 
-function generateAccessToken(username, email, admin, roles) {
-	return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
+function generateAccessToken(username, email, admin, role) {
+	if (role === "student") {
+		var expire = "30m";
+	} else {
+		var expire = "15m";
+	}
+	return jwt.sign({ username: username, email: email, admin: admin, role: role }, process.env.TOKEN_SECRET, { expiresIn: expire });
 }
 
 function name_validate(name) {
@@ -525,7 +530,7 @@ async function gitlab_create_group_and_project_no_user(course_id, group_id, task
 
 async function gitlab_create_group_and_project_with_user(course_id, group_id, username, task) {
 	let add_project = await gitlab_create_group_and_project_no_user(course_id, group_id, task);
-	if (add_project["success"] === false){
+	if (add_project["success"] === false) {
 		return add_project;
 	}
 
@@ -978,32 +983,32 @@ async function copy_groups(course_id, from_task, to_task) {
 	let group_user = {};
 
 	let pg_res_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
-	for (let row of pg_res_group_user.rows){
-		if (row["group_id"] in group_user){
+	for (let row of pg_res_group_user.rows) {
+		if (row["group_id"] in group_user) {
 			group_user[row["group_id"]].push(row["username"]);
-		} else{
+		} else {
 			group_user[row["group_id"]] = [row["username"]];
 		}
 	}
 
-	for (let old_group_id in group_user){
+	for (let old_group_id in group_user) {
 		// Add a new group in db
 		let pg_res_add_group = await db.query("INSERT INTO course_" + course_id + ".group (task) VALUES (($1)) RETURNING group_id", [to_task]);
 		let new_group_id = pg_res_add_group.rows[0]["group_id"];
 
 		// Create a new project on gitlab for the new group
 		let add_project = await gitlab_create_group_and_project_no_user(course_id, new_group_id, to_task);
-		if (add_project["success"] === false){
-			results.push({group_id: old_group_id, code: add_project["code"]});
-		} else{
-			for (let user of group_user[old_group_id]){
+		if (add_project["success"] === false) {
+			results.push({ group_id: old_group_id, code: add_project["code"] });
+		} else {
+			for (let user of group_user[old_group_id]) {
 				// Add user to the new group in db
 				let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
-				if (!err_add_user){
+				if (!err_add_user) {
 					// Add user to the new project on gitlab
 					add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
-					if (add_user["success"] === false){
-						results.push({username: user, code: add_user["code"]});
+					if (add_user["success"] === false) {
+						results.push({ username: user, code: add_user["code"] });
 					}
 				}
 			}
