@@ -61,7 +61,8 @@ const GroupPage = () => {
     console.log("here");
     if (FIRST === 0) {
       StudentApi.details(course_id, task).then((response) => {
-        setDue(response.data.before_due_date.due_date);
+        console.log(response);
+        setDue(response["before_due_date"].due_date);
         setDueEx(response.data.before_due_date.due_date_with_extension);
         setDueExTo(
           response.data.before_due_date.due_date_with_extension_and_token
