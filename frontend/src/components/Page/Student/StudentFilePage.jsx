@@ -98,7 +98,7 @@ let StudentFilePage = () => {
 		return (
 			<div>
 				<div>
-					<NavBar page="File" />
+					<NavBar page="Feedback File" />
 
 					<div className="divider"> </div>
 
