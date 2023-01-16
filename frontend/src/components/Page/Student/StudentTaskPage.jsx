@@ -44,7 +44,6 @@ let StudentTaskPage = () => {
 										<div className="card-body">
 											<h3 className="card-text mb-3">{data.task}</h3>
 											{ data.interview_group === null && <p className="card-text">Original Due Date: {data.due_date}</p>}
-											{ data.interview_group === null && <p className="card-text">Group Size: {data.min_member} {data.min_member === data.max_member ? "": " -- " + data.max_member}</p>}
 											{ data.interview_group !== null && <p className="card-text">Interview Only</p>}
 											{ data.interview_group !== null && <p className="card-text">Using the Same Group as <i>{data.interview_group}</i></p>}
 											<div className="btn-group">

@@ -14,6 +14,11 @@ let StudentDetailsPage = () => {
 
 	let [version, setVersion] = useState(0);
 
+	// Task data
+	let [min_member, setMinMember] = useState(0);
+	let [max_member, setMaxMember] = useState(0);
+	let [changeGroup, setChangeGroup] = useState(true);
+
 	// Group data
 	let [status, setStatus] = useState("not_joined");
 	let [group_id, setGroupId] = useState("");
@@ -34,15 +39,18 @@ let StudentDetailsPage = () => {
 	let [collectTokenUsed, setCollectTokenUsed] = useState(null);
 
 	useEffect(() => {
-		StudentApi.check_group(course_id, task).then(
-			(group_response) => {
-				if (!group_response || !("status" in group_response)) {
+		StudentApi.get_task(course_id, task).then(
+			(task_response) => {
+				if (!task_response || !("status" in task_response)) {
 					toast.error("Unknown error", { theme: "colored" });
 					navigate("/login");
 					return;
-				} else if (group_response["status"] === 200) {
-
-				} else if (group_response["status"] === 401 || group_response["status"] === 403) {
+				} else if (task_response["status"] === 200) {
+					let task_data = task_response["data"]["task"];
+					setMinMember(task_data["min_member"]);
+					setMaxMember(task_data["max_member"]);
+					setChangeGroup(task_data["change_group"]);
+				} else if (task_response["status"] === 401 || task_response["status"] === 403) {
 					toast.warn("You need to login again", { theme: "colored" });
 					navigate("/login");
 					return;
@@ -52,55 +60,76 @@ let StudentDetailsPage = () => {
 					return;
 				}
 
-				if (group_response["data"]["message"] === "You have joined a group.") {
-					setStatus("joined");
-					setGroupId(group_response["data"]["group_id"]);
-					setMembers(group_response["data"]["members"]);
-					setGit(group_response["data"]["gitlab_url"]);
-
-					StudentApi.check_submission(course_id, task).then((submission_response) => {
-						if (!submission_response || !("status" in submission_response)) {
+				StudentApi.check_group(course_id, task).then(
+					(group_response) => {
+						if (!group_response || !("status" in group_response)) {
 							toast.error("Unknown error", { theme: "colored" });
 							navigate("/login");
-						} else if (submission_response["status"] === 200) {
-							let submission_data = submission_response["data"];
+							return;
+						} else if (group_response["status"] === 200) {
 
-							let before_due_date = submission_data["before_due_date"];
-							setDue(before_due_date["due_date"]);
-							setDueEx(before_due_date["due_date_with_extension"]);
-							setDueExTo(before_due_date["due_date_with_extension_and_token"]);
-							setMaxToken(before_due_date["max_token"]);
-							setTokenLen(before_due_date["token_length"]);
-							setCommit(before_due_date["commit_id"]);
-							setCommitTime(before_due_date["commit_time"]);
-							setCommitMsg(before_due_date["commit_message"]);
-							setTokenUsed(before_due_date["token_used"]);
-
-							if ("collected" in submission_data) {
-								let collected = submission_data["before_due_date"];
-								setCollectCommit(collected["commit_id"]);
-								setCollectTokenUsed(collected["token_used"]);
-							}
-						} else if (submission_response["status"] === 401 || submission_response["status"] === 403) {
+						} else if (group_response["status"] === 401 || group_response["status"] === 403) {
 							toast.warn("You need to login again", { theme: "colored" });
 							navigate("/login");
+							return;
 						} else {
 							toast.error("Unknown error", { theme: "colored" });
 							navigate("/login");
+							return;
 						}
-					});
-				} else if (group_response["data"]["message"] === "You are not in a group.") {
-					setStatus("not_joined");
-					setGroupId("");
-					setMembers("");
-					setGit(null);
-				} else if (group_response["data"]["message"] === "You have been invited to join a group.") {
-					setStatus("invited");
-					setGroupId(group_response["data"]["group_id"]);
-					setMembers(group_response["data"]["members"]);
-					setGit(null);
-				}
-			});
+
+						if (group_response["data"]["message"] === "You have joined a group.") {
+							setStatus("joined");
+							setGroupId(group_response["data"]["group_id"]);
+							setMembers(group_response["data"]["members"]);
+							setGit(group_response["data"]["gitlab_url"]);
+
+							StudentApi.check_submission(course_id, task).then((submission_response) => {
+								if (!submission_response || !("status" in submission_response)) {
+									toast.error("Unknown error", { theme: "colored" });
+									navigate("/login");
+								} else if (submission_response["status"] === 200) {
+									let submission_data = submission_response["data"];
+
+									let before_due_date = submission_data["before_due_date"];
+									setDue(before_due_date["due_date"]);
+									setDueEx(before_due_date["due_date_with_extension"]);
+									setDueExTo(before_due_date["due_date_with_extension_and_token"]);
+									setMaxToken(before_due_date["max_token"]);
+									setTokenLen(before_due_date["token_length"]);
+									setCommit(before_due_date["commit_id"]);
+									setCommitTime(before_due_date["commit_time"]);
+									setCommitMsg(before_due_date["commit_message"]);
+									setTokenUsed(before_due_date["token_used"]);
+
+									if ("collected" in submission_data) {
+										let collected = submission_data["before_due_date"];
+										setCollectCommit(collected["commit_id"]);
+										setCollectTokenUsed(collected["token_used"]);
+									}
+								} else if (submission_response["status"] === 401 || submission_response["status"] === 403) {
+									toast.warn("You need to login again", { theme: "colored" });
+									navigate("/login");
+								} else {
+									toast.error("Unknown error", { theme: "colored" });
+									navigate("/login");
+								}
+							});
+						} else if (group_response["data"]["message"] === "You are not in a group.") {
+							setStatus("not_joined");
+							setGroupId("");
+							setMembers("");
+							setGit(null);
+						} else if (group_response["data"]["message"] === "You have been invited to join a group.") {
+							setStatus("invited");
+							setGroupId(group_response["data"]["group_id"]);
+							setMembers(group_response["data"]["members"]);
+							setGit(null);
+						}
+					}
+				)
+			}
+		);
 	}, [course_id, task, status, group_id, version, navigate]);
 
 	let create_group = (course_id, task) => {
@@ -261,6 +290,11 @@ let StudentDetailsPage = () => {
 
 									<hr />
 
+									<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
+									<h5>Leaving group has been disabled</h5>
+
+									<hr />
+
 									<ul>
 										{members.map((member) => (
 											<li key={member.username + member.status} className="align-left">
@@ -276,13 +310,20 @@ let StudentDetailsPage = () => {
 
 									<hr />
 
-									<InviteMember course_id={course_id} task={task} version={version} setVersion={setVersion} />
+									{(members.length < max_member) && <InviteMember course_id={course_id} task={task} version={version} setVersion={setVersion} />}
 								</div>
 							}
 
 							{status === "not_joined" &&
 								<div>
 									<h4>You are not in a group</h4>
+
+									<hr />
+
+									<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
+									{changeGroup && max_member > 1 && <h5>Ask a group member to invite you if you want to join an existing group</h5>}
+									{changeGroup && <h5>You cannot switch to another group once you create a new group</h5>}
+									{!changeGroup && <h5>Modifying group has been disabled</h5>}
 
 									<hr />
 
@@ -295,6 +336,11 @@ let StudentDetailsPage = () => {
 							{status === "invited" &&
 								<div>
 									<h4>You have been invited to join group {group_id}</h4>
+
+									<hr />
+
+									<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
+									<h5>Reject the invitation to create a new group</h5>
 
 									<hr />
 

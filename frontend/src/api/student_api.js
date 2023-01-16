@@ -8,10 +8,21 @@ let all_tasks = async (course_id) => {
 	};
 
 	try {
-		return await axios.get(
-			process.env.REACT_APP_API_URL + "/course/" + course_id + "/task/all",
-			config
-		);
+		return await axios.get(process.env.REACT_APP_API_URL + "/course/" + course_id + "/task/all", config);
+	} catch (err) {
+		return err.response;
+	}
+};
+
+let get_task = async (course_id, task) => {
+	let token = sessionStorage.getItem("token");
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` },
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/course/" + course_id + "/task/get?task=" + task, config);
 	} catch (err) {
 		return err.response;
 	}
@@ -26,10 +37,7 @@ let get_mark = async (course_id, task) => {
 	};
 
 	try {
-		return await axios.get(
-			process.env.REACT_APP_API_URL + "/course/" + course_id + "/mark",
-			config
-		);
+		return await axios.get(process.env.REACT_APP_API_URL + "/course/" + course_id + "/mark", config);
 	} catch (err) {
 		return err.response;
 	}
@@ -44,10 +52,7 @@ let all_files = async (course_id, task) => {
 	};
 
 	try {
-		return await axios.get(
-			process.env.REACT_APP_API_URL + "/course/" + course_id + "/file/all",
-			config
-		);
+		return await axios.get(process.env.REACT_APP_API_URL + "/course/" + course_id + "/file/all", config);
 	} catch (err) {
 		return err.response;
 	}
@@ -85,13 +90,7 @@ let available_interviews = async (course_id, task) => {
 	};
 
 	try {
-		return await axios.get(
-			process.env.REACT_APP_API_URL +
-			"/course/" +
-			course_id +
-			"/interview/available",
-			config
-		);
+		return await axios.get(process.env.REACT_APP_API_URL + "/course/" + course_id + "/interview/available", config);
 	} catch (err) {
 		return err.response;
 	}
@@ -276,6 +275,7 @@ let reject_invitation = async (course_id, task) => {
 let StudentApi = {
 	// Task related
 	all_tasks,
+	get_task,
 
 	// Mark related
 	get_mark,
