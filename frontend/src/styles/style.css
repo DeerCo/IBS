@@ -367,3 +367,12 @@ input[type=password] {
     height: 100vh;
     margin: 0;
 }
+
+.inviteButtons{
+    display: flex;
+    
+}
+
+.size{
+    width: 50%;
+}
