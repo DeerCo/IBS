@@ -101,6 +101,7 @@ const GroupPage = () => {
           // no groupid since not in group
           setGroup_id("");
         }
+        console.log("not joined");
         setMembers("");
         setIsMembers(false);
         setGit(null);

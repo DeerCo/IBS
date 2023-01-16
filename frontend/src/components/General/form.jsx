@@ -56,7 +56,7 @@ const Form = (props) => {
           <div className="row justify-content-center ">
             <button
               type="submit"
-              className="m-1 btn btn-secondary size groupbtn"
+              className="m-1 btn btn-secondary groupbtn size"
             >
               {props.action}
             </button>
