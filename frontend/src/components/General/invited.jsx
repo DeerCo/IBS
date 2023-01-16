@@ -5,6 +5,7 @@ const Invited = (props) => {
     <>
       <button
         onClick={() => {
+          console.log("accept");
           StudentApi.check_group(props.course_id, props.task).then(
             (response) => {
               let group_id = response.data.group_id;

@@ -28,6 +28,7 @@ const GroupPage = () => {
   const [tokenUsed, setTokenUsed] = useState("");
   const [commitTime, setCommitTime] = useState("");
   const [maxToken, setMaxToken] = useState("");
+  const [ingroup, setIngroup] = useState(false);
 
   // after collected info
   const [collectCommit, setCollectCommit] = useState(null);
@@ -57,12 +58,12 @@ const GroupPage = () => {
     ),
   };
   // set the details on the page
+  // need to join a group to check submissions
+
   useEffect(() => {
-    console.log("here");
-    if (FIRST === 0) {
+    if (ingroup) {
       StudentApi.details(course_id, task).then((response) => {
-        console.log(response);
-        setDue(response["before_due_date"].due_date);
+        setDue(response.data.before_due_date.due_date);
         setDueEx(response.data.before_due_date.due_date_with_extension);
         setDueExTo(
           response.data.before_due_date.due_date_with_extension_and_token
@@ -79,7 +80,7 @@ const GroupPage = () => {
         }
       });
     }
-    console.log(task);
+
     StudentApi.check_group(course_id, task).then((response) => {
       const msg = response.data.message;
 
@@ -93,8 +94,8 @@ const GroupPage = () => {
         setIsMembers(true);
         setGit(response.data.gitlab_url);
         setComp(ENUM_STATES["joined"]);
+        setIngroup(true);
       } else if (msg === msg2) {
-        console.log("I'm msg 1");
         if (FIRST === 0) {
           FIRST += 1;
           // no groupid since not in group
@@ -104,7 +105,7 @@ const GroupPage = () => {
         setIsMembers(false);
         setGit(null);
         setComp(ENUM_STATES["notJoined"]);
-        console.log("I'm msg 2");
+        setIngroup(false);
       } else if (msg === msg3) {
         if (FIRST === 0) {
           FIRST += 1;
@@ -115,39 +116,13 @@ const GroupPage = () => {
         setIsMembers(true);
         setGit(null);
         setComp(ENUM_STATES["invited"]);
-        console.log("I'm msg 3");
+        setIngroup(false);
       }
     });
   }, [group_id]);
 
   return (
     <div id="code_page">
-      <script src="prism.js"></script>
-
-      <nav id="navbar">
-        <div id="inner">
-          <a href="student_first_page.html">
-            <p className="logo2">IBS</p>
-          </a>
-
-          <a className="button second" href="#">
-            Interview
-          </a>
-
-          <a className="button" href="#">
-            Files
-          </a>
-
-          <a className="button" href="#">
-            Grades
-          </a>
-
-          <a className="button" href="#">
-            A1
-          </a>
-        </div>
-      </nav>
-
       <div className="divider"> </div>
 
       <div className="tabset">
@@ -158,126 +133,136 @@ const GroupPage = () => {
           aria-controls="marzen"
           checked
         />
-        <label>Description</label>
+        {/* <label>Description</label> */}
 
         <input type="radio" name="tabset" id="tab2" aria-controls="rauchbier" />
         {/* <label>Submissions</label> */}
 
         <div className="tab-panels">
           <section id="marzen" className="tab-panel">
-            <p className="aname">{task}</p>
+            <h4 className="aname">{task}</h4>
             <div className="card-box-special row">
               <div className="col-7 my-2">
                 <div className="p-3 bg-body rounded shadow-sm">
-                  <h5 className="border-bottom pb-2 mb-0">Requirements</h5>
-                  <div className="d-flex text-muted pt-3">
-                    <p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-                      <strong className="d-block text-gray-dark">
-                        Due Date
-                      </strong>
-                      The due date is: <b>{due}</b>
-                    </p>
-                  </div>
-                  <div className="d-flex text-muted pt-3">
-                    <div className="pb-3 mb-0 small lh-sm border-bottom w-100">
-                      <strong className="d-block text-gray-dark">
-                        Due Date after Extension
-                      </strong>
-                      <ul className="list-unstyled my-1">
-                        <li>
-                          The due date after the extension is applied (if
-                          applicable) is: <b>{dueEx}</b>
-                        </li>
-                      </ul>
-                      <br></br>
-                      <strong className="d-block text-gray-dark">
-                        Due Date after Extension and Token
-                      </strong>
-                      <ul className="list-unstyled my-1">
-                        <li>
-                          Each Token extends the deadline by {tokenLen} minutes.{" "}
-                          <br></br>The due date after the extension (if
-                          applicable) and after all the tokens have been applied
-                          is <b>{dueExTo}</b>.
-                        </li>
-                      </ul>
-                      <br></br>
-                      <strong className="d-block text-gray-dark">Tokens</strong>
-                      <ul className="list-unstyled my-1">
-                        <li>
-                          You have max <b>{maxToken} tokens</b> and if you
-                          submit now, this submission will use{" "}
-                          <b>{tokenUsed} tokens</b>.
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="d-flex text-muted pt-3">
-                    <p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-                      <strong className="d-block text-gray-dark">
-                        Latest Commit
-                      </strong>
-                      <br></br>
-                      {commit && (
-                        <ul className="list-unstyled my-1">
-                          <li>
-                            Your latest commit id is:<b>{commit}</b>
-                          </li>
+                  <h5 className="border-bottom pb-2 mb-0">Assignment Info</h5>
+                  {ingroup && (
+                    <div>
+                      {/* here */}
+                      <div className="d-flex text-muted pt-3">
+                        <p className="pb-3 mb-0 small lh-sm border-bottom w-100">
+                          <strong className="d-block text-gray-dark">
+                            Due Date
+                          </strong>
+                          The due date is: <b>{due}</b>
+                        </p>
+                      </div>
+                      <div className="d-flex text-muted pt-3">
+                        <div className="pb-3 mb-0 small lh-sm border-bottom w-100">
+                          <strong className="d-block text-gray-dark">
+                            Due Date after Extension
+                          </strong>
+                          <ul className="list-unstyled my-1">
+                            <li>
+                              The due date after the extension is applied (if
+                              applicable) is: <b>{dueEx}</b>
+                            </li>
+                          </ul>
+                          <br></br>
+                          <strong className="d-block text-gray-dark">
+                            Due Date after Extension and Token
+                          </strong>
+                          <ul className="list-unstyled my-1">
+                            <li>
+                              Each Token extends the deadline by {tokenLen}{" "}
+                              minutes. <br></br>The due date after the extension
+                              (if applicable) and after all the tokens have been
+                              applied is <b>{dueExTo}</b>.
+                            </li>
+                          </ul>
+                          <br></br>
+                          <strong className="d-block text-gray-dark">
+                            Tokens
+                          </strong>
+                          <ul className="list-unstyled my-1">
+                            <li>
+                              You have max <b>{maxToken} tokens</b> and if you
+                              submit now, this submission will use{" "}
+                              <b>{tokenUsed} tokens</b>.
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="d-flex text-muted pt-3">
+                        <p className="pb-3 mb-0 small lh-sm border-bottom w-100">
+                          <strong className="d-block text-gray-dark">
+                            Latest Commit
+                          </strong>
+                          <br></br>
+                          {commit && (
+                            <ul className="list-unstyled my-1">
+                              <li>
+                                Your latest commit id is:<b>{commit}</b>
+                              </li>
 
-                          <li>
-                            The latest commit was made at <b>{commitTime} </b>
-                          </li>
+                              <li>
+                                The latest commit was made at{" "}
+                                <b>{commitTime} </b>
+                              </li>
 
-                          <li>
-                            The latest commit message was <b>"{commitMsg}"</b>
-                          </li>
-                        </ul>
-                      )}
-                      {!commit && (
-                        <ul className="list-unstyled my-1">
-                          <li>There are no commits to show</li>{" "}
-                        </ul>
-                      )}
-                    </p>
-                  </div>
-                  <div className="d-flex text-muted pt-3">
-                    <div className="pb-3 mb-0 small lh-sm border-bottom w-100">
-                      <strong className="d-block text-gray-dark">
-                        Repository URL
-                      </strong>
-                      <ul className="list-unstyled my-1">
-                        <li>
-                          HTTPS:{" "}
-                          <a href={git}>
-                            {!git &&
-                              "Please join a group to get a repository link"}
-                            {git && git}
-                          </a>
-                        </li>
-                      </ul>
+                              <li>
+                                The latest commit message was{" "}
+                                <b>"{commitMsg}"</b>
+                              </li>
+                            </ul>
+                          )}
+                          {!commit && (
+                            <ul className="list-unstyled my-1">
+                              <li>There are no commits to show</li>{" "}
+                            </ul>
+                          )}
+                        </p>
+                      </div>
+                      <div className="d-flex text-muted pt-3">
+                        <div className="pb-3 mb-0 small lh-sm border-bottom w-100">
+                          <strong className="d-block text-gray-dark">
+                            Repository URL
+                          </strong>
+                          <ul className="list-unstyled my-1">
+                            <li>
+                              HTTPS:{" "}
+                              {/* <a href={git}>
+                                {!git &&
+                                  "Please join a group to get a repository link"}
+                                {git && git}
+                              </a> */}
+                              {git}
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="d-flex text-muted pt-3">
+                        <p className="pb-3 mb-0 small lh-sm border-bottom w-100">
+                          <strong className="d-block text-gray-dark">
+                            After Due Date
+                          </strong>
+                          {!collectCommit &&
+                            "The final due date has not yet passed"}
+                          {collectCommit && (
+                            <ul className="list-unstyled my-1">
+                              <li>
+                                The last collected commit was :{" "}
+                                <b>{collectCommit}</b> and{" "}
+                                <b>{collectTokenUsed}</b> tokens have been used
+                              </li>
+                            </ul>
+                          )}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="d-flex text-muted pt-3">
-                    <p className="pb-3 mb-0 small lh-sm border-bottom w-100">
-                      <strong className="d-block text-gray-dark">
-                        After Due Date
-                      </strong>
-                      {!collectCommit &&
-                        "The final due date has not yet passed"}
-                      {collectCommit && (
-                        <ul className="list-unstyled my-1">
-                          <li>
-                            The last collected commit was :{" "}
-                            <b>{collectCommit}</b> and <b>{collectTokenUsed}</b>{" "}
-                            tokens have been used
-                          </li>
-                        </ul>
-                      )}
-                    </p>
-                  </div>
-                  <small className="d-block text-end mt-3">
-                    <a href="#">Assignment Page</a>
-                  </small>
+                  )}
+                  {!ingroup && (
+                    <p>Please join a group to view the assignment info</p>
+                  )}
                 </div>
               </div>
 

@@ -208,7 +208,7 @@ let details = async (course_id, curr_task) => {
   try {
     return await axios.get(
       process.env.REACT_APP_API_URL +
-        "course/" +
+        "/course/" +
         course_id +
         "/submission/check?task=" +
         curr_task,
@@ -242,8 +242,10 @@ let uninvite = async (course_id, group_id, username) => {
         "/course/" +
         course_id +
         "/group/disinvite",
-      { group_id: group_id, username: username },
-      { headers: { Authorization: `Bearer ${token}` } }
+      {
+        data: { group_id: group_id, username: username },
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
   } catch (err) {
     return err.response;
@@ -267,7 +269,7 @@ let accept = async (course_id, group_id) => {
   let token = localStorage.getItem("token");
   try {
     return await axios.put(
-      process.env.REACT_APP_API_URL + "course/" + course_id + "/group/accept",
+      process.env.REACT_APP_API_URL + "/course/" + course_id + "/group/accept",
       {
         course_id: course_id,
         group_id: group_id,
@@ -285,36 +287,21 @@ let reject = async (course_id, group_id) => {
   let token = localStorage.getItem("token");
   try {
     return await axios.delete(
-      process.env.REACT_APP_API_URL + "course/" + course_id + "/group/reject",
+      process.env.REACT_APP_API_URL + "/course/" + course_id + "/group/reject",
       {
-        course_id: course_id,
-        group_id: group_id,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
+        data: {
+          course_id: course_id,
+          group_id: group_id,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
   } catch (err) {
     return err.response;
   }
 };
-
-// axios
-//   .post(
-//     API_URL + "course/" + course_id + "/group/create",
-//     { task: "a1" },
-//     config
-//   )
-//   .then((response) => {
-//     axios
-//       .get(
-//         API_URL + "course/" + course_id + "/group/check?task=" + "a1",
-//         config
-//       )
-//       .then((response) => {
-//         changeGroup(response.data.group_id);
-//       });
-//   });
 
 let StudentApi = {
   // Task related

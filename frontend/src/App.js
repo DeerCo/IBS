@@ -41,7 +41,7 @@ function App() {
             element={<StudentInterviewPage />}
           ></Route>
           <Route
-            path="/course/:course_id/task/:task/groupPage"
+            path="/course/:course_id/task/:task/group"
             element={<GroupPage />}
           ></Route>
 
