@@ -253,7 +253,7 @@ let StudentDetailsPage = () => {
 									{commit && (
 										<div>
 											<p>The commit id is: <b>{commit}</b></p>
-											<p>The commit time is <b>{commitTime} </b></p>
+											<p>The commit time is: <b>{commitTime} </b></p>
 											<p>The commit message is: <b>{commitMsg}</b></p>
 											<p>This commit uses {tokenUsed} token(s)</p>
 										</div>

@@ -1,9 +1,7 @@
 import React from "react";
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 let NavBar = (props) => {
-	let navigate = useNavigate();
-
 	let username = sessionStorage.getItem("username");
 	let roles = JSON.parse(sessionStorage.getItem("roles"));
 
@@ -17,11 +15,6 @@ let NavBar = (props) => {
 			}
 		}
 	} 
-
-	let logout = () => {
-		navigate("/login");
-		navigate(0);
-	};
 	
 	return (
 		<div>
@@ -39,7 +32,7 @@ let NavBar = (props) => {
 
 					<div className="d-flex justify-content-end">
 						<div className="button mx-3"> {username} </div>
-						<Link className="button mx-3" onClick={logout}> Logout </Link>
+						<Link className="button mx-3" to="/login"> Logout </Link>
 					</div>
 				</div>
 			</nav>
