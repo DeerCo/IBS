@@ -327,11 +327,6 @@ input[type=password] {
     background-color: #fafafa;
 }
 
-.code_box {
-    overflow: scroll;
-    height: 600px;
-}
-
 
 #highlight {
     background: #f5f2f0;
@@ -365,4 +360,9 @@ input[type=password] {
 
 .inviteButtons{
     display: flex;
+}
+
+#details_page{
+    width: 95%;
+    height: 95%
 }

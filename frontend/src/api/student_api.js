@@ -187,13 +187,13 @@ let check_submission = async (course_id, task) => {
 	}
 };
 
-let invite_member = async (course_id, group_id, username) => {
+let invite_member = async (course_id, task, username) => {
 	let token = sessionStorage.getItem("token");
 
 	let headers = { headers: { Authorization: `Bearer ${token}` } };
 
 	let data = {
-		group_id: group_id,
+		task: task,
 		username: username,
 	};
 
@@ -204,11 +204,11 @@ let invite_member = async (course_id, group_id, username) => {
 	}
 };
 
-let uninvite_member = async (course_id, group_id, username) => {
+let uninvite_member = async (course_id, task, username) => {
 	let token = sessionStorage.getItem("token");
 
 	let config = {
-		data: { group_id: group_id, username: username },
+		data: { task: task, username: username },
 		headers: { Authorization: `Bearer ${token}` },
 	};
 
@@ -236,14 +236,14 @@ let create_group = async (course_id, task) => {
 	}
 };
 
-let accept_invitation = async (course_id, group_id) => {
+let accept_invitation = async (course_id, task) => {
 	let token = sessionStorage.getItem("token");
 
 	let headers = { headers: { Authorization: `Bearer ${token}` } };
 
 	let data = {
 		course_id: course_id,
-		group_id: group_id
+		task: task
 	};
 
 	try {
@@ -253,13 +253,13 @@ let accept_invitation = async (course_id, group_id) => {
 	}
 };
 
-let reject_invitation = async (course_id, group_id) => {
+let reject_invitation = async (course_id, task) => {
 	let token = sessionStorage.getItem("token");
 
 	let config = {
 		data: {
 			course_id: course_id,
-			group_id: group_id,
+			task: task,
 		},
 		headers: {
 			Authorization: `Bearer ${token}`,

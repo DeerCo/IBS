@@ -9,6 +9,8 @@ let LoginPage = () => {
 	let [username, setUsername] = useState("");
 	let [password, setPassword] = useState("");
 
+	window.sessionStorage.clear();
+
 	let onChangeUsername = (e) => {
 		let username = e.target.value;
 		setUsername(username);

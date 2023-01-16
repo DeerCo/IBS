@@ -16,7 +16,7 @@ let InviteMember = (props) => {
 		} else if (username === sessionStorage.getItem("username")){
 			toast.error("You cannot invite yourself :)", { theme: "colored" });
 		} else{
-			StudentApi.invite_member(props.course_id, props.group_id, username).then((response) => {
+			StudentApi.invite_member(props.course_id, props.task, username).then((response) => {
 				if (!response || !("status" in response)) {
 					toast.error("Unknown error", { theme: "colored" });
 					navigate("/login");

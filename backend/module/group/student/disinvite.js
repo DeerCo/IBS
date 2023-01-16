@@ -8,20 +8,20 @@ router.delete("/", (req, res) => {
 		res.status(400).json({ message: "Changing group is not allowed for this task." });
 		return;
 	}
-
-	if (!("group_id" in req.body) || helpers.number_validate(req.body["group_id"])) {
-		res.status(400).json({ message: "The group id is missing or invalid." });
+	if (res.locals["task"] === "") {
+		res.status(400).json({ message: "The task is missing or invalid." });
 		return;
 	}
+
 	if (!("username" in req.body) || helpers.name_validate(req.body["username"])) {
 		res.status(400).json({ message: "The username is missing or has invalid format." });
 		return;
 	}
 
-	let sql_select_user = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1) AND username = ($2) AND status = 'confirmed'";
-	let sql_disinvite = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1) AND username = ($2) AND status = 'pending'";
+	let sql_select_user = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE task = ($1) AND username = ($2) AND status = 'confirmed'";
+	let sql_disinvite = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE task = ($1) AND username = ($2) AND status = 'pending'";
 
-	client.query(sql_select_user, [req.body["group_id"], res.locals["username"]], (err, pgRes) => {
+	client.query(sql_select_user, [res.locals["task"] , res.locals["username"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);
@@ -30,7 +30,7 @@ router.delete("/", (req, res) => {
 			res.status(403).json({ message: "You don't have access to cancel the invitation." });
 			return;
 		} else {
-			client.query(sql_disinvite, [req.body["group_id"], req.body["username"]], (err, pgRes) => {
+			client.query(sql_disinvite, [res.locals["task"] , req.body["username"]], (err, pgRes) => {
 				if (err) {
 					res.status(404).json({ message: "Unknown error." });
 					console.log(err);

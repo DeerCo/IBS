@@ -19,7 +19,6 @@ let NavBar = (props) => {
 	} 
 
 	let logout = () => {
-		window.sessionStorage.clear();
 		navigate("/login");
 		navigate(0);
 	};

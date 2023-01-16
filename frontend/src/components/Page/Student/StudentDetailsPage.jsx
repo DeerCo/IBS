@@ -128,8 +128,8 @@ let StudentDetailsPage = () => {
 		})
 	};
 
-	let accept_invitation = (course_id, group_id) => {
-		StudentApi.accept_invitation(course_id, group_id).then((response) => {
+	let accept_invitation = (course_id, task) => {
+		StudentApi.accept_invitation(course_id, task).then((response) => {
 			if (!response || !("status" in response)) {
 				toast.error("Unknown error", { theme: "colored" });
 				navigate("/login");
@@ -148,8 +148,8 @@ let StudentDetailsPage = () => {
 		})
 	};
 
-	let reject_invitation = (course_id, group_id) => {
-		StudentApi.reject_invitation(course_id, group_id).then((response) => {
+	let reject_invitation = (course_id, task) => {
+		StudentApi.reject_invitation(course_id, task).then((response) => {
 			if (!response || !("status" in response)) {
 				toast.error("Unknown error", { theme: "colored" });
 				navigate("/login");
@@ -168,8 +168,8 @@ let StudentDetailsPage = () => {
 		})
 	};
 
-	let uninvite_member = (course_id, group_id, username) => {
-		StudentApi.uninvite_member(course_id, group_id, username).then((response) => {
+	let uninvite_member = (course_id, task, username) => {
+		StudentApi.uninvite_member(course_id, task, username).then((response) => {
 			if (!response || !("status" in response)) {
 				toast.error("Unknown error", { theme: "colored" });
 				navigate("/login");
@@ -192,136 +192,134 @@ let StudentDetailsPage = () => {
 		<div>
 			<NavBar page="Details" />
 
-			<div>
-				<section>
-					<h2>{task} Details</h2>
+			<div id="details_page">
+				<h2>{task} Details</h2>
 
-					<hr />
+				<hr />
 
-					<div className="card-box-special row">
-						<div className="col-7 my-2">
-							<div className="bg-body rounded shadow-sm">
-								{status === "joined" && (
-									<div>
-										<h4> Due Date </h4>
-										<p> Original Due Date: <b>{due}</b></p>
-										<p> Due Date after Extension: <b>{dueEx}</b></p>
-										<p> Due Date after Extension and Token: <b>{dueExTo}</b></p>
+				<div className="card-box-special row">
+					<div className="col-7 my-2">
+						<div className="bg-body rounded shadow-sm">
+							{status === "joined" && (
+								<div>
+									<h4> Due Date </h4>
+									<p> Original Due Date: <b>{due}</b></p>
+									<p> Due Date after Extension: <b>{dueEx}</b></p>
+									<p> Due Date after Extension and Token: <b>{dueExTo}</b></p>
 
-										<hr />
+									<hr />
 
-										<h4> Gitlab URL </h4>
-										<p><a href={git}>{git}</a></p>
+									<h4> Gitlab URL </h4>
+									<p><a href={git}>{git}</a></p>
 
-										<hr />
+									<hr />
 
-										<h4> Token </h4>
-										<p> At most <b>{maxToken}</b> token(s) can be used for this task</p>
-										<p> Each token can extend the due date by <b>{tokenLen}</b> minutes</p>
+									<h4> Token </h4>
+									<p> At most <b>{maxToken}</b> token(s) can be used for this task</p>
+									<p> Each token can extend the due date by <b>{tokenLen}</b> minutes</p>
 
-										<hr />
+									<hr />
 
-										<h4> Last Commit Before Due Date </h4>
-										{commit && (
-											<div>
-												<p>The commit id is: <b>{commit}</b></p>
-												<p>The commit time is <b>{commitTime} </b></p>
-												<p>The commit message is: <b>{commitMsg}</b></p>
-												<p>This commit uses {tokenUsed} token(s)</p>
-											</div>
-										)}
+									<h4> Last Commit Before Due Date </h4>
+									{commit && (
+										<div>
+											<p>The commit id is: <b>{commit}</b></p>
+											<p>The commit time is <b>{commitTime} </b></p>
+											<p>The commit message is: <b>{commitMsg}</b></p>
+											<p>This commit uses {tokenUsed} token(s)</p>
+										</div>
+									)}
 
-										{!commit && (
-											<p>There are no commits to show</p>
-										)}
+									{!commit && (
+										<p>No commit before due date is found</p>
+									)}
 
-										<hr />
+									<hr />
 
-										<h4> Collected Commit </h4>
-										{!collectCommit && "No submission has been collected yet"}
-										{collectCommit && (
-											<div>
-												<p>The commit id is: <b>{collectCommit}</b></p>
-												<p>This commit uses {collectTokenUsed} token(s)</p>
-											</div>
-										)}
-									</div>
-								)}
+									<h4> Collected Commit </h4>
+									{!collectCommit && "No submission has been collected yet"}
+									{collectCommit && (
+										<div>
+											<p>The commit id is: <b>{collectCommit}</b></p>
+											<p>This commit uses {collectTokenUsed} token(s)</p>
+										</div>
+									)}
+								</div>
+							)}
 
-								{status !== "joined" && (
-									<h4>Please join a group to view the task details</h4>
-								)}
-							</div>
-						</div>
-
-						<div className="col-5 my-2">
-							<div className="p-3 bg-body rounded shadow-sm">
-								{status === "joined" &&
-									<div>
-										<h4>You have joined group {group_id}</h4>
-
-										<hr />
-
-										<ul>
-											{members.map((member) => (
-												<li key={member.username + member.status} className="align-left">
-													<strong>{member.username}</strong> ({member.status})
-													{member.status === "pending" &&
-														<button onClick={() => { uninvite_member(course_id, group_id, member.username) }} className="btn" title="Cancel the invitation">
-															❌
-														</button>
-													}
-												</li>
-											))}
-										</ul>
-
-										<hr />
-
-										<InviteMember group_id={group_id} course_id={course_id} task={task} version={version} setVersion={setVersion} />
-									</div>
-								}
-
-								{status === "not_joined" &&
-									<div>
-										<h4>You are not in a group</h4>
-
-										<hr />
-
-										<button onClick={() => { create_group(course_id, task) }} className="btn btn-primary btn-lg m-2" id="create_group_button">
-											Create a New Group
-										</button>
-									</div>
-								}
-
-								{status === "invited" &&
-									<div>
-										<h4>You have been invited to join group {group_id}</h4>
-
-										<hr />
-										
-										<ul>
-											{members.map((member) => (
-												<li key={member.username + member.status} className="align-left">
-													<strong>{member.username}</strong> ({member.status})
-												</li>
-											))}
-										</ul>
-
-										<hr />
-
-										<button onClick={() => { accept_invitation(course_id, group_id) }} className="btn btn-primary btn-lg m-2">
-											Accept the invitation
-										</button>
-
-										<button onClick={() => { reject_invitation(course_id, group_id) }} className="btn btn-primary btn-lg m-2">
-											Reject the invitation
-										</button>
-									</div>
-								}
-							</div>
+							{status !== "joined" && (
+								<h4>Please join a group to view the task details</h4>
+							)}
 						</div>
 					</div>
-				</section>
+
+					<div className="col-5 my-2">
+						<div className="p-3 bg-body rounded shadow-sm">
+							{status === "joined" &&
+								<div>
+									<h4>You have joined group {group_id}</h4>
+
+									<hr />
+
+									<ul>
+										{members.map((member) => (
+											<li key={member.username + member.status} className="align-left">
+												<strong>{member.username}</strong> ({member.status})
+												{member.status === "pending" &&
+													<button onClick={() => { uninvite_member(course_id, task, member.username) }} className="btn" title="Cancel the invitation">
+														❌
+													</button>
+												}
+											</li>
+										))}
+									</ul>
+
+									<hr />
+
+									<InviteMember course_id={course_id} task={task} version={version} setVersion={setVersion} />
+								</div>
+							}
+
+							{status === "not_joined" &&
+								<div>
+									<h4>You are not in a group</h4>
+
+									<hr />
+
+									<button onClick={() => { create_group(course_id, task) }} className="btn btn-primary btn-lg m-2" id="create_group_button">
+										Create a New Group
+									</button>
+								</div>
+							}
+
+							{status === "invited" &&
+								<div>
+									<h4>You have been invited to join group {group_id}</h4>
+
+									<hr />
+
+									<ul>
+										{members.map((member) => (
+											<li key={member.username + member.status} className="align-left">
+												<strong>{member.username}</strong> ({member.status})
+											</li>
+										))}
+									</ul>
+
+									<hr />
+
+									<button onClick={() => { accept_invitation(course_id, task) }} className="btn btn-primary btn-lg m-2">
+										Accept the invitation
+									</button>
+
+									<button onClick={() => { reject_invitation(course_id, task) }} className="btn btn-primary btn-lg m-2">
+										Reject the invitation
+									</button>
+								</div>
+							}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

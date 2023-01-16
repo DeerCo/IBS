@@ -8,15 +8,14 @@ router.delete("/", (req, res) => {
 		res.status(400).json({ message: "Changing group is not allowed for this task." });
 		return;
 	}
-
-	if (!("group_id" in req.body) || helpers.number_validate(req.body["group_id"])) {
-		res.status(400).json({ message: "The group id is missing or invalid." });
+	if (res.locals["task"] === "") {
+		res.status(400).json({ message: "The task is missing or invalid." });
 		return;
 	}
 
-	let sql_reject = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
+	let sql_reject = "DELETE FROM course_" + res.locals["course_id"] + ".group_user WHERE username = ($1) AND task = ($2) AND status = 'pending'";
 
-	client.query(sql_reject, [res.locals["username"], req.body["group_id"]], (err, pgRes) => {
+	client.query(sql_reject, [res.locals["username"], res.locals["task"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);

@@ -8,23 +8,23 @@ router.put("/", (req, res) => {
 		res.status(400).json({ message: "Changing group is not allowed for this task." });
 		return;
 	}
-
-	if (!("group_id" in req.body) || helpers.number_validate(req.body["group_id"])) {
-		res.status(400).json({ message: "The group id is missing or invalid." });
+	if (res.locals["task"] === "") {
+		res.status(400).json({ message: "The task is missing or invalid." });
 		return;
 	}
 
-	let sql_accept = "UPDATE course_" + res.locals["course_id"] + ".group_user SET status = 'confirmed' WHERE username = ($1) AND group_id = ($2) AND status = 'pending'";
+	let sql_accept = "UPDATE course_" + res.locals["course_id"] + ".group_user SET status = 'confirmed' WHERE username = ($1) AND task = ($2) AND status = 'pending' RETURNING group_id";
 
-	client.query(sql_accept, [res.locals["username"], req.body["group_id"]], (err, pgRes) => {
+	client.query(sql_accept, [res.locals["username"], res.locals["task"]], (err, pgRes) => {
 		if (err) {
 			res.status(404).json({ message: "Unknown error." });
 			console.log(err);
 		} else if (pgRes.rowCount === 1) {
-			helpers.gitlab_add_user_without_gitlab_group_id(res.locals["course_id"], req.body["group_id"], res.locals["username"]).then(result => {
+			let group_id = pgRes.rows[0]["group_id"];
+			helpers.gitlab_add_user_without_gitlab_group_id(res.locals["course_id"], group_id, res.locals["username"]).then(result => {
 				if (result["success"] === true) {
 					let message = "User has been added to the group.";
-					res.status(200).json({ message: message, group_id: req.body["group_id"], gitlab_url: result["gitlab_url"] });
+					res.status(200).json({ message: message, group_id: group_id, gitlab_url: result["gitlab_url"] });
 				} else if (result["code"] === "project_not_exist") {
 					res.status(404).json({ message: "A Gitlab project wasn't created for this group. Please contact system admin." });
 				} else if (result["code"] === "failed_add_user") {
