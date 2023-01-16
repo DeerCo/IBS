@@ -54,28 +54,26 @@ let all_files = async (course_id, curr_task) => {
 };
 
 let download_file = async (course_id, task, file_id, file_name) => {
-  let token = localStorage.getItem("token");
+	let token = localStorage.getItem("token");
 
-  let config = {
-    headers: { Authorization: `Bearer ${token}` },
-    params: { task: task, file_id: file_id },
-  };
+	let config = {
+		headers: { Authorization: `Bearer ${token}` },
+		params: { task: task, file_id: file_id },
+		responseType: "blob"
+	};
 
-  try {
-    let response = await axios.get(
-      process.env.REACT_APP_API_URL + "/course/" + course_id + "/file/retrieve",
-      config
-    );
-    let temp_url = window.URL.createObjectURL(new Blob([response.data]));
-    let link = document.createElement("a");
-    link.href = temp_url;
-    link.setAttribute("download", file_name); //or any other extension
-    document.body.appendChild(link);
-    link.click();
-    return response;
-  } catch (err) {
-    return err.response;
-  }
+	try {
+		let response = await axios.get(process.env.REACT_APP_API_URL + "/course/" + course_id + "/file/retrieve", config);
+		let temp_url = window.URL.createObjectURL(new Blob([response.data]));
+		let link = document.createElement('a');
+		link.href = temp_url;
+		link.setAttribute('download', file_name); //or any other extension
+		document.body.appendChild(link);
+		link.click();
+		return response;
+	} catch (err) {
+		return err.response;
+	}
 };
 
 let available_interviews = async (course_id, curr_task) => {

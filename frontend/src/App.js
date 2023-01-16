@@ -14,10 +14,13 @@ import TaTaskPage from "./components/Page/Ta/TaTaskPage";
 import TaInterviewPage from "./components/Page/Ta/TaInterviewPage";
 
 function App() {
-  return (
-    <div>
-      <ToastContainer />
-
+	return (
+		<div>
+			<ToastContainer 
+				limit={3}
+				position="top-center"
+			/>
+      
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />}></Route>

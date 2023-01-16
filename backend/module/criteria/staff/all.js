@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
         return;
     }
 
-    let sql_criteria = "SELECT * FROM course_" + res.locals["course_id"] + ".criteria WHERE task = ($1)";
+    let sql_criteria = "SELECT * FROM course_" + res.locals["course_id"] + ".criteria WHERE task = ($1) ORDER BY criteria_id";
     client.query(sql_criteria, [res.locals["task"]], (err, pg_res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });

@@ -3,6 +3,7 @@ const router = express.Router();
 
 const middleware = require("../module/auth/student/middleware");
 const all_tasks = require("../module/task/student/all");
+const get_task = require("../module/task/student/get");
 const check_group = require("../module/group/student/check");
 const create_group = require("../module/group/student/create");
 const leave_group = require("../module/group/student/leave");
@@ -30,11 +31,12 @@ router.use("/course/", middleware);
 
 // Task
 router.use("/course/:course_id/task/all", all_tasks);
+router.use("/course/:course_id/task/get", get_task);
 
 // Group
 router.use("/course/:course_id/group/check", check_group);
 router.use("/course/:course_id/group/create", create_group);
-router.use("/course/:course_id/group/leave", leave_group);
+// router.use("/course/:course_id/group/leave", leave_group);
 router.use("/course/:course_id/group/invite", invite_group);
 router.use("/course/:course_id/group/disinvite", disinvite_group);
 router.use("/course/:course_id/group/accept", accept_group);

@@ -5,6 +5,7 @@ const middleware = require("../module/auth/ta/middleware");
 const get_token = require("../module/token/staff/get");
 const change_token = require("../module/token/staff/change");
 const all_tasks = require("../module/task/staff/all");
+const get_task = require("../module/task/staff/get");
 const add_task = require("../module/task/staff/add");
 const change_task = require("../module/task/staff/change");
 const all_task_group = require("../module/task_group/staff/all");
@@ -17,8 +18,10 @@ const change_criteria = require("../module/criteria/staff/change");
 const delete_criteria = require("../module/criteria/staff/delete");
 const check_group = require("../module/group/staff/check");
 const create_group = require("../module/group/staff/create");
+const copy_groups = require("../module/group/staff/copy");
 const add_member = require("../module/group/staff/add");
 const remove_member = require("../module/group/staff/remove");
+const change_extension = require("../module/group/staff/extension");
 const upload_files = require("../module/file/staff/upload");
 const download_files = require("../module/file/staff/download");
 const delete_files = require("../module/file/staff/delete");
@@ -49,6 +52,7 @@ router.use("/course/", middleware);
 
 // Task
 router.use("/course/:course_id/task/all", all_tasks);
+router.use("/course/:course_id/task/get", get_task);
 
 // Criteria
 router.use("/course/:course_id/criteria/all", all_criteria);
@@ -58,6 +62,7 @@ router.use("/course/:course_id/group/check", check_group);
 router.use("/course/:course_id/group/create", create_group);
 router.use("/course/:course_id/group/add", add_member);
 router.use("/course/:course_id/group/remove", remove_member);
+router.use("/course/:course_id/group/extension", change_extension);
 
 // File
 router.use("/course/:course_id/file/upload", upload_files);

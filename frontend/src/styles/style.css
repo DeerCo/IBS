@@ -1,11 +1,12 @@
 /* BASIC */
+@import url('https://fonts.googleapis.com/css2?family=Doppio+One&display=swap');
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "react-toastify/dist/ReactToastify.css";
 @import "./tab.css";
 
 
 body {
-    font-family: 'Silkscreen', cursive;
+    font-family: 'Doppio One', sans-serif;
     height: 100vh;
     justify-content: center;
     text-align: center;
@@ -16,6 +17,10 @@ a {
     display: inline-block;
     text-decoration: none;
     font-weight: 400;
+}
+
+img {
+    max-height: 25vh;
 }
 
 /* STRUCTURE */
@@ -280,13 +285,14 @@ input[type=password] {
 }
 
 #navbar {
+    z-index: 10;
     margin-left: 0;
     margin-right: 0;
     position: fixed;
     display: block;
     width: 100%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    background-color: white;
+    background-color: yellow;
 }
 
 #inner {
@@ -351,13 +357,7 @@ input[type=password] {
 }
 
 .popup {
-    z-index: 99999;
-}
-
-.curtain {
-    z-index: 99998;
-    --bs-bg-opacity: .5;
-    height: 850px;
+    z-index: 2;
 }
 
 .center {

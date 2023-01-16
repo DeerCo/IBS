@@ -7,8 +7,13 @@ const axios = require("axios");
 const transporter = require("../setup/email");
 const db = require("../setup/db");
 
-function generateAccessToken(username, email, admin, roles) {
-	return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: "2h" });
+function generateAccessToken(username, email, admin, role) {
+	if (role === "student") {
+		var expire = "30m";
+	} else {
+		var expire = "15m";
+	}
+	return jwt.sign({ username: username, email: email, admin: admin, role: role }, process.env.TOKEN_SECRET, { expiresIn: expire });
 }
 
 function name_validate(name) {
@@ -37,7 +42,7 @@ function boolean_validate(string) {
 }
 
 function number_validate(number) {
-	if (number === null || isNaN(Number(number))) {
+	if (number === null || isNaN(Number(number)) || number.toString().trim() === "") {
 		return 1;
 	}
 	return 0;
@@ -73,7 +78,7 @@ function time_validate(time) {
 }
 
 function password_validate(password) {
-	let regex = new RegExp(".+");
+	let regex = new RegExp(".{8,}");
 	if (!regex.test(password)) {
 		return 1;
 	} else {
@@ -95,7 +100,7 @@ async function task_validate(course_id, task, student) {
 	}
 }
 
-function query_filter(query, start_data_id) {
+function interview_data_filter(query, start_data_id, others_interview, username) {
 	let filter = "";
 	let data = [];
 	let data_id = start_data_id;
@@ -115,7 +120,7 @@ function query_filter(query, start_data_id) {
 		data_id += 1;
 		data.push(query["date"] + " America/Toronto");
 	}
-	if ("group_id" in query && !name_validate(query["group_id"])) {
+	if ("group_id" in query && !number_validate(query["group_id"])) {
 		filter = filter + " AND group_id = ($" + data_id + ")";
 		data_id += 1;
 		data.push(query["group_id"]);
@@ -135,10 +140,28 @@ function query_filter(query, start_data_id) {
 		data_id += 1;
 		data.push(query["note"]);
 	}
+	if ("cancelled" in query && !boolean_validate(query["cancelled"])) {
+		filter = filter + " AND cancelled = ($" + data_id + ")";
+		data_id += 1;
+		data.push(query["cancelled"]);
+	}
+
+	if (others_interview && "host" in query && !name_validate(query["host"])) { // potentially return other's interview
+		if (query["host"] !== "all") {
+			filter = filter + " AND host = ($" + data_id + ")";
+			data_id += 1;
+			data.push(query["host"]);
+		}
+	} else { // restrict to user's interview
+		filter = filter + " AND host = ($" + data_id + ")";
+		data_id += 1;
+		data.push(username);
+	}
+
 	return { filter: filter, data: data, data_id: data_id };
 }
 
-function query_set(query, start_data_id) {
+function interview_data_set_new(query, start_data_id) {
 	let set = "";
 	let data = [];
 	let data_id = start_data_id;
@@ -147,6 +170,11 @@ function query_set(query, start_data_id) {
 		set = set + " time = ($" + data_id + "),";
 		data_id += 1;
 		data.push(query["set_time"] + " America/Toronto");
+	}
+	if ("set_group_id" in query && !number_validate(query["set_group_id"])) {
+		set = set + " group_id = ($" + data_id + "),";
+		data_id += 1;
+		data.push(query["set_group_id"]);
 	}
 	if ("set_length" in query && !number_validate(query["set_length"])) {
 		set = set + " length = ($" + data_id + "),";
@@ -162,6 +190,11 @@ function query_set(query, start_data_id) {
 		set = set + " note = ($" + data_id + "),";
 		data_id += 1;
 		data.push(query["set_note"]);
+	}
+	if ("set_cancelled" in query && !boolean_validate(query["set_cancelled"])) {
+		set = set + " cancelled = ($" + data_id + "),";
+		data_id += 1;
+		data.push(query["set_cancelled"]);
 	}
 	return { set: set, data: data, data_id: data_id };
 }
@@ -439,7 +472,7 @@ async function gitlab_get_user_id(username) {
 	}
 }
 
-async function gitlab_create_group_and_project(course_id, group_id, username, task) {
+async function gitlab_create_group_and_project_no_user(course_id, group_id, task) {
 	// Get the gitlab group id
 	let pg_res_gitlab_course_group_id = await db.query("SELECT gitlab_group_id FROM course WHERE course_id = ($1)", [course_id])
 	if (pg_res_gitlab_course_group_id.rowCount !== 1) {
@@ -492,8 +525,17 @@ async function gitlab_create_group_and_project(course_id, group_id, username, ta
 	let sql_add_gitlab_info = "UPDATE course_" + course_id + ".group SET gitlab_group_id = ($1), gitlab_project_id = ($2), gitlab_url = ($3) WHERE group_id = ($4)";
 	await db.query(sql_add_gitlab_info, [gitlab_subgroup_id, gitlab_project_id, gitlab_url, group_id]);
 
+	return { success: true, gitlab_group_id: gitlab_subgroup_id, gitlab_project_id: gitlab_project_id, gitlab_url: gitlab_url }
+}
+
+async function gitlab_create_group_and_project_with_user(course_id, group_id, username, task) {
+	let add_project = await gitlab_create_group_and_project_no_user(course_id, group_id, task);
+	if (add_project["success"] === false) {
+		return add_project;
+	}
+
 	// Add the user to the subgroup
-	return await gitlab_add_user_with_gitlab_group_id(gitlab_subgroup_id, gitlab_url, username);
+	return await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], add_project["gitlab_url"], username);
 }
 
 async function gitlab_add_user_with_gitlab_group_id(gitlab_group_id, gitlab_url, username) {
@@ -916,17 +958,64 @@ async function download_all_submissions(course_id, task) {
 		let group_id = row["group_id"];
 		let pg_res_gitlab_url = await db.query("SELECT gitlab_url FROM course_" + course_id + ".group WHERE group_id = ($1)", [group_id]);
 		let pg_res_commit_id = await db.query("SELECT commit_id FROM course_" + course_id + ".submission WHERE group_id = ($1)", [group_id]);
+
+		let gitlab_url = pg_res_gitlab_url.rows[0]["gitlab_url"];
+		let regex = gitlab_url.match(/https:\/\/([^\/]*)\/(.*)/);
+		let ssh_clone_url = "git@" + regex[1] + ":" + regex[2] + ".git";
+
 		if (pg_res_gitlab_url.rowCount === 1 && pg_res_commit_id.rowCount === 1) {
 			groups.push({
 				group_name: "group_" + group_id,
 				group_id: group_id,
-				gitlab_url: pg_res_gitlab_url.rows[0]["gitlab_url"],
+				gitlab_url: gitlab_url,
+				https_clone_url: gitlab_url + ".git",
+				ssh_clone_url: ssh_clone_url,
 				commit_id: pg_res_commit_id.rows[0]["commit_id"]
 			});
 		}
 	}
 
 	return groups;
+}
+
+async function copy_groups(course_id, from_task, to_task) {
+	let results = [];
+	let group_user = {};
+
+	let pg_res_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
+	for (let row of pg_res_group_user.rows) {
+		if (row["group_id"] in group_user) {
+			group_user[row["group_id"]].push(row["username"]);
+		} else {
+			group_user[row["group_id"]] = [row["username"]];
+		}
+	}
+
+	for (let old_group_id in group_user) {
+		// Add a new group in db
+		let pg_res_add_group = await db.query("INSERT INTO course_" + course_id + ".group (task) VALUES (($1)) RETURNING group_id", [to_task]);
+		let new_group_id = pg_res_add_group.rows[0]["group_id"];
+
+		// Create a new project on gitlab for the new group
+		let add_project = await gitlab_create_group_and_project_no_user(course_id, new_group_id, to_task);
+		if (add_project["success"] === false) {
+			results.push({ group_id: old_group_id, code: add_project["code"] });
+		} else {
+			for (let user of group_user[old_group_id]) {
+				// Add user to the new group in db
+				let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
+				if (!err_add_user) {
+					// Add user to the new project on gitlab
+					add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
+					if (add_user["success"] === false) {
+						results.push({ username: user, code: add_user["code"] });
+					}
+				}
+			}
+		}
+	}
+
+	return results;
 }
 
 
@@ -945,8 +1034,8 @@ module.exports = {
 	task_validate: task_validate,
 
 	// Utility
-	query_filter: query_filter,
-	query_set: query_set,
+	interview_data_filter: interview_data_filter,
+	interview_data_set_new: interview_data_set_new,
 	send_email: send_email,
 	send_email_by_group: send_email_by_group,
 	get_courses: get_courses,
@@ -979,9 +1068,13 @@ module.exports = {
 
 	// Gitlab related
 	gitlab_get_user_id: gitlab_get_user_id,
-	gitlab_create_group_and_project: gitlab_create_group_and_project,
+	gitlab_create_group_and_project_no_user: gitlab_create_group_and_project_no_user,
+	gitlab_create_group_and_project_with_user: gitlab_create_group_and_project_with_user,
 	gitlab_add_user_with_gitlab_group_id: gitlab_add_user_with_gitlab_group_id,
 	gitlab_add_user_without_gitlab_group_id: gitlab_add_user_without_gitlab_group_id,
 	gitlab_remove_user: gitlab_remove_user,
 	gitlab_get_commits: gitlab_get_commits,
+
+	// Group related
+	copy_groups: copy_groups,
 }

@@ -6,7 +6,6 @@ const format = require('pg-format');
 const path = require('path');
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
-const e = require("express");
 
 const upload = multer({
     dest: './tmp/upload/'
@@ -26,7 +25,13 @@ router.post("/", upload.single("file"), (req, res) => {
         return;
     }
 
-    let sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO NOTHING";
+    let roles = ["instructor", "ta", "student"];
+    if (!("role" in req.body) || !roles.includes(req.body["role"])) {
+        res.status(400).json({ message: "The role is missing or invalid." });
+        return;
+    }
+
+    let sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email";
     let sql_upload = "INSERT INTO course_role (username, course_id, role) VALUES %L ON CONFLICT (username, course_id) DO NOTHING; "
         + "INSERT INTO course_" + req.body["course_id"] + ".user (username) VALUES %L ON CONFLICT (username) DO NOTHING";
 
@@ -44,7 +49,7 @@ router.post("/", upload.single("file"), (req, res) => {
         for (let j = 1; j < csv_row.length; j++) {
             if (csv_row[j].length >= 1 && !(helpers.name_validate(csv_row[j][0]))) {
                 upload_data_users.push([csv_row[j][0]]);
-                upload_data_all.push([csv_row[j][0], req.body["course_id"], "student"]);
+                upload_data_all.push([csv_row[j][0], req.body["course_id"], req.body["role"]]);
                 if (csv_row[j].length >= 2 && csv_row[j][1] != "") {
                     if (helpers.email_validate(csv_row[j][1])) {
                         invalid_email += 1;
@@ -75,7 +80,7 @@ router.post("/", upload.single("file"), (req, res) => {
                             console.log(err);
                         }
                     } else {
-                        let message = pg_res_upload[0].rowCount + " students are added to the course.";
+                        let message = pg_res_upload[0].rowCount + " users are added to the course as " + req.body["role"] + ".";
                         res.status(200).json({ message: message, added: pg_res_upload[0].rowCount, registered: pg_res_register.rowCount, invalid_username: invalid_username, invalid_email: invalid_email });
                     }
                 });

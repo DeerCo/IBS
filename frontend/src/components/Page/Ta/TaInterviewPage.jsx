@@ -25,6 +25,7 @@ let TaInterviewPage = () => {
 	let [selectedHost, setSelectedHost] = useState("");
 	let [selectedLength, setSelectedLength] = useState("");
 	let [selectedNote, setSelectedNote] = useState("");
+	let [selectedCancelled, setSelectedCancelled] = useState("");
 
 	// track the entered
 	let [enteredTime, setEnteredTime] = useState("");
@@ -57,10 +58,18 @@ let TaInterviewPage = () => {
 				let interviews = response["data"]["interviews"];
 
 				for (let interview of interviews) {
+					let location_lower = interview.location.toLowerCase();
+					if (location_lower === "zoom" || location_lower === "online" || location_lower.startsWith("http")) {
+						var title = "💻";
+					} else {
+						var title = "🏫";
+					}
+
 					let colour = (interview.group_id === null ? "green" : "red");
 					let curr = {
-						start: '',
-						end: '',
+						title: title,
+						start: interview.start_time.replace(" ", "T"),
+						end: interview.end_time.replace(" ", "T"),
 						extendedProps: {
 							id: interview.interview_id,
 							task: interview.task,
@@ -68,12 +77,11 @@ let TaInterviewPage = () => {
 							group_id: interview.group_id,
 							length: interview.length,
 							location: interview.location,
-							note: interview.note
+							note: interview.note,
+							cancelled: interview.cancelled
 						},
 						backgroundColor: colour
 					};
-					curr.start = interview.start_time.replace(" ", "T");
-					curr.end = interview.end_time.replace(" ", "T");
 					temp_data.push(curr);
 				}
 
@@ -96,7 +104,7 @@ let TaInterviewPage = () => {
 		} else if (location === "") {
 			toast.error("The location cannot be empty", { theme: "colored" });
 		} else {
-			TaApi.schedule_interview(course_id, task, length, time).then(
+			TaApi.schedule_interview(course_id, task, length, time, location).then(
 				(response) => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });
@@ -175,7 +183,7 @@ let TaInterviewPage = () => {
 							name="time"
 							placeholder="time (YYYY-MM-DD HH:mm:ss)"
 							value={enteredTime}
-							onChange={onChangeTime} 
+							onChange={onChangeTime}
 						/>
 
 						<input type="text"
@@ -184,7 +192,7 @@ let TaInterviewPage = () => {
 							name="length"
 							placeholder="length (minutes)"
 							value={enteredLength}
-							onChange={onChangeLength} 
+							onChange={onChangeLength}
 						/>
 
 						<input type="text"
@@ -193,7 +201,7 @@ let TaInterviewPage = () => {
 							name="location"
 							placeholder="location"
 							value={enteredLocation}
-							onChange={onChangeLocation} 
+							onChange={onChangeLocation}
 						/>
 
 						<input type="submit" className="m-2" value="Schedule" onClick={() => schedule_interview(enteredTime, enteredLength, enteredLocation)} />
@@ -201,7 +209,7 @@ let TaInterviewPage = () => {
 				</div>
 
 				<div className="row card-box mt-3">
-					<div className="col-7" id='calendar'>
+					<div className="col-8" id='calendar'>
 						<FullCalendar
 							plugins={[dayGridPlugin, interactionPlugin]}
 							initialView="dayGridMonth"
@@ -217,7 +225,7 @@ let TaInterviewPage = () => {
 							eventTimeFormat={{// like '14:30:00'
 								hour: '2-digit',
 								minute: '2-digit',
-								meridiem: true
+								hour12: false
 							}}
 							eventClick={function (info) {
 								setSelectedId(info.event.extendedProps.id);
@@ -228,8 +236,9 @@ let TaInterviewPage = () => {
 								setSelectedHost(info.event.extendedProps.host);
 								setSelectedLength(info.event.extendedProps.length);
 								setSelectedNote(info.event.extendedProps.note);
+								setSelectedCancelled(info.event.extendedProps.cancelled);
 
-								setOpen(!open);
+								setOpen(true);
 							}
 							} />
 					</div>
@@ -240,14 +249,15 @@ let TaInterviewPage = () => {
 						{open && (
 							<div>
 								<h4 className="border-bottom pb-2 mb-2">Selected Interview</h4>
-								<strong className="d-block text-gray-dark"> Interview ID: {selectedId} </strong>
-								<strong className="d-block text-gray-dark"> Start time: {moment(selectedStart).format('MM/DD/YYYY, h:mm:ss a')} </strong>
-								<strong className="d-block text-gray-dark"> End time: {moment(selectedEnd).format('MM/DD/YYYY, h:mm:ss a')} </strong>
-								<strong className="d-block text-gray-dark"> Location: {selectedLocation} </strong>
+								<span className="d-block text-gray-dark"> Start time: {moment(selectedStart).format('MM/DD/YYYY, h:mm:ss a')} </span>
+								<span className="d-block text-gray-dark"> End time: {moment(selectedEnd).format('MM/DD/YYYY, h:mm:ss a')} </span>
+								<span className="d-block text-gray-dark"> Interview ID: {selectedId} </span>
+								<span className="d-block text-gray-dark"> Host: {selectedHost} </span>
+								<span className="d-block text-gray-dark"> Length: {selectedLength.toString()} </span>
+								<span className="d-block text-gray-dark"> Note: {selectedNote === null ? "null" : selectedNote} </span>
+								<span className="d-block text-gray-dark"> Cancelled: {selectedCancelled.toString()} </span>
+								<strong className="d-block text-gray-dark"> Location: {selectedLocation.startsWith("http") ? <a href={selectedLocation}>Link ✈</a> : selectedLocation} </strong>
 								<strong className="d-block text-gray-dark"> Group ID: {selectedGroupId === null ? "null" : selectedGroupId} </strong>
-								<strong className="d-block text-gray-dark"> Host: {selectedHost} </strong>
-								<strong className="d-block text-gray-dark"> Length: {selectedLength.toString()} </strong>
-								<strong className="d-block text-gray-dark"> Note: {selectedNote === null ? "null" : selectedNote} </strong>
 								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interview(task, selectedId) }}>
 									Delete
 								</button>

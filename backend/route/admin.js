@@ -3,6 +3,7 @@ const router = express.Router();
 
 const middleware = require("../module/auth/admin/middleware");
 const all_course = require("../module/course/admin/all");
+const get_course = require("../module/course/admin/get");
 const add_course = require("../module/course/admin/add");
 const change_course = require("../module/course/admin/change");
 const get_role = require("../module/role/admin/get");
@@ -19,6 +20,7 @@ router.use("/", middleware);
 
 // Course
 router.use("/course/all", all_course);
+router.use("/course/get", get_course);
 router.use("/course/add", add_course);
 router.use("/course/change", change_course);
 

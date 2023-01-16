@@ -66,7 +66,7 @@ const ResetPasswordPage = () => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });
 					} else if (response["status"] === 200) {
-						toast.success("A code has been sent to your email", { theme: "colored" });
+						toast.success("A verification code has been sent to your email if the username is valid", { theme: "colored" });
 					} else {
 						toast.error("Unknown error", { theme: "colored" });
 					}

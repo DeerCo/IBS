@@ -29,7 +29,7 @@ router.post("/", (req, res) => {
         return;
     }
 
-    let sql_register = "INSERT INTO user_info (username, password, email) VALUES (($1), ($2), ($3)) ON CONFLICT (username) DO NOTHING";
+    let sql_register = "INSERT INTO user_info (username, password, email) VALUES (($1), ($2), ($3)) ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email";
     let sql_register_data = [req.body["username"], "initial", email];
     let sql_add_1 = "INSERT INTO course_role (username, course_id, role) VALUES (($1), ($2), ($3))";
     let sql_add_1_data = [req.body["username"], req.body["course_id"], req.body["role"]];
@@ -54,10 +54,12 @@ router.post("/", (req, res) => {
                 } else {
                     client.query(sql_add_2, sql_add_2_data, (err, pgRes) => {
                         if (err) {
-                            res.status(404).json({ message: "Unknown error." });
-                            console.log(err);
+                            if (err.code !== "23505") {
+                                res.status(404).json({ message: "Unknown error." });
+                                console.log(err);
+                            }
                         } else {
-                            res.status(200).json({ message: "The user is registered if applicable. The role is added." });
+                            res.status(200).json({ message: "The user is registered if needed and the role is added." });
                         }
                     });
                 }

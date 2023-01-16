@@ -90,7 +90,7 @@ let StudentFilePage = () => {
 				<div>
 					<NavBar page="File" />
 
-					<h1>No file is available</h1>
+					<h1>No feedback file is available</h1>
 				</div>
 			</div>
 		);
@@ -98,7 +98,7 @@ let StudentFilePage = () => {
 		return (
 			<div>
 				<div>
-					<NavBar page="File" />
+					<NavBar page="Feedback File" />
 
 					<div className="divider"> </div>
 
@@ -113,7 +113,7 @@ let StudentFilePage = () => {
 							{files.map((file) => (
 								<li className="list-group-item flex-row" key={file.file_id}>
 									<div className=" d-flex justify-content-between">
-										<span className="badge bg-success rounded-pill mt-1">{file.file_name}</span>
+										<span>{file.file_name.split('/').length === 2 ? file.file_name.substring(1) : file.file_name}</span>
 										<div className="form-check form-switch">
 											<input className="form-check-input" type="checkbox" onChange={() => { handleClick(file.file_id, file.file_name) }} />
 										</div>
