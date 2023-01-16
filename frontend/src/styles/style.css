@@ -332,10 +332,6 @@ input[type=password] {
     height: 600px;
 }
 
-#code_page {
-    overflow: scroll;
-    height: 1050px;
-}
 
 #highlight {
     background: #f5f2f0;
@@ -345,11 +341,6 @@ input[type=password] {
     height: 500px;
     width: 100%;
     margin: auto;
-}
-
-#page2 {
-    overflow: scroll;
-    height: 1050px;
 }
 
 .book {
@@ -368,11 +359,10 @@ input[type=password] {
     margin: 0;
 }
 
-.inviteButtons{
-    display: flex;
-    
+.align-left {
+    text-align: left;
 }
 
-.size{
-    width: 50%;
+.inviteButtons{
+    display: flex;
 }

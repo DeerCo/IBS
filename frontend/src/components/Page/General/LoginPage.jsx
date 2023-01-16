@@ -32,9 +32,9 @@ let LoginPage = () => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });
 					} else if (response["status"] === 200) {
-						localStorage.setItem('username', username);
-						localStorage.setItem('token', response["data"]["token"]);
-						localStorage.setItem('roles', JSON.stringify(response["data"]["roles"]));
+						sessionStorage.setItem('username', username);
+						sessionStorage.setItem('token', response["data"]["token"]);
+						sessionStorage.setItem('roles', JSON.stringify(response["data"]["roles"]));
 						toast("Hello, World!", {icon: "🚀"});
 						navigate("/home");
 					} else if (response["status"] === 401) {

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 let all_tasks = async (course_id) => {
-	let token = localStorage.getItem("token");
+	let token = sessionStorage.getItem("token");
 
 	let config = {
 		headers: { Authorization: `Bearer ${token}` }
@@ -15,7 +15,7 @@ let all_tasks = async (course_id) => {
 };
 
 let all_interviews = async (course_id, curr_task) => {
-	let token = localStorage.getItem("token");
+	let token = sessionStorage.getItem("token");
 
 	let config = {
 		headers: { Authorization: `Bearer ${token}` },
@@ -31,7 +31,7 @@ let all_interviews = async (course_id, curr_task) => {
 
 //schedule a interveiw
 let schedule_interview = async (course_id, curr_task, length, time, location) => {
-	let token = localStorage.getItem("token");
+	let token = sessionStorage.getItem("token");
 
 	const data = {
 		task: curr_task,
@@ -48,7 +48,7 @@ let schedule_interview = async (course_id, curr_task, length, time, location) =>
 };
 
 let delete_interview = async (course_id, curr_task, id) => {
-	let token = localStorage.getItem("token");
+	let token = sessionStorage.getItem("token");
 
 	let config = {
 		data: { task: curr_task, interview_id: id.toString() },

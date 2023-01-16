@@ -10,7 +10,7 @@ let Home = () => {
 	let [roles, setRoles] = useState([]);
 
 	useEffect(() => {
-		let storage_roles = JSON.parse(localStorage.getItem("roles"));
+		let storage_roles = JSON.parse(sessionStorage.getItem("roles"));
 
 		if (!storage_roles) {
 			toast.warn("You need to login again", { theme: "colored" });

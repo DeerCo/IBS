@@ -100,8 +100,6 @@ let StudentFilePage = () => {
 				<div>
 					<NavBar page="Feedback File" />
 
-					<div className="divider"> </div>
-
 					<div className="card-box row">
 						<ol className="list-group list-unstyled">
 							<li className="d-flex justify-content-between flex-row mb-1">

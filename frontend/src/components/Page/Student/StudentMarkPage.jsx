@@ -14,7 +14,7 @@ let StudentMarkPage = () => {
 	let [marks, setMarks] = useState({});
 
 	useEffect(() => {
-		let username = localStorage.getItem("username");
+		let username = sessionStorage.getItem("username");
 
 		StudentApi.get_mark(course_id, task).then(
 			(response) => {

@@ -4,8 +4,8 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 let TaNavBar = (props) => {
 	let navigate = useNavigate();
 
-	let username = localStorage.getItem("username");
-	let roles = JSON.parse(localStorage.getItem("roles"));
+	let username = sessionStorage.getItem("username");
+	let roles = JSON.parse(sessionStorage.getItem("roles"));
 
 	let { course_id, task } = useParams();
 	
@@ -19,7 +19,7 @@ let TaNavBar = (props) => {
 	} 
 
 	let logout = () => {
-		window.localStorage.clear();
+		window.sessionStorage.clear();
 		navigate("/login");
 		navigate(0);
 	};

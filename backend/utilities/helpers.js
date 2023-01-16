@@ -7,13 +7,13 @@ const axios = require("axios");
 const transporter = require("../setup/email");
 const db = require("../setup/db");
 
-function generateAccessToken(username, email, admin, role) {
-	if (role === "student") {
+function generateAccessToken(username, email, admin, roles) {
+	if (roles === "student") {
 		var expire = "30m";
 	} else {
 		var expire = "15m";
 	}
-	return jwt.sign({ username: username, email: email, admin: admin, role: role }, process.env.TOKEN_SECRET, { expiresIn: expire });
+	return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: expire });
 }
 
 function name_validate(name) {
