@@ -4,8 +4,9 @@ const moment = require("moment");
 require("moment-timezone");
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
+const rate_limit = require("../../../setup/rate_limit");
 
-router.post("/", (req, res) => {
+router.post("/", rate_limit.email_limiter, (req, res) => {
     if (res.locals["task"] === "") {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
