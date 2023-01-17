@@ -2,6 +2,13 @@ import React from "react";
 
 let MarkSummary = (props) => {
 	let marks = props.marks;
+	let total_mark = 0;
+	let total_out_of = 0;
+
+	for (let mark in marks){
+		total_mark += marks[mark].mark;
+		total_out_of += marks[mark].out_of;
+	}
 
 	if (Object.keys(marks).length > 0) {
 		return (
@@ -17,14 +24,24 @@ let MarkSummary = (props) => {
 								<span className="fw-bold">Your Mark</span>
 							</li>
 
-							{Object.keys(marks).map((e) => (
-								<li className="list-group-item d-flex justify-content-between flex-row" key={e}>
+							{Object.keys(marks).map((mark) => (
+								<li className="list-group-item d-flex justify-content-between flex-row" key={mark}>
 									<div className="ms-2 me-auto">
-										<div className="fw">{e}</div>
+										<div className="fw">{mark}</div>
 									</div>
-									<span className="badge bg-success rounded-pill mt-1">{marks[e].mark}/{marks[e].out_of}</span>
+									<span className="badge bg-success rounded-pill mt-1">{marks[mark].mark}/{marks[mark].out_of}</span>
 								</li>
 							))}
+
+							<hr />
+
+
+							<li className="list-group-item d-flex justify-content-between flex-row" key={"total"}>
+								<div className="ms-2 me-auto">
+									<div className="fw">Total</div>
+								</div>
+								<span className="badge bg-success rounded-pill mt-1">{total_mark}/{total_out_of}</span>
+							</li>
 						</ul>
 					</div>
 				</div>

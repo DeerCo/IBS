@@ -359,7 +359,7 @@ async function format_marks_one_task(json, course_id, task) {
 		if (!(username in marks)) {
 			marks[username] = {};
 			for (let criteria in all_criteria) {
-				marks[username][all_criteria[criteria]["criteria"]] = { mark: 0, out_of: all_criteria[criteria]["total"] };
+				marks[username][all_criteria[criteria]["criteria"]] = { mark: 0, out_of: parseFloat(all_criteria[criteria]["total"]) };
 			}
 		}
 
@@ -378,7 +378,7 @@ async function format_marks_all_tasks(json, course_id) {
 		if (!(username in marks)) {
 			marks[username] = {};
 			for (let task in total_out_of) {
-				marks[username][task] = { mark: 0, out_of: total_out_of[task] };
+				marks[username][task] = { mark: 0, out_of: parseFloat(total_out_of[task]) };
 			}
 		}
 
