@@ -895,7 +895,7 @@ async function collect_one_submission(course_id, group_id, overwrite) {
 
 async function collect_all_submissions(course_id, task, overwrite) {
 	collect_processes = [];
-	let pg_res = await db.query("SELECT group_id FROM course_" + course_id + ".group WHERE task = ($1)", [task]);
+	let pg_res = await db.query("SELECT group_id FROM course_" + course_id + ".group_user WHERE task = ($1) GROUP BY group_id HAVING COUNT(username) >= 1", [task]);
 	for (let row of pg_res.rows) {
 		collect_processes.push(collect_one_submission(course_id, row["group_id"], overwrite));
 	}
