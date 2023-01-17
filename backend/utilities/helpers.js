@@ -513,6 +513,20 @@ async function gitlab_create_group_and_project_no_user(course_id, group_id, task
 		let res_create_project = await axios.post(process.env.GITLAB_URL + "projects/", data_create_project, config);
 		var gitlab_url = res_create_project["data"]["web_url"];
 		var gitlab_project_id = res_create_project["data"]["id"];
+
+		// Wait for Gitlab to initialize
+		await new Promise(resolve => setTimeout(resolve, 5000));
+
+		let delete_config = {
+			headers: {
+				"Authorization": "Bearer " + process.env.GITLAB_TOKEN,
+				"Content-Type": "application/json",
+			},
+			data: {}
+		};
+
+		// Delete the protected branch
+		await axios.delete(process.env.GITLAB_URL + "projects/" + gitlab_project_id + "/protected_branches/master", delete_config);
 	} catch (err) {
 		console.log(err);
 		if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
