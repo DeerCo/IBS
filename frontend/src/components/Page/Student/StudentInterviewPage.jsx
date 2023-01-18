@@ -62,10 +62,11 @@ let StudentInterviewPage = () => {
 							setBooked(true);
 
 							let location_lower = response_1_data["location"].toLowerCase();
+							let title = "";
 							if (location_lower === "zoom" || location_lower === "online" || location_lower.startsWith("http")) {
-								var title = "💻";
+								title = "💻";
 							} else {
-								var title = "🏫";
+								title = "🏫";
 							}
 
 							let curr = {
@@ -86,10 +87,11 @@ let StudentInterviewPage = () => {
 						for (let location in availability) {
 							for (let time in availability[location]) {
 								let location_lower = location.toLowerCase();
+								let title = "";
 								if (location_lower === "zoom" || location_lower === "online" || location_lower.startsWith("http")) {
-									var title = "💻";
+									title = "💻";
 								} else {
-									var title = "🏫";
+									title = "🏫";
 								}
 								let data = time.split(" - ");
 								let curr = {

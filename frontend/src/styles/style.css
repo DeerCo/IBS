@@ -1,12 +1,12 @@
 /* BASIC */
-@import url('https://fonts.googleapis.com/css2?family=Doppio+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "react-toastify/dist/ReactToastify.css";
 @import "./tab.css";
 
 
 body {
-    font-family: 'Doppio One', sans-serif;
+    font-family: 'Roboto', sans-serif;
     height: 100vh;
     justify-content: center;
     text-align: center;

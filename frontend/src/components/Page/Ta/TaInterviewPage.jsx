@@ -59,10 +59,11 @@ let TaInterviewPage = () => {
 
 				for (let interview of interviews) {
 					let location_lower = interview.location.toLowerCase();
+					let title = "";
 					if (location_lower === "zoom" || location_lower === "online" || location_lower.startsWith("http")) {
-						var title = "💻";
+						title = "💻";
 					} else {
-						var title = "🏫";
+						title = "🏫";
 					}
 
 					let colour = (interview.group_id === null ? "green" : "red");

@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import LoginPage from "./components/Page/General/LoginPage";
 import ResetPasswordPage from "./components/Page/General/ResetPasswordPage";
 import Home from "./components/Page/General/HomePage";
+import NotFoundPage from "./components/Page/General/NotFoundPage";
 
 import StudentMarkPage from "./components/Page/Student/StudentMarkPage";
 import StudentFilePage from "./components/Page/Student/StudentFilePage";
@@ -37,6 +38,7 @@ function App() {
 					<Route path="/ta/course/:course_id/task/:task/interview" element={<TaInterviewPage />}></Route>
 
 					<Route path="/" element={<LoginPage />}></Route>
+					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 			</BrowserRouter>
 		</div>
