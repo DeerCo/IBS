@@ -1,8 +1,8 @@
 TOKEN_SECRET=***something***
 DATABASE_URL=postgres://ibs:***postgres_password***@localhost:5432/ibs
-GITLAB_URL=https://gitlab.com/api/v4/
+GITLAB_URL=***https://gitlab.com/api/v4/***
 GITLAB_TOKEN=***gitlab_token***
-PORT=3000
-EMAIL_SERVICE=***email_service (yahoo)*** # Only needed if using external email service (yahoo, google, ...)
+PORT=***3000***
+EMAIL_SERVICE=***yahoo*** # Only needed if using external email service (yahoo, google, ...)
 EMAIL_USER=***email_address***
 EMAIL_PASS=***email_password*** # Only needed if using external email service (yahoo, google, ...)

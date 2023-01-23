@@ -1,0 +1,4 @@
+PORT=***7778***
+REACT_APP_API_URL=***http://localhost:7777*** # Use this if the domain of the backend is not the same (developing locally, ...)
+REACT_APP_API_URL=***/api*** # Use this if the domain of the backend is the same (deploying the app, ...)
+
