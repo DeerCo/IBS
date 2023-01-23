@@ -1,198 +1,437 @@
 {
-    "info": {
-        "_postman_id": "1e6ba4e1-cb94-462b-aaa9-fa389ef6d5aa",
-        "name": "admin",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-    },
-    "item": [
-        {
-            "name": "one",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{base_url}}/admins/marks/one?student=test",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "admins",
-                        "marks",
-                        "one"
-                    ],
-                    "query": [
-                        {
-                            "key": "student",
-                            "value": "test"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "all",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{base_url}}/admins/marks/all?task=p2&total=true",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "admins",
-                        "marks",
-                        "all"
-                    ],
-                    "query": [
-                        {
-                            "key": "task",
-                            "value": "p2"
-                        },
-                        {
-                            "key": "total",
-                            "value": "true"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "submit",
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "student",
-                            "value": "test",
-                            "type": "text"
-                        },
-                        {
-                            "key": "task",
-                            "value": "p2",
-                            "type": "text"
-                        },
-                        {
-                            "key": "criteria",
-                            "value": "Integrated testing",
-                            "type": "text"
-                        },
-                        {
-                            "key": "mark",
-                            "value": "10",
-                            "type": "text"
-                        },
-                        {
-                            "key": "total",
-                            "value": "16",
-                            "type": "text"
-                        },
-                        {
-                            "key": "overwrite",
-                            "value": "true",
-                            "type": "text"
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{base_url}}/admins/marks/submit",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "admins",
-                        "marks",
-                        "submit"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "upload",
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "formdata",
-                    "formdata": [
-                        {
-                            "key": "file",
-                            "type": "file",
-                            "src": "/C:/Users/howie/OneDrive/Desktop/a3_marks.csv"
-                        },
-                        {
-                            "key": "task",
-                            "value": "a3",
-                            "type": "text"
-                        },
-                        {
-                            "key": "overwrite",
-                            "value": "true",
-                            "type": "text"
-                        }
-                    ]
-                },
-                "url": {
-                    "raw": "{{base_url}}/admins/marks/upload",
-                    "host": [
-                        "{{base_url}}"
-                    ],
-                    "path": [
-                        "admins",
-                        "marks",
-                        "upload"
-                    ]
-                }
-            },
-            "response": []
-        }
-    ],
-    "auth": {
-        "type": "bearer",
-        "bearer": [
-            {
-                "key": "token",
-                "value": "{{token}}",
-                "type": "string"
-            }
-        ]
-    },
-    "event": [
-        {
-            "listen": "prerequest",
-            "script": {
-                "type": "text/javascript",
-                "exec": [
-                    ""
-                ]
-            }
-        },
-        {
-            "listen": "test",
-            "script": {
-                "type": "text/javascript",
-                "exec": [
-                    ""
-                ]
-            }
-        }
-    ],
-    "variable": [
-        {
-            "key": "base_url",
-            "value": "https://mcsapps.utm.utoronto.ca/csc309s22",
-            "type": "string"
-        },
-        {
-            "key": "token",
-            "value": "",
-            "type": "string"
-        }
-    ]
+	"info": {
+		"_postman_id": "30ac4416-78df-463a-88d8-5cfd8258faef",
+		"name": "Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19282045"
+	},
+	"item": [
+		{
+			"name": "Course",
+			"item": [
+				{
+					"name": "All courses",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "course_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "course_session",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/course/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"course",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get course",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/course/get?course_id=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"course",
+								"get"
+							],
+							"query": [
+								{
+									"key": "course_id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add course",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "course_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "course_session",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "gitlab_group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "default_token_count",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token_length",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "hidden",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/course/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"course",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change course",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "course_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "course_code",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "course_session",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "gitlab_group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "default_token_count",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "default_token_length",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "hidden",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/course/change",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"course",
+								"change"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "Get role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/role/get?username=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"role",
+								"get"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "course_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/role/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"role",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "course_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "role",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/role/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"role",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete role",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "course_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/role/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"role",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if('token' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('token', jsonData.token);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
 }

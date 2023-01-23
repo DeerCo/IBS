@@ -1,0 +1,1901 @@
+{
+	"info": {
+		"_postman_id": "e390307e-ef4d-475a-a19b-2eec2af7416a",
+		"name": "Instructor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19282045"
+	},
+	"item": [
+		{
+			"name": "Token",
+			"item": [
+				{
+					"name": "Get token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/token/get?username=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"token",
+								"get"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change token",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token_count",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token_length",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/token/change",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"token",
+								"change"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Task Group",
+			"item": [
+				{
+					"name": "All task group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task_group/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task_group",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add task group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "max_token",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task_group/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task_group",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change task group",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task_group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "max_token",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task_group/change",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task_group",
+								"change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete task group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task_group_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task_group/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task_group",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Task",
+			"item": [
+				{
+					"name": "All tasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task/get?task=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task",
+								"get"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "hidden",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "min_member",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "max_member",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "max_token",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "change_group",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "interview_group",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "task_group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "starter_code_url",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change task",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "due_date",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "hidden",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "min_member",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "max_member",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "max_token",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "change_group",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "interview_group",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "task_group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "starter_code_url",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/task/change",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"task",
+								"change"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Criteria",
+			"item": [
+				{
+					"name": "All criteria",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/criteria/all?task=a1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"criteria",
+								"all"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add criteria",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "criteria",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "total",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/criteria/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"criteria",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change criteria",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "criteria_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "criteria",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "total",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/criteria/change",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"criteria",
+								"change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete criteria",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "criteria_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/criteria/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"criteria",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Group",
+			"item": [
+				{
+					"name": "Check group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/group/check?task=&username=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"group",
+								"check"
+							],
+							"query": [
+								{
+									"key": "group_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "task",
+									"value": ""
+								},
+								{
+									"key": "username",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/group/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"group",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Copy groups",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "from_task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "to_task",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/group/copy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"group",
+								"copy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add member",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/group/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"group",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove member",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/group/remove",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"group",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change extension",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "extension",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/group/extension",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"group",
+								"extension"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File",
+			"item": [
+				{
+					"name": "Upload files",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/file/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"file",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download files",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/file/download?task=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"file",
+								"download"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete files",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/file/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"file",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mark",
+			"item": [
+				{
+					"name": "Get one mark",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/mark/one?username=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"mark",
+								"one"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": ""
+								},
+								{
+									"key": "task",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all marks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/mark/all?task=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"mark",
+								"all"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all marks csv",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/mark/all_csv",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"mark",
+								"all_csv"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit mark",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "criteria",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "mark",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "overwrite",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/mark/submit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"mark",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload marks",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "overwrite",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/mark/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"mark",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Release marks",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/mark/release",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"mark",
+								"release"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hide marks",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/mark/hide",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"mark",
+								"hide"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Interview",
+			"item": [
+				{
+					"name": "All interviews",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/interview/all?task=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"interview",
+								"all"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								},
+								{
+									"key": "interview_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "time",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "host",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "group_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "length",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "cancelled",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Today's interviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/interview/today?task=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"interview",
+								"today"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Schedule interview",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "length",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/interview/schedule",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"interview",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change interview",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "interview_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "time",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "length",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "note",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "cancelled",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_time",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_length",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_location",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_note",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_cancelled",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/interview/change",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"interview",
+								"change"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete interview",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "interview_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/interview/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"interview",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Submission",
+			"item": [
+				{
+					"name": "Collect one submission",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "overwrite",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/submission/collect/one",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"submission",
+								"collect",
+								"one"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Collect all submissions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "task",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "overwrite",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/submission/collect/all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"submission",
+								"collect",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Manually collect submission",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "commit_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token_used",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/submission/collect/manual",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"submission",
+								"collect",
+								"manual"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download all submissions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/submission/download?task=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"submission",
+								"download"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check submission",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/submission/check?task=&username=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"submission",
+								"check"
+							],
+							"query": [
+								{
+									"key": "group_id",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "task",
+									"value": ""
+								},
+								{
+									"key": "username",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if('token' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('token', jsonData.token);\r",
+							"    }\r",
+							"    if('roles' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('course_id', jsonData.roles[Object.keys(jsonData.roles)[0]][\"course_id\"]);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if('token' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('token', jsonData.token);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if('token' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('token', jsonData.token);\r",
+							"    }\r",
+							"    if('roles' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('course_id', jsonData.roles[Object.keys(jsonData.roles)[0]][\"course_id\"]);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/verify",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if('token' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('token', jsonData.token);\r",
+							"    }\r",
+							"    if('roles' in jsonData)\r",
+							"    {\r",
+							"        pm.collectionVariables.set('course_id', jsonData.roles[Object.keys(jsonData.roles)[0]][\"course_id\"]);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/change_password",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"change_password"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "course_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
