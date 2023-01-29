@@ -29,12 +29,12 @@ let LoginPage = () => {
 		} else if (password === "") {
 			toast.error("The password cannot be empty", { theme: "colored" });
 		} else {
-			GeneralApi.login(username, password).then(
+			GeneralApi.login(username.toLowerCase(), password).then(
 				(response) => {
 					if (!response || !("status" in response)) {
 						toast.error("Unknown error", { theme: "colored" });
 					} else if (response["status"] === 200) {
-						sessionStorage.setItem('username', username);
+						sessionStorage.setItem('username', username.toLowerCase());
 						sessionStorage.setItem('token', response["data"]["token"]);
 						sessionStorage.setItem('roles', JSON.stringify(response["data"]["roles"]));
 						toast("Hello, World!", {icon: "🚀"});

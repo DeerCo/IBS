@@ -20,13 +20,13 @@ router.post("/", (req, res) => {
     let sql_delete_code = "DELETE FROM user_verification WHERE username = ($1)";
     let sql_change_password = "UPDATE user_info SET password = crypt(($1), gen_salt('md5')) WHERE username = ($2)";
 
-    client.query(sql_verify, [req.body["username"], req.body["code"]], (err_verify, pg_res_verify) => {
-        client.query(sql_delete_code, [req.body["username"]]);
+    client.query(sql_verify, [req.body["username"].toLowerCase(), req.body["code"]], (err_verify, pg_res_verify) => {
+        client.query(sql_delete_code, [req.body["username"].toLowerCase()]);
 
         if (err_verify) {
             res.status(404).json({ message: "Unknown error." });
         } else if (pg_res_verify.rowCount === 1) {
-            client.query(sql_change_password, [req.body["password"], req.body["username"]], (err_change_password, pg_res_change_password) => {
+            client.query(sql_change_password, [req.body["password"], req.body["username"].toLowerCase()], (err_change_password, pg_res_change_password) => {
                 if (err_change_password) {
                     res.status(404).json({ message: "Unknown error." });
                     console.log(err_change_password)
