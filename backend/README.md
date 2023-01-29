@@ -34,7 +34,13 @@ cp utilities/env_template.txt .env
 vim .env
 ```
 
+
 # Run the backend
+```
+npm start
+```
+
+# Deploy the backend using PM2
 ```
 sudo npm install -g pm2
 pm2 start ~/DeerCo/backend/app.js
