@@ -838,6 +838,13 @@ async function get_submission_before_due_date(course_id, group_id) {
     let collected_commit_time_utc = null;
     let collected_commit_message = null;
 
+    // Check if the due date has passed
+    let before_due_date_with_extension_and_token = false;
+    if (moment().isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
+        before_due_date_with_extension_and_token = true;
+    }
+
+    // Get the last commit before due date
     for (let commit of commits) {
         if (collected_commit_id === null && moment(commit["created_at"]).isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
             collected_commit_id = commit["id"];
@@ -847,6 +854,7 @@ async function get_submission_before_due_date(course_id, group_id) {
         }
     }
 
+    // Calculate number of tokens to deduct
     let token_used = 0;
     if (collected_commit_time_utc !== null) {
         let minutes_past_due_date_with_extension = moment.duration(collected_commit_time_utc.diff(moment.tz(due_date_with_extension, "America/Toronto"))).asMinutes();
@@ -860,6 +868,7 @@ async function get_submission_before_due_date(course_id, group_id) {
         due_date: due_date,
         due_date_with_extension: due_date_with_extension,
         due_date_with_extension_and_token: due_date_with_extension_and_token,
+        before_due_date_with_extension_and_token: before_due_date_with_extension_and_token,
         max_token: max_token,
         token_length: token_length,
         commit_id: collected_commit_id,
@@ -880,6 +889,9 @@ async function collect_one_submission(course_id, group_id, overwrite) {
     }
     if (submission_data["commit_id"] === null) {
         return { message: "No submission is found for this group.", group_id: group_id, code: "no_submission", submission: submission_data };
+    }
+    if (submission_data["before_due_date_with_extension_and_token"] === true) {
+        return { message: "Due date hasn't passed for this group.", group_id: group_id, code: "before_due_date", submission: submission_data };
     }
 
     let sql_add_submission = "INSERT INTO course_" + course_id + ".submission (task, group_id, commit_id, token_used) VALUES (($1), ($2), ($3), ($4))";
@@ -913,10 +925,12 @@ async function collect_all_submissions(course_id, task, overwrite) {
     let collected_count = 0;
     let empty_count = 0;
     let ignore_count = 0;
+    let before_due_date_count = 0;
     let error_count = 0;
     let collected_groups = [];
     let empty_groups = [];
     let ignore_groups = [];
+    let before_due_date_groups = [];
     let error_groups = [];
 
     for (let result of results) {
@@ -932,45 +946,16 @@ async function collect_all_submissions(course_id, task, overwrite) {
         } else if (code === "no_submission") {
             empty_count += 1;
             empty_groups.push(group_id);
+        } else if (code === "before_due_date") {
+            before_due_date_count += 1;
+            before_due_date_groups.push(group_id);
         } else if (code === "unknown_error") {
             error_count += 1;
             error_groups.push(group_id);
         }
     }
 
-    return { collected_count, empty_count, ignore_count, error_count, collected_groups, empty_groups, ignore_groups, error_groups };
-}
-
-async function collect_one_submission(course_id, group_id, overwrite) {
-    let task = await get_group_task(course_id, group_id);
-    if (task === "") {
-        return { message: "The group id doesn't exist.", group_id: group_id, code: "group_not_exist" };
-    }
-    let submission_data = await get_submission_before_due_date(course_id, group_id);
-    if (submission_data["due_date"] === null) {
-        return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
-    }
-    if (submission_data["commit_id"] === null) {
-        return { message: "No submission is found for this group.", group_id: group_id, code: "no_submission", submission: submission_data };
-    }
-
-    let sql_add_submission = "INSERT INTO course_" + course_id + ".submission (task, group_id, commit_id, token_used) VALUES (($1), ($2), ($3), ($4))";
-    let sql_add_submission_data = [submission_data["task"], group_id, submission_data["commit_id"], submission_data["token_used"]];
-
-    if (overwrite) {
-        sql_add_submission += " ON CONFLICT (group_id) DO UPDATE SET commit_id = EXCLUDED.commit_id, token_used = EXCLUDED.token_used";
-    } else {
-        sql_add_submission += " ON CONFLICT (group_id) DO NOTHING";
-    }
-
-    let err_add_submission, pg_res_add_submission = await db.query(sql_add_submission, sql_add_submission_data);
-    if (err_add_submission) {
-        return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
-    } else if (pg_res_add_submission.rowCount === 0) {
-        return { message: "The new submission is not collected as an old submission is found and overwrite is false.", group_id: group_id, code: "submission_exists", submission: submission_data };
-    } else {
-        return { message: "The new submission is collected.", group_id: group_id, code: "submission_collected", submission: submission_data };
-    }
+    return { collected_count, empty_count, ignore_count, before_due_date_count, error_count, collected_groups, empty_groups, ignore_groups, before_due_date_groups, error_groups };
 }
 
 async function download_all_submissions(course_id, task) {
