@@ -8,13 +8,22 @@ router.delete("/", (req, res) => {
         res.status(400).json({ message: "The course id is missing or has invalid format." });
         return;
     }
-    if (!("username" in req.body) || helpers.name_validate(req.body["username"])) {
-        res.status(400).json({ message: "The username is missing or has invalid format." });
+    
+    if ("username" in req.body && !helpers.name_validate(req.body["username"])) {
+        var sql_delete = "DELETE FROM course_role WHERE username = ($1) and course_id = ($2)";
+        var sql_delete_data = [req.body["username"], req.body["course_id"]];
+    } else if ("delete_all" in req.body && !helpers.boolean_validate(req.body["delete_all"])) {
+        if (req.body["delete_all"] === true || req.body["delete_all"] === "true"){
+            var sql_delete = "DELETE FROM course_role WHERE course_id = ($1)";
+            var sql_delete_data = [req.body["course_id"]];
+        } else{
+            res.status(400).json({ message: "A username must be provided if the delete all property is false." });
+            return;
+        }
+    } else{
+        res.status(400).json({ message: "A valid username or delete all property must be provided." });
         return;
     }
-
-    let sql_delete = "DELETE FROM course_role WHERE username = ($1) and course_id = ($2)";
-    let sql_delete_data = [req.body["username"], req.body["course_id"]];
 
     client.query(sql_delete, sql_delete_data, (err, pgRes) => {
         if (err) {

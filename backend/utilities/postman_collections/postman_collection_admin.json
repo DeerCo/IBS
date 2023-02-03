@@ -245,6 +245,11 @@
 									"type": "text"
 								},
 								{
+									"key": "update_user_info",
+									"value": "",
+									"type": "text"
+								},
+								{
 									"key": "email",
 									"value": "",
 									"type": "text",
@@ -288,6 +293,11 @@
 									"key": "role",
 									"value": "",
 									"type": "text"
+								},
+								{
+									"key": "update_user_info",
+									"value": "",
+									"type": "text"
 								}
 							]
 						},
@@ -320,6 +330,11 @@
 								},
 								{
 									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "delete_all",
 									"value": "",
 									"type": "text"
 								}
