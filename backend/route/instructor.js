@@ -16,6 +16,7 @@ const all_criteria = require("../module/criteria/staff/all");
 const add_criteria = require("../module/criteria/staff/add");
 const change_criteria = require("../module/criteria/staff/change");
 const delete_criteria = require("../module/criteria/staff/delete");
+const all_groups = require("../module/group/staff/all");
 const check_group = require("../module/group/staff/check");
 const create_group = require("../module/group/staff/create");
 const copy_groups = require("../module/group/staff/copy");
@@ -43,7 +44,7 @@ const manual_collect_submission = require("../module/submission/staff/collect_ma
 const download_submissions = require("../module/submission/staff/download");
 const check_submission = require("../module/submission/staff/check");
 
-router.use("/", function (req, res, next) {
+router.use("/", function(req, res, next) {
     next();
 })
 
@@ -73,6 +74,7 @@ router.use("/course/:course_id/criteria/change", change_criteria);
 router.use("/course/:course_id/criteria/delete", delete_criteria);
 
 // Group
+router.use("/course/:course_id/group/all", all_groups);
 router.use("/course/:course_id/group/check", check_group);
 router.use("/course/:course_id/group/create", create_group);
 router.use("/course/:course_id/group/copy", copy_groups);

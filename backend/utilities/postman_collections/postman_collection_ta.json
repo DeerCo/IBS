@@ -95,6 +95,33 @@
 			"name": "Group",
 			"item": [
 				{
+					"name": "All groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ta/course/{{course_id}}/group/all?task=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ta",
+								"course",
+								"{{course_id}}",
+								"group",
+								"all"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Check group",
 					"request": {
 						"method": "GET",
