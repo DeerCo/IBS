@@ -24,6 +24,10 @@ router.post("/", upload.single("file"), (req, res) => {
         res.status(400).json({ message: "The course id is missing or has invalid format." });
         return;
     }
+    if (!("update_user_info" in req.body) || helpers.boolean_validate(req.body["update_user_info"])) {
+		res.status(400).json({ message: "The update user info property is missing or invalid." });
+		return;
+	}
 
     let roles = ["instructor", "ta", "student"];
     if (!("role" in req.body) || !roles.includes(req.body["role"])) {
@@ -31,7 +35,12 @@ router.post("/", upload.single("file"), (req, res) => {
         return;
     }
 
-    let sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email";
+    if (req.body["update_user_info"] === true || req.body["update_user_info"] === "true"){
+        var sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email";
+    } else{
+        var sql_register = "INSERT INTO user_info (username, password, email) VALUES %L ON CONFLICT (username) DO NOTHING";
+    }
+    
     let sql_upload = "INSERT INTO course_role (username, course_id, role) VALUES %L ON CONFLICT (username, course_id) DO NOTHING; "
         + "INSERT INTO course_" + req.body["course_id"] + ".user (username) VALUES %L ON CONFLICT (username) DO NOTHING";
 
