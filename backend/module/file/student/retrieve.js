@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
         let files = helpers.search_files(res.locals["username"], group_id, res.locals["course_id"], res.locals["task"] + "/");
 
         if (parseInt(req.query["file_id"]) >= files.length || parseInt(req.query["file_id"]) < 0) {
-            res.status(404).json({ message: "There is no file associated with this id." });
+            res.status(404).json({ message: "The file id is invalid." });
             return;
         }
 

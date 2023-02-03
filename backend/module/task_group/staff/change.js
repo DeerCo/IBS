@@ -21,7 +21,7 @@ router.put("/", (req, res) => {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
         } else if (pg_res.rowCount === 0) {
-            res.status(400).json({ message: "There is no task group associated with this task group id." });
+            res.status(400).json({ message: "The task group id is invalid." });
         } else {
             res.status(200).json({ message: "The task group is changed." });
         }

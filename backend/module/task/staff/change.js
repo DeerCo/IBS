@@ -82,7 +82,7 @@ router.put("/", (req, res) => {
                 console.log(err);
             }
         } else if (pg_res.rowCount === 0) {
-            res.status(400).json({ message: "There is no task associated with this task." });
+            res.status(400).json({ message: "The task is invalid." });
         } else {
             res.status(200).json({ message: "The task is changed." });
         }

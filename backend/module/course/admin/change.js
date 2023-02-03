@@ -47,7 +47,7 @@ router.put("/", (req, res) => {
                 console.log(err);
             }
         } else if (pg_res.rowCount === 0) {
-            res.status(400).json({ message: "There is no course associated with this course id." });
+            res.status(400).json({ message: "The course id is invalid." });
         } else {
             res.status(200).json({ message: "The course is changed." });
         }
