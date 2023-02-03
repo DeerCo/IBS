@@ -9,9 +9,9 @@ const db = require("../setup/db");
 
 function generateAccessToken(username, email, admin, roles) {
     if (roles === "student") {
-        var expire = "30m";
+        var expire = "120m";
     } else {
-        var expire = "15m";
+        var expire = "30m";
     }
     return jwt.sign({ username: username, email: email, admin: admin, roles: roles }, process.env.TOKEN_SECRET, { expiresIn: expire });
 }
@@ -207,7 +207,7 @@ function send_email(email, subject, body) {
         text: body + "\n\n(Please do not reply to this email, as no one monitors it. Post your question to Piazza instead.)"
     };
 
-    transporter.sendMail(mailOptions, function(error, info) { if (error) { console.log("Email error:" + error); } });
+    transporter.sendMail(mailOptions, function (error, info) { if (error) { console.log("Email error:" + error); } });
 }
 
 async function send_email_by_group(course_id, group_id, subject, body) {
