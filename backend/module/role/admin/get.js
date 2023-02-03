@@ -4,17 +4,22 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
-    if (!("username" in req.query) || helpers.name_validate(req.query["username"])) {
-        res.status(400).json({ message: "The username is missing or has invalid format." });
+    if ("username" in req.query && !helpers.name_validate(req.query["username"])) {
+        var sql_role = "SELECT * FROM course_role WHERE username = ($1)";
+        var sql_role_data = [req.query["username"]];
+    } else if ("course_id" in req.query && !helpers.number_validate(req.query["course_id"])) {
+        var sql_role = "SELECT * FROM course_role WHERE course_id = ($1)";
+        var sql_role_data = [req.query["course_id"]];
+    } else {
+        res.status(400).json({ message: "A valid username or course id must be provided." });
         return;
     }
 
-    let sql_task = "SELECT * FROM course_role WHERE username = ($1)";
-    client.query(sql_task, [req.query["username"]], (err, pg_res) => {
+    client.query(sql_role, sql_role_data, (err, pg_res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {
-            res.status(200).json({ role: pg_res.rows });
+            res.status(200).json({ count: pg_res.rows.length, role: pg_res.rows });
         }
     });
 })

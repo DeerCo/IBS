@@ -215,6 +215,11 @@
 								{
 									"key": "username",
 									"value": ""
+								},
+								{
+									"key": "course_id",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -349,6 +354,70 @@
 								"admin",
 								"role",
 								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/user/get?username=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"get"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/user/change",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"change"
 							]
 						}
 					},
