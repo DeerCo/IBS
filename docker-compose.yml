@@ -13,6 +13,7 @@ services:
       - "3444:80"
 
   postgres:
+    restart: always
     build:
       context: ./postgres
       dockerfile: Dockerfile
@@ -26,6 +27,7 @@ services:
       - "5432:5432"
 
   backend:
+    restart: always
     depends_on:
       - postgres
     build:
@@ -35,6 +37,7 @@ services:
       DATABASE_URL: postgres://ibs:password@postgres:5432/ibs?sslmode=disable
 
   frontend:
+    restart: always
     build:
       context: ./frontend
       dockerfile: Dockerfile
