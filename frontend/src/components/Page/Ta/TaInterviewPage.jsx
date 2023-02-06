@@ -22,6 +22,7 @@ let TaInterviewPage = () => {
 	let [selectedEnd, setSelectedEnd] = useState("");
 	let [selectedLocation, setSelectedLocation] = useState("");
 	let [selectedGroupId, setSelectedGroupId] = useState("");
+	let [selectedUsername, setSelectedUsername] = useState("");
 	let [selectedHost, setSelectedHost] = useState("");
 	let [selectedLength, setSelectedLength] = useState("");
 	let [selectedNote, setSelectedNote] = useState("");
@@ -119,8 +120,6 @@ let TaInterviewPage = () => {
 					} else if (response["status"] === 401 || response["status"] === 403) {
 						toast.warn("You need to login again", { theme: "colored" });
 						navigate("/login");
-					} else if (response["status"] === 429) {
-						toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
 					} else {
 						toast.error("Unknown error", { theme: "colored" });
 						navigate("/login");
@@ -146,8 +145,35 @@ let TaInterviewPage = () => {
 				} else if (response["status"] === 401 || response["status"] === 403) {
 					toast.warn("You need to login again", { theme: "colored" });
 					navigate("/login");
-				} else if (response["status"] === 429) {
-					toast.error("You've sent too many requests. Please try again in one hour.", { theme: "colored" });
+				} else {
+					toast.error("Unknown error", { theme: "colored" });
+					navigate("/login");
+				}
+			}
+		);
+	};
+
+	let check_group = (group_id) => {
+		if (group_id === null) {
+			return;
+		}
+
+		TaApi.check_group(course_id, group_id).then(
+			(response) => {
+				if (!response || !("status" in response)) {
+					toast.error("Unknown error", { theme: "colored" });
+					navigate("/login");
+				} else if (response["status"] === 200) {
+					let members = "";
+					for (let member of response["data"]["members"]) {
+						members += member["username"] + "(" + member["status"] + ")\n";
+					}
+					setSelectedUsername(members);
+				} else if (response["status"] === 400 || response["status"] === 409) {
+					toast.error(response["data"]["message"], { theme: "colored" });
+				} else if (response["status"] === 401 || response["status"] === 403) {
+					toast.warn("You need to login again", { theme: "colored" });
+					navigate("/login");
 				} else {
 					toast.error("Unknown error", { theme: "colored" });
 					navigate("/login");
@@ -238,6 +264,7 @@ let TaInterviewPage = () => {
 								setSelectedLength(info.event.extendedProps.length);
 								setSelectedNote(info.event.extendedProps.note);
 								setSelectedCancelled(info.event.extendedProps.cancelled);
+								check_group(info.event.extendedProps.group_id);
 
 								setOpen(true);
 							}
@@ -259,6 +286,7 @@ let TaInterviewPage = () => {
 								<span className="d-block text-gray-dark"> Cancelled: {selectedCancelled.toString()} </span>
 								<strong className="d-block text-gray-dark"> Location: {selectedLocation.startsWith("http") ? <a href={selectedLocation}>Link ✈</a> : selectedLocation} </strong>
 								<strong className="d-block text-gray-dark"> Group ID: {selectedGroupId === null ? "null" : selectedGroupId} </strong>
+								<strong className="d-block text-gray-dark"> Group Members: </strong> {selectedGroupId === null ? "null" : <pre>{selectedUsername}</pre>}
 								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { delete_interview(task, selectedId) }}>
 									Delete
 								</button>

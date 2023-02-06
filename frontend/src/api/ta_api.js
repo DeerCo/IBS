@@ -14,6 +14,20 @@ let all_tasks = async (course_id) => {
 	}
 };
 
+let check_group = async (course_id, group_id) => {
+	let token = sessionStorage.getItem("token");
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/ta/course/" + course_id + "/group/check?group_id=" + group_id, config);
+	} catch (err) {
+		return err.response;
+	}
+};
+
 let all_interviews = async (course_id, curr_task) => {
 	let token = sessionStorage.getItem("token");
 
@@ -66,6 +80,9 @@ let delete_interview = async (course_id, curr_task, id) => {
 let TaApi = {
 	// Task related
 	all_tasks,
+
+	// Group related
+	check_group,
 
 	// Interview related
 	all_interviews,
