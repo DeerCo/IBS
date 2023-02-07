@@ -8,6 +8,10 @@ router.get("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (res.locals["hide_interview"] === true) {
+        res.status(400).json({ message: "The interviews are not ready yet." });
+        return;
+    }
 
     let sql_times = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS start_time, " +
         "to_char(time AT TIME ZONE 'America/Toronto' + CONCAT(length,' minutes')::INTERVAL, 'YYYY-MM-DD HH24:MI:SS') AS end_time, " +

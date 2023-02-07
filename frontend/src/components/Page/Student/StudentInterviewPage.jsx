@@ -44,7 +44,11 @@ let StudentInterviewPage = () => {
 							navigate("/login");
 							return;
 						} else if (response_1["status"] === 400) {
-							toast.info("You need to join a group before booking an interview", { theme: "colored" });
+							toast.info(response_1["data"]["message"], { theme: "colored" });
+							return;
+						} else if (response_2["status"] === 400) {
+							toast.info(response_2["data"]["message"], { theme: "colored" });
+							return;
 						} else {
 							toast.warn("Unknown error", { theme: "colored" });
 							navigate("/login");

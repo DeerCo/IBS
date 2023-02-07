@@ -96,7 +96,7 @@ async function task_validate(course_id, task, student) {
     if (pg_res.rowCount <= 0) {
         return { task: "" };
     } else {
-        return { task: task, change_group: pg_res.rows[0]["change_group"], interview_group: pg_res.rows[0]["interview_group"] };
+        return { task: task, change_group: pg_res.rows[0]["change_group"], hide_interview: pg_res.rows[0]["hide_interview"] , interview_group: pg_res.rows[0]["interview_group"] };
     }
 }
 

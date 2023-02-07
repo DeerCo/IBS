@@ -8,6 +8,10 @@ router.get("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (res.locals["hide_interview"] === true) {
+        res.status(400).json({ message: "The interviews are not ready yet." });
+        return;
+    }
 
     if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null) {
         var task = res.locals["interview_group"];
