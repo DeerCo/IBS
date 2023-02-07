@@ -24,7 +24,7 @@ router.delete("/", rate_limit.email_limiter, (req, res) => {
 
     helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
         if (group_id === -1) {
-            res.status(400).json({ message: "You need to join a group before cancelling an interview." });
+            res.status(400).json({ message: "You need to join a group before cancelling your interview." });
             return;
         }
 

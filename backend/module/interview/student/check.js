@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
 
     helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
         if (group_id === -1) {
-            res.status(400).json({ message: "You need to join a group before checking." });
+            res.status(400).json({ message: "You need to join a group before checking your interview." });
             return;
         }
 
