@@ -55,9 +55,10 @@ router.get("/", (req, res) => {
 									let message = "The student has been invited to join a group.";
 									res.status(200).json({ message: message, group_id: group_id, members: pg_res_members.rows });
 								} else {
+									let extension = pg_res_url.rows[0]["extension"];
 									let gitlab_url = pg_res_url.rows[0]["gitlab_url"];
 									let message = "The student has joined a group.";
-									res.status(200).json({ message: message, group_id: group_id, members: pg_res_members.rows, gitlab_url: gitlab_url });
+									res.status(200).json({ message: message, group_id: group_id, members: pg_res_members.rows, extension: extension, gitlab_url: gitlab_url });
 								}
 							}
 						});
