@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
         } else {
-            res.status(200).json({ task_group: pg_res.rows });
+            res.status(200).json({ count: pg_res.rowCount, task_group: pg_res.rows });
         }
     });
 })

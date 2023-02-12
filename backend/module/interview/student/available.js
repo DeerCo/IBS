@@ -32,8 +32,9 @@ router.get("/", (req, res) => {
                     interviews[interview["location"]][time] = interview["all_count"] - interview["booked_count"];
                 }
             }
-            if (Object.keys(interviews).length != 0) {
-                res.json({ task: res.locals["task"], availability: interviews });
+            let interviews_count = Object.keys(interviews).length;
+            if (interviews_count != 0) {
+                res.json({ task: res.locals["task"], count: interviews_count, availability: interviews });
             } else {
                 res.json({ task: res.locals["task"], message: "No interview is available." });
             }

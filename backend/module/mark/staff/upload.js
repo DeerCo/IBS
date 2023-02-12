@@ -102,7 +102,7 @@ router.post("/", upload.single("file"), (req, res) => {
                         }
                     } else {
                         let message = pgRes.rowCount + " marks are changed. " + (marks_data.length - pgRes.rowCount) + " marks are unchanged.";
-                        res.status(200).json({ message: message });
+                        res.status(200).json({ message: message, changed_count: pgRes.rowCount, unchanged_count: marks_data.length - pgRes.rowCount });
                     }
                 });
             });

@@ -17,9 +17,9 @@ router.get("", (req, res) => {
         }
 
         if (files.length === 0) {
-            res.json({ message: "You don't have any files for this task.", files: [] });
+            res.json({ message: "You don't have any files for this task.", count: 0, files: [] });
         } else {
-            res.json({ message: "Files are returned", files: files_list });
+            res.json({ message: "Files are returned", count: files_list.length, files: files_list });
         }
     });
 })
