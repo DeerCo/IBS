@@ -532,6 +532,11 @@
 									"value": ""
 								},
 								{
+									"key": "booked",
+									"value": "",
+									"disabled": true
+								},
+								{
 									"key": "interview_id",
 									"value": "",
 									"disabled": true

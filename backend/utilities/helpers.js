@@ -110,6 +110,11 @@ function interview_data_filter(query, start_data_id, others_interview, username)
         data_id += 1;
         data.push(query["interview_id"]);
     }
+    if ("booked" in query && !boolean_validate(query["booked"])) {
+        if (query["booked"] === "true" || query["booked"] === true){
+            filter = filter + " AND group_id IS NOT NULL";
+        }
+    }
     if ("time" in query && !time_validate(query["time"])) {
         filter = filter + " AND time = ($" + data_id + ")";
         data_id += 1;
