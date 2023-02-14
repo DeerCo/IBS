@@ -668,6 +668,16 @@
 									"type": "text"
 								},
 								{
+									"key": "force",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "booked",
+									"value": "",
+									"disabled": true
+								},
+								{
 									"key": "interview_id",
 									"value": "",
 									"type": "text",
