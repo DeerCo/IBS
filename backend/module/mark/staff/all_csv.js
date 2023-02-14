@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
         var total = false;
     }
 
-    client.query("SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE task = ($1) ORDER BY username DESC", [res.locals["task"]], (err, pgRes) => {
+    client.query("SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE task = ($1) ORDER BY username", [res.locals["task"]], (err, pgRes) => {
         if (err) {
             console.log(err)
             res.status(404).json({ message: "Unknown error." });
