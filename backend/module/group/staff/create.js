@@ -22,7 +22,7 @@ router.post("/", (req, res) => {
 			console.log(err);
 		} else if (pgRes.rowCount === 1) {
 			let group_id = pgRes.rows[0]["group_id"];
-			client.query(sql_add_user, [res.locals["task"], req.body["username"], group_id], (err, pgRes) => {
+			client.query(sql_add_user, [res.locals["task"], req.body["username"].toLowerCase(), group_id], (err, pgRes) => {
 				if (err) {
 					if (err.code === "23505") {
 						res.status(409).json({ message: "The student can join at most one group for each task." });
@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
 						console.log(err);
 					}
 				} else if (pgRes.rowCount === 1) {
-					helpers.gitlab_create_group_and_project_with_user(res.locals["course_id"], group_id, req.body["username"], res.locals["task"]).then(result => {
+					helpers.gitlab_create_group_and_project_with_user(res.locals["course_id"], group_id, req.body["username"].toLowerCase(), res.locals["task"]).then(result => {
 						if (result["success"] === true) {
 							let message = "Group and Gitlab repo have been created. Student has been added to the Gitlab project.";
 							res.status(200).json({ message: message, group_id: group_id, url: result["url"] });

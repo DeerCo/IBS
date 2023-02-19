@@ -53,7 +53,7 @@ router.post("/", upload.single("file"), (req, res) => {
         let invalid_email = 0;
         let upload_data_all = [];
         let upload_data_users = [];
-        let register_data = [["test", "initial", "test@utoronto.ca"]];
+        let register_data = [["test", "initial", "ibs-test@utoronto.ca"]];
 
         for (let j = 1; j < csv_row.length; j++) {
             if (csv_row[j].length >= 1 && !(helpers.name_validate(csv_row[j][0]))) {

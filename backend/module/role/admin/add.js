@@ -17,7 +17,7 @@ router.post("/", (req, res) => {
 		return;
 	}
 
-    let email = "test@utoronto.ca";
+    let email = "ibs-test@utoronto.ca";
     if ("email" in req.body) {
         if (helpers.email_validate(req.body["email"])) {
             res.status(400).json({ message: "The email has invalid format." });
@@ -38,11 +38,11 @@ router.post("/", (req, res) => {
     } else{
         var sql_register = "INSERT INTO user_info (username, password, email) VALUES (($1), ($2), ($3)) ON CONFLICT (username) DO NOTHING";
     }
-    let sql_register_data = [req.body["username"], "initial", email];
+    let sql_register_data = [req.body["username"].toLowerCase(), "initial", email];
     let sql_add_1 = "INSERT INTO course_role (username, course_id, role) VALUES (($1), ($2), ($3))";
-    let sql_add_1_data = [req.body["username"], req.body["course_id"], req.body["role"]];
+    let sql_add_1_data = [req.body["username"].toLowerCase(), req.body["course_id"], req.body["role"]];
     let sql_add_2 = "INSERT INTO course_" + req.body["course_id"] + ".user (username) VALUES (($1))";
-    let sql_add_2_data = [req.body["username"]];
+    let sql_add_2_data = [req.body["username"].toLowerCase()];
 
     client.query(sql_register, sql_register_data, (err, pgRes) => {
         if (err) {

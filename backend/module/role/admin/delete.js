@@ -11,7 +11,7 @@ router.delete("/", (req, res) => {
     
     if ("username" in req.body && !helpers.name_validate(req.body["username"])) {
         var sql_delete = "DELETE FROM course_role WHERE username = ($1) and course_id = ($2)";
-        var sql_delete_data = [req.body["username"], req.body["course_id"]];
+        var sql_delete_data = [req.body["username"].toLowerCase(), req.body["course_id"]];
     } else if ("delete_all" in req.body && !helpers.boolean_validate(req.body["delete_all"])) {
         if (req.body["delete_all"] === true || req.body["delete_all"] === "true"){
             var sql_delete = "DELETE FROM course_role WHERE course_id = ($1)";

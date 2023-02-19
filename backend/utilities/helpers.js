@@ -96,7 +96,7 @@ async function task_validate(course_id, task, student) {
     if (pg_res.rowCount <= 0) {
         return { task: "" };
     } else {
-        return { task: task, change_group: pg_res.rows[0]["change_group"], hide_interview: pg_res.rows[0]["hide_interview"] , interview_group: pg_res.rows[0]["interview_group"] };
+        return { task: task, change_group: pg_res.rows[0]["change_group"], hide_interview: pg_res.rows[0]["hide_interview"], interview_group: pg_res.rows[0]["interview_group"] };
     }
 }
 
@@ -111,7 +111,7 @@ function interview_data_filter(query, start_data_id, others_interview, username)
         data.push(query["interview_id"]);
     }
     if ("booked" in query && !boolean_validate(query["booked"])) {
-        if (query["booked"] === "true" || query["booked"] === true){
+        if (query["booked"] === "true" || query["booked"] === true) {
             filter = filter + " AND group_id IS NOT NULL";
         }
     }
@@ -973,18 +973,20 @@ async function download_all_submissions(course_id, task) {
         let pg_res_commit_id = await db.query("SELECT commit_id FROM course_" + course_id + ".submission WHERE group_id = ($1)", [group_id]);
 
         let gitlab_url = pg_res_gitlab_url.rows[0]["gitlab_url"];
-        let regex = gitlab_url.match(/https:\/\/([^\/]*)\/(.*)/);
-        let ssh_clone_url = "git@" + regex[1] + ":" + regex[2] + ".git";
+        if (gitlab_url !== null) {
+            let regex = gitlab_url.match(/https:\/\/([^\/]*)\/(.*)/);
+            let ssh_clone_url = "git@" + regex[1] + ":" + regex[2] + ".git";
 
-        if (pg_res_gitlab_url.rowCount === 1 && pg_res_commit_id.rowCount === 1) {
-            groups.push({
-                group_name: "group_" + group_id,
-                group_id: group_id,
-                gitlab_url: gitlab_url,
-                https_clone_url: gitlab_url + ".git",
-                ssh_clone_url: ssh_clone_url,
-                commit_id: pg_res_commit_id.rows[0]["commit_id"]
-            });
+            if (pg_res_gitlab_url.rowCount === 1 && pg_res_commit_id.rowCount === 1) {
+                groups.push({
+                    group_name: "group_" + group_id,
+                    group_id: group_id,
+                    gitlab_url: gitlab_url,
+                    https_clone_url: gitlab_url + ".git",
+                    ssh_clone_url: ssh_clone_url,
+                    commit_id: pg_res_commit_id.rows[0]["commit_id"]
+                });
+            }
         }
     }
 

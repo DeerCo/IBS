@@ -17,13 +17,13 @@ router.delete("/", (req, res) => {
     let sql_select = "SELECT * FROM course_" + res.locals["course_id"] + ".group_user WHERE group_id = ($1)";
     let sql_delete = "DELETE FROM course_" + res.locals["course_id"] + ".group WHERE group_id = ($1)";
 
-    client.query(sql_remove, [req.body["username"], req.body["group_id"]], (err, pg_res_remove) => {
+    client.query(sql_remove, [req.body["username"].toLowerCase(), req.body["group_id"]], (err, pg_res_remove) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
         } else {
             if (pg_res_remove.rowCount === 1) {
-                helpers.gitlab_remove_user(res.locals["course_id"], req.body["group_id"], req.body["username"]);
+                helpers.gitlab_remove_user(res.locals["course_id"], req.body["group_id"], req.body["username"].toLowerCase());
                 res.status(200).json({ message: "The student is removed from the group." });
             } else {
                 res.status(400).json({ message: "The student was not in the group." });

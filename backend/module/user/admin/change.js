@@ -14,7 +14,7 @@ router.put("/", (req, res) => {
     }
 
     let sql_update = "UPDATE user_info SET email = ($1) WHERE username = ($2)";
-    let sql_update_data = [req.body["email"], req.body["username"]];
+    let sql_update_data = [req.body["email"], req.body["username"].toLowerCase()];
 
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {

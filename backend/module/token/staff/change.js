@@ -30,7 +30,7 @@ router.put("/", (req, res) => {
     }
 
     var sql_change = "UPDATE course_" + res.locals["course_id"] + ".user SET token_count = ($1), token_length = ($2) WHERE username = ($3)";
-    var sql_change_data = [token_count, token_length, req.body["username"]];
+    var sql_change_data = [token_count, token_length, req.body["username"].toLowerCase()];
 
     client.query(sql_change, sql_change_data, (err, pg_res) => {
         if (err) {
