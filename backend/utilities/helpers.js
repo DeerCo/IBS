@@ -871,7 +871,7 @@ async function get_submission_before_due_date(course_id, group_id) {
 
     return {
         group_id, task, due_date, due_date_with_extension, due_date_with_extension_and_token, before_due_date_with_extension_and_token,
-        max_token, token_length, commit_id, commit_time, commit_message, token_used
+        max_token, token_length, commit_id: collected_commit_id, commit_time: collected_commit_time, commit_message: collected_commit_message, token_used
     };
 }
 
