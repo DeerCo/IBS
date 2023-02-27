@@ -726,6 +726,12 @@
 									"disabled": true
 								},
 								{
+									"key": "set_group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "set_length",
 									"value": "",
 									"type": "text",
@@ -733,6 +739,18 @@
 								},
 								{
 									"key": "set_location",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_note",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_cancelled",
 									"value": "",
 									"type": "text",
 									"disabled": true
