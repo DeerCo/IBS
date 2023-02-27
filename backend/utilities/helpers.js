@@ -817,12 +817,12 @@ async function get_due_date(course_id, group_id) {
     due_date_with_extension_and_token = due_date_with_extension.clone().add(max_token * token_length, "minutes");
 
     return {
-        task: task,
+        task,
         due_date: due_date.format("YYYY-MM-DD HH:mm:ss"),
         due_date_with_extension: due_date_with_extension.format("YYYY-MM-DD HH:mm:ss"),
         due_date_with_extension_and_token: due_date_with_extension_and_token.format("YYYY-MM-DD HH:mm:ss"),
-        max_token: max_token,
-        token_length: token_length,
+        max_token,
+        token_length,
     };
 }
 
@@ -870,17 +870,8 @@ async function get_submission_before_due_date(course_id, group_id) {
     }
 
     return {
-        task: task,
-        due_date: due_date,
-        due_date_with_extension: due_date_with_extension,
-        due_date_with_extension_and_token: due_date_with_extension_and_token,
-        before_due_date_with_extension_and_token: before_due_date_with_extension_and_token,
-        max_token: max_token,
-        token_length: token_length,
-        commit_id: collected_commit_id,
-        commit_time: collected_commit_time,
-        commit_message: collected_commit_message,
-        token_used: token_used
+        group_id, task, due_date, due_date_with_extension, due_date_with_extension_and_token, before_due_date_with_extension_and_token,
+        max_token, token_length, commit_id, commit_time, commit_message, token_used
     };
 }
 
