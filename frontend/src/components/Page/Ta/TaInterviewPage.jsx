@@ -203,7 +203,7 @@ let TaInterviewPage = () => {
 				<TaNavBar page="Interview" />
 
 				<div className="wrapper">
-					<div className="input-group">
+					<div className="input-group d-block">
 						<input type="text"
 							id="time"
 							className="m-2 w-25 h-25"
