@@ -992,7 +992,8 @@
 							"query": [
 								{
 									"key": "task",
-									"value": ""
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "total",

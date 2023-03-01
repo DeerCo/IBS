@@ -430,13 +430,13 @@
 							],
 							"query": [
 								{
+									"key": "username",
+									"value": ""
+								},
+								{
 									"key": "task",
 									"value": "",
 									"disabled": true
-								},
-								{
-									"key": "username",
-									"value": ""
 								},
 								{
 									"key": "total",
@@ -468,7 +468,8 @@
 							"query": [
 								{
 									"key": "task",
-									"value": ""
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "total",
