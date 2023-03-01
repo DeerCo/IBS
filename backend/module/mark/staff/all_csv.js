@@ -20,7 +20,7 @@ router.get("/", (req, res) => {
             console.log(err)
             res.status(404).json({ message: "Unknown error." });
         } else {
-            helpers.format_marks_one_task_csv(pgRes.rows, res.locals["course_id"], res.locals["task"], res, "", total);
+            helpers.format_marks_one_task_csv(pgRes.rows, res.locals["course_id"], res.locals["task"], res, total);
         }
     });
 })

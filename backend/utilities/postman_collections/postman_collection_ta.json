@@ -437,6 +437,11 @@
 								{
 									"key": "username",
 									"value": ""
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -464,6 +469,11 @@
 								{
 									"key": "task",
 									"value": ""
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -491,6 +501,11 @@
 								{
 									"key": "task",
 									"value": ""
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}

@@ -961,6 +961,11 @@
 									"key": "task",
 									"value": "",
 									"disabled": true
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -988,6 +993,11 @@
 								{
 									"key": "task",
 									"value": ""
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -1014,6 +1024,11 @@
 							"query": [
 								{
 									"key": "task",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "total",
 									"value": "",
 									"disabled": true
 								}

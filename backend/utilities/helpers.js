@@ -302,7 +302,7 @@ async function get_criteria(course_id, task) {
         let criteria = {};
         criteria["task"] = row["task"];
         criteria["criteria"] = row["criteria"];
-        criteria["total"] = row["total"];
+        criteria["total"] = parseFloat(row["total"]);
         criteria["description"] = row["description"];
 
         all_criteria[row["criteria_id"]] = criteria;
@@ -316,7 +316,7 @@ async function get_total_out_of(course_id) {
 
     let total_out_of = {};
     for (let row of pg_res.rows) {
-        total_out_of[row["task"]] = row["sum"];
+        total_out_of[row["task"]] = parseFloat(row["sum"]);
     }
 
     return total_out_of;
@@ -356,7 +356,7 @@ async function get_all_group_users(course_id, task) {
     return results;
 }
 
-async function format_marks_one_task(json, course_id, task) {
+async function format_marks_one_task(json, course_id, task, total) {
     let marks = {};
     let all_criteria = await get_criteria(course_id, task);
 
@@ -365,13 +365,26 @@ async function format_marks_one_task(json, course_id, task) {
         if (!(username in marks)) {
             marks[username] = {};
             for (let criteria in all_criteria) {
-                marks[username][all_criteria[criteria]["criteria"]] = { mark: 0, out_of: parseFloat(all_criteria[criteria]["total"]) };
+                marks[username][all_criteria[criteria]["criteria"]] = { mark: 0, out_of: all_criteria[criteria]["total"] };
             }
         }
 
         let criteria_name = all_criteria[row["criteria_id"]]["criteria"];
         marks[username][criteria_name]["mark"] = parseFloat(row["mark"]);
     }
+
+    if (total) {
+        for (let username in marks) {
+            let temp_total = 0;
+            let temp_out_of = 0;
+            for (let criteria in marks[username]) {
+                temp_total += marks[username][criteria]["mark"];
+                temp_out_of += marks[username][criteria]["out_of"];
+            }
+            marks[username]["Total"] = {mark: temp_total, out_of: temp_out_of};
+        }
+    }
+
     return marks;
 }
 
@@ -384,7 +397,7 @@ async function format_marks_all_tasks(json, course_id) {
         if (!(username in marks)) {
             marks[username] = {};
             for (let task in total_out_of) {
-                marks[username][task] = { mark: 0, out_of: parseFloat(total_out_of[task]) };
+                marks[username][task] = { mark: 0, out_of: total_out_of[task] };
             }
         }
 
@@ -393,7 +406,7 @@ async function format_marks_all_tasks(json, course_id) {
     return marks;
 }
 
-async function format_marks_one_task_csv(json, course_id, task, res, note = "", total = false) {
+async function format_marks_one_task_csv(json, course_id, task, res, total) {
     if (JSON.stringify(json) === "[]") {
         res.status(200).json({ message: "No data is available." });
         return;
@@ -407,10 +420,10 @@ async function format_marks_one_task_csv(json, course_id, task, res, note = "", 
     }
 
     let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
-    let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ((note === "") ? "" : "_") + note + ".csv";
+    let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ".csv";
     let header = { Student: "Out Of" };
     let parsed_json = {};
-    let marks = await format_marks_one_task(json, course_id, task);
+    let marks = await format_marks_one_task(json, course_id, task, false);
 
     if (Object.keys(marks).length === 0) {
         res.status(200).json({ message: "No mark is available." });
@@ -420,14 +433,14 @@ async function format_marks_one_task_csv(json, course_id, task, res, note = "", 
     for (let student in marks) {
         for (let criteria in marks[student]) {
             if (!(criteria in header)) {
-                header[criteria] = parseFloat(marks[student][criteria]["out_of"]);
+                header[criteria] = marks[student][criteria]["out_of"];
             }
 
-            let mark = parseFloat(marks[student][criteria]["mark"]);
+            let mark = marks[student][criteria]["mark"];
             if (student in parsed_json) {
-                parsed_json[student][criteria] = parseFloat(mark);
+                parsed_json[student][criteria] = mark;
             } else {
-                parsed_json[student] = { Student: student, [criteria]: parseFloat(mark) };
+                parsed_json[student] = { Student: student, [criteria]: mark };
             }
         }
     }
