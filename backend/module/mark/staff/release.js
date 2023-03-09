@@ -16,9 +16,9 @@ router.put("/", (req, res) => {
             console.log(err);
         } else {
             if (pgRes.rowCount <= 1) {
-                res.status(200).json({ message: pgRes.rowCount + " mark is released." });
+                res.status(200).json({ message: pgRes.rowCount + " mark is released.", count: pgRes.rowCount });
             } else {
-                res.status(200).json({ message: pgRes.rowCount + " marks are released." });
+                res.status(200).json({ message: pgRes.rowCount + " marks are released.", count: pgRes.rowCount });
             }
         }
     });

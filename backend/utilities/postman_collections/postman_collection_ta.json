@@ -430,13 +430,18 @@
 							],
 							"query": [
 								{
+									"key": "username",
+									"value": ""
+								},
+								{
 									"key": "task",
 									"value": "",
 									"disabled": true
 								},
 								{
-									"key": "username",
-									"value": ""
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -463,7 +468,13 @@
 							"query": [
 								{
 									"key": "task",
-									"value": ""
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -491,6 +502,11 @@
 								{
 									"key": "task",
 									"value": ""
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -530,6 +546,11 @@
 								{
 									"key": "task",
 									"value": ""
+								},
+								{
+									"key": "booked",
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "interview_id",
@@ -663,6 +684,16 @@
 									"type": "text"
 								},
 								{
+									"key": "force",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "booked",
+									"value": "",
+									"disabled": true
+								},
+								{
 									"key": "interview_id",
 									"value": "",
 									"type": "text",
@@ -711,6 +742,12 @@
 									"disabled": true
 								},
 								{
+									"key": "set_group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "set_length",
 									"value": "",
 									"type": "text",
@@ -718,6 +755,18 @@
 								},
 								{
 									"key": "set_location",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_note",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "set_cancelled",
 									"value": "",
 									"type": "text",
 									"disabled": true

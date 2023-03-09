@@ -13,7 +13,7 @@ router.put("/", (req, res) => {
 		return;
 	}
 
-	let sql_change = "UPDATE course_" + res.locals["course_id"] + ".group SET extension = ($1) WHERE group_id = ($2)";
+	let sql_change = "UPDATE course_" + res.locals["course_id"] + ".group SET extension = ($1) WHERE group_id = ($2) RETURNING task";
 
 	client.query(sql_change, [req.body["extension"], req.body["group_id"]], (err, pg_res_update) => {
 		if (err) {
@@ -22,6 +22,10 @@ router.put("/", (req, res) => {
 		} else {
 			if (pg_res_update.rowCount === 1) {
 				res.status(200).json({ message: "The extension is changed." });
+
+				let subject = "IBS Extension Confirmation";
+				let body = "Your extension request for " + pg_res_update.rows[0]["task"] + " has been approved. The due date is extended by " + req.body["extension"] + " minutes. Please check IBS for details.";
+				helpers.send_email_by_group(res.locals["course_id"], req.body["group_id"], subject, body);
 			} else {
 				res.status(400).json({ message: "The group id doesn't exist." });
 			}

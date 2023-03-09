@@ -78,6 +78,7 @@ app.use((err, req, res, next) => {
             res.status(501).json({ message: "Upload fails. Please check error log." });
         }
     } else if (err instanceof SyntaxError) {
+        console.error(err);
         return res.status(400).send({ message: "Invalid data is received." });
     } else {
         console.error(err);

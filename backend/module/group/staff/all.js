@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
             res.status(404).json({ message: "Unknown error." });
             console.log(err);
         } else {
-            res.status(200).json({ count: pg_res_groups.rows.length, groups: pg_res_groups.rows });
+            res.status(200).json({ count: pg_res_groups.rowCount, groups: pg_res_groups.rows });
         }
     });
 })

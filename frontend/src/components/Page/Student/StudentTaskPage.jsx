@@ -48,7 +48,7 @@ let StudentTaskPage = () => {
 											{ data.interview_group !== null && <p className="card-text">Using the Same Group as <i>{data.interview_group}</i></p>}
 											<div className="btn-group">
 											{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/details"}>Details</Link>}
-												<Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/interview"}>Interview</Link>
+												{data.hide_interview === false && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/interview"}>Interview</Link>}
 												{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/mark"}>Mark</Link>}
 												{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/file"}>Feedback File</Link>}
 											</div>

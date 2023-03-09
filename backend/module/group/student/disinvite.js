@@ -30,7 +30,7 @@ router.delete("/", (req, res) => {
 			res.status(403).json({ message: "You don't have access to cancel the invitation." });
 			return;
 		} else {
-			client.query(sql_disinvite, [res.locals["task"] , req.body["username"]], (err, pgRes) => {
+			client.query(sql_disinvite, [res.locals["task"] , req.body["username"].toLowerCase()], (err, pgRes) => {
 				if (err) {
 					res.status(404).json({ message: "Unknown error." });
 					console.log(err);

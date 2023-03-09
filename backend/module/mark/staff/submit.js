@@ -23,7 +23,7 @@ router.post("/", (req, res) => {
 
     helpers.get_criteria_id(res.locals["course_id"], res.locals["task"], req.body["criteria"]).then(criteria_id => {
         let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".mark (criteria_id, username, mark, task) VALUES (($1), ($2), ($3), ($4))";
-        let sql_add_data = [criteria_id, req.body["username"], req.body["mark"], res.locals["task"]];
+        let sql_add_data = [criteria_id, req.body["username"].toLowerCase(), req.body["mark"], res.locals["task"]];
 
         if (req.body["overwrite"] === true || req.body["overwrite"] === "true") {
             sql_add += " ON CONFLICT (criteria_id, username) DO UPDATE SET mark = EXCLUDED.mark";

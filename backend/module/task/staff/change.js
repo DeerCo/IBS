@@ -28,6 +28,10 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The max token is missing or invalid." });
         return;
     }
+    if (!("hide_interview" in req.body) || helpers.boolean_validate(req.body["hide_interview"])) {
+        res.status(400).json({ message: "The hide interview property is missing or not correct." });
+        return;
+    }
     if (!("change_group" in req.body) || helpers.boolean_validate(req.body["change_group"])) {
         res.status(400).json({ message: "The change group property is missing or not correct." });
         return;
@@ -70,8 +74,8 @@ router.put("/", (req, res) => {
     }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), change_group = ($6), interview_group = ($7), task_group_id = ($8), starter_code_url = ($9) WHERE task = ($10)";
-    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], interview_group, task_group_id, starter_code_url, res.locals["task"]];
+    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), change_group = ($6), hide_interview = ($7), interview_group = ($8), task_group_id = ($9), starter_code_url = ($10) WHERE task = ($11)";
+    let sql_update_data = [due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], req.body["hide_interview"], interview_group, task_group_id, starter_code_url, res.locals["task"]];
 
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {

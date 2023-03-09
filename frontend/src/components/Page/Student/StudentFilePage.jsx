@@ -118,6 +118,9 @@ let StudentFilePage = () => {
 									</div>
 								</li>
 							))}
+
+							<br />
+							
 							<button type="button" onClick={download_all} className="btn btn-sm btn-outline-secondary">Download</button>
 						</ol>
 					</div>
