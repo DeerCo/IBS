@@ -26,7 +26,7 @@ function name_validate(name) {
 }
 
 function string_validate(string) {
-    let regex_string = new RegExp("^[0-9a-zA-Z:_ \\.\\/\\-\\(\\)]{1,500}$");
+    let regex_string = new RegExp("^[0-9a-zA-Z:_ \\,\\.\\/\\-\\(\\)\\!]{1,500}$");
 
     if (!regex_string.test(string)) {
         return 1;
@@ -242,7 +242,7 @@ function search_files(username, group_id, coure_id, sub_dir = "") {
         let stat = fs.lstatSync(file_name);
 
         if (stat.isDirectory()) {
-            result = result.concat(search_files(username, group_id, sub_dir + files[i] + "/"));
+            result = result.concat(search_files(username, group_id, coure_id, sub_dir + files[i] + "/"));
         } else if (file_name.indexOf(username + "_") >= 0 || file_name.indexOf("group_" + group_id + "_") >= 0) {
             result.push(sub_dir + files[i]);
         };
