@@ -103,7 +103,7 @@ let StudentDetailsPage = () => {
 									setTokenUsed(before_due_date["token_used"]);
 
 									if ("collected" in submission_data) {
-										let collected = submission_data["before_due_date"];
+										let collected = submission_data["collected"];
 										setCollectCommit(collected["commit_id"]);
 										setCollectTokenUsed(collected["token_used"]);
 									}
