@@ -240,14 +240,14 @@ let StudentDetailsPage = () => {
 
 									<hr />
 
-									<h4> Gitlab URL </h4>
-									<p><a href={git}>{git}</a></p>
-
-									<hr />
-
 									<h4> Token </h4>
 									<p> At most <b>{maxToken}</b> token(s) can be used for this task</p>
 									<p> Each token can extend the due date by <b>{tokenLen}</b> minutes</p>
+
+									<hr />
+
+									<h4> GitLab URL </h4>
+									<p><a href={git}>{git}</a></p>
 
 									<hr />
 
@@ -269,11 +269,12 @@ let StudentDetailsPage = () => {
 									<hr />
 
 									<h4> Collected Commit </h4>
-									{!collectCommit && "No submission has been collected yet"}
+									{!collectCommit && "No commit has been collected yet"}
 									{collectCommit && (
 										<div>
 											<p>The commit id is: <b>{collectCommit}</b></p>
 											<p>This commit uses {collectTokenUsed} token(s)</p>
+											<p>This commit is for marking purposes</p>
 										</div>
 									)}
 								</div>
