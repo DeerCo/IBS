@@ -247,7 +247,7 @@ let StudentDetailsPage = () => {
 									<hr />
 
 									<h4> GitLab URL </h4>
-									<p><a href={git}>{git}</a></p>
+									<p><a href={git} target="_blank">{git}</a></p>
 
 									<hr />
 
