@@ -34,6 +34,7 @@ let StudentDetailsPage = () => {
 	let [commitMsg, setCommitMsg] = useState("");
 	let [tokenUsed, setTokenUsed] = useState("");
 	let [commitTime, setCommitTime] = useState("");
+	let [pushTime, setPushTime] = useState("");
 	let [maxToken, setMaxToken] = useState("");
 	let [collectCommit, setCollectCommit] = useState(null);
 	let [collectTokenUsed, setCollectTokenUsed] = useState(null);
@@ -99,6 +100,7 @@ let StudentDetailsPage = () => {
 									setTokenLen(before_due_date["token_length"]);
 									setCommit(before_due_date["commit_id"]);
 									setCommitTime(before_due_date["commit_time"]);
+									setPushTime(before_due_date["push_time"]);
 									setCommitMsg(before_due_date["commit_message"]);
 									setTokenUsed(before_due_date["token_used"]);
 
@@ -253,7 +255,8 @@ let StudentDetailsPage = () => {
 									{commit && (
 										<div>
 											<p>The commit id is: <b>{commit}</b></p>
-											<p>The commit time is: <b>{commitTime} </b></p>
+											<p>The commit time is: <b>{commitTime}</b></p>
+											{pushTime === null ? <p>The push time is: <b>Not Applicable</b></p> : <p>The push time is: <b>{pushTime}</b></p>}
 											<p>The commit message is: <b>{commitMsg}</b></p>
 											<p>This commit uses {tokenUsed} token(s)</p>
 										</div>

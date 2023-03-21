@@ -34,7 +34,7 @@ router.get("/", (req, res) => {
 			});
 		});
 	} else {
-		res.status(400).json({ message: "Both group id and  username are missing or has invalid format." });
+		res.status(400).json({ message: "Both group id and username are missing or have invalid format." });
 		return;
 	}
 })
