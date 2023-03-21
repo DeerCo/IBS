@@ -485,7 +485,7 @@ async function gitlab_get_user_id(username) {
     } catch (err) {
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
-        } else{
+        } else {
             console.log(err);
         }
         return -1;
@@ -558,7 +558,7 @@ async function gitlab_create_group_and_project_no_user(course_id, group_id, task
     } catch (err) {
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
-        } else{
+        } else {
             console.log(err);
         }
         return { success: false, code: "failed_create_project" }
@@ -604,7 +604,7 @@ async function gitlab_add_user_with_gitlab_group_id(gitlab_group_id, gitlab_url,
     } catch (err) {
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
-        } else{
+        } else {
             console.log(err);
         }
         return { success: false, code: "failed_add_user" };
@@ -660,7 +660,7 @@ async function gitlab_remove_user(course_id, group_id, username) {
     } catch (err) {
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
-        } else{
+        } else {
             console.log(err);
         }
         return { success: false, code: "failed_remove_user" };
@@ -694,7 +694,7 @@ async function gitlab_get_commits(course_id, group_id) {
     } catch (err) {
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
-        } else{
+        } else {
             console.log(err);
         }
         return { commit: [], push: [] };
@@ -874,21 +874,22 @@ async function get_submission_before_due_date(course_id, group_id) {
         if (last_commit_id === null && moment(commit["created_at"]).isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
             // The commit time is before the due date, but we also need to check the push time in case it's modified manually
             let verified = false;
-            let empty = true;
+            let forbidden = false;
 
             for (let push_commit of push_commits) {
                 if (push_commit["action_name"] === "pushed to") {
-                    empty = false;
                     if (push_commit["push_data"]["commit_to"] === commit["id"]) {
                         if (moment(push_commit["created_at"]).isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
                             verified = true;
                             push_time = moment(push_commit["created_at"]).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
+                        } else {
+                            forbidden = true;
                         }
                     }
                 }
             }
 
-            if (verified || empty) {
+            if (verified && !forbidden) {
                 last_commit_id = commit["id"];
                 last_commit_time = moment(commit["created_at"]).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
                 last_commit_time_utc = moment(commit["created_at"]);
@@ -922,7 +923,7 @@ async function collect_one_submission(course_id, group_id, overwrite) {
         return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
     }
     if (submission_data["commit_id"] === null) {
-        return { message: "No submission is found for this group.", group_id: group_id, code: "no_submission", submission: submission_data };
+        return { message: "No commit is found for this group.", group_id: group_id, code: "no_commit", submission: submission_data };
     }
     if (submission_data["before_due_date_with_extension_and_token"] === true) {
         return { message: "Due date hasn't passed for this group.", group_id: group_id, code: "before_due_date", submission: submission_data };
@@ -977,7 +978,7 @@ async function collect_all_submissions(course_id, task, overwrite) {
         } else if (code === "submission_exists") {
             ignore_count += 1;
             ignore_groups.push(group_id);
-        } else if (code === "no_submission") {
+        } else if (code === "no_commit") {
             empty_count += 1;
             empty_groups.push(group_id);
         } else if (code === "before_due_date") {
