@@ -1028,12 +1028,16 @@ async function copy_groups(course_id, from_task, to_task) {
     let results = [];
     let group_user = {};
 
-    let pg_res_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
-    for (let row of pg_res_group_user.rows) {
-        if (row["group_id"] in group_user) {
-            group_user[row["group_id"]].push(row["username"]);
-        } else {
-            group_user[row["group_id"]] = [row["username"]];
+    let pg_res_old_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
+    for (let row of pg_res_old_group_user.rows) {
+        // Check if the user already has a group in to_task
+        let pg_res_new_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND username = ($2)", [to_task, row["username"]]);
+        if (pg_res_new_group_user.rowCount === 0){
+            if (row["group_id"] in group_user) {
+                group_user[row["group_id"]].push(row["username"]);
+            } else {
+                group_user[row["group_id"]] = [row["username"]];
+            }
         }
     }
 
@@ -1050,7 +1054,9 @@ async function copy_groups(course_id, from_task, to_task) {
             for (let user of group_user[old_group_id]) {
                 // Add user to the new group in db
                 let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
-                if (!err_add_user) {
+                if (err_add_user) {
+                    console.log("User " + user + "is already in a group");
+                } else{
                     // Add user to the new project on gitlab
                     add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
                     if (add_user["success"] === false) {
