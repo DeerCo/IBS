@@ -24,7 +24,7 @@ router.post("/", (req, res) => {
 			if (pg_res_select_group.rowCount !== 1) {
 				res.status(400).json({ message: "The group id is not found in the database." });
 			} else {
-				client.query(sql_add, [pg_res_select_group.rows[0]["task"], req.body["username"], req.body["group_id"]], (err_add, pg_res_add) => {
+				client.query(sql_add, [pg_res_select_group.rows[0]["task"], req.body["username"].toLowerCase(), req.body["group_id"]], (err_add, pg_res_add) => {
 					if (err_add) {
 						if (err_add.code === "23503" && err_add.constraint === "username") {
 							res.status(400).json({ message: "The username is not found in the database." });
@@ -35,7 +35,7 @@ router.post("/", (req, res) => {
 							console.log(err_add);
 						}
 					} else {
-						helpers.gitlab_add_user_without_gitlab_group_id(res.locals["course_id"], req.body["group_id"], req.body["username"]).then(result => {
+						helpers.gitlab_add_user_without_gitlab_group_id(res.locals["course_id"], req.body["group_id"], req.body["username"].toLowerCase()).then(result => {
 							if (result["success"] === true) {
 								let message = "User has been added to the group.";
 								res.status(200).json({ message: message, group_id: req.body["group_id"], gitlab_url: result["gitlab_url"] });

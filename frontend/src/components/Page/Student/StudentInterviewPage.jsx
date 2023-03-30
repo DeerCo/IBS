@@ -19,6 +19,7 @@ let StudentInterviewPage = () => {
 	let [bookedStart, setBookedStart] = useState("");
 	let [bookedEnd, setBookedEnd] = useState("");
 	let [bookedLocation, setBookedLocation] = useState("");
+	let [bookedNote, setBookedNote] = useState("");
 
 	let [selectedStart, setSelectedStart] = useState("");
 	let [selectedEnd, setSelectedEnd] = useState("");
@@ -44,7 +45,11 @@ let StudentInterviewPage = () => {
 							navigate("/login");
 							return;
 						} else if (response_1["status"] === 400) {
-							toast.info("You need to join a group before booking an interview", { theme: "colored" });
+							toast.info(response_1["data"]["message"], { theme: "colored" });
+							return;
+						} else if (response_2["status"] === 400) {
+							toast.info(response_2["data"]["message"], { theme: "colored" });
+							return;
 						} else {
 							toast.warn("Unknown error", { theme: "colored" });
 							navigate("/login");
@@ -59,6 +64,7 @@ let StudentInterviewPage = () => {
 							setBookedStart(response_1_data["start_time"]);
 							setBookedEnd(response_1_data["end_time"]);
 							setBookedLocation(response_1_data["location"]);
+							setBookedNote(response_1_data["note"]);
 							setBooked(true);
 
 							let location_lower = response_1_data["location"].toLowerCase();
@@ -247,6 +253,7 @@ let StudentInterviewPage = () => {
 								<strong className="d-block text-gray-dark"> Start time: {bookedStart} </strong>
 								<strong className="d-block text-gray-dark"> End time: {bookedEnd} </strong>
 								<strong className="d-block text-gray-dark"> Location: {bookedLocation.startsWith("http") ? <a href={bookedLocation}>Link ✈</a> : bookedLocation} </strong>
+								{bookedNote !== null && <strong className="d-block text-gray-dark"> Note: {bookedNote} </strong>}
 								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { cancel_interview(task) }}>
 									Cancel
 								</button>

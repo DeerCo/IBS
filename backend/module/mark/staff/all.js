@@ -5,7 +5,7 @@ const helpers = require("../../../utilities/helpers");
 
 router.get("/", (req, res) => {
     if (res.locals["task"] === "") {
-        let sql_mark = "SELECT username, task, SUM(mark) AS sum FROM course_" + res.locals["course_id"] + ".mark GROUP BY (username, task)";
+        let sql_mark = "SELECT username, task, SUM(mark) AS sum FROM course_" + res.locals["course_id"] + ".mark GROUP BY username, task ORDER BY username";
         client.query(sql_mark, [], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });
@@ -16,13 +16,18 @@ router.get("/", (req, res) => {
             }
         });
     } else {
-        let sql_mark = "SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE task = ($1) ORDER BY criteria_id";
+        if (req.query["total"] === true || req.query["total"] === "true") {
+            var total = true;
+        } else {
+            var total = false;
+        }
+
+        let sql_mark = "SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE task = ($1) ORDER BY criteria_id, username";
         client.query(sql_mark, [res.locals["task"]], (err, pgRes) => {
             if (err) {
-                console.log(err)
                 res.status(404).json({ message: "Unknown error." });
             } else {
-                helpers.format_marks_one_task(pgRes.rows, res.locals["course_id"], res.locals["task"]).then(marks => {
+                helpers.format_marks_one_task(pgRes.rows, res.locals["course_id"], res.locals["task"], total).then(marks => {
                     res.json({ marks: marks });
                 });
             }

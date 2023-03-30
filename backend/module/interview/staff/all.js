@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
             res.status(404).json({ message: "Unknown error." });
             console.log(err)
         } else {
-            res.status(200).json({ interviews: pg_res.rows });
+            res.status(200).json({ count: pg_res.rowCount, interviews: pg_res.rows });
         }
     });
 })

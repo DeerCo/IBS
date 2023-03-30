@@ -11,6 +11,10 @@ router.delete("/", rate_limit.email_limiter, (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (res.locals["hide_interview"] === true) {
+        res.status(400).json({ message: "The interviews are not ready yet." });
+        return;
+    }
 
     if (res.locals["interview_group"] !== "" && res.locals["interview_group"] !== null) {
         var task = res.locals["interview_group"];
@@ -20,7 +24,7 @@ router.delete("/", rate_limit.email_limiter, (req, res) => {
 
     helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
         if (group_id === -1) {
-            res.status(400).json({ message: "You need to join a group before cancelling an interview." });
+            res.status(400).json({ message: "You need to join a group before cancelling your interview." });
             return;
         }
 

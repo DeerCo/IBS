@@ -52,7 +52,7 @@ router.post("/", (req, res) => {
 				return;
 			}
 
-			client.query(sql_invite, [res.locals["task"], req.body["username"], group_id], (err_invite, pg_res_invite) => {
+			client.query(sql_invite, [res.locals["task"], req.body["username"].toLowerCase(), group_id], (err_invite, pg_res_invite) => {
 				if (err_invite) {
 					if (err_invite.code === "23503" && err_invite.constraint === "username") {
 						res.status(400).json({ message: "The username is not found in the database." });

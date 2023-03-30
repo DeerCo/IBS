@@ -11,6 +11,10 @@ router.put("/", rate_limit.email_limiter, (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (res.locals["hide_interview"] === true) {
+        res.status(400).json({ message: "The interviews are not ready yet." });
+        return;
+    }
     if (!("time" in req.body) || helpers.time_validate(req.body["time"])) {
         res.status(400).json({ message: "Your desired time is missing or not correct." });
         return;
@@ -39,7 +43,7 @@ router.put("/", rate_limit.email_limiter, (req, res) => {
 
     helpers.get_group_id(res.locals["course_id"], task, res.locals["username"]).then(group_id => {
         if (group_id === -1) {
-            res.status(400).json({ message: "You need to join a group before changing an interview." });
+            res.status(400).json({ message: "You need to join a group before changing your interview." });
             return;
         }
 

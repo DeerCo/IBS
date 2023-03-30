@@ -298,6 +298,11 @@
 									"type": "text"
 								},
 								{
+									"key": "hide_interview",
+									"value": "",
+									"type": "text"
+								},
+								{
 									"key": "interview_group",
 									"value": "",
 									"type": "text",
@@ -373,6 +378,11 @@
 								},
 								{
 									"key": "change_group",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "hide_interview",
 									"value": "",
 									"type": "text"
 								},
@@ -951,6 +961,11 @@
 									"key": "task",
 									"value": "",
 									"disabled": true
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -977,7 +992,13 @@
 							"query": [
 								{
 									"key": "task",
-									"value": ""
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "total",
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -1004,6 +1025,11 @@
 							"query": [
 								{
 									"key": "task",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "total",
 									"value": "",
 									"disabled": true
 								}
@@ -1201,6 +1227,11 @@
 									"value": ""
 								},
 								{
+									"key": "booked",
+									"value": "",
+									"disabled": true
+								},
+								{
 									"key": "interview_id",
 									"value": "",
 									"disabled": true
@@ -1335,6 +1366,16 @@
 									"key": "task",
 									"value": "",
 									"type": "text"
+								},
+								{
+									"key": "force",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "booked",
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "interview_id",

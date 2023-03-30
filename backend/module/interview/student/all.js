@@ -8,6 +8,10 @@ router.get("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (res.locals["hide_interview"] === true) {
+        res.status(400).json({ message: "The interviews are not ready yet." });
+        return;
+    }
 
     let sql_times = "SELECT to_char(time AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS start_time, " +
         "to_char(time AT TIME ZONE 'America/Toronto' + CONCAT(length,' minutes')::INTERVAL, 'YYYY-MM-DD HH24:MI:SS') AS end_time, " +
@@ -26,8 +30,9 @@ router.get("/", (req, res) => {
                 let time = interview["start_time"] + " - " + interview["end_time"];
                 interviews[interview["location"]][time] = interview["all_count"] - interview["booked_count"];
             }
-            if (Object.keys(interviews).length != 0) {
-                res.json({ task: res.locals["task"], availability: interviews });
+            let interviews_count = Object.keys(interviews).length;
+            if (interviews_count != 0) {
+                res.json({ task: res.locals["task"], count: interviews_count, availability: interviews });
             } else {
                 res.json({ task: res.locals["task"], message: "No interview is available." });
             }

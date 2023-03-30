@@ -34,6 +34,7 @@ let StudentDetailsPage = () => {
 	let [commitMsg, setCommitMsg] = useState("");
 	let [tokenUsed, setTokenUsed] = useState("");
 	let [commitTime, setCommitTime] = useState("");
+	let [pushTime, setPushTime] = useState("");
 	let [maxToken, setMaxToken] = useState("");
 	let [collectCommit, setCollectCommit] = useState(null);
 	let [collectTokenUsed, setCollectTokenUsed] = useState(null);
@@ -99,11 +100,12 @@ let StudentDetailsPage = () => {
 									setTokenLen(before_due_date["token_length"]);
 									setCommit(before_due_date["commit_id"]);
 									setCommitTime(before_due_date["commit_time"]);
+									setPushTime(before_due_date["push_time"]);
 									setCommitMsg(before_due_date["commit_message"]);
 									setTokenUsed(before_due_date["token_used"]);
 
 									if ("collected" in submission_data) {
-										let collected = submission_data["before_due_date"];
+										let collected = submission_data["collected"];
 										setCollectCommit(collected["commit_id"]);
 										setCollectTokenUsed(collected["token_used"]);
 									}
@@ -238,14 +240,14 @@ let StudentDetailsPage = () => {
 
 									<hr />
 
-									<h4> Gitlab URL </h4>
-									<p><a href={git}>{git}</a></p>
-
-									<hr />
-
 									<h4> Token </h4>
 									<p> At most <b>{maxToken}</b> token(s) can be used for this task</p>
 									<p> Each token can extend the due date by <b>{tokenLen}</b> minutes</p>
+
+									<hr />
+
+									<h4> GitLab URL </h4>
+									<p><a href={git} target="_blank">{git}</a></p>
 
 									<hr />
 
@@ -253,7 +255,8 @@ let StudentDetailsPage = () => {
 									{commit && (
 										<div>
 											<p>The commit id is: <b>{commit}</b></p>
-											<p>The commit time is: <b>{commitTime} </b></p>
+											<p>The commit time is: <b>{commitTime}</b></p>
+											{pushTime === null ? <p>The push time is: <b>Not Applicable</b></p> : <p>The push time is: <b>{pushTime}</b></p>}
 											<p>The commit message is: <b>{commitMsg}</b></p>
 											<p>This commit uses {tokenUsed} token(s)</p>
 										</div>
@@ -266,11 +269,12 @@ let StudentDetailsPage = () => {
 									<hr />
 
 									<h4> Collected Commit </h4>
-									{!collectCommit && "No submission has been collected yet"}
+									{!collectCommit && "No commit has been collected yet"}
 									{collectCommit && (
 										<div>
 											<p>The commit id is: <b>{collectCommit}</b></p>
 											<p>This commit uses {collectTokenUsed} token(s)</p>
+											<p>This commit is for marking purposes</p>
 										</div>
 									)}
 								</div>

@@ -16,9 +16,9 @@ router.put("/", (req, res) => {
             console.log(err);
         } else {
             if (pgRes.rowCount <= 1) {
-                res.status(200).json({ message: pgRes.rowCount + " mark is hidden." });
+                res.status(200).json({ message: pgRes.rowCount + " mark is hidden.", count: pgRes.rowCount });
             } else {
-                res.status(200).json({ message: pgRes.rowCount + " marks are hidden." });
+                res.status(200).json({ message: pgRes.rowCount + " marks are hidden.", count: pgRes.rowCount });
             }
         }
     });
