@@ -37,7 +37,6 @@ let LoginPage = () => {
 						sessionStorage.setItem('username', username.toLowerCase());
 						sessionStorage.setItem('token', response["data"]["token"]);
 						sessionStorage.setItem('roles', JSON.stringify(response["data"]["roles"]));
-						toast("Hello, World!", {icon: "🚀"});
 						navigate("/home");
 					} else if (response["status"] === 401) {
 						toast.error("Your username or password is incorrect", { theme: "colored" });

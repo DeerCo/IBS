@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  nginx:
+    restart: always
+    depends_on:
+      - frontend
+      - backend
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "3444:80"
+
+  postgres:
+    restart: always
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ibs
+      POSTGRES_DB: ibs
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    restart: always
+    depends_on:
+      - postgres
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://ibs:password@postgres:5432/ibs?sslmode=disable
+
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+volumes:
+  db_data:
