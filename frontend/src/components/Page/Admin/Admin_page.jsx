@@ -77,7 +77,7 @@ let Admin_page = () => {
   return (
     <div style={{margin: "0.5ch", justifyContent:"left", textAlign: "left"}}>
       <h1>Admin Page</h1>
-      <div style={{display: "flex"}}>
+      <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, 15em)"}}>
         {courses?.map?.(data =>
           (
             <div className="col" key={data.course_id}>
