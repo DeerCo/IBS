@@ -169,7 +169,7 @@ let Admin_page = () => {
           <p>course_id</p>
           <input {...register5("course_id")}></input>
           <p>file</p>
-          <input type={"file"} {...register5("file")}></input>
+          <input type={"file"} {...register5("file")} multiple={true}></input>
           <p>role</p>
           <input {...register5("role")}></input>
           <p></p>
