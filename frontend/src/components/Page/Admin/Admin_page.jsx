@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import AdminApi from "../../../api/admin_api";
 import {useForm} from "react-hook-form";
-import {Link} from "react-router-dom";
 import {toast} from "react-toastify";
 
 let Admin_page = () => {
@@ -11,6 +10,7 @@ let Admin_page = () => {
   const { register: register3, handleSubmit: handleSubmit3 } = useForm();
   const { register: register4, handleSubmit: handleSubmit4 } = useForm();
   const { register: register5, handleSubmit: handleSubmit5 } = useForm();
+  const { register: register6, handleSubmit: handleSubmit6 } = useForm();
   const [checked, setChecked] = useState(true);
   const [role, setRole] = useState({});
   const addCourse = data => {
@@ -52,6 +52,13 @@ let Admin_page = () => {
     })
   }
 
+  const uploadRole = data => {
+    AdminApi.add_role(data).then((response) => {
+      console.log(response);
+      toast(response.data.message);
+    })
+  }
+
   const deleteRole = data => {
     AdminApi.delete_role(data).then((response) => {
       console.log(response);
@@ -68,7 +75,7 @@ let Admin_page = () => {
   }, []);
 
   return (
-    <div style={{textAlign: "left"}}>
+    <div style={{margin: "0.5ch", justifyContent:"left", textAlign: "left"}}>
       <h1>Admin Page</h1>
       <div style={{display: "flex"}}>
         {courses?.map?.(data =>
@@ -108,11 +115,6 @@ let Admin_page = () => {
             <input {...register1("token_length")} />
             <p>hidden</p>
             <input {...register1("hidden")} />
-            {/*<select {...register("gender")}>*/}
-            {/*  <option value="female">female</option>*/}
-            {/*  <option value="male">male</option>*/}
-            {/*  <option value="other">other</option>*/}
-            {/*</select>*/}
             <p></p>
             <input type="submit" />
           </form> :
@@ -162,12 +164,25 @@ let Admin_page = () => {
         </form>
       </div>
       <div>
-        <h2>Delete role</h2>
-        <form onSubmit={handleSubmit5(deleteRole)}>
+        <h2>Upload roles</h2>
+        <form onSubmit={handleSubmit5(uploadRole)}>
           <p>course_id</p>
           <input {...register5("course_id")}></input>
+          <p>file</p>
+          <input type={"file"} {...register5("file")}></input>
+          <p>role</p>
+          <input {...register5("role")}></input>
+          <p></p>
+          <input type={"submit"}/>
+        </form>
+      </div>
+      <div>
+        <h2>Delete role</h2>
+        <form onSubmit={handleSubmit6(deleteRole)}>
+          <p>course_id</p>
+          <input {...register6("course_id")}></input>
           <p>username</p>
-          <input {...register5("username")}></input>
+          <input {...register6("username")}></input>
           <p></p>
           <input type={"submit"}/>
         </form>
