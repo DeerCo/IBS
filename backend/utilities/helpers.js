@@ -26,7 +26,7 @@ function name_validate(name) {
 }
 
 function string_validate(string) {
-    let regex_string = new RegExp("^[0-9a-zA-Z:_ \\.\\/\\-\\(\\)]{1,500}$");
+    let regex_string = new RegExp("^[0-9a-zA-Z:_ \\,\\.\\/\\-\\(\\)\\!]{1,500}$");
 
     if (!regex_string.test(string)) {
         return 1;
@@ -242,7 +242,7 @@ function search_files(username, group_id, coure_id, sub_dir = "") {
         let stat = fs.lstatSync(file_name);
 
         if (stat.isDirectory()) {
-            result = result.concat(search_files(username, group_id, sub_dir + files[i] + "/"));
+            result = result.concat(search_files(username, group_id, coure_id, sub_dir + files[i] + "/"));
         } else if (file_name.indexOf(username + "_") >= 0 || file_name.indexOf("group_" + group_id + "_") >= 0) {
             result.push(sub_dir + files[i]);
         };
@@ -381,7 +381,7 @@ async function format_marks_one_task(json, course_id, task, total) {
                 temp_total += marks[username][criteria]["mark"];
                 temp_out_of += marks[username][criteria]["out_of"];
             }
-            marks[username]["Total"] = {mark: temp_total, out_of: temp_out_of};
+            marks[username]["Total"] = { mark: temp_total, out_of: temp_out_of };
         }
     }
 
@@ -483,9 +483,10 @@ async function gitlab_get_user_id(username) {
         }
         return res["data"][0]["id"];
     } catch (err) {
-        console.log(err)
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
+        } else {
+            console.log(err);
         }
         return -1;
     }
@@ -555,9 +556,10 @@ async function gitlab_create_group_and_project_no_user(course_id, group_id, task
         // Delete the protected branch
         await axios.delete(process.env.GITLAB_URL + "projects/" + gitlab_project_id + "/protected_branches/master", delete_config);
     } catch (err) {
-        console.log(err);
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
+        } else {
+            console.log(err);
         }
         return { success: false, code: "failed_create_project" }
     }
@@ -600,9 +602,10 @@ async function gitlab_add_user_with_gitlab_group_id(gitlab_group_id, gitlab_url,
 
         await axios.post(process.env.GITLAB_URL + "groups/" + gitlab_group_id + "/members", data_add_user, config_add_user);
     } catch (err) {
-        console.log(err);
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
+        } else {
+            console.log(err);
         }
         return { success: false, code: "failed_add_user" };
     }
@@ -655,9 +658,10 @@ async function gitlab_remove_user(course_id, group_id, username) {
 
         await axios.delete(process.env.GITLAB_URL + "groups/" + gitlab_group_id + "/members/" + user_id, config);
     } catch (err) {
-        console.log(err);
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
+        } else {
+            console.log(err);
         }
         return { success: false, code: "failed_remove_user" };
     }
@@ -684,14 +688,16 @@ async function gitlab_get_commits(course_id, group_id) {
             }
         };
 
-        let res = await axios.get(process.env.GITLAB_URL + "projects/" + gitlab_project_id + "/repository/commits", config);
-        return res["data"];
+        let res_commit = await axios.get(process.env.GITLAB_URL + "projects/" + gitlab_project_id + "/repository/commits", config);
+        let res_push = await axios.get(process.env.GITLAB_URL + "projects/" + gitlab_project_id + "/events", config);
+        return { commit: res_commit["data"], push: res_push["data"] };
     } catch (err) {
-        console.log(err)
         if ("response" in err && "data" in err["response"] && "message" in err["response"]["data"]) {
             console.log(err["response"]["data"]["message"]);
+        } else {
+            console.log(err);
         }
-        return [];
+        return { commit: [], push: [] };
     }
 }
 
@@ -822,10 +828,6 @@ async function get_due_date(course_id, group_id) {
         }
 
         max_token = Math.min(max_token, max_task_token, max_user_token - used_user_token, max_task_group_token - used_task_group_token);
-
-        // console.log(max_task_token);
-        // console.log(max_user_token - used_user_token);
-        // console.log(max_task_group_token - used_task_group_token);
     }
     due_date_with_extension_and_token = due_date_with_extension.clone().add(max_token * token_length, "minutes");
 
@@ -840,7 +842,10 @@ async function get_due_date(course_id, group_id) {
 }
 
 async function get_submission_before_due_date(course_id, group_id) {
-    let commits = await gitlab_get_commits(course_id, group_id);
+    let data = await gitlab_get_commits(course_id, group_id);
+    let commit_commits = data["commit"]; // the commit history
+    let push_commits = data["push"]; // the time when the commits were pushed (in case they modified the commit time manually)
+
     let due_date_data = await get_due_date(course_id, group_id);
     let task = due_date_data["task"];
     let due_date = due_date_data["due_date"];
@@ -852,10 +857,11 @@ async function get_submission_before_due_date(course_id, group_id) {
     let max_token = due_date_data["max_token"];
     let token_length = due_date_data["token_length"];
 
-    let collected_commit_id = null;
-    let collected_commit_time = null;
-    let collected_commit_time_utc = null;
-    let collected_commit_message = null;
+    let last_commit_id = null;
+    let last_commit_time = null;
+    let push_time = null;
+    let last_commit_time_utc = null;
+    let last_commit_message = null;
 
     // Check if the due date has passed
     let before_due_date_with_extension_and_token = false;
@@ -864,19 +870,38 @@ async function get_submission_before_due_date(course_id, group_id) {
     }
 
     // Get the last commit before due date
-    for (let commit of commits) {
-        if (collected_commit_id === null && moment(commit["created_at"]).isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
-            collected_commit_id = commit["id"];
-            collected_commit_time = moment(commit["created_at"]).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
-            collected_commit_time_utc = moment(commit["created_at"]);
-            collected_commit_message = commit["message"];
+    for (let commit of commit_commits) {
+        if (last_commit_id === null && moment(commit["created_at"]).isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
+            // The commit time is before the due date, but we also need to check the push time in case it's modified manually
+            let verified = false;
+            let forbidden = false;
+
+            for (let push_commit of push_commits) {
+                if (push_commit["action_name"] === "pushed to") {
+                    if (push_commit["push_data"]["commit_to"] === commit["id"]) {
+                        if (moment(push_commit["created_at"]).isBefore(moment.tz(due_date_with_extension_and_token, "America/Toronto"))) {
+                            verified = true;
+                            push_time = moment(push_commit["created_at"]).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
+                        } else {
+                            forbidden = true;
+                        }
+                    }
+                }
+            }
+
+            if (verified && !forbidden) {
+                last_commit_id = commit["id"];
+                last_commit_time = moment(commit["created_at"]).tz("America/Toronto").format("YYYY-MM-DD HH:mm:ss");
+                last_commit_time_utc = moment(commit["created_at"]);
+                last_commit_message = commit["message"];
+            }
         }
     }
 
     // Calculate number of tokens to deduct
     let token_used = 0;
-    if (collected_commit_time_utc !== null) {
-        let minutes_past_due_date_with_extension = moment.duration(collected_commit_time_utc.diff(moment.tz(due_date_with_extension, "America/Toronto"))).asMinutes();
+    if (last_commit_time_utc !== null) {
+        let minutes_past_due_date_with_extension = moment.duration(last_commit_time_utc.diff(moment.tz(due_date_with_extension, "America/Toronto"))).asMinutes();
         if (minutes_past_due_date_with_extension > 0) {
             token_used = Math.ceil(minutes_past_due_date_with_extension / token_length);
         }
@@ -884,7 +909,7 @@ async function get_submission_before_due_date(course_id, group_id) {
 
     return {
         group_id, task, due_date, due_date_with_extension, due_date_with_extension_and_token, before_due_date_with_extension_and_token,
-        max_token, token_length, commit_id: collected_commit_id, commit_time: collected_commit_time, commit_message: collected_commit_message, token_used
+        max_token, token_length, commit_id: last_commit_id, commit_time: last_commit_time, push_time, commit_message: last_commit_message, token_used
     };
 }
 
@@ -898,7 +923,7 @@ async function collect_one_submission(course_id, group_id, overwrite) {
         return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
     }
     if (submission_data["commit_id"] === null) {
-        return { message: "No submission is found for this group.", group_id: group_id, code: "no_submission", submission: submission_data };
+        return { message: "No commit is found for this group.", group_id: group_id, code: "no_commit", submission: submission_data };
     }
     if (submission_data["before_due_date_with_extension_and_token"] === true) {
         return { message: "Due date hasn't passed for this group.", group_id: group_id, code: "before_due_date", submission: submission_data };
@@ -953,7 +978,7 @@ async function collect_all_submissions(course_id, task, overwrite) {
         } else if (code === "submission_exists") {
             ignore_count += 1;
             ignore_groups.push(group_id);
-        } else if (code === "no_submission") {
+        } else if (code === "no_commit") {
             empty_count += 1;
             empty_groups.push(group_id);
         } else if (code === "before_due_date") {
@@ -973,11 +998,12 @@ async function download_all_submissions(course_id, task) {
     let pg_res = await db.query("SELECT group_id FROM course_" + course_id + ".group WHERE task = ($1)", [task]);
     for (let row of pg_res.rows) {
         let group_id = row["group_id"];
-        let pg_res_gitlab_url = await db.query("SELECT gitlab_url FROM course_" + course_id + ".group WHERE group_id = ($1)", [group_id]);
+        let pg_res_gitlab_url = await db.query("SELECT gitlab_project_id, gitlab_url FROM course_" + course_id + ".group WHERE group_id = ($1)", [group_id]);
         let pg_res_commit_id = await db.query("SELECT commit_id FROM course_" + course_id + ".submission WHERE group_id = ($1)", [group_id]);
 
         let gitlab_url = pg_res_gitlab_url.rows[0]["gitlab_url"];
-        if (gitlab_url !== null) {
+        let gitlab_project_id = pg_res_gitlab_url.rows[0]["gitlab_project_id"];
+        if (gitlab_url !== null && gitlab_project_id !== null) {
             let regex = gitlab_url.match(/https:\/\/([^\/]*)\/(.*)/);
             let ssh_clone_url = "git@" + regex[1] + ":" + regex[2] + ".git";
 
@@ -985,6 +1011,7 @@ async function download_all_submissions(course_id, task) {
                 groups.push({
                     group_name: "group_" + group_id,
                     group_id: group_id,
+                    gitlab_project_id: gitlab_project_id,
                     gitlab_url: gitlab_url,
                     https_clone_url: gitlab_url + ".git",
                     ssh_clone_url: ssh_clone_url,
@@ -1001,12 +1028,16 @@ async function copy_groups(course_id, from_task, to_task) {
     let results = [];
     let group_user = {};
 
-    let pg_res_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
-    for (let row of pg_res_group_user.rows) {
-        if (row["group_id"] in group_user) {
-            group_user[row["group_id"]].push(row["username"]);
-        } else {
-            group_user[row["group_id"]] = [row["username"]];
+    let pg_res_old_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
+    for (let row of pg_res_old_group_user.rows) {
+        // Check if the user already has a group in to_task
+        let pg_res_new_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND username = ($2)", [to_task, row["username"]]);
+        if (pg_res_new_group_user.rowCount === 0){
+            if (row["group_id"] in group_user) {
+                group_user[row["group_id"]].push(row["username"]);
+            } else {
+                group_user[row["group_id"]] = [row["username"]];
+            }
         }
     }
 
@@ -1023,7 +1054,9 @@ async function copy_groups(course_id, from_task, to_task) {
             for (let user of group_user[old_group_id]) {
                 // Add user to the new group in db
                 let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
-                if (!err_add_user) {
+                if (err_add_user) {
+                    console.log("User " + user + "is already in a group");
+                } else{
                     // Add user to the new project on gitlab
                     add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
                     if (add_user["success"] === false) {

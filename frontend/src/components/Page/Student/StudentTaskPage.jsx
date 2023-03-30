@@ -1,67 +1,166 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
-import '../../../styles/style.css';
+import { makeStyles } from "@mui/styles";
+import { Typography, Button } from '@mui/material';
+import Countdown from 'react-countdown';
+
+const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    margin: '16px',
+    padding: '16px',
+  },
+  card: {
+    display: 'flex',
+    boxShadow: '0px 2px 10px 1px #e6e9ed',
+    flexDirection: 'column',
+    margin: '32px',
+    borderRadius: '15px 15px 15px 15px',
+    padding: '12px 8px 12px 8px'
+  },
+  cardHeader: {
+    borderBottom: 'solid ghostwhite',
+    paddingBottom: '8px',
+  },
+  cardSubtitle: {
+    margin: '12px',
+    color: 'green',
+  },
+  buttonGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  button: {
+    color: '#202126',
+    borderRadius: '8px 8px 8px 8px',
+    padding: '4px 8px 4px 8px',
+    border: 'solid 1px #adcadd99',
+    boxShadow: 'inset 5px 5px 10px 0px #adcadd17',
+    fontSize: 'small',
+    width: '100px'
+  },
+  meeting: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '8px 0 0 8px',
+    marginTop: '8px',
+    borderTop: 'solid ghostwhite',
+  }
+});
 
 
 let StudentTaskPage = () => {
-	let navigate = useNavigate();
+  const classes = useStyles();
+  let navigate = useNavigate();
+  let { course_id } = useParams();
+  let [tasks, setTasks] = useState([]);
 
-	let { course_id } = useParams();
-	let [tasks, setTasks] = useState([]);
+  useEffect(() => {
+    StudentApi.all_tasks(course_id).then(
+      (response) => {
+        if (!response || !("status" in response)) {
+          toast.error("Unknown error", { theme: "colored" });
+          navigate("/login");
+        } else if (response["status"] === 200) {
+          setTasks(response["data"]["task"]);
+        } else if (response["status"] === 401 || response["status"] === 403) {
+          toast.warn("You need to login again", { theme: "colored" });
+          navigate("/login");
+        } else {
+          toast.error("Unknown error", { theme: "colored" });
+          navigate("/login");
+        }
+      })
+  }, [course_id, navigate]);
 
-	useEffect(() => {
-		StudentApi.all_tasks(course_id).then(
-			(response) => {
-				if (!response || !("status" in response)){
-					toast.error("Unknown error", {theme: "colored"});
-					navigate("/login");
-				} else if (response["status"] === 200){
-					setTasks(response["data"]["task"]);
-				} else if (response["status"] === 401 || response["status"] === 403){
-					toast.warn("You need to login again", {theme: "colored"});
-					navigate("/login");
-				} else{
-					toast.error("Unknown error", {theme: "colored"});
-					navigate("/login");
-				}
-			})
-	}, [course_id, navigate]);
+  let mainTasks = tasks.filter(task => task.interview_group === null).map(task => ({ ...task, subtasks: tasks.filter(subtask => subtask.interview_group === task.task) }));
 
-	return (
-		<div>
-			<div>
-				<NavBar page="Task"/>
-
-				<div className="album py-5 bg-white">
-					<div className="container mt-5">
-						<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-							{tasks.map(data => (
-								<div className="col" key={data.task}>
-									<div className="card shadow-sm m-3">
-										<div className="card-body">
-											<h3 className="card-text mb-3">{data.task}</h3>
-											{ data.interview_group === null && <p className="card-text">Original Due Date: {data.due_date}</p>}
-											{ data.interview_group !== null && <p className="card-text">Interview Only</p>}
-											{ data.interview_group !== null && <p className="card-text">Using the Same Group as <i>{data.interview_group}</i></p>}
-											<div className="btn-group">
-											{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/details"}>Details</Link>}
-												{data.hide_interview === false && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/interview"}>Interview</Link>}
-												{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/mark"}>Mark</Link>}
-												{data.interview_group === null && <Link className="btn btn-sm btn-outline-secondary" to={"/course/" + course_id + "/task/" + data.task + "/file"}>Feedback File</Link>}
-											</div>
-										</div>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div>
+      <NavBar page="Task" />
+      <div className={classes.container}>
+        {mainTasks.map(data => (
+          <div className={classes.card} key={data.task}>
+            <div>
+              <div className={classes.cardHeader}>
+                <Typography variant="h5">
+                  {data.task}
+                </Typography>
+              </div>
+              {data.interview_group === null &&
+                <div className={classes.cardSubtitle}>
+                  <Countdown date={data.due_date} renderer={({ days, hours, minutes, completed }) => {
+                    if (completed) {
+                      return <Typography color='#a71111fc '>
+                        Due Date Past
+                      </Typography>;
+                    }
+                    else {
+                      return `${days} Days and ${hours} Hours and ${minutes} Minutes Left`;
+                    }
+                  }} />
+                </div>
+              }
+              <div className={classes.buttonGroup}>
+                <div>
+                  {data.interview_group === null &&
+                    <Button href={"/course/" + course_id + "/task/" + data.task + "/details"}>
+                      <div className={classes.button}>
+                        Details
+                      </div>
+                    </Button>
+                  }
+                  {data.interview_group === null &&
+                    <Button href={"/course/" + course_id + "/task/" + data.task + "/mark"}>
+                      <div className={classes.button}>
+                        Mark
+                      </div>
+                    </Button>
+                  }
+                  {data.interview_group === null &&
+                    <Button href={"/course/" + course_id + "/task/" + data.task + "/file"}>
+                      <div className={classes.button}>
+                        Feedback
+                      </div>
+                    </Button>
+                  }
+                </div>
+                <div>
+                  {data.hide_interview === false &&
+                    <div className={classes.meeting}>
+                      <Typography variant="subtitle1"> Final Interview </Typography>
+                      <Button href={"/course/" + course_id + "/task/" + data.task + "/interview"}>
+                        <div className={classes.button}>
+                          Book
+                        </div>
+                      </Button>
+                    </div>
+                  }
+                  {data.subtasks.map(subtask => (
+                    <div className={classes.meeting}>
+                      <Typography variant="subtitle1"> Mentor Session </Typography>
+                      <Button href={"/course/" + course_id + "/task/" + subtask.task + "/interview"}>
+                        <div className={classes.button}>
+                          Book
+                        </div>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 

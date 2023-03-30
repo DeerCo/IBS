@@ -19,18 +19,8 @@ router.put("/", (req, res) => {
         }
     }
 
-    let token_length = -1;
-    if ("token_length" in req.body) {
-        if (helpers.name_validate(req.body["token_length"])) {
-            res.status(400).json({ message: "The token length is missing or has invalid format." });
-            return;
-        } else {
-            token_length = req.body["token_length"];
-        }
-    }
-
-    var sql_change = "UPDATE course_" + res.locals["course_id"] + ".user SET token_count = ($1), token_length = ($2) WHERE username = ($3)";
-    var sql_change_data = [token_count, token_length, req.body["username"].toLowerCase()];
+    var sql_change = "UPDATE course_" + res.locals["course_id"] + ".user SET token_count = ($1) WHERE username = ($2)";
+    var sql_change_data = [token_count, req.body["username"].toLowerCase()];
 
     client.query(sql_change, sql_change_data, (err, pg_res) => {
         if (err) {
