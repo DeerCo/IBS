@@ -13,6 +13,7 @@ import StudentTaskPage from "./components/Page/Student/StudentTaskPage";
 import StudentDetailsPage from "./components/Page/Student/StudentDetailsPage";
 import TaTaskPage from "./components/Page/Ta/TaTaskPage";
 import TaInterviewPage from "./components/Page/Ta/TaInterviewPage";
+import Admin_page from "./components/Page/Admin/Admin_page";
 
 function App() {
 	return (
@@ -36,6 +37,7 @@ function App() {
 
 					<Route path="/ta/course/:course_id/task" element={<TaTaskPage />}></Route>
 					<Route path="/ta/course/:course_id/task/:task/interview" element={<TaInterviewPage />}></Route>
+					<Route path="/admin" element={<Admin_page/>}></Route>
 
 					<Route path="/" element={<LoginPage />}></Route>
 					<Route path="*" element={<NotFoundPage />} />
