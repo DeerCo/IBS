@@ -3,7 +3,7 @@ import AdminApi from "../../../api/admin_api";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
 
-let Admin_page = () => {
+let AdminPage = () => {
   const [courses, setCourses] = useState({});
   const { register: register1, handleSubmit: handleSubmit1 } = useForm();
   const { register: register2, handleSubmit: handleSubmit2 } = useForm();
@@ -191,4 +191,4 @@ let Admin_page = () => {
   );
 }
 
-export default Admin_page;
+export default AdminPage;
