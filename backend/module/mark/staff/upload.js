@@ -84,7 +84,7 @@ router.post("/", upload.single("file"), (req, res) => {
                 }
 
                 if (marks_data.length === 0) {
-                    res.status(200).json({ message: "The file must contain at least 1 valid mark." });
+                    res.status(400).json({ message: "The file must contain at least 1 valid mark." });
                     return;
                 }
 

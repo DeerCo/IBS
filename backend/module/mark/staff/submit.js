@@ -22,10 +22,15 @@ router.post("/", (req, res) => {
         submit_mark([req.body["username"].toLowerCase()], req, res);
     } else if ("group_id" in req.body && !helpers.name_validate(req.body["group_id"])) {
         helpers.get_group_users(res.locals["course_id"], req.body["group_id"]).then(user => {
+            if (user.length === 0) {
+                res.status(400).json({ message: "The group id is not found in the database." });
+                return;
+            }
+
             submit_mark(user, req, res);
         });
     } else {
-        res.status(400).json({ message: "Either group id or username needs to be provided.." });
+        res.status(400).json({ message: "Either group id or username needs to be provided." });
         return;
     }
 })
@@ -39,6 +44,10 @@ function submit_mark(user_list, req, res) {
     }
 
     helpers.get_criteria_id(res.locals["course_id"], res.locals["task"], req.body["criteria"]).then(criteria_id => {
+        if (criteria_id === -1){
+            res.status(400).json({ message: "The criteria is not found in the database." });
+        }
+
         let marks_data = [];
         for (let user of user_list) {
             marks_data.push([criteria_id, user.toLowerCase(), req.body["mark"], res.locals["task"]]);
