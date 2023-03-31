@@ -31,7 +31,6 @@ router.post("/", (req, res) => {
         });
     } else {
         res.status(400).json({ message: "Either group id or username needs to be provided." });
-        return;
     }
 })
 
@@ -46,6 +45,7 @@ function submit_mark(user_list, req, res) {
     helpers.get_criteria_id(res.locals["course_id"], res.locals["task"], req.body["criteria"]).then(criteria_id => {
         if (criteria_id === -1){
             res.status(400).json({ message: "The criteria is not found in the database." });
+            return;
         }
 
         let marks_data = [];

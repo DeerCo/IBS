@@ -98,7 +98,7 @@ let StudentTaskPage = () => {
 							</div>
 							{data.interview_group === null &&
 								<div className={classes.cardSubtitle}>
-									<Countdown date={data.due_date} renderer={({ days, hours, minutes, seconds, completed }) => {
+									<Countdown date={data.due_date_utc} renderer={({ days, hours, minutes, seconds, completed }) => {
 										if (completed) {
 											return <Typography color='#a71111fc '>
 												Due Date Has Passed
