@@ -117,7 +117,7 @@ let StudentTaskPage = () => {
 											if (minutes > 1){
 												text += "s";
 											}
-											text += `and ${seconds} Second`;
+											text += ` and ${seconds} Second`;
 											if (seconds > 1){
 												text += "s";
 											}
