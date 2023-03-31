@@ -143,7 +143,7 @@ let StudentTaskPage = () => {
 											</div>
 										</Button>
 									}
-									{data.interview_group === null &&
+									{(data.hide_file === true || data.hide_file === false) &&
 										<Button href={"/course/" + course_id + "/task/" + data.task + "/file"}>
 											<div className={classes.button}>
 												Feedback

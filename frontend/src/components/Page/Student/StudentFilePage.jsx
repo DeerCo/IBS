@@ -21,6 +21,8 @@ let StudentFilePage = () => {
 					navigate("/login");
 				} else if (response["status"] === 200) {
 					setFiles(response["data"]["files"]);
+				} else if (response["status"] === 400) {
+					toast.error(response["data"]["message"], { theme: "colored" });
 				} else if (response["status"] === 401 || response["status"] === 403) {
 					toast.warn("You need to login again", { theme: "colored" });
 					navigate("/login");

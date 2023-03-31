@@ -308,6 +308,11 @@
 									"type": "text"
 								},
 								{
+									"key": "hide_file",
+									"value": "",
+									"type": "text"
+								},
+								{
 									"key": "interview_group",
 									"value": "",
 									"type": "text",
@@ -393,6 +398,11 @@
 								},
 								{
 									"key": "hide_interview",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "hide_file",
 									"value": "",
 									"type": "text"
 								},

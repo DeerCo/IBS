@@ -36,6 +36,10 @@ router.put("/", (req, res) => {
         res.status(400).json({ message: "The hide interview property is missing or not correct." });
         return;
     }
+    if (!("hide_file" in req.body) || helpers.boolean_validate(req.body["hide_file"])) {
+        res.status(400).json({ message: "The hide file property is missing or not correct." });
+        return;
+    }
     if (!("change_group" in req.body) || helpers.boolean_validate(req.body["change_group"])) {
         res.status(400).json({ message: "The change group property is missing or not correct." });
         return;
@@ -78,8 +82,8 @@ router.put("/", (req, res) => {
     }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET long_name = ($1), due_date = ($2), hidden = ($3), min_member = ($4), max_member = ($5) , max_token = ($6), change_group = ($7), hide_interview = ($8), interview_group = ($9), task_group_id = ($10), starter_code_url = ($11) WHERE task = ($12)";
-    let sql_update_data = [req.body["long_name"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], req.body["hide_interview"], interview_group, task_group_id, starter_code_url, res.locals["task"]];
+    let sql_update = "UPDATE course_" + res.locals["course_id"] + ".task SET long_name = ($1), due_date = ($2), hidden = ($3), min_member = ($4), max_member = ($5) , max_token = ($6), change_group = ($7), hide_interview = ($8), hide_file = ($9), interview_group = ($10), task_group_id = ($11), starter_code_url = ($12) WHERE task = ($13)";
+    let sql_update_data = [req.body["long_name"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], req.body["hide_interview"], req.body["hide_file"], interview_group, task_group_id, starter_code_url, res.locals["task"]];
 
     client.query(sql_update, sql_update_data, (err, pg_res) => {
         if (err) {
