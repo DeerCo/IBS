@@ -75,10 +75,10 @@ router.post("/", upload.single("file"), (req, res) => {
                         if (user.startsWith("group_") && (user.replace("group_", "") in groups)) { // The user is a group so add the mark for all confirmed members
                             let group_id = user.replace("group_", "");
                             for (let temp_user of groups[group_id]) {
-                                marks_data.push([all_criteria[k], temp_user, mark, req.body["task"]]);
+                                marks_data.push([all_criteria[k], temp_user.toLowerCase(), mark, req.body["task"]]);
                             }
                         } else { // The user is just a single user
-                            marks_data.push([all_criteria[k], user, mark, req.body["task"]]);
+                            marks_data.push([all_criteria[k], user.toLowerCase(), mark, req.body["task"]]);
                         }
                     }
                 }

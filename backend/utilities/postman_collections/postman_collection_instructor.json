@@ -1082,6 +1082,11 @@
 									"type": "text"
 								},
 								{
+									"key": "group_id",
+									"value": "",
+									"disabled": true
+								},
+								{
 									"key": "mark",
 									"value": "",
 									"type": "text"

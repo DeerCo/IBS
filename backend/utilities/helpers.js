@@ -342,6 +342,16 @@ async function get_group_id(course_id, task, username) {
     }
 }
 
+async function get_group_users(course_id, group_id) {
+    let results = [];
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE group_id = ($1) AND status = 'confirmed'", [group_id]);
+
+    for (let row of pg_res.rows) {
+        results.push(row["username"]);
+    }
+    return results;
+}
+
 async function get_all_group_users(course_id, task) {
     let results = {};
     let pg_res = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [task]);
@@ -1097,6 +1107,7 @@ module.exports = {
     get_total_out_of: get_total_out_of,
     get_group_task: get_group_task,
     get_group_id: get_group_id,
+    get_group_users: get_group_users,
     get_all_group_users: get_all_group_users,
 
     // Mark related
