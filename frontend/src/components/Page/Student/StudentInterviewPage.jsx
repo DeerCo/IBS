@@ -250,8 +250,8 @@ let StudentInterviewPage = () => {
 						{booked && (
 							<div>
 								<h4 className="border-bottom pb-2 mb-2">Your Booked Interview</h4>
-								<strong className="d-block text-gray-dark"> Start time: {bookedStart} </strong>
-								<strong className="d-block text-gray-dark"> End time: {bookedEnd} </strong>
+								<strong className="d-block text-gray-dark"> Start time: {moment(bookedStart).format('MM/DD/YYYY, h:mm:ss a')} </strong>
+								<strong className="d-block text-gray-dark"> End time: {moment(bookedEnd).format('MM/DD/YYYY, h:mm:ss a')} </strong>
 								<strong className="d-block text-gray-dark"> Location: {bookedLocation.startsWith("http") ? <a href={bookedLocation}>Link ✈</a> : bookedLocation} </strong>
 								{bookedNote !== null && <strong className="d-block text-gray-dark"> Note: {bookedNote} </strong>}
 								<button type="button" className="btn btn-secondary mt-4 col-12" onClick={() => { cancel_interview(task) }}>
