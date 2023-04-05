@@ -928,15 +928,28 @@ async function collect_one_submission(course_id, group_id, overwrite) {
     if (task === "") {
         return { message: "The group id doesn't exist.", group_id: group_id, code: "group_not_exist" };
     }
+
+    if (!overwrite) {
+        let sql_check_submission = "SELECT * FROM course_" + course_id + ".submission WHERE task = ($1) AND group_id = ($2)";
+        let sql_check_submission_data = [task, group_id];
+
+        let err_check_submission, pg_res_check_submission = await db.query(sql_check_submission, sql_check_submission_data);
+        if (err_check_submission) {
+            return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
+        } else if (pg_res_check_submission.rowCount >= 1) {
+            return { message: "The new submission is not collected as an old submission is found and overwrite is false.", group_id: group_id, code: "submission_exists", submission: pg_res_check_submission.rows[0] };
+        }
+    }
+
     let submission_data = await get_submission_before_due_date(course_id, group_id);
     if (submission_data["due_date"] === null) {
         return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
     }
-    if (submission_data["commit_id"] === null) {
-        return { message: "No commit is found for this group.", group_id: group_id, code: "no_commit", submission: submission_data };
-    }
     if (submission_data["before_due_date_with_extension_and_token"] === true) {
         return { message: "Due date hasn't passed for this group.", group_id: group_id, code: "before_due_date", submission: submission_data };
+    }
+    if (submission_data["commit_id"] === null) {
+        return { message: "No commit is found for this group.", group_id: group_id, code: "no_commit", submission: submission_data };
     }
 
     let sql_add_submission = "INSERT INTO course_" + course_id + ".submission (task, group_id, commit_id, token_used) VALUES (($1), ($2), ($3), ($4))";
@@ -1042,7 +1055,7 @@ async function copy_groups(course_id, from_task, to_task) {
     for (let row of pg_res_old_group_user.rows) {
         // Check if the user already has a group in to_task
         let pg_res_new_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND username = ($2)", [to_task, row["username"]]);
-        if (pg_res_new_group_user.rowCount === 0){
+        if (pg_res_new_group_user.rowCount === 0) {
             if (row["group_id"] in group_user) {
                 group_user[row["group_id"]].push(row["username"]);
             } else {
@@ -1066,7 +1079,7 @@ async function copy_groups(course_id, from_task, to_task) {
                 let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
                 if (err_add_user) {
                     console.log("User " + user + "is already in a group");
-                } else{
+                } else {
                     // Add user to the new project on gitlab
                     add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
                     if (add_user["success"] === false) {
