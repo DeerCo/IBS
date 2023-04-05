@@ -78,7 +78,7 @@ function time_validate(time) {
 }
 
 function password_validate(password) {
-    let regex = new RegExp(".{8,}");
+    let regex = new RegExp(".{8,72}");
     if (!regex.test(password)) {
         return 1;
     } else {
