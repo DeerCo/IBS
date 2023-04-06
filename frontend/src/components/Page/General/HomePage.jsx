@@ -28,7 +28,7 @@ let Home = () => {
 
 				<div className="album py-5 bg-white">
 					<div className="container mt-5">
-						<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+						<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" style={{justifyContent: "center"}}>
 							{roles.map(data => (
 								<Homecard data={data}/>
 							))}
