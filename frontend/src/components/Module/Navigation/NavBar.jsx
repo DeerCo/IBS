@@ -25,6 +25,7 @@ let NavBar = (props) => {
 	let roles = JSON.parse(sessionStorage.getItem("roles"));
 
 	let { course_id, task } = useParams();
+	let ta = props?.ta ?? false;
 
 	let course_code = null;
 	if (roles) {
@@ -45,9 +46,9 @@ let NavBar = (props) => {
 		<Toolbar className={classes.toolbar}>
 			<Breadcrumbs aria-label="breadcrumb" separator=' > '>
 				<Link underline="hover" href="/home">IBS</Link>
-				{course_code && <Link underline="hover" href={"/ta/course/" + course_id + "/task"}> {course_code}</Link>}
-				{task && <Link underline="hover" href={"/ta/course/" + course_id + "/task"}>{task}</Link>}
-				{task && props.page && <Link underline="hover" href={"/ta/course/" + course_id + "/task/" + task + "/" + props.page.toLowerCase()}>{props.page}</Link>}
+				{course_code && <Link underline="hover" href={(ta ? "/ta" : "") + "/course/" + course_id + "/task"}> {course_code}</Link>}
+				{task && <Link underline="hover" href={(ta ? "/ta" : "") + "/course/" + course_id + "/task"}>{task}</Link>}
+				{task && props.page && <Link underline="hover" href={(ta ? "/ta" : "") + "/course/" + course_id + "/task/" + task + "/" + props.page.toLowerCase()}>{props.page}</Link>}
 			</Breadcrumbs>
       <div className={classes.user}>
 				<Typography margin='8px' color="text.primary"> {username} </Typography>

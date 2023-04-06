@@ -14,7 +14,7 @@ const Homecard = ({data}) => {
           <Link className="stretched-link button" to={"/ta/course/" + data.course_id + "/task"}> </Link>}
         <div className="d-flex justify-content-between align-items-center">
           <small className="text-muted">{data.course_session.replaceAll("_", " ")}</small>
-          <small className="text-muted">{data.role.charAt(0).toUpperCase() + data.role.slice(1)}</small>
+          <small className="text-muted">{data?.role?.charAt(0)?.toUpperCase() + data?.role?.slice(1)}</small>
         </div>
       </div>
     </div>

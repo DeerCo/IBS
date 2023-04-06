@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     margin: '16px',
     padding: '16px',
   },
@@ -84,7 +84,7 @@ let TaTaskPage = () => {
 
 	return (
 		<div>
-      <TaNavBar page="Task" />
+      <NavBar page="Task" ta={true}/>
       <div className={classes.container}>
         {mainTasks.map(data => (
           <Taskcard data={data} course_id={course_id} ta={true}/>
