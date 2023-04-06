@@ -1,14 +1,31 @@
 import React from "react";
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Breadcrumbs, Typography, Link, Toolbar } from '@mui/material';
+import {makeStyles} from "@mui/styles";
+
+const useStyles = makeStyles({
+  toolbar: {
+    display: 'flex',
+    background: 'white',
+    boxShadow: '0 3px 5px 2px ghostwhite',
+    alignItems: 'center',
+    justifyContent: ' space-between'
+
+  },
+  user: {
+    display: 'flex',
+  },
+});
 
 let TaNavBar = (props) => {
+	const classes = useStyles();
 	let navigate = useNavigate();
 
 	let username = sessionStorage.getItem("username");
 	let roles = JSON.parse(sessionStorage.getItem("roles"));
 
 	let { course_id, task } = useParams();
-	
+
 	let course_code = null;
 	if (roles){
 		for (let role of roles){
@@ -16,37 +33,27 @@ let TaNavBar = (props) => {
 				course_code = role["course_code"];
 			}
 		}
-	} 
+	}
 
 	let logout = () => {
 		window.sessionStorage.clear();
 		navigate("/login");
 		navigate(0);
 	};
-	
+
 	return (
-		<div>
-			<nav id="navbar">
-				<div id="inner">
-					<div className="d-flex">
-						<Link className="button mx-3" to="/home">IBS</Link>
-						{course_code && <div className="button mx-3">{"->"}</div>}
-						{course_code && <Link className="button mx-3" to={"/ta/course/" + course_id + "/task"}> {course_code}</Link>}
-						{task && <div className="button mx-3">{"->"}</div>}
-						{task && <Link className="button mx-3" to={"/ta/course/" + course_id + "/task"}>{task}</Link>}
-						{task && props.page && <div className="button mx-3">{"->"}</div>}
-						{task && props.page && <Link className="button mx-3" to={"/ta/course/" + course_id + "/task/" + task + "/" + props.page.toLowerCase()}>{props.page}</Link>}
-					</div>
-
-					<div className="d-flex justify-content-end">
-						<div className="button mx-3"> {username} </div>
-						<Link className="button mx-3" onClick={logout}> Logout </Link>
-					</div>
-				</div>
-			</nav>
-
-			<div className="divider"> </div>
-		</div>
+		<Toolbar className={classes.toolbar}>
+			<Breadcrumbs aria-label="breadcrumb" separator=' > '>
+				<Link underline="hover" href="/home">IBS</Link>
+				{course_code && <Link underline="hover" href={"/course/" + course_id + "/task"}> {course_code}</Link>}
+				{task && <Link underline="hover" href={"/course/" + course_id + "/task"}>{task}</Link>}
+				{task && props.page && <Link underline="hover" href={"/course/" + course_id + "/task/" + task + "/" + props.page.toLowerCase()}>{props.page}</Link>}
+			</Breadcrumbs>
+      <div className={classes.user}>
+				<Typography margin='8px' color="text.primary"> {username} </Typography>
+				<Link margin='8px' underline="hover" onClick={logout}> Logout </Link>
+      </div>
+		</Toolbar>
 	);
 };
 

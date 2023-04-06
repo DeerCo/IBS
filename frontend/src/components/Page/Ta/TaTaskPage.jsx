@@ -4,11 +4,61 @@ import { toast } from 'react-toastify';
 import TaApi from "../../../api/ta_api";
 import TaNavBar from "../../Module/Navigation/TaNavBar";
 import '../../../styles/style.css';
+import Taskcard from "../../Module/Course/Taskcard";
+import NavBar from "../../Module/Navigation/NavBar";
+import {makeStyles} from "@mui/styles";
 
+const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    margin: '16px',
+    padding: '16px',
+  },
+  card: {
+    display: 'flex',
+    boxShadow: '0px 2px 10px 1px #e6e9ed',
+    flexDirection: 'column',
+    margin: '32px',
+    borderRadius: '15px 15px 15px 15px',
+    padding: '12px 8px 12px 8px'
+  },
+  cardHeader: {
+    borderBottom: 'solid ghostwhite',
+    paddingBottom: '8px',
+  },
+  cardSubtitle: {
+    margin: '12px',
+    color: 'green',
+  },
+  buttonGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  button: {
+    color: '#202126',
+    borderRadius: '8px 8px 8px 8px',
+    padding: '4px 8px 4px 8px',
+    border: 'solid 1px #adcadd99',
+    boxShadow: 'inset 5px 5px 10px 0px #adcadd17',
+    fontSize: 'small',
+    width: '100px'
+  },
+  meeting: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '8px 0 0 8px',
+    marginTop: '8px',
+    borderTop: 'solid ghostwhite',
+  }
+});
 
 let TaTaskPage = () => {
-	let navigate = useNavigate();
-
+  const classes = useStyles();
+  let navigate = useNavigate();
 	let { course_id } = useParams();
 	let [tasks, setTasks] = useState([]);
 
@@ -30,40 +80,17 @@ let TaTaskPage = () => {
 			})
 	}, [course_id, navigate]);
 
+	let mainTasks = tasks.filter(task => task.interview_group === null).map(task => ({ ...task, subtasks: tasks.filter(subtask => subtask.interview_group === task.task) }));
+
 	return (
 		<div>
-			<div>
-				<TaNavBar page="Task" />
-
-				<div className="album py-5 bg-white">
-					<div className="container mt-5">
-						<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-							{tasks.map(data => (
-								<div className="col" key={data.task}>
-									<div className="card shadow-sm m-3">
-										<div className="card-body">
-											<h3 className="card-text mb-3">{data.task}</h3>
-											<p className="card-text">Due Date: {data.due_date}</p>
-											<p className="card-text">Group Size: {data.min_member} {data.min_member === data.max_member ? "" : " -- " + data.max_member}</p>
-											<p className="card-text">Hidden: {data.hidden.toString()}</p>
-											<p className="card-text">Max Token: {data.max_token}</p>
-											<p className="card-text">Change Group: {data.change_group.toString()}</p>
-											<p className="card-text">Interview Group: {data.interview_group === null ? "null" : data.interview_group}</p>
-											<p className="card-text">Task Group: {data.task_group_id === null ? "null" : data.task_group_id}</p>
-											<p className="card-text">Starter Code Url: {data.starter_code_url === null ? "null" : <a href={data.starter_code_url}> {data.starter_code_url} </a>}</p>
-											<div className="btn-group">
-												<Link className="btn btn-sm btn-outline-secondary" to={"/ta/course/" + course_id + "/task/" + data.task + "/interview"}>Interview</Link>
-											</div>
-										</div>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
+      <TaNavBar page="Task" />
+      <div className={classes.container}>
+        {mainTasks.map(data => (
+          <Taskcard data={data} course_id={course_id} ta={true}/>
+        ))}
+      </div>
+    </div>
 	);
 };
 

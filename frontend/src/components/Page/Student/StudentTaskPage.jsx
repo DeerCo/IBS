@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
+import Taskcard from "../../Module/Course/Taskcard";
 import { makeStyles } from "@mui/styles";
 import { Typography, Button } from '@mui/material';
 import Countdown from 'react-countdown';
@@ -87,76 +88,7 @@ let StudentTaskPage = () => {
       <NavBar page="Task" />
       <div className={classes.container}>
         {mainTasks.map(data => (
-          <div className={classes.card} key={data.task}>
-            <div>
-              <div className={classes.cardHeader}>
-                <Typography variant="h5">
-                  {data.task}
-                </Typography>
-              </div>
-              {data.interview_group === null &&
-                <div className={classes.cardSubtitle}>
-                  <Countdown date={data.due_date} renderer={({ days, hours, minutes, completed }) => {
-                    if (completed) {
-                      return <Typography color='#a71111fc '>
-                        Due Date Past
-                      </Typography>;
-                    }
-                    else {
-                      return `${days} Days and ${hours} Hours and ${minutes} Minutes Left`;
-                    }
-                  }} />
-                </div>
-              }
-              <div className={classes.buttonGroup}>
-                <div>
-                  {data.interview_group === null &&
-                    <Button href={"/course/" + course_id + "/task/" + data.task + "/details"}>
-                      <div className={classes.button}>
-                        Details
-                      </div>
-                    </Button>
-                  }
-                  {data.interview_group === null &&
-                    <Button href={"/course/" + course_id + "/task/" + data.task + "/mark"}>
-                      <div className={classes.button}>
-                        Mark
-                      </div>
-                    </Button>
-                  }
-                  {data.interview_group === null &&
-                    <Button href={"/course/" + course_id + "/task/" + data.task + "/file"}>
-                      <div className={classes.button}>
-                        Feedback
-                      </div>
-                    </Button>
-                  }
-                </div>
-                <div>
-                  {data.hide_interview === false &&
-                    <div className={classes.meeting}>
-                      <Typography variant="subtitle1"> Final Interview </Typography>
-                      <Button href={"/course/" + course_id + "/task/" + data.task + "/interview"}>
-                        <div className={classes.button}>
-                          Book
-                        </div>
-                      </Button>
-                    </div>
-                  }
-                  {data.subtasks.map(subtask => (
-                    <div className={classes.meeting}>
-                      <Typography variant="subtitle1"> Mentor Session </Typography>
-                      <Button href={"/course/" + course_id + "/task/" + subtask.task + "/interview"}>
-                        <div className={classes.button}>
-                          Book
-                        </div>
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <Taskcard data={data} course_id={course_id} ta={false}/>
         ))}
       </div>
     </div>
