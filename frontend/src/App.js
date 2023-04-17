@@ -16,6 +16,7 @@ import TaInterviewPage from "./components/Page/Ta/TaInterviewPage";
 import Admin_page from "./components/Page/Admin/Admin_page";
 import {ThemeProvider} from "@mui/material/styles";
 import theme from "./styles/theme";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 	return (
@@ -26,7 +27,9 @@ function App() {
 			/>
 			<BrowserRouter>
 				<Routes>
+					<Route path="/" element={<LoginPage />}></Route>
 					<Route path="/login" element={<LoginPage />}></Route>
+
 					<Route path="/reset" element={<ResetPasswordPage />}></Route>
 					<Route path="/home" element={<Home />}></Route>
 
@@ -40,7 +43,6 @@ function App() {
 					<Route path="/ta/course/:course_id/task/:task/interview" element={<TaInterviewPage />}></Route>
 					<Route path="/admin" element={<Admin_page/>}></Route>
 
-					<Route path="/" element={<LoginPage />}></Route>
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 			</BrowserRouter>

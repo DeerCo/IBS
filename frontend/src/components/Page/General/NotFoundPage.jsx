@@ -1,17 +1,32 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import '../../../styles/style.css';
+import {Box, Button, Grid, Typography} from "@mui/material";
 
 let NotFoundPage = () => {
-	return (
-		<div>
-			<div>
-				<h1> Looks like nothing is here! </h1>
-				<h2> Page Not Found </h2>
-				<Link className="button" to="/login"> Return to Login </Link>
-			</div>
-		</div>
-	);
+  return (
+    <Grid container
+          direction="column"
+          height="100%"
+          wrap="nowrap">
+      <Grid item container
+            spacing={2}
+            direction="column"
+            justifyContent="center"
+            alignContent="center"
+            justify="center"
+            flex="1 1 auto">
+        <Box textAlign="center">
+          <Typography variant="h6">
+            We can't find the page you're looking for.
+          </Typography>
+          <Button variant="contained" component={Link} to="/login">
+            Return to Login
+          </Button>
+        </Box>
+      </Grid>
+    </Grid>
+  );
 };
 
 
