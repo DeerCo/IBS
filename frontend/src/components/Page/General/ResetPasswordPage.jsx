@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {useNavigate, Link} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import GeneralApi from "../../../api/general_api";
-import '../../../styles/style.css'
 import {Box, Button, Card, Grid, TextField, Typography} from "@mui/material";
 
 const ResetPasswordPage = () => {
