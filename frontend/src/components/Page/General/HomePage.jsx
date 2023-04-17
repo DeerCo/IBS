@@ -1,43 +1,48 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React, {useState, useEffect} from "react";
+import {useNavigate} from 'react-router-dom';
+import {toast} from 'react-toastify';
 import NavBar from "../../Module/Navigation/NavBar";
 import Homecard from "../../Module/Course/Homecard";
+import {Grid} from "@mui/material";
 
 
 let Home = () => {
-	let navigate = useNavigate();
+  let navigate = useNavigate();
 
-	let [roles, setRoles] = useState([]);
+  let [roles, setRoles] = useState([]);
 
-	useEffect(() => {
-		let storage_roles = JSON.parse(sessionStorage.getItem("roles"));
+  useEffect(() => {
+    let storage_roles = JSON.parse(sessionStorage.getItem("roles"));
 
-		if (!storage_roles) {
-			toast.warn("You need to login again", { theme: "colored" });
-			navigate("/login");
-		} else{
-			setRoles(storage_roles);
-		}
-	}, [navigate]);
+    if (!storage_roles) {
+      toast.warn("You need to login again", {theme: "colored"});
+      navigate("/login");
+    } else {
+      setRoles(storage_roles);
+    }
+  }, [navigate]);
 
-	return (
-		<div>
-			<div>
-				<NavBar page="Home"/>
-
-				<div className="album py-5 bg-white">
-					<div className="container mt-5">
-						<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" style={{justifyContent: "center"}}>
-							{roles.map(data => (
-								<Homecard data={data}/>
-							))}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <Grid container
+          direction="column"
+          height="100%"
+          wrap="nowrap">
+      <NavBar item page="Home"/>
+      <Grid item container
+            spacing={2}
+            direction="row"
+            justifyContent="center"
+            alignContent="center"
+            justify="center"
+            flex="1 1 auto">
+        {roles.map((data, index) => (
+          <Grid item key={index}>
+            <Homecard data={data}/>
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+  );
 };
 
 

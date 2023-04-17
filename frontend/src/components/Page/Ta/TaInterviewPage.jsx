@@ -6,7 +6,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import moment from "moment";
 import TaApi from "../../../api/ta_api";
-import TaNavBar from "../../Module/Navigation/TaNavBar";
 import '../../../styles/style.css';
 import NavBar from "../../Module/Navigation/NavBar";
 

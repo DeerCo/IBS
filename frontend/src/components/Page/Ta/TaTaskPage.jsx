@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import TaApi from "../../../api/ta_api";
-import TaNavBar from "../../Module/Navigation/TaNavBar";
 import '../../../styles/style.css';
 import Taskcard from "../../Module/Course/Taskcard";
 import NavBar from "../../Module/Navigation/NavBar";

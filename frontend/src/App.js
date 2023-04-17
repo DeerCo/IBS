@@ -14,15 +14,16 @@ import StudentDetailsPage from "./components/Page/Student/StudentDetailsPage";
 import TaTaskPage from "./components/Page/Ta/TaTaskPage";
 import TaInterviewPage from "./components/Page/Ta/TaInterviewPage";
 import Admin_page from "./components/Page/Admin/Admin_page";
+import {ThemeProvider} from "@mui/material/styles";
+import theme from "./styles/theme";
 
 function App() {
 	return (
-		<div>
+		<ThemeProvider theme={theme}>
 			<ToastContainer
 				limit={3}
 				position="top-center"
 			/>
-
 			<BrowserRouter>
 				<Routes>
 					<Route path="/login" element={<LoginPage />}></Route>
@@ -43,7 +44,7 @@ function App() {
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 			</BrowserRouter>
-		</div>
+		</ThemeProvider>
 	);
 }
 
