@@ -29,6 +29,7 @@ router.use("/:course_id/", function (req, res, next) {
                     res.locals["task"] = data["task"];
                     res.locals["username"] = token_data["username"];
                     res.locals["email"] = token_data["email"];
+                    res.locals["type"] = "student";
                     res.locals["change_group"] = data["change_group"];
                     res.locals["hide_interview"] = data["hide_interview"];
                     res.locals["hide_file"] = data["hide_file"];

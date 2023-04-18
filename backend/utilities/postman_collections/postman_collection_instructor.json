@@ -1421,6 +1421,12 @@
 									"disabled": true
 								},
 								{
+									"key": "host",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "group_id",
 									"value": "",
 									"type": "text",
