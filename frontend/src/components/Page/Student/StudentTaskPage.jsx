@@ -3,31 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
-import Taskcard from "../../Module/Course/Taskcard";
 import { makeStyles } from "@mui/styles";
-import { Typography, Button } from '@mui/material';
+import { Typography, Button, Grid } from '@mui/material';
 import Countdown from 'react-countdown';
+import Card from "../../General/Card";
+import Accordion from "../../General/Accordion";
 
 const useStyles = makeStyles({
   container: {
-    display: 'flex',
-    flexWrap: 'wrap',
     alignItems: 'flex-start',
-    justifyContent: 'center',
-    margin: '16px',
-    padding: '16px',
-  },
-  card: {
-    display: 'flex',
-    boxShadow: '0px 2px 10px 1px #e6e9ed',
-    flexDirection: 'column',
-    margin: '32px',
-    borderRadius: '15px 15px 15px 15px',
-    padding: '12px 8px 12px 8px'
-  },
-  cardHeader: {
-    borderBottom: 'solid ghostwhite',
-    paddingBottom: '8px',
+    justifyContent: 'space-between',
   },
   cardSubtitle: {
     margin: '12px',
@@ -86,11 +71,84 @@ let StudentTaskPage = () => {
   return (
     <div>
       <NavBar page="Task" />
-      <div className={classes.container}>
+      <Grid container className={classes.container}>
         {mainTasks.map(data => (
-          <Taskcard data={data} course_id={course_id} ta={false}/>
+          <Grid item xs={12} sm={8} md={6} lg={4}>
+            <Card key={data.task} title={data.task} child={
+              <div>
+                {data.interview_group === null &&
+                  <div className={classes.cardSubtitle}>
+                    <Countdown date={data.due_date} renderer={({ days, hours, minutes, seconds, completed }) => {
+                      if (completed) {
+                        return <Typography color='darkred'>
+                          Due Date Past
+                        </Typography>;
+                      }
+                      else {
+                        return `${days} Days, ${hours} Hours, ${minutes} Minutes & ${seconds} Seconds Left`;
+                      }
+                    }} />
+                  </div>
+                }
+                <div className={classes.buttonGroup}>
+                  <div>
+                    {data.interview_group === null &&
+                      <Button href={"/course/" + course_id + "/task/" + data.task + "/details"}>
+                        <div className={classes.button}>
+                          Details
+                        </div>
+                      </Button>
+                    }
+                    {data.interview_group === null &&
+                      <Button href={"/course/" + course_id + "/task/" + data.task + "/mark"}>
+                        <div className={classes.button}>
+                          Mark
+                        </div>
+                      </Button>
+                    }
+                    {data.interview_group === null &&
+                      <Button href={"/course/" + course_id + "/task/" + data.task + "/file"}>
+                        <div className={classes.button}>
+                          Feedback
+                        </div>
+                      </Button>
+                    }
+                  </div>
+
+                  <Accordion title='Mentor Sessions and Final Interview'
+                    content={
+                      <div>
+                        {(data.hide_interview === true || data.hide_interview === false) &&
+                          <div className={classes.meeting}>
+                            <Typography variant="subtitle1"> Final Interview </Typography>
+                            <Button href={"/course/" + course_id + "/task/" + data.task + "/interview"}>
+                              <div className={classes.button}>
+                                Book
+                              </div>
+                            </Button>
+                          </div>
+                        }
+                        {data.subtasks.map(subtask => (
+                          <div className={classes.meeting}>
+                            <Typography variant="subtitle1"> Mentor Session </Typography>
+                            <Button href={"/course/" + course_id + "/task/" + subtask.task + "/interview"}>
+                              <div className={classes.button}>
+                                Book
+                              </div>
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    }
+                  />
+
+
+                </div>
+              </div>
+            } />
+          </Grid>
         ))}
-      </div>
+      </Grid>
     </div>
   );
 };
