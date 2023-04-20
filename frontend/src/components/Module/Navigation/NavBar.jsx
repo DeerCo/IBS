@@ -46,7 +46,7 @@ let NavBar = (props) => {
 
 	return (
     <Box>
-      <AppBar position="">
+      <AppBar position="static">
         <Toolbar variant="dense">
 					<Box component={Link}
 							 sx={{color: "inherit", textDecoration: "inherit", display: "contents"}}

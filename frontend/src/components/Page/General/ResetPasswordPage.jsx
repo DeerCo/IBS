@@ -97,7 +97,7 @@ const ResetPasswordPage = () => {
                maxWidth={300}
           >
             <Typography component="h1" variant="h5">
-              Sign in
+              Reset Password
             </Typography>
             <Box component="form"
                  onSubmit={handleLogin}
