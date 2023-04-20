@@ -1,9 +1,8 @@
-/* BASIC */
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+/*!* BASIC *!*/
+/*@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');*/
 @import "bootstrap/dist/css/bootstrap.min.css";
-@import "react-toastify/dist/ReactToastify.css";
+/*@import "react-toastify/dist/ReactToastify.css";*/
 @import "./tab.css";
-
 
 body {
     font-family: 'Roboto', sans-serif;

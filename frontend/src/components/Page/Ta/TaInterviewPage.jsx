@@ -6,8 +6,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import moment from "moment";
 import TaApi from "../../../api/ta_api";
-import TaNavBar from "../../Module/Navigation/TaNavBar";
 import '../../../styles/style.css';
+import NavBar from "../../Module/Navigation/NavBar";
 
 let TaInterviewPage = () => {
 	let navigate = useNavigate();
@@ -129,7 +129,7 @@ let TaInterviewPage = () => {
 		}
 	};
 
-	// the cancel interview function 
+	// the cancel interview function
 	let delete_interview = (task, id) => {
 		TaApi.delete_interview(course_id, task, id).then(
 			(response) => {
@@ -200,7 +200,7 @@ let TaInterviewPage = () => {
 	return (
 		<div>
 			<div>
-				<TaNavBar page="Interview" />
+				<NavBar page="Interview" ta={true}/>
 
 				<div className="wrapper">
 					<div className="input-group d-block">
