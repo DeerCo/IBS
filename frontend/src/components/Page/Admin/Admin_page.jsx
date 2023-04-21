@@ -3,6 +3,8 @@ import AdminApi from "../../../api/admin_api";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
 import Homecard from "../../Module/Course/Homecard";
+import {Box, Button, Card, Grid, TextField, Typography} from "@mui/material";
+import {Link} from "react-router-dom";
 
 let Admin_page = () => {
   const [courses, setCourses] = useState({});
@@ -78,12 +80,17 @@ let Admin_page = () => {
   return (
     <div style={{margin: "0.5ch", justifyContent:"left", textAlign: "left"}}>
       <h1>Admin Page</h1>
-      <div style={{display: "flex"}}>
-        {courses?.map?.(data =>
+      <Grid container spacing={2}>
+        {courses?.map?.((data, index) =>
           (
-            <Homecard data={data}/>
+            <Grid item key={index}>
+              <Homecard data={{...data, ["role"]: "admin"}}/>
+            </Grid>
           ))}
-      </div>
+      </Grid>
+      {/*<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, 15em)"}}>*/}
+
+      {/*</div>*/}
       <div>
         <h2>Change/Add Course</h2>
         <input type={"checkbox"} checked={checked} onChange={() => setChecked((c) => !c)}></input>
@@ -130,47 +137,6 @@ let Admin_page = () => {
         <form onSubmit={handleSubmit3(getRole)}>
           <input {...register3("username")} />
           <p style={{whiteSpace: "pre-wrap"}}>{JSON.stringify(role, null, 2)}</p>
-          <input type={"submit"}/>
-        </form>
-      </div>
-      <div>
-        <h2>Add role</h2>
-        <form onSubmit={handleSubmit4(addRole)}>
-          <p>course_id</p>
-          <input {...register4("course_id")}></input>
-          <p>username</p>
-          <input {...register4("username")}></input>
-          <p>role</p>
-          <input {...register4("role")}></input>
-          <p>email</p>
-          <input {...register4("email")}></input>
-          <p>update_user_info</p>
-          <input {...register4("update_user_info")}></input>
-          <p></p>
-          <input type={"submit"}/>
-        </form>
-      </div>
-      <div>
-        <h2>Upload roles</h2>
-        <form onSubmit={handleSubmit5(uploadRole)}>
-          <p>course_id</p>
-          <input {...register5("course_id")}></input>
-          <p>file</p>
-          <input type={"file"} {...register5("file")} multiple={true}></input>
-          <p>role</p>
-          <input {...register5("role")}></input>
-          <p></p>
-          <input type={"submit"}/>
-        </form>
-      </div>
-      <div>
-        <h2>Delete role</h2>
-        <form onSubmit={handleSubmit6(deleteRole)}>
-          <p>course_id</p>
-          <input {...register6("course_id")}></input>
-          <p>username</p>
-          <input {...register6("username")}></input>
-          <p></p>
           <input type={"submit"}/>
         </form>
       </div>

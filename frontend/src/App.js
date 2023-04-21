@@ -17,6 +17,8 @@ import Admin_page from "./components/Page/Admin/Admin_page";
 import {ThemeProvider} from "@mui/material/styles";
 import theme from "./styles/theme";
 import 'react-toastify/dist/ReactToastify.css';
+import InstructorTaskPage from "./components/Page/Instructor/InstructorTaskPage";
+import Admin_task from "./components/Page/Admin/admin_task";
 
 function App() {
 	return (
@@ -41,7 +43,11 @@ function App() {
 
 					<Route path="/ta/course/:course_id/task" element={<TaTaskPage />}></Route>
 					<Route path="/ta/course/:course_id/task/:task/interview" element={<TaInterviewPage />}></Route>
+
+					<Route path="/instructor/course/:course_id/task" element={<InstructorTaskPage />}></Route>
+
 					<Route path="/admin" element={<Admin_page/>}></Route>
+					<Route path="/admin/course/:course_id/task" element={<Admin_task />}></Route>
 
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>

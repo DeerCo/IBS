@@ -12,4 +12,13 @@ export default createTheme({
       paper: '#f3f3ff',
     },
   },
+  components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "1ch",
+        }
+      }
+    }
+  }
 });

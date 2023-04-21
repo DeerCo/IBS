@@ -83,10 +83,10 @@ let TaTaskPage = () => {
 
 	return (
 		<div>
-      <NavBar page="Task" ta={true}/>
+      <NavBar page="Task" role={"ta"}/>
       <div className={classes.container}>
         {mainTasks.map(data => (
-          <Taskcard data={data} course_id={course_id} ta={true}/>
+          <Taskcard data={data} course_id={course_id} role={"ta"}/>
         ))}
       </div>
     </div>

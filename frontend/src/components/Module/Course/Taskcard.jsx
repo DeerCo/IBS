@@ -2,6 +2,7 @@ import {Button, Typography} from "@mui/material";
 import Countdown from "react-countdown";
 import React from "react";
 import {makeStyles} from "@mui/styles";
+import Accordion from "../../General/Accordion";
 
 const useStyles = makeStyles({
   container: {
@@ -50,7 +51,7 @@ const useStyles = makeStyles({
     borderTop: 'solid ghostwhite',
   }
 });
-const Taskcard = ({data, course_id, ta}) => {
+const Taskcard = ({data, course_id, role}) => {
   const classes = useStyles();
 
   return (
@@ -77,49 +78,54 @@ const Taskcard = ({data, course_id, ta}) => {
         <div className={classes.buttonGroup}>
           <div>
             {data.interview_group === null &&
-              <Button href={(ta ? "/ta" : "") + "/course/" + course_id + "/task/" + data.task + "/details"}>
+              <Button href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/details"}>
                 <div className={classes.button}>
                   Details
                 </div>
               </Button>
             }
             {data.interview_group === null &&
-              <Button href={(ta ? "/ta" : "") + "/course/" + course_id + "/task/" + data.task + "/mark"}>
+              <Button href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/mark"}>
                 <div className={classes.button}>
                   Mark
                 </div>
               </Button>
             }
             {data.interview_group === null &&
-              <Button href={(ta ? "/ta" : "") + "/course/" + course_id + "/task/" + data.task + "/file"}>
+              <Button href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/file"}>
                 <div className={classes.button}>
                   Feedback
                 </div>
               </Button>
             }
           </div>
-          <div>
-            {data.hide_interview === false &&
-              <div className={classes.meeting}>
-                <Typography variant="subtitle1"> Final Interview </Typography>
-                <Button href={(ta ? "/ta" : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}>
-                  <div className={classes.button}>
-                    Book
-                  </div>
-                </Button>
-              </div>
-            }
-            {data.subtasks.map(subtask => (
-              <div className={classes.meeting}>
-                <Typography variant="subtitle1"> Mentor Session </Typography>
-                <Button href={(ta ? "/ta" : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}>
-                  <div className={classes.button}>
-                    Book
-                  </div>
-                </Button>
-              </div>
-            ))}
-          </div>
+          <Accordion title='Mentor Sessions and Final Interview'
+                     content={
+                       <div>
+                         {data.hide_interview === false &&
+                           <div className={classes.meeting}>
+                             <Typography variant="subtitle1"> Final Interview </Typography>
+                             <Button
+                               href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}>
+                               <div className={classes.button}>
+                                 {(role === "instructor" ? "Manage" : "Book")}
+                               </div>
+                             </Button>
+                           </div>
+                         }
+                         {data.subtasks.map((subtask, index) => (
+                           <div className={classes.meeting} key={index}>
+                             <Typography variant="subtitle1"> Mentor Session </Typography>
+                             <Button
+                               href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}>
+                               <div className={classes.button}>
+                                 {(role === "instructor" ? "Manage" : "Book")}
+                               </div>
+                             </Button>
+                           </div>
+                         ))}
+                       </div>
+                     }/>
         </div>
       </div>
     </div>
