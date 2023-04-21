@@ -140,47 +140,6 @@ let Admin_page = () => {
           <input type={"submit"}/>
         </form>
       </div>
-      <div>
-        <h2>Add role</h2>
-        <form onSubmit={handleSubmit4(addRole)}>
-          <p>course_id</p>
-          <input {...register4("course_id")}></input>
-          <p>username</p>
-          <input {...register4("username")}></input>
-          <p>role</p>
-          <input {...register4("role")}></input>
-          <p>email</p>
-          <input {...register4("email")}></input>
-          <p>update_user_info</p>
-          <input {...register4("update_user_info")}></input>
-          <p></p>
-          <input type={"submit"}/>
-        </form>
-      </div>
-      <div>
-        <h2>Upload roles</h2>
-        <form onSubmit={handleSubmit5(uploadRole)}>
-          <p>course_id</p>
-          <input {...register5("course_id")}></input>
-          <p>file</p>
-          <input type={"file"} {...register5("file")} multiple={true}></input>
-          <p>role</p>
-          <input {...register5("role")}></input>
-          <p></p>
-          <input type={"submit"}/>
-        </form>
-      </div>
-      <div>
-        <h2>Delete role</h2>
-        <form onSubmit={handleSubmit6(deleteRole)}>
-          <p>course_id</p>
-          <input {...register6("course_id")}></input>
-          <p>username</p>
-          <input {...register6("username")}></input>
-          <p></p>
-          <input type={"submit"}/>
-        </form>
-      </div>
     </div>
   );
 }
