@@ -200,7 +200,7 @@ let TaInterviewPage = () => {
 	return (
 		<div>
 			<div>
-				<NavBar page="Interview" ta={true}/>
+				<NavBar page="Interview" role={"ta"}/>
 
 				<div className="wrapper">
 					<div className="input-group d-block">

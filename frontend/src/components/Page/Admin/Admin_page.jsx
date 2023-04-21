@@ -3,6 +3,8 @@ import AdminApi from "../../../api/admin_api";
 import {useForm} from "react-hook-form";
 import {toast} from "react-toastify";
 import Homecard from "../../Module/Course/Homecard";
+import {Box, Button, Card, Grid, TextField, Typography} from "@mui/material";
+import {Link} from "react-router-dom";
 
 let Admin_page = () => {
   const [courses, setCourses] = useState({});
@@ -78,12 +80,17 @@ let Admin_page = () => {
   return (
     <div style={{margin: "0.5ch", justifyContent:"left", textAlign: "left"}}>
       <h1>Admin Page</h1>
-      <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, 15em)"}}>
-        {courses?.map?.(data =>
+      <Grid container spacing={2}>
+        {courses?.map?.((data, index) =>
           (
-            <Homecard data={data}/>
+            <Grid item key={index}>
+              <Homecard data={{...data, ["role"]: "admin"}}/>
+            </Grid>
           ))}
-      </div>
+      </Grid>
+      {/*<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, 15em)"}}>*/}
+
+      {/*</div>*/}
       <div>
         <h2>Change/Add Course</h2>
         <input type={"checkbox"} checked={checked} onChange={() => setChecked((c) => !c)}></input>

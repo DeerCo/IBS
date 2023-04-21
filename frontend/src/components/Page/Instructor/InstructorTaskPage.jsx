@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from "react";
-import {useNavigate, useParams} from 'react-router-dom';
-import {toast} from 'react-toastify';
-import StudentApi from "../../../api/student_api";
+import {Box, Grid, Typography} from "@mui/material";
 import NavBar from "../../Module/Navigation/NavBar";
 import Taskcard from "../../Module/Course/Taskcard";
-import {Grid} from '@mui/material';
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import InstructorApi from "../../../api/instructor_api";
+import {toast} from "react-toastify";
 
-let StudentTaskPage = () => {
+const InstructorTaskPage = () => {
   let navigate = useNavigate();
   let {course_id} = useParams();
   let [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    StudentApi.all_tasks(course_id).then(
+    InstructorApi.all_tasks(course_id).then(
       (response) => {
         if (!response || !("status" in response)) {
           toast.error("Unknown error", {theme: "colored"});
@@ -39,7 +39,7 @@ let StudentTaskPage = () => {
           direction="column"
           height="100%"
           wrap="nowrap">
-      <NavBar item page="Task"/>
+      <NavBar item page="Task" role={"instructor"}/>
       <Grid item container
             spacing={2}
             direction="row"
@@ -48,12 +48,11 @@ let StudentTaskPage = () => {
             justify="center"
             flex="1 1 auto">
         {mainTasks.map(data => (
-          <Taskcard data={data} course_id={course_id}/>
+          <Taskcard data={data} course_id={course_id} role={"instructor"}/>
         ))}
       </Grid>
     </Grid>
   )
-};
+}
 
-
-export default StudentTaskPage;
+export default InstructorTaskPage

@@ -3,10 +3,12 @@ import {Card, CardActionArea, CardContent, CardMedia, Typography} from "@mui/mat
 import {Link} from "react-router-dom";
 
 const Homecard = ({data}) => {
+  const role = ((data.role === undefined || data.role === "student") ? ""  : data.role);
+
   return (
     <Card>
       <CardActionArea component={Link}
-                      to={(data.role === "ta" ? "/ta" : "") + "/course/" + data.course_id + "/task"}>
+                      to={(role ? "/" + role : "") + "/course/" + data.course_id + "/task"}>
         <CardMedia
           component="img"
           height="200"
