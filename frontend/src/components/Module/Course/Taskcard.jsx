@@ -3,6 +3,7 @@ import Countdown from "react-countdown";
 import React from "react";
 import {makeStyles} from "@mui/styles";
 import Accordion from "../../General/Accordion";
+import {Link} from "react-router-dom"
 
 const useStyles = makeStyles({
   container: {
@@ -78,21 +79,21 @@ const Taskcard = ({data, course_id, role}) => {
         <div className={classes.buttonGroup}>
           <div>
             {data.interview_group === null &&
-              <Button href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/details"}>
+              <Button component={Link} to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/details"}>
                 <div className={classes.button}>
                   Details
                 </div>
               </Button>
             }
             {data.interview_group === null &&
-              <Button href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/mark"}>
+              <Button component={Link} to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/mark"}>
                 <div className={classes.button}>
                   Mark
                 </div>
               </Button>
             }
             {data.interview_group === null &&
-              <Button href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/file"}>
+              <Button component={Link} to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/file"}>
                 <div className={classes.button}>
                   Feedback
                 </div>
@@ -105,8 +106,8 @@ const Taskcard = ({data, course_id, role}) => {
                          {data.hide_interview === false &&
                            <div className={classes.meeting}>
                              <Typography variant="subtitle1"> Final Interview </Typography>
-                             <Button
-                               href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}>
+                             <Button component={Link}
+                                     to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}>
                                <div className={classes.button}>
                                  {(role === "instructor" ? "Manage" : "Book")}
                                </div>
@@ -116,8 +117,8 @@ const Taskcard = ({data, course_id, role}) => {
                          {data.subtasks.map((subtask, index) => (
                            <div className={classes.meeting} key={index}>
                              <Typography variant="subtitle1"> Mentor Session </Typography>
-                             <Button
-                               href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}>
+                             <Button component={Link}
+                                     to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}>
                                <div className={classes.button}>
                                  {(role === "instructor" ? "Manage" : "Book")}
                                </div>
