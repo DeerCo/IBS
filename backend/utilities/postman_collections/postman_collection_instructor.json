@@ -283,6 +283,11 @@
 									"type": "text"
 								},
 								{
+									"key": "weight",
+									"value": "",
+									"type": "text"
+								},
+								{
 									"key": "min_member",
 									"value": "",
 									"type": "text"

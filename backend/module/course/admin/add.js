@@ -91,6 +91,7 @@ router.post("/", (req, res) => {
                 "CREATE TABLE " + task_table_name + " (" +
                 "task character varying NOT NULL, long_name character varying NOT NULL, " +
                 "due_date timestamp with time zone NOT NULL, hidden boolean NOT NULL DEFAULT true, " +
+                "weight integer NOT NULL DEFAULT 0, " +
                 "min_member integer NOT NULL DEFAULT 1, max_member integer NOT NULL DEFAULT 1, " +
                 "max_token integer NOT NULL DEFAULT 0, change_group boolean NOT NULL DEFAULT true, " +
                 "hide_interview boolean NOT NULL DEFAULT true, hide_file boolean NOT NULL DEFAULT true, " +

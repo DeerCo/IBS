@@ -252,7 +252,7 @@ function search_files(username, group_id, coure_id, sub_dir = "") {
 };
 
 async function get_courses() {
-    let pg_res = await db.query("SELECT * FROM course ORDER BY task_order", []);
+    let pg_res = await db.query("SELECT * FROM course ORDER BY course_id", []);
 
     let courses = {};
     for (let row of pg_res.rows) {
@@ -267,13 +267,14 @@ async function get_courses() {
 }
 
 async function get_tasks(course_id) {
-    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".task ORDER BY task_order", []);
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".task ORDER BY due_date, task", []);
 
     let tasks = {};
     for (let row of pg_res.rows) {
         let task = {};
         task["due_date"] = row["due_date"];
         task["hidden"] = row["hidden"];
+        task["weight"] = row["weight"];
         task["min_member"] = row["min_member"];
         task["max_member"] = row["max_member"];
 
@@ -295,7 +296,7 @@ async function get_criteria_id(course_id, task, criteria) {
 }
 
 async function get_criteria(course_id, task) {
-    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".criteria WHERE task = ($1)", [task]);
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".criteria WHERE task = ($1) ORDER BY criteria_id", [task]);
 
     let all_criteria = {};
     for (let row of pg_res.rows) {
@@ -312,7 +313,8 @@ async function get_criteria(course_id, task) {
 }
 
 async function get_total_out_of(course_id) {
-    let pg_res = await db.query("SELECT task, SUM(total) AS sum FROM course_" + course_id + ".criteria GROUP BY task", []);
+    sql_ordered_task = `SELECT criteria.task, SUM(total) AS sum FROM course_${course_id}.criteria LEFT JOIN course_${course_id}.task ON criteria.task = task.task GROUP BY criteria.task, due_date ORDER BY due_date, criteria.task`;
+    let pg_res = await db.query(sql_ordered_task, []);
 
     let total_out_of = {};
     for (let row of pg_res.rows) {
@@ -366,6 +368,52 @@ async function get_all_group_users(course_id, task) {
     return results;
 }
 
+async function copy_groups(course_id, from_task, to_task) {
+    let results = [];
+    let group_user = {};
+
+    let pg_res_old_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
+    for (let row of pg_res_old_group_user.rows) {
+        // Check if the user already has a group in to_task
+        let pg_res_new_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND username = ($2)", [to_task, row["username"]]);
+        if (pg_res_new_group_user.rowCount === 0) {
+            if (row["group_id"] in group_user) {
+                group_user[row["group_id"]].push(row["username"]);
+            } else {
+                group_user[row["group_id"]] = [row["username"]];
+            }
+        }
+    }
+
+    for (let old_group_id in group_user) {
+        // Add a new group in db
+        let pg_res_add_group = await db.query("INSERT INTO course_" + course_id + ".group (task) VALUES (($1)) RETURNING group_id", [to_task]);
+        let new_group_id = pg_res_add_group.rows[0]["group_id"];
+
+        // Create a new project on gitlab for the new group
+        let add_project = await gitlab_create_group_and_project_no_user(course_id, new_group_id, to_task);
+        if (add_project["success"] === false) {
+            results.push({ group_id: old_group_id, code: add_project["code"] });
+        } else {
+            for (let user of group_user[old_group_id]) {
+                // Add user to the new group in db
+                let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
+                if (err_add_user) {
+                    console.log("User " + user + "is already in a group");
+                } else {
+                    // Add user to the new project on gitlab
+                    add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
+                    if (add_user["success"] === false) {
+                        results.push({ username: user, code: add_user["code"] });
+                    }
+                }
+            }
+        }
+    }
+
+    return results;
+}
+
 async function format_marks_one_task(json, course_id, task, total) {
     let marks = {};
     let all_criteria = await get_criteria(course_id, task);
@@ -398,7 +446,7 @@ async function format_marks_one_task(json, course_id, task, total) {
     return marks;
 }
 
-async function format_marks_all_tasks(json, course_id) {
+async function format_marks_all_tasks(json, course_id, total) {
     let marks = {};
     let total_out_of = await get_total_out_of(course_id);
 
@@ -413,6 +461,24 @@ async function format_marks_all_tasks(json, course_id) {
 
         marks[username][row["task"]]["mark"] = parseFloat(row["sum"]);
     }
+
+    if (total) {
+        let all_tasks = await get_tasks(course_id);
+
+        let weighted_total_out_of = 0;
+        for (let task in all_tasks) {
+            weighted_total_out_of += all_tasks[task]["weight"];
+        }
+
+        for (let user in marks) {
+            let user_total = 0;
+            for (let task in marks[user]) {
+                user_total += marks[user][task]["mark"] / marks[user][task]["out_of"] * all_tasks[task]["weight"];
+            }
+            marks[user]["Total"] = { mark: user_total, out_of: weighted_total_out_of };
+        }
+    }
+
     return marks;
 }
 
@@ -433,7 +499,7 @@ async function format_marks_one_task_csv(json, course_id, task, res, total) {
     let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ".csv";
     let header = { Student: "Out Of" };
     let parsed_json = {};
-    let marks = await format_marks_one_task(json, course_id, task, false);
+    let marks = await format_marks_one_task(json, course_id, task, total);
 
     if (Object.keys(marks).length === 0) {
         res.status(200).json({ message: "No mark is available." });
@@ -457,17 +523,56 @@ async function format_marks_one_task_csv(json, course_id, task, res, total) {
 
     let rows = [header].concat(Object.values(parsed_json));
 
-    if (total) {
-        for (let row of rows) {
-            let row_total = 0;
-            for (let criteria of Object.keys(row)) {
-                if (criteria != "Student") {
-                    row_total += row[criteria];
-                }
+    let csv = json2csvParser.parse(rows);
+    fs.writeFile(dir + file_name, csv, (err) => {
+        if (err) {
+            res.status(404).json({ message: "Unknown error." });
+        } else {
+            res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+        }
+    });
+}
+
+async function format_marks_all_tasks_csv(json, course_id, res, total) {
+    if (JSON.stringify(json) === "[]") {
+        res.status(200).json({ message: "No data is available." });
+        return;
+    }
+
+    let current_time = moment().tz("America/Toronto");
+    let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
+    let dir = __dirname + "/../backup/" + dir_date;
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
+    let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ".csv";
+    let header = { Student: "Out Of" };
+    let parsed_json = {};
+    let marks = await format_marks_all_tasks(json, course_id, total);
+
+    if (Object.keys(marks).length === 0) {
+        res.status(200).json({ message: "No mark is available." });
+        return;
+    }
+
+    for (let student in marks) {
+        for (let task in marks[student]) {
+            if (!(task in header)) {
+                header[task] = marks[student][task]["out_of"];
             }
-            row["Total"] = row_total;
+
+            let mark = marks[student][task]["mark"];
+            if (student in parsed_json) {
+                parsed_json[student][task] = mark;
+            } else {
+                parsed_json[student] = { Student: student, [task]: mark };
+            }
         }
     }
+
+    let rows = [header].concat(Object.values(parsed_json));
 
     let csv = json2csvParser.parse(rows);
     fs.writeFile(dir + file_name, csv, (err) => {
@@ -1047,110 +1152,64 @@ async function download_all_submissions(course_id, task) {
     return groups;
 }
 
-async function copy_groups(course_id, from_task, to_task) {
-    let results = [];
-    let group_user = {};
-
-    let pg_res_old_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
-    for (let row of pg_res_old_group_user.rows) {
-        // Check if the user already has a group in to_task
-        let pg_res_new_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND username = ($2)", [to_task, row["username"]]);
-        if (pg_res_new_group_user.rowCount === 0) {
-            if (row["group_id"] in group_user) {
-                group_user[row["group_id"]].push(row["username"]);
-            } else {
-                group_user[row["group_id"]] = [row["username"]];
-            }
-        }
-    }
-
-    for (let old_group_id in group_user) {
-        // Add a new group in db
-        let pg_res_add_group = await db.query("INSERT INTO course_" + course_id + ".group (task) VALUES (($1)) RETURNING group_id", [to_task]);
-        let new_group_id = pg_res_add_group.rows[0]["group_id"];
-
-        // Create a new project on gitlab for the new group
-        let add_project = await gitlab_create_group_and_project_no_user(course_id, new_group_id, to_task);
-        if (add_project["success"] === false) {
-            results.push({ group_id: old_group_id, code: add_project["code"] });
-        } else {
-            for (let user of group_user[old_group_id]) {
-                // Add user to the new group in db
-                let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
-                if (err_add_user) {
-                    console.log("User " + user + "is already in a group");
-                } else {
-                    // Add user to the new project on gitlab
-                    add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
-                    if (add_user["success"] === false) {
-                        results.push({ username: user, code: add_user["code"] });
-                    }
-                }
-            }
-        }
-    }
-
-    return results;
-}
-
 
 module.exports = {
+    // Authentication related
     generateAccessToken: generateAccessToken,
 
     // Validation related
-    name_validate: name_validate,
-    boolean_validate: boolean_validate,
-    number_validate: number_validate,
-    string_validate: string_validate,
-    date_validate: date_validate,
-    time_validate: time_validate,
-    email_validate: email_validate,
-    password_validate: password_validate,
-    task_validate: task_validate,
+    name_validate,
+    boolean_validate,
+    number_validate,
+    string_validate,
+    date_validate,
+    time_validate,
+    email_validate,
+    password_validate,
+    task_validate,
 
     // Utility
-    interview_data_filter: interview_data_filter,
-    interview_data_set_new: interview_data_set_new,
-    send_email: send_email,
-    send_email_by_group: send_email_by_group,
-    get_courses: get_courses,
-    get_tasks: get_tasks,
-    get_criteria_id: get_criteria_id,
-    get_criteria: get_criteria,
-    get_total_out_of: get_total_out_of,
-    get_group_task: get_group_task,
-    get_group_id: get_group_id,
-    get_group_users: get_group_users,
-    get_all_group_users: get_all_group_users,
+    interview_data_filter,
+    interview_data_set_new,
+    send_email,
+    send_email_by_group,
+    get_courses,
+    get_tasks,
+    get_criteria_id,
+    get_criteria,
+    get_total_out_of,
+    get_group_task,
+    get_group_id,
+    get_group_users,
+    get_all_group_users,
+    copy_groups,
 
     // Mark related
-    format_marks_one_task: format_marks_one_task,
-    format_marks_all_tasks: format_marks_all_tasks,
-    format_marks_one_task_csv: format_marks_one_task_csv,
+    format_marks_one_task,
+    format_marks_all_tasks,
+    format_marks_one_task_csv,
+    format_marks_all_tasks_csv,
 
     // File related
-    search_files: search_files,
+    search_files,
 
     // Token related
-    get_max_user_tokens: get_max_user_tokens,
-    get_user_token_usage: get_user_token_usage,
-    get_due_date: get_due_date,
+    get_max_user_tokens,
+    get_user_token_usage,
+    get_due_date,
 
     // Submission related,
-    get_submission_before_due_date: get_submission_before_due_date,
-    collect_one_submission: collect_one_submission,
-    collect_all_submissions: collect_all_submissions,
-    download_all_submissions: download_all_submissions,
+    get_submission_before_due_date,
+    collect_one_submission,
+    collect_all_submissions,
+    download_all_submissions,
 
     // Gitlab related
-    gitlab_get_user_id: gitlab_get_user_id,
-    gitlab_create_group_and_project_no_user: gitlab_create_group_and_project_no_user,
-    gitlab_create_group_and_project_with_user: gitlab_create_group_and_project_with_user,
-    gitlab_add_user_with_gitlab_group_id: gitlab_add_user_with_gitlab_group_id,
-    gitlab_add_user_without_gitlab_group_id: gitlab_add_user_without_gitlab_group_id,
-    gitlab_remove_user: gitlab_remove_user,
-    gitlab_get_commits: gitlab_get_commits,
-
-    // Group related
-    copy_groups: copy_groups,
+    gitlab_get_user_id,
+    gitlab_create_group_and_project_no_user,
+    gitlab_create_group_and_project_with_user,
+    gitlab_add_user_with_gitlab_group_id,
+    gitlab_add_user_without_gitlab_group_id,
+    gitlab_remove_user,
+    gitlab_get_commits,
 }
