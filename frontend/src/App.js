@@ -19,6 +19,8 @@ import theme from "./styles/theme";
 import 'react-toastify/dist/ReactToastify.css';
 import InstructorTaskPage from "./components/Page/Instructor/InstructorTaskPage";
 import Admin_task from "./components/Page/Admin/admin_task";
+import InstructorImpersonate from "./components/Page/Instructor/InstructorImpersonate";
+import AdminImpersonate from "./components/Page/Admin/AdminImpersonate";
 
 function App() {
 	return (
@@ -45,9 +47,11 @@ function App() {
 					<Route path="/ta/course/:course_id/task/:task/interview" element={<TaInterviewPage />}></Route>
 
 					<Route path="/instructor/course/:course_id/task" element={<InstructorTaskPage />}></Route>
+					<Route path="/instructor/course/:course_id/impersonate" element={<InstructorImpersonate/>}></Route>
 
 					<Route path="/admin" element={<Admin_page/>}></Route>
 					<Route path="/admin/course/:course_id/task" element={<Admin_task />}></Route>
+					<Route path="/admin/impersonate" element={<AdminImpersonate />}></Route>
 
 					<Route path="*" element={<NotFoundPage />} />
 				</Routes>

@@ -43,6 +43,7 @@ const collect_all_submissions = require("../module/submission/staff/collect_all"
 const manual_collect_submission = require("../module/submission/staff/collect_manual");
 const download_submissions = require("../module/submission/staff/download");
 const check_submission = require("../module/submission/staff/check");
+const impersonate = require("../module/impersonate/instructor/impersonate");
 
 router.use("/", function(req, res, next) {
     next();
@@ -109,5 +110,8 @@ router.use("/course/:course_id/submission/collect/all", collect_all_submissions)
 router.use("/course/:course_id/submission/collect/manual", manual_collect_submission);
 router.use("/course/:course_id/submission/download", download_submissions);
 router.use("/course/:course_id/submission/check", check_submission);
+
+// impersonate
+router.use("/course/:course_id/impersonate", impersonate);
 
 module.exports = router;

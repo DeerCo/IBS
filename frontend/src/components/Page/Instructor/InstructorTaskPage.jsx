@@ -11,6 +11,7 @@ const InstructorTaskPage = () => {
   let {course_id} = useParams();
   let [tasks, setTasks] = useState([]);
 
+
   useEffect(() => {
     InstructorApi.all_tasks(course_id).then(
       (response) => {

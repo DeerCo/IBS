@@ -1,6 +1,6 @@
 import React from "react";
 import {useNavigate, useParams} from 'react-router-dom';
-import {Breadcrumbs, Typography, Toolbar, AppBar, Container, Box, IconButton, Button} from '@mui/material';
+import {Breadcrumbs, Typography, Toolbar, AppBar, Container, Box, IconButton, Button, TextField} from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import {Link} from "react-router-dom";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -10,6 +10,20 @@ let NavBar = (props) => {
 
   let username = sessionStorage.getItem("username");
   let roles = JSON.parse(sessionStorage.getItem("roles"));
+
+  let origusername = sessionStorage.getItem("origusername");
+  let origroles = JSON.parse(sessionStorage.getItem("origroles"));
+  let origtoken = sessionStorage.getItem("origtoken");
+  let impersonated = false;
+
+  console.log(origusername);
+  console.log(origroles);
+
+  if (origusername !== null) {
+     impersonated = true;
+  }
+
+  console.log(impersonated);
 
   let {course_id, task} = useParams();
   const role = ((props.role === undefined || props.role === "student") ? "" : props.role);
@@ -84,7 +98,27 @@ let NavBar = (props) => {
               </Typography>
             }
           </Breadcrumbs>
-          <Typography> {username} </Typography>
+          {impersonated
+            ? <>
+                <Typography> {origusername + " impersonating " + username} </Typography>
+                <Button color="inherit"
+                        onClick={() => {
+                          sessionStorage.setItem("username", origusername);
+                          sessionStorage.setItem("roles", JSON.stringify(origroles));
+                          sessionStorage.setItem("token", origtoken);
+
+                          sessionStorage.removeItem("origusername");
+                          sessionStorage.removeItem("origroles");
+                          sessionStorage.removeItem("origtoken");
+                          navigate("/home");
+                          navigate(0);
+                        }}
+                        variant={'outline'}>
+                  Stop Impersonating
+                </Button>
+              </>
+            : <Typography> {username} </Typography>
+          }
           <Button color="inherit" onClick={logout}>Logout</Button>
         </Toolbar>
       </AppBar>

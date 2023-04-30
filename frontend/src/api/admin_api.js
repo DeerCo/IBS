@@ -14,6 +14,25 @@ let all_courses = async () => {
   }
 }
 
+let impersonate = async (username) => {
+	let token = sessionStorage.getItem("token");
+
+	const data = {
+		username: username,
+	}
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.post(process.env.REACT_APP_API_URL + "/admin/impersonate", data, config);
+	} catch (err) {
+		return err.response;
+	}
+}
+
+
 let add_course = async (data) => {
   let token = sessionStorage.getItem("token");
 
@@ -110,7 +129,8 @@ let AdminApi = {
   change_course,
   get_role,
   add_role,
-  delete_role
+  delete_role,
+  impersonate
 }
 
 export default AdminApi;
