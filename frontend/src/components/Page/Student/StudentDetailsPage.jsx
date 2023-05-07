@@ -79,6 +79,15 @@ let StudentDetailsPage = () => {
 							return;
 						}
 
+						// For testing, gitlab_url can be null and backend problems occur at check_submission endpoint
+						if (group_response["data"]["gitlab_url"] === null) {
+							setStatus("not_joined");
+							setGroupId("");
+							setMembers([]);
+							setGit(null);
+							return;
+						}
+
 						if (group_response["data"]["message"] === "You have joined a group.") {
 							setStatus("joined");
 							setGroupId(group_response["data"]["group_id"]);
