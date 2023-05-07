@@ -11,7 +11,7 @@ router.use("/", function (req, res, next) {
 })
 
 router.use("/auth/login", login);
-// router.use("/auth/register", register);
+router.use("/auth/register", register);
 router.use("/auth/verify", verify);
 router.use("/auth/change_password", change_password);
 
