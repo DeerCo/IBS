@@ -4,10 +4,10 @@ import {Link, useNavigate} from 'react-router-dom';
 import img1 from '../../assets/images/backgrounds/login-bg.svg';
 
 import LogoIcon from '../../layouts/full-layout/logo/LogoIcon';
-import CustomTextField from '../../components/forms/custom-elements/CustomTextField';
-import CustomFormLabel from '../../components/forms/custom-elements/CustomFormLabel';
+import CustomTextField from '../../components/FlexyMainComponents/forms/custom-elements/CustomTextField';
+import CustomFormLabel from '../../components/FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 
-import PageContainer from '../../components/container/PageContainer';
+import PageContainer from '../../components/FlexyMainComponents/container/PageContainer';
 import {toast} from "react-toastify";
 import GeneralApi from "../../api/general_api";
 import FacebookIcon from "@mui/icons-material/Facebook";
