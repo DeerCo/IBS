@@ -17,10 +17,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
 
 import PageContainer from "../../FlexyMainComponents/container/PageContainer";
-import Breadcrumb from "../../../layouts/full-layout/breadcrumb/Breadcrumb";
 import CustomTextField from "../../FlexyMainComponents/forms/custom-elements/CustomTextField";
 import CustomFormLabel from "../../FlexyMainComponents/forms/custom-elements/CustomFormLabel";
-
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
@@ -128,7 +126,6 @@ export const InterviewCalendar = ({ ...props }) => {
 
     return (
         <PageContainer title="Calendar ui" description="this is Calendar page">
-            <Breadcrumb title="Calendar" subtitle="App" />
             <Card>
                 <CardContent>
                     <Calendar

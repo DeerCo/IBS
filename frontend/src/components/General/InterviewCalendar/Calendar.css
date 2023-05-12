@@ -2,6 +2,10 @@
   background-color: #1e4db7;
 }
 
+.rbc-calendar {
+  font-family: "DM Sans", sans-serif;
+}
+
 .rbc-event.event-default {
   background-color: #1a97f5;
 }
