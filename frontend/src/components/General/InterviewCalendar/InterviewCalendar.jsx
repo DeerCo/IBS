@@ -77,8 +77,6 @@ const InterviewCalendar = (props) => {
         <PageContainer title="Calendar ui" description="this is Calendar page">
             <Card>
                 <CardContent>
-                    {/*TODO: Modify Calendar component props such that it aligns with the FullCalendar props used in*/}
-                    {/*TODO: StudentInterviewPage.jsx*/}
                     <Calendar
                         selectable
                         events={props.events}
