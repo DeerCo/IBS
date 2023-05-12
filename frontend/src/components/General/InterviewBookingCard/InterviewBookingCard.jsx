@@ -11,6 +11,7 @@ import {
 import RTL from '../../../layouts/full-layout/customizer/RTL';
 import { BuildTheme } from '../../../assets/global/Theme-variable';
 import { LIGHT_THEME } from '../../../redux/constants';
+import moment from 'moment/moment';
 
 /**
  * Subcomponent for StudentInterviewPage. Used for displaying booking information based on props
@@ -48,7 +49,11 @@ const InterviewBookingCard = (props) => {
                 </Box>
                 <Box sx={{ ml: 'auto' }}>
                     <Typography color="textSecondary" variant="h5" fontWeight="400">
-                        {desc}
+                        {typeof desc === 'string' && desc.startsWith('http') ? (
+                            <a href={desc}>Link ✈</a>
+                        ) : (
+                            desc
+                        )}
                     </Typography>
                 </Box>
             </Box>
@@ -81,25 +86,24 @@ const InterviewBookingCard = (props) => {
                     </Typography>
                 </Box>
                 <Box sx={{ mt: -1 }}>
-                    {props.startTime === undefined ? (
-                        <div></div>
-                    ) : (
-                        <CardItem title="Start time" desc={props.startTime} />
+                    {props.startTime !== undefined && (
+                        <CardItem
+                            title="Start time"
+                            desc={moment(props.startTime).format('MM/DD/YYYY, h:mm:ss a')}
+                        />
                     )}
-                    {props.endTime === undefined ? (
-                        <div></div>
-                    ) : (
-                        <CardItem title="End time" desc={props.endTime} />
+                    {props.endTime !== undefined && (
+                        <CardItem
+                            title="End time"
+                            desc={moment(props.endTime).format('MM/DD/YYYY, h:mm:ss a')}
+                        />
                     )}
-                    {props.location === undefined ? (
-                        <div></div>
-                    ) : (
+                    {props.location !== undefined && (
                         <CardItem title="Location" desc={props.location} />
                     )}
+                    {props.bookedNote !== '' && <CardItem title="Note" desc={props.bookedNote} />}
                 </Box>
-                {props.eventHandler === null && !props.testing ? (
-                    <div></div>
-                ) : (
+                {(props.eventHandler !== null || props.testing) && (
                     <Box>
                         <Button
                             variant="contained"
@@ -134,6 +138,8 @@ InterviewBookingCard.propTypes = {
     eventHandler: PropTypes.func,
     // Task (query parameter) from StudentInterviewPage
     task: PropTypes.string,
+    // bookedNote when first booking (set to empty string otherwise)
+    bookedNote: PropTypes.string,
     // Adjust card width
     width: PropTypes.number,
     // For testing purposes,

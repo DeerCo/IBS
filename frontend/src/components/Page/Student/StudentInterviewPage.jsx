@@ -229,8 +229,8 @@ let StudentInterviewPage = () => {
     };
 
     return (
-        <Grid container>
-            <Grid xs={12}>
+        <div>
+            <div>
                 <NavBar page="Interview" />
 
                 <div className="row card-box mt-3">
@@ -264,7 +264,6 @@ let StudentInterviewPage = () => {
 
                     <div className="col-1"></div>
 
-                    {/*TODO: Convert the HTML code into MUI tags*/}
                     <div className="col-3 row">
                         {booked && (
                             <InterviewBookingCard
@@ -274,6 +273,7 @@ let StudentInterviewPage = () => {
                                 endTime={selectedEnd}
                                 location={selectedLocation}
                                 eventHandler={cancel_interview}
+                                bookedNote={bookedNote}
                                 task={task}
                                 width={800}
                                 testing={false}
@@ -288,6 +288,7 @@ let StudentInterviewPage = () => {
                                 endTime={selectedEnd}
                                 location={selectedLocation}
                                 eventHandler={book_interview}
+                                bookedNote={''}
                                 task={task}
                                 width={800}
                                 testing={false}
@@ -302,6 +303,7 @@ let StudentInterviewPage = () => {
                                 endTime={selectedEnd}
                                 location={selectedLocation}
                                 eventHandler={change_interview}
+                                bookedNote={''}
                                 task={task}
                                 width={800}
                                 testing={false}
@@ -309,8 +311,8 @@ let StudentInterviewPage = () => {
                         )}
                     </div>
                 </div>
-            </Grid>
-        </Grid>
+            </div>
+        </div>
     );
 };
 
