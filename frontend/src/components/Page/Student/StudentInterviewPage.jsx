@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
 import moment from 'moment';
 import StudentApi from '../../../api/student_api';
 import NavBar from '../../Module/Navigation/NavBar';
 import InterviewBookingCard from '../../General/InterviewBookingCard/InterviewBookingCard';
 import Grid from '@mui/material/Unstable_Grid2';
+import InterviewCalendar from '../../General/InterviewCalendar/InterviewCalendar';
 
 let StudentInterviewPage = () => {
     let navigate = useNavigate();
@@ -89,8 +87,8 @@ let StudentInterviewPage = () => {
 
                     let curr = {
                         title: title,
-                        start: response_1_data['start_time'].replace(' ', 'T'),
-                        end: response_1_data['end_time'].replace(' ', 'T'),
+                        start: moment(response_1_data['start_time']).toDate(),
+                        end: moment(response_1_data['end_time']).toDate(),
                         extendedProps: {
                             location: response_1_data['location']
                         },
@@ -118,8 +116,8 @@ let StudentInterviewPage = () => {
                         let data = time.split(' - ');
                         let curr = {
                             title: title,
-                            start: data[0].replace(' ', 'T'),
-                            end: data[1].replace(' ', 'T'),
+                            start: moment(data[0]).toDate(),
+                            end: moment(data[1]).toDate(),
                             extendedProps: {
                                 location: location
                             },
@@ -236,29 +234,14 @@ let StudentInterviewPage = () => {
             <Grid xs={12} sx={{ mt: 3, marginX: 22 }}>
                 <Grid container spacing={3} direction="row" sx={{ m: 'auto' }}>
                     <Grid xs>
-                        <FullCalendar
-                            plugins={[dayGridPlugin, interactionPlugin]}
-                            initialView="dayGridMonth"
-                            headerToolbar={{
-                                left: 'prev,next',
-                                center: 'title',
-                                right: 'dayGridWeek,dayGridMonth'
-                            }}
+                        <InterviewCalendar
                             events={calendarData}
-                            eventTimeFormat={{
-                                // like '14:30:00'
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: false
-                            }}
-                            eventClick={function (info) {
-                                // when click, update the value
-                                setSelectedStart(info.event.start);
-                                setSelectedEnd(info.event.end);
-                                console.log(info);
-                                setSelectedLocation(info.event.extendedProps.location);
+                            eventClickHandler={(event) => {
+                                console.log(event);
+                                setSelectedStart(event.start);
+                                setSelectedEnd(event.end);
+                                setSelectedLocation(event.extendedProps.location);
 
-                                // open the popup
                                 setOpen(true);
                             }}
                         />
