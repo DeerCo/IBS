@@ -77,8 +77,10 @@ const InterviewBookingCard = (props) => {
     //         );
     // };
 
+    const customWidth = props.width === -1 ? 'auto' : props.width;
+
     return (
-        <Card sx={{ pb: 0, mb: 4, width: props.width }}>
+        <Card sx={{ pb: 0, mb: 4, width: customWidth }}>
             <CardContent sx={{ pb: 0 }}>
                 <Box>
                     <Typography variant="h4" sx={{ mb: 2 }}>
@@ -140,7 +142,7 @@ InterviewBookingCard.propTypes = {
     task: PropTypes.string,
     // bookedNote when first booking (set to empty string otherwise)
     bookedNote: PropTypes.string,
-    // Adjust card width
+    // Adjust card width (-1 means auto-scale)
     width: PropTypes.number,
     // For testing purposes,
     testing: PropTypes.bool

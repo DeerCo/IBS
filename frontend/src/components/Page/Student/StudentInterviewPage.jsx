@@ -229,12 +229,13 @@ let StudentInterviewPage = () => {
     };
 
     return (
-        <div>
-            <div>
+        <Grid container>
+            <Grid xs={12}>
                 <NavBar page="Interview" />
-
-                <div className="row card-box mt-3">
-                    <div className="col-7" id="calendar">
+            </Grid>
+            <Grid xs={12} sx={{ mt: 3, marginX: 22 }}>
+                <Grid container spacing={3} direction="row" sx={{ m: 'auto' }}>
+                    <Grid xs>
                         <FullCalendar
                             plugins={[dayGridPlugin, interactionPlugin]}
                             initialView="dayGridMonth"
@@ -254,17 +255,15 @@ let StudentInterviewPage = () => {
                                 // when click, update the value
                                 setSelectedStart(info.event.start);
                                 setSelectedEnd(info.event.end);
+                                console.log(info);
                                 setSelectedLocation(info.event.extendedProps.location);
 
                                 // open the popup
                                 setOpen(true);
                             }}
                         />
-                    </div>
-
-                    <div className="col-1"></div>
-
-                    <div className="col-3 row">
+                    </Grid>
+                    <Grid xs>
                         {booked && (
                             <InterviewBookingCard
                                 booked={booked}
@@ -275,7 +274,7 @@ let StudentInterviewPage = () => {
                                 eventHandler={cancel_interview}
                                 bookedNote={bookedNote}
                                 task={task}
-                                width={800}
+                                width={-1}
                                 testing={false}
                             />
                         )}
@@ -290,7 +289,7 @@ let StudentInterviewPage = () => {
                                 eventHandler={book_interview}
                                 bookedNote={''}
                                 task={task}
-                                width={800}
+                                width={-1}
                                 testing={false}
                             />
                         )}
@@ -305,14 +304,14 @@ let StudentInterviewPage = () => {
                                 eventHandler={change_interview}
                                 bookedNote={''}
                                 task={task}
-                                width={800}
+                                width={-1}
                                 testing={false}
                             />
                         )}
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
     );
 };
 
