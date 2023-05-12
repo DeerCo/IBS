@@ -8,6 +8,7 @@ import moment from 'moment';
 import StudentApi from '../../../api/student_api';
 import NavBar from '../../Module/Navigation/NavBar';
 import InterviewBookingCard from '../../General/InterviewBookingCard/InterviewBookingCard';
+import Grid from '@mui/material/Unstable_Grid2';
 
 let StudentInterviewPage = () => {
     let navigate = useNavigate();
@@ -228,8 +229,8 @@ let StudentInterviewPage = () => {
     };
 
     return (
-        <div>
-            <div>
+        <Grid container>
+            <Grid xs={12}>
                 <NavBar page="Interview" />
 
                 <div className="row card-box mt-3">
@@ -308,8 +309,8 @@ let StudentInterviewPage = () => {
                         )}
                     </div>
                 </div>
-            </div>
-        </div>
+            </Grid>
+        </Grid>
     );
 };
 
