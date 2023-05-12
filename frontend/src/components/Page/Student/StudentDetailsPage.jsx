@@ -6,6 +6,7 @@ import InviteMember from "../../Module/Group/InviteMember";
 import NavBar from "../../Module/Navigation/NavBar";
 import StudentApi from "../../../api/student_api";
 import "../../../styles/style.css";
+import {Typography} from "@mui/material";
 
 let StudentDetailsPage = () => {
 	let navigate = useNavigate();
@@ -76,6 +77,15 @@ let StudentDetailsPage = () => {
 						} else {
 							toast.error("Unknown error", { theme: "colored" });
 							navigate("/login");
+							return;
+						}
+
+						// For testing, gitlab_url can be null and backend problems occur at check_submission endpoint
+						if (group_response["data"]["gitlab_url"] === null) {
+							setStatus("not_joined");
+							setGroupId("");
+							setMembers([]);
+							setGit(null);
 							return;
 						}
 
@@ -219,6 +229,151 @@ let StudentDetailsPage = () => {
 		})
 	};
 
+	const TaskDetails = () => {
+		return (
+			<div className="bg-body rounded shadow-sm">
+
+				{status === "joined" && (
+					<div>
+						<h4> Due Date </h4>
+						<p> Original Due Date: <b>{due}</b></p>
+						<p> Due Date after Extension: <b>{dueEx}</b></p>
+						<p> Due Date after Extension and Token: <b>{dueExTo}</b></p>
+
+						<hr />
+
+						<h4> Token </h4>
+						<p> At most <b>{maxToken}</b> token(s) can be used for this task</p>
+						<p> Each token can extend the due date by <b>{tokenLen}</b> minutes</p>
+
+						<hr />
+
+						<h4> GitLab URL </h4>
+						<p><a href={git} target="_blank">{git}</a></p>
+
+						<hr />
+
+						<h4> Last Commit Before Due Date </h4>
+						{commit && (
+							<div>
+								<p>The commit id is: <b>{commit}</b></p>
+								<p>The commit time is: <b>{commitTime}</b></p>
+								{pushTime === null ? <p>The push time is: <b>Not Applicable</b></p> : <p>The push time is: <b>{pushTime}</b></p>}
+								<p>The commit message is: <b>{commitMsg}</b></p>
+								<p>This commit uses {tokenUsed} token(s)</p>
+							</div>
+						)}
+
+						{!commit && (
+							<p>No commit before due date is found</p>
+						)}
+
+						<hr />
+
+						<h4> Collected Commit </h4>
+						{!collectCommit && "No commit has been collected yet"}
+						{collectCommit && (
+							<div>
+								<p>The commit id is: <b>{collectCommit}</b></p>
+								<p>This commit uses {collectTokenUsed} token(s)</p>
+								<p>This commit is for marking purposes</p>
+							</div>
+						)}
+					</div>
+				)}
+
+				{status !== "joined" && (
+					<h4>Please join a group to view the task details</h4>
+				)}
+			</div>)
+	}
+
+	const GroupDetails = () => {
+		return (
+			<div className="p-3 bg-body rounded shadow-sm">
+				{status === "joined" &&
+					<div>
+						<h4>You have joined group {group_id}</h4>
+
+						<hr />
+
+						<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
+						<h5>Leaving group has been disabled</h5>
+
+						<hr />
+
+						<ul>
+							{members.map((member) => (
+								<li key={member.username + member.status} className="align-left">
+									<strong>{member.username}</strong> ({member.status})
+									{member.status === "pending" &&
+										<button onClick={() => { uninvite_member(course_id, task, member.username) }} className="btn" title="Cancel the invitation">
+											❌
+										</button>
+									}
+								</li>
+							))}
+						</ul>
+
+						<hr />
+
+						{(members.length < max_member) && <InviteMember course_id={course_id} task={task} version={version} setVersion={setVersion} />}
+					</div>
+				}
+
+				{status === "not_joined" &&
+					<div>
+						<h4>You are not in a group</h4>
+
+						<hr />
+
+						<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
+						{changeGroup && max_member > 1 && <h5>Ask a group member to invite you if you want to join an existing group</h5>}
+						{changeGroup && <h5>You cannot switch to another group once you create a new group</h5>}
+						{!changeGroup && <h5>Modifying group has been disabled</h5>}
+
+						<hr />
+
+						<button onClick={() => { create_group(course_id, task) }} className="btn btn-primary btn-lg m-2" id="create_group_button">
+							Create a New Group
+						</button>
+					</div>
+				}
+
+				{status === "invited" &&
+					<div>
+						<h4>You have been invited to join group {group_id}</h4>
+
+						<hr />
+
+						<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
+						<h5>Reject the invitation to create a new group</h5>
+
+						<hr />
+
+						<ul>
+							{members.map((member) => (
+								<li key={member.username + member.status} className="align-left">
+									<strong>{member.username}</strong> ({member.status})
+								</li>
+							))}
+						</ul>
+
+						<hr />
+
+						<button onClick={() => { accept_invitation(course_id, task) }} className="btn btn-primary btn-lg m-2">
+							Accept the invitation
+						</button>
+
+						<button onClick={() => { reject_invitation(course_id, task) }} className="btn btn-primary btn-lg m-2">
+							Reject the invitation
+						</button>
+					</div>
+				}
+			</div>
+		)
+	}
+
 	return (
 		<div>
 			<NavBar page="Details" />
@@ -230,144 +385,11 @@ let StudentDetailsPage = () => {
 
 				<div className="card-box-special row">
 					<div className="col-7 my-2">
-						<div className="bg-body rounded shadow-sm">
-							{status === "joined" && (
-								<div>
-									<h4> Due Date </h4>
-									<p> Original Due Date: <b>{due}</b></p>
-									<p> Due Date after Extension: <b>{dueEx}</b></p>
-									<p> Due Date after Extension and Token: <b>{dueExTo}</b></p>
-
-									<hr />
-
-									<h4> Token </h4>
-									<p> At most <b>{maxToken}</b> token(s) can be used for this task</p>
-									<p> Each token can extend the due date by <b>{tokenLen}</b> minutes</p>
-
-									<hr />
-
-									<h4> GitLab URL </h4>
-									<p><a href={git} target="_blank">{git}</a></p>
-
-									<hr />
-
-									<h4> Last Commit Before Due Date </h4>
-									{commit && (
-										<div>
-											<p>The commit id is: <b>{commit}</b></p>
-											<p>The commit time is: <b>{commitTime}</b></p>
-											{pushTime === null ? <p>The push time is: <b>Not Applicable</b></p> : <p>The push time is: <b>{pushTime}</b></p>}
-											<p>The commit message is: <b>{commitMsg}</b></p>
-											<p>This commit uses {tokenUsed} token(s)</p>
-										</div>
-									)}
-
-									{!commit && (
-										<p>No commit before due date is found</p>
-									)}
-
-									<hr />
-
-									<h4> Collected Commit </h4>
-									{!collectCommit && "No commit has been collected yet"}
-									{collectCommit && (
-										<div>
-											<p>The commit id is: <b>{collectCommit}</b></p>
-											<p>This commit uses {collectTokenUsed} token(s)</p>
-											<p>This commit is for marking purposes</p>
-										</div>
-									)}
-								</div>
-							)}
-
-							{status !== "joined" && (
-								<h4>Please join a group to view the task details</h4>
-							)}
-						</div>
+						<TaskDetails />
 					</div>
 
 					<div className="col-5 my-2">
-						<div className="p-3 bg-body rounded shadow-sm">
-							{status === "joined" &&
-								<div>
-									<h4>You have joined group {group_id}</h4>
-
-									<hr />
-
-									<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
-									<h5>Leaving group has been disabled</h5>
-
-									<hr />
-
-									<ul>
-										{members.map((member) => (
-											<li key={member.username + member.status} className="align-left">
-												<strong>{member.username}</strong> ({member.status})
-												{member.status === "pending" &&
-													<button onClick={() => { uninvite_member(course_id, task, member.username) }} className="btn" title="Cancel the invitation">
-														❌
-													</button>
-												}
-											</li>
-										))}
-									</ul>
-
-									<hr />
-
-									{(members.length < max_member) && <InviteMember course_id={course_id} task={task} version={version} setVersion={setVersion} />}
-								</div>
-							}
-
-							{status === "not_joined" &&
-								<div>
-									<h4>You are not in a group</h4>
-
-									<hr />
-
-									<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
-									{changeGroup && max_member > 1 && <h5>Ask a group member to invite you if you want to join an existing group</h5>}
-									{changeGroup && <h5>You cannot switch to another group once you create a new group</h5>}
-									{!changeGroup && <h5>Modifying group has been disabled</h5>}
-
-									<hr />
-
-									<button onClick={() => { create_group(course_id, task) }} className="btn btn-primary btn-lg m-2" id="create_group_button">
-										Create a New Group
-									</button>
-								</div>
-							}
-
-							{status === "invited" &&
-								<div>
-									<h4>You have been invited to join group {group_id}</h4>
-
-									<hr />
-
-									<h5>Group Size: {min_member} {min_member === max_member ? "" : " -- " + max_member}</h5>
-									<h5>Reject the invitation to create a new group</h5>
-
-									<hr />
-
-									<ul>
-										{members.map((member) => (
-											<li key={member.username + member.status} className="align-left">
-												<strong>{member.username}</strong> ({member.status})
-											</li>
-										))}
-									</ul>
-
-									<hr />
-
-									<button onClick={() => { accept_invitation(course_id, task) }} className="btn btn-primary btn-lg m-2">
-										Accept the invitation
-									</button>
-
-									<button onClick={() => { reject_invitation(course_id, task) }} className="btn btn-primary btn-lg m-2">
-										Reject the invitation
-									</button>
-								</div>
-							}
-						</div>
+						<GroupDetails />
 					</div>
 				</div>
 			</div>
