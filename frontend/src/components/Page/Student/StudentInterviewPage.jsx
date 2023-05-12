@@ -246,6 +246,7 @@ let StudentInterviewPage = () => {
 
 					<div className="col-1"></div>
 
+					{/*TODO: Convert the HTML code into MUI tags*/}
 					<div className="col-3 row">
 						{booked && (
 							<div>
