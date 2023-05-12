@@ -6,6 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
 
 import PageContainer from "../../FlexyMainComponents/container/PageContainer";
+import { Card, CardContent } from "@mui/material";
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -54,7 +55,7 @@ export const InterviewCalendar = ({ ...props }) => {
     };
     const editEvent = (event) => {
         setOpen(true);
-        const newEditEvent = calevents.find((elem) => elem.title === event.title);
+        const newEditEvent = calEvents.find((elem) => elem.title === event.title);
         setColor(event.color);
         setTitle(newEditEvent.title);
         setColor(newEditEvent.color);
@@ -76,7 +77,7 @@ export const InterviewCalendar = ({ ...props }) => {
                     {/*TODO: StudentInterviewPage.jsx*/}
                     <Calendar
                         selectable
-                        events={calevents}
+                        events={calEvents}
                         defaultView="month"
                         scrollToTime={new Date(1970, 1, 1, 6)}
                         defaultDate={new Date()}
