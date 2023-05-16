@@ -19,53 +19,6 @@ const localizer = momentLocalizer(moment);
  * @constructor
  */
 const InterviewCalendar = (props) => {
-    const [calEvents, setCalEvents] = useState(Events);
-    const [open, setOpen] = React.useState(false);
-    const [title, setTitle] = useState('');
-    const [slot, setSlot] = useState();
-    const [color, setColor] = useState('default');
-    const [booked, setBooked] = useState(false);
-    const [update, setUpdate] = useState();
-    const ColorVariation = [
-        {
-            id: 1,
-            eColor: '#1a97f5',
-            value: 'default'
-        },
-        {
-            id: 2,
-            eColor: '#00ab55',
-            value: 'green'
-        },
-        {
-            id: 3,
-            eColor: '#fc4b6c',
-            value: 'red'
-        },
-        {
-            id: 4,
-            eColor: '#1e4db7',
-            value: 'azure'
-        },
-        {
-            id: 5,
-            eColor: '#fdd43f',
-            value: 'warning'
-        }
-    ];
-    const addNewEventAlert = (slotInfo) => {
-        setOpen(true);
-        setSlot(slotInfo);
-    };
-    const editEvent = (event) => {
-        setOpen(true);
-        const newEditEvent = calEvents.find((elem) => elem.title === event.title);
-        setColor(event.color);
-        setTitle(newEditEvent.title);
-        setColor(newEditEvent.color);
-        setUpdate(event);
-    };
-
     const eventColors = (event) => {
         if (event.color) {
             return { className: `event-${event.color}` };
@@ -75,7 +28,7 @@ const InterviewCalendar = (props) => {
 
     return (
         <PageContainer title="Calendar ui" description="this is Calendar page">
-            <Card>
+            <Card sx={{ width: props.width }}>
                 <CardContent>
                     <Calendar
                         selectable
@@ -84,10 +37,11 @@ const InterviewCalendar = (props) => {
                         scrollToTime={new Date(1970, 1, 1, 6)}
                         defaultDate={new Date()}
                         localizer={localizer}
-                        style={{ height: 'calc(100vh - 350px' }}
+                        style={{ height: 'calc(100vh - 350px)', width: props.width - 60 }}
                         onSelectEvent={props.eventClickHandler}
-                        onSelectSlot={(slotInfo) => addNewEventAlert(slotInfo)}
+                        onSelectSlot={props.selectSlotHandler}
                         eventPropGetter={(event) => eventColors(event)}
+                        {...props}
                     />
                 </CardContent>
             </Card>
@@ -99,7 +53,11 @@ InterviewCalendar.propTypes = {
     // Default events to prefill calendar with
     events: PropTypes.array,
     // Event handler for clicking on events
-    eventClickHandler: PropTypes.func
+    eventClickHandler: PropTypes.func,
+    // Event handler for clicking on days (be it eventful or not)
+    selectSlotHandler: PropTypes.func,
+    // Width of calendar
+    width: PropTypes.number
 };
 
 export default InterviewCalendar;

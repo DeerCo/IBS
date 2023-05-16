@@ -34,7 +34,7 @@ const InterviewBookingCard = (props) => {
             buttonLabel = 'Cancel Existing Interview & Book';
             buttonColor = 'secondary';
         } else {
-            buttonLabel = 'Book';
+            buttonLabel = 'Book Interview';
             buttonColor = 'primary';
         }
     }
@@ -59,23 +59,6 @@ const InterviewBookingCard = (props) => {
             </Box>
         );
     };
-
-    // const ApplyFlexy = (flexyProps) => {
-    //     const theme = BuildTheme({
-    //         theme: LIGHT_THEME,
-    //         direction: 'ltr'
-    //     });
-    //     if (props.testing === false) return <div>{flexyProps.children}</div>;
-    //     else
-    //         return (
-    //             <ThemeProvider theme={theme}>
-    //                 <RTL direction="ltr">
-    //                     <CssBaseline />
-    //                     {flexyProps.children}
-    //                 </RTL>
-    //             </ThemeProvider>
-    //         );
-    // };
 
     const customWidth = props.width === -1 ? 'auto' : props.width;
 
@@ -103,10 +86,13 @@ const InterviewBookingCard = (props) => {
                     {props.location !== undefined && (
                         <CardItem title="Location" desc={props.location} />
                     )}
-                    {props.bookedNote !== '' && <CardItem title="Note" desc={props.bookedNote} />}
+                    {props.bookedNote !== null ||
+                        (props.bookedNote !== '' && (
+                            <CardItem title="Additional Notes" desc={props.bookedNote} />
+                        ))}
                 </Box>
                 {(props.eventHandler !== null || props.testing) && (
-                    <Box>
+                    <Box display="flex" alignItems="center">
                         <Button
                             variant="contained"
                             color={buttonColor}
@@ -115,6 +101,8 @@ const InterviewBookingCard = (props) => {
                                 else
                                     props.eventHandler(props.task, props.startTime, props.location);
                             }}
+                            size="large"
+                            style={{ minWidth: 150, marginTop: 3 }}
                         >
                             {buttonLabel}
                         </Button>
@@ -131,9 +119,9 @@ InterviewBookingCard.propTypes = {
     // State value: if interview slot is clicked upon
     openedPopup: PropTypes.bool,
     // Interview start time (assumed in correct format)
-    startTime: PropTypes.string,
+    startTime: PropTypes.instanceOf(Date),
     // Interview end time (assumed in correct format)
-    endTime: PropTypes.string,
+    endTime: PropTypes.instanceOf(Date),
     // Interview location
     location: PropTypes.string,
     // Event handler for button's onClick functionality

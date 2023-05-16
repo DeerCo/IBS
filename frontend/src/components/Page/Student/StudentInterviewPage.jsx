@@ -70,7 +70,7 @@ let StudentInterviewPage = () => {
                     setBookedStart(response_1_data['start_time']);
                     setBookedEnd(response_1_data['end_time']);
                     setBookedLocation(response_1_data['location']);
-                    setBookedNote(response_1_data['note']);
+                    setBookedNote(response_1_data['note'] === null ? '' : response_1_data['note']);
                     setBooked(true);
 
                     let location_lower = response_1_data['location'].toLowerCase();
@@ -85,6 +85,8 @@ let StudentInterviewPage = () => {
                         title = '🏫';
                     }
 
+                    title += `  ${response_1_data['start_time'].split(' ')[1]}`;
+
                     let curr = {
                         title: title,
                         start: moment(response_1_data['start_time']).toDate(),
@@ -92,7 +94,7 @@ let StudentInterviewPage = () => {
                         extendedProps: {
                             location: response_1_data['location']
                         },
-                        backgroundColor: 'red'
+                        color: 'red'
                     };
 
                     temp_data.push(curr);
@@ -114,6 +116,7 @@ let StudentInterviewPage = () => {
                             title = '🏫';
                         }
                         let data = time.split(' - ');
+                        title += `  ${data[0].split(' ')[1]}`;
                         let curr = {
                             title: title,
                             start: moment(data[0]).toDate(),
@@ -121,7 +124,7 @@ let StudentInterviewPage = () => {
                             extendedProps: {
                                 location: location
                             },
-                            backgroundColor: 'green'
+                            color: 'green'
                         };
                         temp_data.push(curr);
                     }
@@ -231,19 +234,22 @@ let StudentInterviewPage = () => {
             <Grid xs={12}>
                 <NavBar page="Interview" />
             </Grid>
-            <Grid xs={12} sx={{ mt: 3, marginX: 22 }}>
-                <Grid container spacing={3} direction="row" sx={{ m: 'auto' }}>
-                    <Grid xs>
+            <Grid xs={12} sx={{ mt: 3, marginX: 10 }}>
+                <Grid container spacing={2} direction="row" sx={{ m: 'auto' }}>
+                    <Grid xs={6}>
                         <InterviewCalendar
                             events={calendarData}
                             eventClickHandler={(event) => {
-                                console.log(event);
                                 setSelectedStart(event.start);
                                 setSelectedEnd(event.end);
                                 setSelectedLocation(event.extendedProps.location);
 
                                 setOpen(true);
                             }}
+                            selectSlotHandler={(slotInfo) => {
+                                setOpen(false);
+                            }}
+                            width={1000}
                         />
                     </Grid>
                     <Grid xs>
@@ -251,9 +257,9 @@ let StudentInterviewPage = () => {
                             <InterviewBookingCard
                                 booked={booked}
                                 openedPopup={open}
-                                startTime={selectedStart}
-                                endTime={selectedEnd}
-                                location={selectedLocation}
+                                startTime={bookedStart}
+                                endTime={bookedEnd}
+                                location={bookedLocation}
                                 eventHandler={cancel_interview}
                                 bookedNote={bookedNote}
                                 task={task}
