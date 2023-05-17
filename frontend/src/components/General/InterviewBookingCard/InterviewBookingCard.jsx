@@ -1,16 +1,5 @@
 import { PropTypes } from 'prop-types';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    CssBaseline,
-    ThemeProvider,
-    Typography
-} from '@mui/material';
-import RTL from '../../../layouts/full-layout/customizer/RTL';
-import { BuildTheme } from '../../../assets/global/Theme-variable';
-import { LIGHT_THEME } from '../../../redux/constants';
+import { Box, Button, Card, CardContent, Link, Typography } from '@mui/material';
 import moment from 'moment/moment';
 
 /**
@@ -41,7 +30,7 @@ const InterviewBookingCard = (props) => {
 
     const CardItem = ({ title, desc, ...props }) => {
         return (
-            <Box key={desc} display="flex" alignItems="center" sx={{ pb: 2, pt: 2 }}>
+            <Box key={desc} sx={{ pb: 2, pt: 2, display: 'flex', alignItems: 'center' }}>
                 <Box sx={{ ml: 2 }}>
                     <Typography color="textSecondary" variant="h5">
                         {title}:
@@ -50,9 +39,9 @@ const InterviewBookingCard = (props) => {
                 <Box sx={{ ml: 'auto' }}>
                     <Typography color="textSecondary" variant="h5" fontWeight="400">
                         {typeof desc === 'string' && desc.startsWith('http') ? (
-                            <a href={desc}>Link ✈</a>
+                            <Link href={desc}>Link ✈</Link>
                         ) : (
-                            desc
+                            <div>{desc}</div>
                         )}
                     </Typography>
                 </Box>
@@ -70,7 +59,7 @@ const InterviewBookingCard = (props) => {
                         {title}
                     </Typography>
                 </Box>
-                <Box sx={{ mt: -1 }}>
+                <Box sx={{ mt: 0 }}>
                     {props.startTime !== undefined && (
                         <CardItem
                             title="Start time"
@@ -92,7 +81,7 @@ const InterviewBookingCard = (props) => {
                         ))}
                 </Box>
                 {(props.eventHandler !== null || props.testing) && (
-                    <Box display="flex" alignItems="center">
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Button
                             variant="contained"
                             color={buttonColor}
@@ -119,9 +108,9 @@ InterviewBookingCard.propTypes = {
     // State value: if interview slot is clicked upon
     openedPopup: PropTypes.bool,
     // Interview start time (assumed in correct format)
-    startTime: PropTypes.instanceOf(Date),
+    startTime: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
     // Interview end time (assumed in correct format)
-    endTime: PropTypes.instanceOf(Date),
+    endTime: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
     // Interview location
     location: PropTypes.string,
     // Event handler for button's onClick functionality

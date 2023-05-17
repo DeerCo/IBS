@@ -253,7 +253,7 @@ let StudentInterviewPage = () => {
                         />
                     </Grid>
                     <Grid xs>
-                        {booked && (
+                        {booked && !open && (
                             <InterviewBookingCard
                                 booked={booked}
                                 openedPopup={open}
