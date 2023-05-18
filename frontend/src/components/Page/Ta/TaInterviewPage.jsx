@@ -234,17 +234,10 @@ let TaInterviewPage = () => {
                 <NavBar page="Interview" role={'ta'} />
             </Grid>
             <Grid xs={12} sx={{ mt: 3, marginX: 2 }}>
-                <Container disableGutters>
-                    <Card sx={{ p: 0 }}>
-                        <Box sx={{ padding: '15px 30px' }} display="flex" alignItems="center">
-                            <Box flexGrow={1}>
-                                <Typography fontWeight="500" variant="h4">
-                                    Schedule Interview
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Card>
-                    <Divider />
+                <Container>
+                    <Typography fontWeight="500" variant="h2" sx={{ ml: 3 }}>
+                        Schedule Interview
+                    </Typography>
                     <CardContent sx={{ padding: '30px' }}>
                         <Grid container spacing={2} direction="row">
                             <Grid xs>
@@ -305,98 +298,92 @@ let TaInterviewPage = () => {
                         </Grid>
                     </CardContent>
                 </Container>
-                <div className="row card-box mt-3">
-                    <Grid container spacing={2} direction="row" sx={{ m: 'auto' }}>
-                        <Grid xs={6}>
-                            <InterviewCalendar
-                                events={calendarData}
-                                eventClickHandler={(event) => {
-                                    setSelectedId(event.extendedProps.id);
-                                    setSelectedStart(event.start);
-                                    setSelectedEnd(event.end);
-                                    setSelectedLocation(event.extendedProps.location);
-                                    setSelectedGroupId(event.extendedProps.group_id);
-                                    setSelectedHost(event.extendedProps.host);
-                                    setSelectedLength(event.extendedProps.length);
-                                    setSelectedNote(event.extendedProps.note);
-                                    setSelectedCancelled(event.extendedProps.cancelled);
-                                    check_group(event.extendedProps.group_id);
+                <Grid container spacing={2} direction="row" sx={{ m: 'auto' }}>
+                    <Grid xs={6}>
+                        <InterviewCalendar
+                            events={calendarData}
+                            eventClickHandler={(event) => {
+                                setSelectedId(event.extendedProps.id);
+                                setSelectedStart(event.start);
+                                setSelectedEnd(event.end);
+                                setSelectedLocation(event.extendedProps.location);
+                                setSelectedGroupId(event.extendedProps.group_id);
+                                setSelectedHost(event.extendedProps.host);
+                                setSelectedLength(event.extendedProps.length);
+                                setSelectedNote(event.extendedProps.note);
+                                setSelectedCancelled(event.extendedProps.cancelled);
+                                check_group(event.extendedProps.group_id);
 
-                                    setOpen(true);
-                                }}
-                                selectSlotHandler={(slotInfo) => setOpen(false)}
-                                width={880}
-                            />
-                        </Grid>
-                        <Grid xs>
-                            {open && (
-                                <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
-                                    <CardContent sx={{ pb: 0 }}>
-                                        <Box>
-                                            <Typography variant="h4" sx={{ mb: 2 }}>
-                                                Selected Interview
-                                            </Typography>
-                                        </Box>
-                                        <Box sx={{ mt: 0 }}>
-                                            <CardItem
-                                                title="Start time"
-                                                desc={moment(selectedStart).format(
-                                                    'MM/DD/YYYY, h:mm:ss a'
-                                                )}
-                                            />
-                                            <CardItem
-                                                title="End time"
-                                                desc={moment(selectedEnd).format(
-                                                    'MM/DD/YYYY, h:mm:ss a'
-                                                )}
-                                            />
-                                            <CardItem title="Interview ID" desc={selectedId} />
-                                            <CardItem title="Host" desc={selectedHost} />
-                                            <CardItem
-                                                title="Length"
-                                                desc={selectedLength.toString()}
-                                            />
-                                            <CardItem
-                                                title="Note"
-                                                desc={selectedNote === null ? 'null' : selectedNote}
-                                            />
-                                            <CardItem
-                                                title="Cancelled"
-                                                desc={selectedCancelled.toString()}
-                                            />
-                                            <CardItem title="Location" desc={selectedLocation} />
-                                            <CardItem
-                                                title="Group ID"
-                                                desc={
-                                                    selectedGroupId === null
-                                                        ? 'null'
-                                                        : selectedGroupId
-                                                }
-                                            />
+                                setOpen(true);
+                            }}
+                            selectSlotHandler={(slotInfo) => setOpen(false)}
+                            width={1000}
+                        />
+                    </Grid>
+                    <Grid xs>
+                        {open && (
+                            <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
+                                <CardContent sx={{ pb: 0 }}>
+                                    <Box>
+                                        <Typography variant="h4" sx={{ mb: 2 }}>
+                                            Selected Interview
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ mt: 0 }}>
+                                        <CardItem
+                                            title="Start time"
+                                            desc={moment(selectedStart).format(
+                                                'MM/DD/YYYY, h:mm:ss a'
+                                            )}
+                                        />
+                                        <CardItem
+                                            title="End time"
+                                            desc={moment(selectedEnd).format(
+                                                'MM/DD/YYYY, h:mm:ss a'
+                                            )}
+                                        />
+                                        <CardItem title="Interview ID" desc={selectedId} />
+                                        <CardItem title="Host" desc={selectedHost} />
+                                        <CardItem title="Length" desc={selectedLength.toString()} />
+                                        {selectedNote === null ? (
+                                            <div></div>
+                                        ) : (
+                                            <CardItem title="Note" desc={selectedNote} />
+                                        )}
+                                        <CardItem
+                                            title="Cancelled"
+                                            desc={selectedCancelled.toString()}
+                                        />
+                                        <CardItem title="Location" desc={selectedLocation} />
+                                        {selectedGroupId === null ? (
+                                            <div></div>
+                                        ) : (
+                                            <CardItem title="Group ID" desc={selectedGroupId} />
+                                        )}
+                                        {selectedGroupId === null ? (
+                                            <div></div>
+                                        ) : (
                                             <CardItem
                                                 title="Group Members"
-                                                desc={
-                                                    selectedGroupId === null ? (
-                                                        'null'
-                                                    ) : (
-                                                        <pre>{selectedUsername}</pre>
-                                                    )
-                                                }
+                                                desc={<pre>{selectedUsername}</pre>}
                                             />
-                                            <Button
-                                                onClick={() => {
-                                                    delete_interview(task, selectedId);
-                                                }}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            )}
-                        </Grid>
+                                        )}
+                                        <Button
+                                            onClick={() => {
+                                                delete_interview(task, selectedId);
+                                            }}
+                                            variant="contained"
+                                            size="large"
+                                            style={{ minWidth: 120, marginTop: 3 }}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        )}
                     </Grid>
-                </div>
+                </Grid>
             </Grid>
         </Grid>
     );
