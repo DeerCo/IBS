@@ -7,7 +7,16 @@ import '../../../styles/style.css';
 import NavBar from '../../Module/Navigation/NavBar';
 import Grid from '@mui/material/Unstable_Grid2';
 import InterviewCalendar from '../../General/InterviewCalendar/InterviewCalendar';
-import { Box, Button, Card, CardContent, Container, Divider, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Container,
+    Divider,
+    Link,
+    Typography
+} from '@mui/material';
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 
@@ -198,12 +207,33 @@ let TaInterviewPage = () => {
         setEnteredLocation(location);
     };
 
+    const CardItem = ({ title, desc, ...props }) => {
+        return (
+            <Box key={desc} sx={{ pb: 2, pt: 2, display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ ml: 2 }}>
+                    <Typography color="textSecondary" variant="h5">
+                        {title}:
+                    </Typography>
+                </Box>
+                <Box sx={{ ml: 'auto' }}>
+                    <Typography color="textSecondary" variant="h5" fontWeight="400">
+                        {typeof desc === 'string' && desc.startsWith('http') ? (
+                            <Link href={desc}>Link ✈</Link>
+                        ) : (
+                            <div>{desc}</div>
+                        )}
+                    </Typography>
+                </Box>
+            </Box>
+        );
+    };
+
     return (
         <Grid container>
             <Grid xs={12}>
                 <NavBar page="Interview" role={'ta'} />
             </Grid>
-            <Grid xs={12} sx={{ mt: 3, marginX: 10 }}>
+            <Grid xs={12} sx={{ mt: 3, marginX: 2 }}>
                 <Container disableGutters>
                     <Card sx={{ p: 0 }}>
                         <Box sx={{ padding: '15px 30px' }} display="flex" alignItems="center">
@@ -295,76 +325,74 @@ let TaInterviewPage = () => {
                                     setOpen(true);
                                 }}
                                 selectSlotHandler={(slotInfo) => setOpen(false)}
-                                width={1000}
+                                width={880}
                             />
                         </Grid>
                         <Grid xs>
                             {open && (
-                                <div>
-                                    <h4 className="border-bottom pb-2 mb-2">Selected Interview</h4>
-                                    <span className="d-block text-gray-dark">
-                                        {' '}
-                                        Start time:{' '}
-                                        {moment(selectedStart).format('MM/DD/YYYY, h:mm:ss a')}{' '}
-                                    </span>
-                                    <span className="d-block text-gray-dark">
-                                        {' '}
-                                        End time:{' '}
-                                        {moment(selectedEnd).format('MM/DD/YYYY, h:mm:ss a')}{' '}
-                                    </span>
-                                    <span className="d-block text-gray-dark">
-                                        {' '}
-                                        Interview ID: {selectedId}{' '}
-                                    </span>
-                                    <span className="d-block text-gray-dark">
-                                        {' '}
-                                        Host: {selectedHost}{' '}
-                                    </span>
-                                    <span className="d-block text-gray-dark">
-                                        {' '}
-                                        Length: {selectedLength.toString()}{' '}
-                                    </span>
-                                    <span className="d-block text-gray-dark">
-                                        {' '}
-                                        Note: {selectedNote === null ? 'null' : selectedNote}{' '}
-                                    </span>
-                                    <span className="d-block text-gray-dark">
-                                        {' '}
-                                        Cancelled: {selectedCancelled.toString()}{' '}
-                                    </span>
-                                    <strong className="d-block text-gray-dark">
-                                        {' '}
-                                        Location:{' '}
-                                        {selectedLocation.startsWith('http') ? (
-                                            <a href={selectedLocation}>Link ✈</a>
-                                        ) : (
-                                            selectedLocation
-                                        )}{' '}
-                                    </strong>
-                                    <strong className="d-block text-gray-dark">
-                                        {' '}
-                                        Group ID:{' '}
-                                        {selectedGroupId === null ? 'null' : selectedGroupId}{' '}
-                                    </strong>
-                                    <strong className="d-block text-gray-dark">
-                                        {' '}
-                                        Group Members:{' '}
-                                    </strong>{' '}
-                                    {selectedGroupId === null ? (
-                                        'null'
-                                    ) : (
-                                        <pre>{selectedUsername}</pre>
-                                    )}
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary mt-4 col-12"
-                                        onClick={() => {
-                                            delete_interview(task, selectedId);
-                                        }}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+                                <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
+                                    <CardContent sx={{ pb: 0 }}>
+                                        <Box>
+                                            <Typography variant="h4" sx={{ mb: 2 }}>
+                                                Selected Interview
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ mt: 0 }}>
+                                            <CardItem
+                                                title="Start time"
+                                                desc={moment(selectedStart).format(
+                                                    'MM/DD/YYYY, h:mm:ss a'
+                                                )}
+                                            />
+                                            <CardItem
+                                                title="End time"
+                                                desc={moment(selectedEnd).format(
+                                                    'MM/DD/YYYY, h:mm:ss a'
+                                                )}
+                                            />
+                                            <CardItem title="Interview ID" desc={selectedId} />
+                                            <CardItem title="Host" desc={selectedHost} />
+                                            <CardItem
+                                                title="Length"
+                                                desc={selectedLength.toString()}
+                                            />
+                                            <CardItem
+                                                title="Note"
+                                                desc={selectedNote === null ? 'null' : selectedNote}
+                                            />
+                                            <CardItem
+                                                title="Cancelled"
+                                                desc={selectedCancelled.toString()}
+                                            />
+                                            <CardItem title="Location" desc={selectedLocation} />
+                                            <CardItem
+                                                title="Group ID"
+                                                desc={
+                                                    selectedGroupId === null
+                                                        ? 'null'
+                                                        : selectedGroupId
+                                                }
+                                            />
+                                            <CardItem
+                                                title="Group Members"
+                                                desc={
+                                                    selectedGroupId === null ? (
+                                                        'null'
+                                                    ) : (
+                                                        <pre>{selectedUsername}</pre>
+                                                    )
+                                                }
+                                            />
+                                            <Button
+                                                onClick={() => {
+                                                    delete_interview(task, selectedId);
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
                             )}
                         </Grid>
                     </Grid>
