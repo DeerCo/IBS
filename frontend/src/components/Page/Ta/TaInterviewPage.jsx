@@ -85,8 +85,8 @@ let TaInterviewPage = () => {
                 let colour = interview.group_id === null ? 'green' : 'red';
                 let curr = {
                     title: title,
-                    start: interview.start_time.replace(' ', 'T'),
-                    end: interview.end_time.replace(' ', 'T'),
+                    start: moment(interview.start_time).toDate(),
+                    end: moment(interview.end_time).toDate(),
                     extendedProps: {
                         id: interview.interview_id,
                         task: interview.task,
