@@ -80,7 +80,7 @@ let TaInterviewPage = () => {
                     title = '🏫';
                 }
 
-                console.log(interview);
+                title += `  ${interview.start_time.split(' ')[1]}`;
 
                 let colour = interview.group_id === null ? 'green' : 'red';
                 let curr = {
