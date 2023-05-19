@@ -13,12 +13,13 @@ import {
     Card,
     CardContent,
     Container,
-    Divider,
     Link,
+    MenuItem,
     Typography
 } from '@mui/material';
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
+import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 
 let TaInterviewPage = () => {
     let navigate = useNavigate();
@@ -38,6 +39,10 @@ let TaInterviewPage = () => {
     let [selectedLength, setSelectedLength] = useState('');
     let [selectedNote, setSelectedNote] = useState('');
     let [selectedCancelled, setSelectedCancelled] = useState('');
+
+    // for select dropdown when scheduling interview
+    const [isOnline, setIsOnline] = useState(false);
+    const [selectVal, setSelectVal] = useState('In-Person');
 
     // track the entered
     let [enteredTime, setEnteredTime] = useState('');
@@ -267,16 +272,44 @@ let TaInterviewPage = () => {
                                 />
                             </Grid>
                             <Grid xs>
-                                <CustomFormLabel sx={{ mt: 0 }} htmlFor="interview-location">
+                                <CustomFormLabel sx={{ mt: 0 }} htmlFor="location-select">
                                     Location
                                 </CustomFormLabel>
-                                <CustomTextField
-                                    id="interview-location"
-                                    variant="outlined"
+                                <CustomSelect
+                                    labelId="location-select-label"
+                                    id="location-select"
+                                    value={selectVal}
+                                    onChange={(event, newVal) => {
+                                        setSelectVal(event.target.value);
+                                        if (event.target.value === 'Online') {
+                                            setIsOnline(true);
+                                        } else {
+                                            setIsOnline(false);
+                                        }
+                                    }}
+                                    fullWidth
                                     size="small"
-                                    value={enteredLocation}
-                                    onChange={onChangeLocation}
-                                />
+                                >
+                                    <MenuItem value="In-Person">In-Person</MenuItem>
+                                    <MenuItem value="Online">Online</MenuItem>
+                                </CustomSelect>
+                                {!isOnline && (
+                                    <div>
+                                        <CustomFormLabel
+                                            sx={{ mt: 1.5 }}
+                                            htmlFor="inperson-location"
+                                        >
+                                            Enter Room
+                                        </CustomFormLabel>
+                                        <CustomTextField
+                                            id="inperson-location"
+                                            variant="outlined"
+                                            size="small"
+                                            value={enteredLocation}
+                                            onChange={onChangeLocation}
+                                        />
+                                    </div>
+                                )}
                             </Grid>
                             <Grid xs>
                                 <Button
