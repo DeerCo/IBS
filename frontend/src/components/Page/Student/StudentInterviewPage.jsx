@@ -80,12 +80,10 @@ let StudentInterviewPage = () => {
                         location_lower === 'online' ||
                         location_lower.startsWith('http')
                     ) {
-                        title = '💻';
+                        title = '💻  Online';
                     } else {
-                        title = '🏫';
+                        title = `🏫  ${response_1_data['location']}`;
                     }
-
-                    title += `  ${response_1_data['start_time'].split(' ')[1]}`;
 
                     let curr = {
                         title: title,
@@ -111,12 +109,11 @@ let StudentInterviewPage = () => {
                             location_lower === 'online' ||
                             location_lower.startsWith('http')
                         ) {
-                            title = '💻';
+                            title = '💻  Online';
                         } else {
-                            title = '🏫';
+                            title = `🏫  ${location}`;
                         }
                         let data = time.split(' - ');
-                        title += `  ${data[0].split(' ')[1]}`;
                         let curr = {
                             title: title,
                             start: moment(data[0]).toDate(),

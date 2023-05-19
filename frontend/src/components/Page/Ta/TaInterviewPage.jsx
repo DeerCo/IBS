@@ -80,12 +80,10 @@ let TaInterviewPage = () => {
                     location_lower === 'online' ||
                     location_lower.startsWith('http')
                 ) {
-                    title = '💻';
+                    title = '💻  Online';
                 } else {
-                    title = '🏫';
+                    title = `🏫  ${interview.location}`;
                 }
-
-                title += `  ${interview.start_time.split(' ')[1]}`;
 
                 let colour = interview.group_id === null ? 'green' : 'red';
                 let curr = {
@@ -387,7 +385,14 @@ let TaInterviewPage = () => {
                                             title="Cancelled"
                                             desc={selectedCancelled === false ? 'No' : 'Yes'}
                                         />
-                                        <CardItem title="Location" desc={selectedLocation} />
+                                        <CardItem
+                                            title="Location"
+                                            desc={
+                                                selectedLocation === 'online'
+                                                    ? 'Online'
+                                                    : selectedLocation
+                                            }
+                                        />
                                         {selectedGroupId === null ? (
                                             <div></div>
                                         ) : (
