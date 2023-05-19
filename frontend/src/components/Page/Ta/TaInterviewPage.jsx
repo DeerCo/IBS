@@ -385,7 +385,7 @@ let TaInterviewPage = () => {
                                         )}
                                         <CardItem
                                             title="Cancelled"
-                                            desc={selectedCancelled.toString()}
+                                            desc={selectedCancelled === false ? 'No' : 'Yes'}
                                         />
                                         <CardItem title="Location" desc={selectedLocation} />
                                         {selectedGroupId === null ? (
