@@ -119,7 +119,7 @@ const Router = [
       { path: '/react-icons', element: <ReactIcons /> },
       { path: '/form-layouts/form-custom', element: <FormCustom /> },
       { path: '/quill-editor', element: <QuillEditor /> },
-      { path: '/treeview', element: <Treeview /> },
+      // { path: '/treeview', element: <Treeview /> },
       { path: '/pricing', element: <Pricing /> },
       { path: '/timeline', element: <CustomTimeline /> },
       { path: '/typography', element: <CustomTypography /> },
