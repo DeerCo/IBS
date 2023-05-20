@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "14a9ec08-0047-47a7-8ca0-e9b090286e99",
+		"_postman_id": "8f6e75c8-8985-4ca5-924c-6459ab9aef47",
 		"name": "Student",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19282045"
@@ -287,7 +287,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/course/{{course_id}}/mark?task=",
+							"raw": "{{base_url}}/course/{{course_id}}/mark",
 							"host": [
 								"{{base_url}}"
 							],
