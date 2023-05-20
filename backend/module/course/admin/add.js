@@ -8,7 +8,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The course code is missing or has invalid format." });
         return;
     }
-    if (!("course_session" in req.body) || helpers.name_validate(req.body["course_session"])) {
+    if (!("course_session" in req.body) || helpers.string_validate(req.body["course_session"])) {
         res.status(400).json({ message: "The course session is missing or has invalid format." });
         return;
     }
