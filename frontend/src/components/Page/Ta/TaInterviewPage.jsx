@@ -281,6 +281,7 @@ let TaInterviewPage = () => {
                                         setSelectVal(event.target.value);
                                         if (event.target.value === 'Online') {
                                             setIsOnline(true);
+                                            setEnteredLocation(event.target.value);
                                         } else {
                                             setIsOnline(false);
                                         }
