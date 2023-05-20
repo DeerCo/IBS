@@ -16,14 +16,14 @@ let NavBar = (props) => {
   let origtoken = sessionStorage.getItem("origtoken");
   let impersonated = false;
 
-  console.log(origusername);
-  console.log(origroles);
+  // console.log(origusername);
+  // console.log(origroles);
 
   if (origusername !== null) {
      impersonated = true;
   }
 
-  console.log(impersonated);
+  // console.log(impersonated);
 
   let {course_id, task} = useParams();
   const role = ((props.role === undefined || props.role === "student") ? "" : props.role);

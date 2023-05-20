@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
 import {Link, useNavigate} from 'react-router-dom';
-import PageContainer from '../../components/container/PageContainer';
+import PageContainer from '../../components/FlexyMainComponents/container/PageContainer';
 
 const Error = () => {
   const navigate = useNavigate();

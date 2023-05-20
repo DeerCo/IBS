@@ -6,10 +6,10 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 
-import CustomCheckbox from '../../components/forms/custom-elements/CustomCheckbox';
-import CustomTextField from '../../components/forms/custom-elements/CustomTextField';
-import CustomFormLabel from '../../components/forms/custom-elements/CustomFormLabel';
-import PageContainer from '../../components/container/PageContainer';
+import CustomCheckbox from '../../components/FlexyMainComponents/forms/custom-elements/CustomCheckbox';
+import CustomTextField from '../../components/FlexyMainComponents/forms/custom-elements/CustomTextField';
+import CustomFormLabel from '../../components/FlexyMainComponents/forms/custom-elements/CustomFormLabel';
+import PageContainer from '../../components/FlexyMainComponents/container/PageContainer';
 
 import img1 from '../../assets/images/backgrounds/login-bg.svg';
 import LogoIcon from '../../layouts/full-layout/logo/LogoIcon';
