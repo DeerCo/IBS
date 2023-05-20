@@ -20,6 +20,9 @@ import {
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
+import { LocalizationProvider, DesktopDateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { parseISO } from 'date-fns';
 
 let TaInterviewPage = () => {
     let navigate = useNavigate();
@@ -247,14 +250,32 @@ let TaInterviewPage = () => {
                                 <CustomFormLabel sx={{ mt: 0 }} htmlFor="interview-time">
                                     Time
                                 </CustomFormLabel>
-                                <CustomTextField
-                                    id="interview-time"
-                                    variant="outlined"
-                                    helperText="Time (YYYY-MM-DD HH:mm:ss)"
-                                    size="small"
-                                    value={enteredTime}
-                                    onChange={onChangeTime}
-                                />
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DesktopDateTimePicker
+                                        placeholder="Start date"
+                                        onChange={(value) => {
+                                            setEnteredTime(
+                                                moment(value).format('YYYY-MM-DD HH:mm:ss')
+                                            );
+                                        }}
+                                        // renderInput={(inputProps) => (
+                                        //     <CustomTextField
+                                        //         fullWidth
+                                        //         variant="outlined"
+                                        //         size="small"
+                                        //         inputProps={{ 'aria-label': 'basic date picker' }}
+                                        //         {...inputProps}
+                                        //     />
+                                        // )}
+                                        slotProps={{
+                                            textField: {
+                                                variant: 'outlined',
+                                                size: 'small'
+                                            }
+                                        }}
+                                        value={parseISO(enteredTime)}
+                                    />
+                                </LocalizationProvider>
                             </Grid>
                             <Grid xs>
                                 <CustomFormLabel sx={{ mt: 0 }} htmlFor="interview-length">
