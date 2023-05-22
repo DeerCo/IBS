@@ -3,6 +3,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import NavBar from '../../Module/Navigation/NavBar';
 import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 import { Typography } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import InstructorApi from '../../../api/instructor_api';
+import { useEffect } from 'react';
 
 const rows = [
     {
@@ -87,12 +90,21 @@ const flexyTabs = [
 ];
 
 const AggregatedGrades = (props) => {
+    const navigate = useNavigate();
+
+    const { courseId } = useParams();
+
+    useEffect(() => {
+        InstructorApi.getAllMarks(courseId).then((res) => {});
+    }, [courseId, navigate]);
+
     return (
         <Grid container spacing={2}>
             <Grid xs={12}>
                 <NavBar />
             </Grid>
             <Grid xs={12}>
+                {/*TODO: Handle case where no marks have been uploaded*/}
                 <FlexyTabs tabs={flexyTabs} />
             </Grid>
         </Grid>
