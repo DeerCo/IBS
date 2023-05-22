@@ -66,23 +66,19 @@ function App() {
                             element={<TaInterviewPage />}
                         />
 
-                        <Route path="/instructor" element={<Home />}>
-                            <Route
-                                path="/course/:course_id/task"
-                                element={<InstructorTaskPage />}
-                            />
-                            <Route
-                                path="/course/:course_id/impersonate"
-                                element={<InstructorImpersonate />}
-                            />
-                            <Route path="/all-grades" element={<AggregatedGrades />} />
-                        </Route>
+                        <Route
+                            path="/instructor/course/:course_id/task"
+                            element={<InstructorTaskPage />}
+                        />
+                        <Route
+                            path="/instructor/course/:course_id/impersonate"
+                            element={<InstructorImpersonate />}
+                        />
+                        <Route path="/instructor/all-grades" element={<AggregatedGrades />} />
 
-                        <Route path="/admin" element={<Admin_page />}>
-                            <Route path="/course/:course_id/task" element={<Admin_task />} />
-                            <Route path="/impersonate" element={<AdminImpersonate />} />
-                            <Route path="/all-grades" element={<AggregatedGrades />} />
-                        </Route>
+                        <Route path="/admin/course/:course_id/task" element={<Admin_task />} />
+                        <Route path="/admin/impersonate" element={<AdminImpersonate />} />
+                        <Route path="/admin/all-grades" element={<AggregatedGrades />} />
 
                         <Route path="*" element={<Error />} />
                     </Routes>

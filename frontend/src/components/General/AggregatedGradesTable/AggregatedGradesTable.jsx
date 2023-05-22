@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
+import { alpha, createTheme } from '@mui/material/styles';
 import {
     Box,
     Table,
@@ -19,7 +19,8 @@ import {
     Card,
     CardContent,
     Typography,
-    Avatar
+    Avatar,
+    Container
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import FeatherIcon from 'feather-icons-react';
@@ -53,6 +54,21 @@ const rows = [
     }
 ];
 
+const headCells = [
+    {
+        id: 'student',
+        numeric: false,
+        disablePadding: false,
+        label: 'Students'
+    },
+    {
+        id: 'grade',
+        numeric: false,
+        disablePadding: false,
+        label: 'Grades'
+    }
+];
+
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -78,21 +94,6 @@ function stableSort(array, comparator) {
     });
     return stabilizedThis.map((el) => el[0]);
 }
-
-const headCells = [
-    {
-        id: 'student',
-        numeric: false,
-        disablePadding: false,
-        label: 'Students'
-    },
-    {
-        id: 'grade',
-        numeric: false,
-        disablePadding: false,
-        label: 'Grades'
-    }
-];
 
 function AggregatedGradesTableHead(props) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
@@ -283,7 +284,7 @@ const AggregatedGradesTable = () => {
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row, index) => {
                                             const isItemSelected = isSelected(row.name);
-                                            const labelId = `enhanced-table-checkbox-${index}`;
+                                            const labelId = `grades-table-checkbox-${index}`;
 
                                             return (
                                                 <TableRow
@@ -325,14 +326,7 @@ const AggregatedGradesTable = () => {
                                                                     variant="h6"
                                                                     fontWeight="600"
                                                                 >
-                                                                    {row.name}
-                                                                </Typography>
-                                                                <Typography
-                                                                    color="textSecondary"
-                                                                    variant="h6"
-                                                                    fontWeight="400"
-                                                                >
-                                                                    {row.email}
+                                                                    {row.student}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
@@ -344,83 +338,6 @@ const AggregatedGradesTable = () => {
                                                             fontWeight="400"
                                                         >
                                                             {row.pname}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Box display="flex" alignItems="center">
-                                                            {row.teams.map((team) => (
-                                                                <Avatar
-                                                                    key={team.id}
-                                                                    sx={{
-                                                                        backgroundColor: team.color,
-                                                                        width: '35px',
-                                                                        height: '35px',
-                                                                        color: '#fff',
-                                                                        ml: '-8px'
-                                                                    }}
-                                                                >
-                                                                    {team.text}
-                                                                </Avatar>
-                                                            ))}
-                                                        </Box>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Box display="flex" alignItems="center">
-                                                            <Box
-                                                                sx={{
-                                                                    backgroundColor:
-                                                                        row.status === 'Active'
-                                                                            ? (theme) =>
-                                                                                  theme.palette
-                                                                                      .success.main
-                                                                            : row.status ===
-                                                                              'Pending'
-                                                                            ? (theme) =>
-                                                                                  theme.palette
-                                                                                      .warning.main
-                                                                            : row.status ===
-                                                                              'Completed'
-                                                                            ? (theme) =>
-                                                                                  theme.palette
-                                                                                      .primary.main
-                                                                            : row.status ===
-                                                                              'Cancel'
-                                                                            ? (theme) =>
-                                                                                  theme.palette
-                                                                                      .error.main
-                                                                            : (theme) =>
-                                                                                  theme.palette
-                                                                                      .secondary
-                                                                                      .main,
-                                                                    borderRadius: '100%',
-                                                                    height: '10px',
-                                                                    width: '10px'
-                                                                }}
-                                                            />
-                                                            <Typography
-                                                                color="textSecondary"
-                                                                variant="body1"
-                                                                fontWeight="400"
-                                                                sx={{
-                                                                    ml: 1
-                                                                }}
-                                                            >
-                                                                {row.status}
-                                                            </Typography>
-                                                        </Box>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography
-                                                            color="textSecondary"
-                                                            variant="body1"
-                                                            fontWeight="400"
-                                                        >
-                                                            {row.weeks}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography variant="h6">
-                                                            ${row.budget}k
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
@@ -446,6 +363,18 @@ const AggregatedGradesTable = () => {
                             page={page}
                             onPageChange={handleChangePage}
                             onRowsPerPageChange={handleChangeRowsPerPage}
+                            // For correcting offset in text for "Rows per page:" and "1-5 of 5"
+                            sx={{
+                                '.MuiTablePagination-displayedRows': {
+                                    'margin-top': '0.5em',
+                                    'margin-bottom': '1em'
+                                },
+                                '.MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel':
+                                    {
+                                        'margin-top': '1em',
+                                        'margin-bottom': '1em'
+                                    }
+                            }}
                         />
                     </Paper>
                     <FormControlLabel
