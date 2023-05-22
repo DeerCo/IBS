@@ -74,11 +74,14 @@ function App() {
                             path="/instructor/course/:course_id/impersonate"
                             element={<InstructorImpersonate />}
                         />
-                        <Route path="/instructor/all-grades" element={<AggregatedGrades />} />
+                        <Route
+                            path="/instructor/all-grades/:courseId"
+                            element={<AggregatedGrades />}
+                        />
 
                         <Route path="/admin/course/:course_id/task" element={<Admin_task />} />
                         <Route path="/admin/impersonate" element={<AdminImpersonate />} />
-                        <Route path="/admin/all-grades" element={<AggregatedGrades />} />
+                        <Route path="/admin/all-grades/:courseId" element={<AggregatedGrades />} />
 
                         <Route path="*" element={<Error />} />
                     </Routes>
