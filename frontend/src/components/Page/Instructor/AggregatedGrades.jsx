@@ -101,7 +101,7 @@ const AggregatedGrades = (props) => {
     return (
         <Grid container spacing={2}>
             <Grid xs={12}>
-                <NavBar />
+                <NavBar role="instructor" page="Grades" />
             </Grid>
             <Grid xs={12}>
                 {/*TODO: Handle case where no marks have been uploaded*/}
