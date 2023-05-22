@@ -27,48 +27,6 @@ import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../FlexyMainComponents/forms/custom-elements/CustomCheckbox';
 import CustomSwitch from '../../FlexyMainComponents/forms/custom-elements/CustomSwitch';
 
-const rows = [
-    {
-        id: '1',
-        student: 'Sunil Joshi'
-    },
-    {
-        id: '2',
-        student: 'Andrew McDownland',
-        grade: '90'
-    },
-    {
-        id: '3',
-        student: 'Christopher Jamil',
-        grade: '74'
-    },
-    {
-        id: '4',
-        student: 'Nirav Joshi',
-        grade: '92'
-    },
-    {
-        id: '5',
-        student: 'Micheal Doe',
-        grade: '67'
-    }
-];
-
-const headCells = [
-    {
-        id: 'student',
-        numeric: false,
-        disablePadding: false,
-        label: 'Students'
-    },
-    {
-        id: 'grade',
-        numeric: false,
-        disablePadding: false,
-        label: 'Grades'
-    }
-];
-
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -96,7 +54,8 @@ function stableSort(array, comparator) {
 }
 
 function AggregatedGradesTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells } =
+        props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -145,7 +104,8 @@ AggregatedGradesTableHead.propTypes = {
     onSelectAllClick: PropTypes.func.isRequired,
     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
     orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired
+    rowCount: PropTypes.number.isRequired,
+    headCells: PropTypes.array.isRequired
 };
 
 const AggregatedGradesTableToolbar = (props) => {
@@ -198,9 +158,9 @@ AggregatedGradesTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired
 };
 
-const AggregatedGradesTable = () => {
+const AggregatedGradesTable = ({ headCells, rows }) => {
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
+    const [orderBy, setOrderBy] = React.useState('student');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -214,7 +174,7 @@ const AggregatedGradesTable = () => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
+            const newSelecteds = rows.map((n) => n.student);
             setSelected(newSelecteds);
             return;
         }
@@ -222,6 +182,7 @@ const AggregatedGradesTable = () => {
     };
 
     const handleClick = (event, name) => {
+        console.log(name);
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
 
@@ -278,19 +239,20 @@ const AggregatedGradesTable = () => {
                                     onSelectAllClick={handleSelectAllClick}
                                     onRequestSort={handleRequestSort}
                                     rowCount={rows.length}
+                                    headCells={headCells}
                                 />
                                 <TableBody>
                                     {stableSort(rows, getComparator(order, orderBy))
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row, index) => {
-                                            const isItemSelected = isSelected(row.name);
+                                            const isItemSelected = isSelected(row.student);
                                             const labelId = `grades-table-checkbox-${index}`;
 
                                             return (
                                                 <TableRow
                                                     hover
                                                     onClick={(event) =>
-                                                        handleClick(event, row.name)
+                                                        handleClick(event, row.student)
                                                     }
                                                     role="checkbox"
                                                     aria-checked={isItemSelected}
@@ -309,19 +271,7 @@ const AggregatedGradesTable = () => {
                                                     </TableCell>
                                                     <TableCell>
                                                         <Box display="flex" alignItems="center">
-                                                            <Avatar
-                                                                src={row.imgsrc}
-                                                                alt={row.imgsrc}
-                                                                width="35"
-                                                                sx={{
-                                                                    borderRadius: '100%'
-                                                                }}
-                                                            />
-                                                            <Box
-                                                                sx={{
-                                                                    ml: 2
-                                                                }}
-                                                            >
+                                                            <Box>
                                                                 <Typography
                                                                     variant="h6"
                                                                     fontWeight="600"
@@ -337,7 +287,7 @@ const AggregatedGradesTable = () => {
                                                             variant="h6"
                                                             fontWeight="400"
                                                         >
-                                                            {row.pname}
+                                                            {row.grade}
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
@@ -385,6 +335,13 @@ const AggregatedGradesTable = () => {
             </CardContent>
         </Card>
     );
+};
+
+AggregatedGradesTable.propTypes = {
+    // Must be in form of { id: string, numeric: boolean, disablePadding: boolean, label: string }
+    headCells: PropTypes.array.isRequired,
+    // Must be in form of { id: string, student: string, grade: string }
+    rows: PropTypes.array.isRequired
 };
 
 export default AggregatedGradesTable;
