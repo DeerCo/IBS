@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
+<<<<<<< HEAD
+import { animated } from 'react-spring/dist/react-spring.cjs';
+=======
+>>>>>>> develop
 import { Card, Collapse } from '@mui/material';
 import FeatherIcon from 'feather-icons-react';
 
@@ -56,7 +60,13 @@ function TransitionComponent(props) {
   //   });
 
   return (
+<<<<<<< HEAD
+    <animated.div>
       <Collapse {...props} />
+    </animated.div>
+=======
+      <Collapse {...props} />
+>>>>>>> develop
   );
 }
 
