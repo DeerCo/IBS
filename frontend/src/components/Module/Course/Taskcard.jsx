@@ -60,12 +60,12 @@ const Taskcard = ({data, course_id, role}) => {
       <div>
         <div className={classes.cardHeader}>
           <Typography variant="h5">
-            {data.task}
+            {data.long_name}
           </Typography>
         </div>
         {data.interview_group === null &&
           <div className={classes.cardSubtitle}>
-            <Countdown date={data.due_date} renderer={({ days, hours, minutes, seconds, completed }) => {
+            <Countdown date={data.due_date_utc} renderer={({ days, hours, minutes, seconds, completed }) => {
               if (completed) {
                 return <Typography color='#a71111fc '>
                   Due Date Has Passed
@@ -83,7 +83,7 @@ const Taskcard = ({data, course_id, role}) => {
                 if (minutes > 1){
                   text += "s";
                 }
-                text += `and ${seconds} Second`;
+                text += ` and ${seconds} Second`;
                 if (seconds > 1){
                   text += "s";
                 }
@@ -122,7 +122,7 @@ const Taskcard = ({data, course_id, role}) => {
                        <div>
                          {data.hide_interview === false &&
                            <div className={classes.meeting}>
-                             <Typography variant="subtitle1"> Final Interview </Typography>
+                             <Typography variant="subtitle1"> {data.long_name} Interview </Typography>
                              <Button component={Link}
                                      to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}>
                                <div className={classes.button}>
@@ -133,7 +133,7 @@ const Taskcard = ({data, course_id, role}) => {
                          }
                          {data.subtasks.map((subtask, index) => (
                            <div className={classes.meeting} key={index}>
-                             <Typography variant="subtitle1"> Mentor Session </Typography>
+                             <Typography variant="subtitle1"> {subtask.long_name} </Typography>
                              <Button component={Link}
                                      to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}>
                                <div className={classes.button}>
