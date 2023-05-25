@@ -36,7 +36,9 @@ const ResetPasswordPage = () => {
       toast.error("The verification code cannot be empty", {theme: "colored"});
     } else if (password.length < 8) {
       toast.error("The password should contain at least 8 characters", {theme: "colored"});
-    } else {
+    } else if (password.length > 72) {
+			toast.error("The password should contain at most 72 characters", { theme: "colored" });
+		} else {
       GeneralApi.reset_password(username, password, code).then(
         (response) => {
           if (!response || !("status" in response)) {

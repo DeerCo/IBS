@@ -8,7 +8,7 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The course code is missing or has invalid format." });
         return;
     }
-    if (!("course_session" in req.body) || helpers.name_validate(req.body["course_session"])) {
+    if (!("course_session" in req.body) || helpers.string_validate(req.body["course_session"])) {
         res.status(400).json({ message: "The course session is missing or has invalid format." });
         return;
     }
@@ -89,10 +89,12 @@ router.post("/", (req, res) => {
                 ");";
             let sql_add_task_table =
                 "CREATE TABLE " + task_table_name + " (" +
-                "task character varying NOT NULL, due_date timestamp with time zone NOT NULL, " +
-                "hidden boolean NOT NULL DEFAULT true,  min_member integer NOT NULL DEFAULT 1, " +
-                "max_member integer NOT NULL DEFAULT 1, max_token integer NOT NULL DEFAULT 0, " +
-                "change_group boolean NOT NULL DEFAULT true, hide_interview boolean NOT NULL DEFAULT true, " +
+                "task character varying NOT NULL, long_name character varying NOT NULL, " +
+                "due_date timestamp with time zone NOT NULL, hidden boolean NOT NULL DEFAULT true, " +
+                "weight integer NOT NULL DEFAULT 0, " +
+                "min_member integer NOT NULL DEFAULT 1, max_member integer NOT NULL DEFAULT 1, " +
+                "max_token integer NOT NULL DEFAULT 0, change_group boolean NOT NULL DEFAULT true, " +
+                "hide_interview boolean NOT NULL DEFAULT true, hide_file boolean NOT NULL DEFAULT true, " +
                 "interview_group character varying, task_group_id integer, starter_code_url character varying, " +
                 "PRIMARY KEY (task), UNIQUE (task), " +
                 "CONSTRAINT task_group_id FOREIGN KEY (task_group_id) REFERENCES " + toekn_group_table_name + " (task_group_id) MATCH SIMPLE " +

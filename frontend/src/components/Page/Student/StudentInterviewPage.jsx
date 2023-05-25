@@ -254,8 +254,8 @@ let StudentInterviewPage = () => {
                             <InterviewBookingCard
                                 booked={booked}
                                 openedPopup={open}
-                                startTime={bookedStart}
-                                endTime={bookedEnd}
+                                startTime={moment(bookedStart).format('MM/DD/YYYY, h:mm:ss a')}
+                                endTime={moment(bookedEnd).format('MM/DD/YYYY, h:mm:ss a')}
                                 location={bookedLocation}
                                 eventHandler={cancel_interview}
                                 bookedNote={bookedNote}

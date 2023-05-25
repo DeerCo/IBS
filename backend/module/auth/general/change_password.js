@@ -18,7 +18,7 @@ router.post("/", (req, res) => {
 
     let sql_verify = "SELECT * FROM user_verification WHERE username = ($1) AND code = ($2) AND (NOW() - created_at <= INTERVAL '5 minutes')";
     let sql_delete_code = "DELETE FROM user_verification WHERE username = ($1)";
-    let sql_change_password = "UPDATE user_info SET password = crypt(($1), gen_salt('md5')) WHERE username = ($2)";
+    let sql_change_password = "UPDATE user_info SET password = crypt(($1), gen_salt('bf', 8)) WHERE username = ($2)";
 
     client.query(sql_verify, [req.body["username"].toLowerCase(), req.body["code"]], (err_verify, pg_res_verify) => {
         client.query(sql_delete_code, [req.body["username"].toLowerCase()]);

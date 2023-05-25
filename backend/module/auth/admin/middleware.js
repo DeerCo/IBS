@@ -18,6 +18,7 @@ router.use("/", function (req, res, next) {
                 } else {
                     res.locals["username"] = token_data["username"];
                     res.locals["email"] = token_data["email"];
+                    res.locals["type"] = "admin";
                     next();
                 }
             }

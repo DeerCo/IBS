@@ -28,6 +28,7 @@ router.use("/:course_id/", function (req, res, next) {
                     res.locals["task"] = data["task"];
                     res.locals["username"] = token_data["username"];
                     res.locals["email"] = token_data["email"];
+                    res.locals["type"] = "instructor";
                     next();
                 });
             }

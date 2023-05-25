@@ -8,6 +8,10 @@ router.post("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (!("long_name" in req.body) || helpers.string_validate(req.body["long_name"])) {
+        res.status(400).json({ message: "The long name is missing or invalid." });
+        return;
+    }
     if (!("due_date" in req.body) || helpers.time_validate(req.body["due_date"])) {
         res.status(400).json({ message: "The due date is missing or not correct." });
         return;
@@ -30,6 +34,10 @@ router.post("/", (req, res) => {
     }
     if (!("hide_interview" in req.body) || helpers.boolean_validate(req.body["hide_interview"])) {
         res.status(400).json({ message: "The hide interview property is missing or not correct." });
+        return;
+    }
+    if (!("hide_file" in req.body) || helpers.boolean_validate(req.body["hide_file"])) {
+        res.status(400).json({ message: "The hide file property is missing or not correct." });
         return;
     }
     if (!("change_group" in req.body) || helpers.boolean_validate(req.body["change_group"])) {
@@ -68,8 +76,8 @@ router.post("/", (req, res) => {
     }
 
     let due_date = req.body["due_date"] + " America/Toronto";
-    let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".task (task, due_date, hidden, min_member, max_member, max_token, change_group, hide_interview, interview_group, task_group_id, starter_code_url) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8), ($9), ($10), ($11))";
-    let sql_add_data = [req.body["task"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], req.body["hide_interview"], interview_group, task_group_id, starter_code_url];
+    let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".task (task, long_name, due_date, hidden, min_member, max_member, max_token, change_group, hide_interview, hide_file, interview_group, task_group_id, starter_code_url) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8), ($9), ($10), ($11))";
+    let sql_add_data = [req.body["task"], req.body["long_name"], due_date, req.body["hidden"], req.body["min_member"], req.body["max_member"], req.body["max_token"], req.body["change_group"], req.body["hide_interview"], req.body["hide_file"], interview_group, task_group_id, starter_code_url];
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {
         if (err) {

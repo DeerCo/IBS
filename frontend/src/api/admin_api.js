@@ -32,7 +32,6 @@ let impersonate = async (username) => {
 	}
 }
 
-
 let add_course = async (data) => {
   let token = sessionStorage.getItem("token");
 
