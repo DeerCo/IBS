@@ -94,11 +94,26 @@ let impersonate = async (course_id, username) => {
 // 	}
 // };
 
+let all_groups = async (course_id, task) => {
+	let token = sessionStorage.getItem("token");
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/group/all?task=" + task, config);
+	} catch (err) {
+		return err.response;
+	}
+}
+
 
 let InstructorApi = {
 	// Task related
 	all_tasks,
 	impersonate,
+	all_groups
   //
 	// // Group related
 	// check_group,
