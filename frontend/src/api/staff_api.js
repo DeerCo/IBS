@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+// Accessible to any of TA/Instructor/Admin
+
 let get_students_in_course = async (course_id) => {
     let token = sessionStorage.getItem('token');
 
@@ -17,6 +19,10 @@ let get_students_in_course = async (course_id) => {
         return err.response;
     }
 };
+
+// Accessible to any of Instructor/Admin
+
+// Accessible to any of TA/Admin
 
 const StaffApi = {
     get_students_in_course
