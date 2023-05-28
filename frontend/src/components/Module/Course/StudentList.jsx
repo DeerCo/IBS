@@ -202,93 +202,110 @@ const StudentList = ({ courseId, courseCode }) => {
             });
     }, [courseId]);
 
+    // if (rows.length === 0) {
+    //     return <Typography>There are no students currently enrolled in this course</Typography>;
+    // }
+
     return (
         <>
-            {/* breadcrumb */}
             <Breadcrumb title={`Students in ${courseCode}`} items={BCrumb} />
-            {/* end breadcrumb */}
+
             <Card>
                 <CardContent>
                     <Box>
                         <Paper sx={{ width: '100%', mb: 2 }}>
-                            <TableContainer>
-                                <Table
-                                    sx={{ minWidth: 750 }}
-                                    aria-labelledby="tableTitle"
-                                    size={dense ? 'small' : 'medium'}
-                                >
-                                    <EnhancedTableHead
-                                        numSelected={selected.length}
-                                        order={order}
-                                        orderBy={orderBy}
-                                        onSelectAllClick={handleSelectAllClick}
-                                        onRequestSort={handleRequestSort}
-                                        rowCount={rows.length}
-                                    />
-                                    <TableBody>
-                                        {stableSort(rows, getComparator(order, orderBy))
-                                            .slice(
-                                                page * rowsPerPage,
-                                                page * rowsPerPage + rowsPerPage
-                                            )
-                                            .map((row, index) => {
-                                                const isItemSelected = isSelected(row.name);
-                                                const labelId = `enhanced-table-checkbox-${index}`;
+                            {rows.length === 0 ? (
+                                <Typography>
+                                    There are no students currently enrolled in this course
+                                </Typography>
+                            ) : (
+                                <>
+                                    <TableContainer>
+                                        <Table
+                                            sx={{ minWidth: 750 }}
+                                            aria-labelledby="tableTitle"
+                                            size={dense ? 'small' : 'medium'}
+                                        >
+                                            <EnhancedTableHead
+                                                numSelected={selected.length}
+                                                order={order}
+                                                orderBy={orderBy}
+                                                onSelectAllClick={handleSelectAllClick}
+                                                onRequestSort={handleRequestSort}
+                                                rowCount={rows.length}
+                                            />
+                                            <TableBody>
+                                                {stableSort(rows, getComparator(order, orderBy))
+                                                    .slice(
+                                                        page * rowsPerPage,
+                                                        page * rowsPerPage + rowsPerPage
+                                                    )
+                                                    .map((row, index) => {
+                                                        const isItemSelected = isSelected(row.name);
+                                                        const labelId = `enhanced-table-checkbox-${index}`;
 
-                                                return (
+                                                        return (
+                                                            <TableRow
+                                                                hover
+                                                                onClick={(event) =>
+                                                                    handleClick(event, row.name)
+                                                                }
+                                                                role="checkbox"
+                                                                aria-checked={isItemSelected}
+                                                                tabIndex={-1}
+                                                                key={row.id}
+                                                                selected={isItemSelected}
+                                                            >
+                                                                <TableCell>
+                                                                    {row.username}
+                                                                </TableCell>
+                                                                <TableCell>{row.email}</TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    })}
+                                                {emptyRows > 0 && (
                                                     <TableRow
-                                                        hover
-                                                        onClick={(event) =>
-                                                            handleClick(event, row.name)
-                                                        }
-                                                        role="checkbox"
-                                                        aria-checked={isItemSelected}
-                                                        tabIndex={-1}
-                                                        key={row.id}
-                                                        selected={isItemSelected}
+                                                        style={{
+                                                            height: (dense ? 33 : 53) * emptyRows
+                                                        }}
                                                     >
-                                                        <TableCell>{row.username}</TableCell>
-                                                        <TableCell>{row.email}</TableCell>
+                                                        <TableCell colSpan={6} />
                                                     </TableRow>
-                                                );
-                                            })}
-                                        {emptyRows > 0 && (
-                                            <TableRow
-                                                style={{
-                                                    height: (dense ? 33 : 53) * emptyRows
-                                                }}
-                                            >
-                                                <TableCell colSpan={6} />
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25]}
-                                component="div"
-                                count={rows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                                sx={{
-                                    '.MuiTablePagination-displayedRows': {
-                                        'margin-top': '0.5em',
-                                        'margin-bottom': '1em'
-                                    },
-                                    '.MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel':
-                                        {
-                                            'margin-top': '1em',
-                                            'margin-bottom': '1em'
-                                        }
-                                }}
-                            />
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25]}
+                                        component="div"
+                                        count={rows.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                        sx={{
+                                            '.MuiTablePagination-displayedRows': {
+                                                'margin-top': '0.5em',
+                                                'margin-bottom': '1em'
+                                            },
+                                            '.MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel':
+                                                {
+                                                    'margin-top': '1em',
+                                                    'margin-bottom': '1em'
+                                                }
+                                        }}
+                                    />
+                                </>
+                            )}
                         </Paper>
-                        <FormControlLabel
-                            control={<CustomSwitch checked={dense} onChange={handleChangeDense} />}
-                            label="Dense padding"
-                        />
+                        {rows.length !== 0 && (
+                            <FormControlLabel
+                                control={
+                                    <CustomSwitch checked={dense} onChange={handleChangeDense} />
+                                }
+                                label="Dense padding"
+                            />
+                        )}
                     </Box>
                 </CardContent>
             </Card>
