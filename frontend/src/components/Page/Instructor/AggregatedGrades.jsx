@@ -1,13 +1,12 @@
 import AggregatedGradesTable from '../../General/AggregatedGradesTable/AggregatedGradesTable';
 import Grid from '@mui/material/Unstable_Grid2';
 import NavBar from '../../Module/Navigation/NavBar';
-import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 import { Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import StaffApi from '../../../api/staff_api';
 
-const rows = [
+const sampleRows = [
     {
         id: '1',
         student: 'Sunil Joshi',
@@ -35,7 +34,7 @@ const rows = [
     }
 ];
 
-const headCells = [
+const sampleHeadCells = [
     {
         id: 'student',
         numeric: false,
@@ -50,74 +49,74 @@ const headCells = [
     }
 ];
 
-const flexyTabs = [
-    {
-        tabName: 'Tab 1',
-        tabId: 0,
-        tabSubheading: 'Example of Subheading 1',
-        tabContext: (
-            <Typography
-                color="textSecondary"
-                sx={{
-                    mt: 4
-                }}
-            >
-                Example of description 1
-            </Typography>
-        )
-    },
-    {
-        tabName: 'Tab 2',
-        tabId: 1,
-        tabSubheading: 'Example of Subheading 2',
-        tabContext: (
-            <Typography
-                color="textSecondary"
-                sx={{
-                    mt: 4
-                }}
-            >
-                Example of description 2
-            </Typography>
-        )
-    },
-    {
-        tabName: 'Aggregated Grades',
-        tabId: 2,
-        tabSubheading: 'Aggregated Grades',
-        tabContext: <AggregatedGradesTable rows={rows} headCells={headCells} />
-    }
-];
-
 const AggregatedGrades = (props) => {
     const navigate = useNavigate();
+
+    const [rows, setRows] = useState([]);
+    const [headCells, setHeadCells] = useState([
+        {
+            id: 'student',
+            numeric: false,
+            disablePadding: false,
+            label: 'Students'
+        }
+    ]);
 
     const { courseId } = useParams();
 
     useEffect(() => {
         StaffApi.getAllMarks(courseId).then((res) => {
+            let idCounter = 0;
             // Format of response:
             // {
             //     "marks": {
             //     "student1": {
             //         "task1": {
             //             "mark": 12,
-            //                 "out_of": 57
-            //         }
-            //     },
-            //     "student2": {
-            //         "task1": {
-            //             "mark": 18,
-            //                 "out_of": 57
-            //         }
-            //     },
-            //     "student3": {
-            //         "task1": {
-            //             "mark": 18,
-            //                 "out_of": 57
+            //             "out_of": 57
             //         }
             //     }
+            //     }
             // }
+            const studentsArr = res.data.marks;
+            // console.log(studentsArr);
+            for (const student in studentsArr) {
+                for (const taskName in res.data.marks[student]) {
+                    setHeadCells((prevState) => {
+                        const newState = {
+                            id: taskName,
+                            numeric: false,
+                            disablePadding: false,
+                            label: taskName
+                        };
+                        for (const col of prevState) {
+                            if (col.id === taskName) {
+                                return [...prevState];
+                            }
+                        }
+                        return [...prevState, newState];
+                    });
+                    setRows((prevState) => {
+                        let newRow = {
+                            id: idCounter,
+                            student: student
+                        };
+                        newRow[
+                            taskName
+                        ] = `${res.data.marks[student][taskName].mark}/${res.data.marks[student][taskName].out_of}`;
+                        for (const row of prevState) {
+                            if (row.student === student) {
+                                row[
+                                    taskName
+                                ] = `${res.data.marks[student][taskName].mark}/${res.data.marks[student][taskName].out_of}`;
+                                return [...prevState];
+                            }
+                        }
+                        idCounter++;
+                        return [...prevState, newRow];
+                    });
+                }
+            }
         });
     }, [courseId, navigate]);
 
@@ -128,7 +127,7 @@ const AggregatedGrades = (props) => {
             </Grid>
             <Grid xs={12}>
                 {/*TODO: Handle case where no marks have been uploaded*/}
-                <FlexyTabs tabs={flexyTabs} />
+                {rows !== [] && <AggregatedGradesTable headCells={headCells} rows={rows} />}
             </Grid>
         </Grid>
     );

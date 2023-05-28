@@ -77,7 +77,7 @@ let getAllMarks = async (courseId) => {
 
     try {
         return await axios.get(
-            `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/marks/all`,
+            `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/mark/all`,
             config
         );
     } catch (err) {

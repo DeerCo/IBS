@@ -281,15 +281,22 @@ const AggregatedGradesTable = ({ headCells, rows }) => {
                                                             </Box>
                                                         </Box>
                                                     </TableCell>
-                                                    <TableCell>
-                                                        <Typography
-                                                            color="textSecondary"
-                                                            variant="h6"
-                                                            fontWeight="400"
-                                                        >
-                                                            {row.grade}
-                                                        </Typography>
-                                                    </TableCell>
+                                                    {headCells.map((jsonObj) => {
+                                                        if (jsonObj.id !== 'student') {
+                                                            return (
+                                                                <TableCell>
+                                                                    <Typography
+                                                                        color="textSecondary"
+                                                                        variant="h6"
+                                                                        fontWeight="400"
+                                                                    >
+                                                                        {row[jsonObj.id]}
+                                                                    </Typography>
+                                                                </TableCell>
+                                                            );
+                                                        }
+                                                        return <></>;
+                                                    })}
                                                 </TableRow>
                                             );
                                         })}
