@@ -21,9 +21,7 @@ const StudentListPage = () => {
                 <Grid item xs={12}>
                     <Container id="student-list" maxWidth="md">
                         <Stack spacing={2}>
-                            <DashboardCard title={`Students in ${courseCode}`}>
-                                <StudentList courseId={course_id} />
-                            </DashboardCard>
+                            <StudentList courseId={course_id} courseCode={courseCode} />
                         </Stack>
                     </Container>
                 </Grid>
