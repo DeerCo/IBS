@@ -4,8 +4,8 @@ import NavBar from '../../Module/Navigation/NavBar';
 import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 import { Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import InstructorApi from '../../../api/instructor_api';
 import { useEffect } from 'react';
+import StaffApi from '../../../api/staff_api';
 
 const rows = [
     {
@@ -95,7 +95,30 @@ const AggregatedGrades = (props) => {
     const { courseId } = useParams();
 
     useEffect(() => {
-        InstructorApi.getAllMarks(courseId).then((res) => {});
+        StaffApi.getAllMarks(courseId).then((res) => {
+            // Format of response:
+            // {
+            //     "marks": {
+            //     "student1": {
+            //         "task1": {
+            //             "mark": 12,
+            //                 "out_of": 57
+            //         }
+            //     },
+            //     "student2": {
+            //         "task1": {
+            //             "mark": 18,
+            //                 "out_of": 57
+            //         }
+            //     },
+            //     "student3": {
+            //         "task1": {
+            //             "mark": 18,
+            //                 "out_of": 57
+            //         }
+            //     }
+            // }
+        });
     }, [courseId, navigate]);
 
     return (
