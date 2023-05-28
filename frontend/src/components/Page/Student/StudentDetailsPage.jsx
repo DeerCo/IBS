@@ -79,14 +79,14 @@ let StudentDetailsPage = () => {
                     return;
                 }
 
-                // For testing, gitlab_url can be null and backend problems occur at check_submission endpoint
-                if (group_response['data']['gitlab_url'] === null) {
-                    setStatus('joined'); // Change this to not_joined or joined for testing purposes
-                    setGroupId('');
-                    setMembers([]);
-                    setGit(null);
-                    return;
-                }
+                // // For testing, gitlab_url can be null and backend problems occur at check_submission endpoint
+                // if (group_response['data']['gitlab_url'] === null) {
+                //     setStatus('joined'); // Change this to not_joined or joined for testing purposes
+                //     setGroupId('');
+                //     setMembers([]);
+                //     setGit(null);
+                //     return;
+                // }
 
                 if (group_response['data']['message'] === 'You have joined a group.') {
                     setStatus('joined');
@@ -358,7 +358,7 @@ let StudentDetailsPage = () => {
 
                         <Typography variant="h5">
                             Group Size: {min_member}{' '}
-                            {min_member === max_member ? '' : ' -- ' + max_member}
+                            {min_member === max_member ? '' : ' - ' + max_member}
                         </Typography>
                         <Typography variant="h5">Leaving group has been disabled</Typography>
 
