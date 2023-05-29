@@ -6,7 +6,6 @@ import ResetPasswordPage from './views/authentication/ResetPassword';
 import Error from './views/authentication/Error';
 import Home from './components/Page/General/HomePage';
 import NotFoundPage from './components/Page/General/NotFoundPage';
-
 import StudentMarkPage from './components/Page/Student/StudentMarkPage';
 import StudentFilePage from './components/Page/Student/StudentFilePage';
 import StudentInterviewPage from './components/Page/Student/StudentInterviewPage';
@@ -21,6 +20,7 @@ import InstructorTaskPage from './components/Page/Instructor/InstructorTaskPage'
 import Admin_task from './components/Page/Admin/admin_task';
 import InstructorImpersonate from './components/Page/Instructor/InstructorImpersonate';
 import AdminImpersonate from './components/Page/Admin/AdminImpersonate';
+import AggregatedGrades from './components/Page/Instructor/AggregatedGrades';
 import { CssBaseline } from '@mui/material';
 import ThemeSettings from './layouts/full-layout/customizer/ThemeSettings';
 import { useSelector } from 'react-redux';
@@ -39,7 +39,6 @@ function App() {
                     <Routes>
                         <Route path="/" element={<LoginPage />}></Route>
                         <Route path="/login" element={<LoginPage />}></Route>
-
                         <Route path="/reset" element={<ResetPasswordPage />}></Route>
                         <Route path="/home" element={<Home />}></Route>
 
@@ -74,13 +73,27 @@ function App() {
                         <Route
                             path="/instructor/course/:course_id/task"
                             element={<InstructorTaskPage />}
-                        ></Route>
+                        />
+                        <Route
+                            path="/instructor/course/:course_id/impersonate"
+                            element={<InstructorImpersonate />}
+                        />
+                        <Route
+                            path="/instructor/course/:courseId/all-grades"
+                            element={<AggregatedGrades />}
+                        />
                         <Route
                             path="/instructor/course/:course_id/impersonate"
                             element={<InstructorImpersonate />}
                         ></Route>
 
                         <Route path="/admin" element={<Admin_page />}></Route>
+                        <Route path="/admin/course/:course_id/task" element={<Admin_task />} />
+                        <Route path="/admin/impersonate" element={<AdminImpersonate />} />
+                        <Route
+                            path="/admin/course/:courseId/all-grades"
+                            element={<AggregatedGrades />}
+                        />
                         <Route
                             path="/admin/course/:course_id/task"
                             element={<Admin_task />}

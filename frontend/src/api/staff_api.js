@@ -63,8 +63,40 @@ export const findCourseCodeInCourse = (courseId) => {
     return null;
 };
 
+/**
+ * Get all marks endpoint for Admins and Instructors' use only.
+ * @param courseId string
+ * @returns {Promise<axios.AxiosResponse<any>|*>}
+ */
+let getAllMarks = async (courseId) => {
+    let token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/mark/all`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/mark/all`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
+    try {
+        return await axios.get(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 const StaffApi = {
-    get_students_in_course
+    get_students_in_course,
+    getAllMarks
 };
 
 export default StaffApi;

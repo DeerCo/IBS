@@ -1,36 +1,43 @@
-import axios from "axios";
+import axios from 'axios';
 
 let all_tasks = async (course_id) => {
-	let token = sessionStorage.getItem("token");
+    let token = sessionStorage.getItem('token');
 
-	let config = {
-		headers: { Authorization: `Bearer ${token}` }
-	};
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
 
-	try {
-		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/task/all", config);
-	} catch (err) {
-		return err.response;
-	}
+    try {
+        return await axios.get(
+            process.env.REACT_APP_API_URL + '/instructor/course/' + course_id + '/task/all',
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
 };
 
 let impersonate = async (course_id, username) => {
-	let token = sessionStorage.getItem("token");
+    let token = sessionStorage.getItem('token');
 
-	const data = {
-		username: username,
-	}
+    const data = {
+        username: username
+    };
 
-	let config = {
-		headers: { Authorization: `Bearer ${token}` }
-	};
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
 
-	try {
-		return await axios.post(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/impersonate", data, config);
-	} catch (err) {
-		return err.response;
-	}
-}
+    try {
+        return await axios.post(
+            process.env.REACT_APP_API_URL + '/instructor/course/' + course_id + '/impersonate',
+            data,
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
+};
 
 // let check_group = async (course_id, group_id) => {
 // 	let token = sessionStorage.getItem("token");
@@ -94,19 +101,18 @@ let impersonate = async (course_id, username) => {
 // 	}
 // };
 
-
 let InstructorApi = {
-	// Task related
-	all_tasks,
-	impersonate,
-  //
-	// // Group related
-	// check_group,
-  //
-	// // Interview related
-	// all_interviews,
-	// schedule_interview,
-	// delete_interview,
+    // Task related
+    all_tasks,
+    impersonate
+    //
+    // // Group related
+    // check_group,
+    //
+    // // Interview related
+    // all_interviews,
+    // schedule_interview,
+    // delete_interview,
 };
 
 export default InstructorApi;

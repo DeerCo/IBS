@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import HomeCardLink from './HomeCardLink';
 
@@ -9,6 +9,8 @@ const Homecard = ({ data }) => {
 
     const coursePageLink = (role ? '/' + role : '') + '/course/' + data.course_id + '/task';
     const courseStudentListPageLink = `/course/${data.course_id}/student-list`;
+
+    const allGradesPageLink = `${role ? `/${role}` : ''}/course/${data.course_id}/all-grades`;
 
     return (
         <Card>
@@ -34,7 +36,10 @@ const Homecard = ({ data }) => {
                 </CardContent>
             </CardActionArea>
             {staffRoles.includes(data.role) && (
-                <HomeCardLink to={courseStudentListPageLink} name="Enrolled Students" />
+                <>
+                    <HomeCardLink to={courseStudentListPageLink} name="Enrolled Students" />
+                    <HomeCardLink to={allGradesPageLink} name="View Grades" />
+                </>
             )}
         </Card>
     );
