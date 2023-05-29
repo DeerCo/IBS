@@ -71,15 +71,24 @@ export const findCourseCodeInCourse = (courseId) => {
 let getAllMarks = async (courseId) => {
     let token = sessionStorage.getItem('token');
 
+    const role = findRoleInCourse(courseId);
+
     let config = {
         headers: { Authorization: `Bearer ${token}` }
     };
 
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/mark/all`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/mark/all`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
     try {
-        return await axios.get(
-            `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/mark/all`,
-            config
-        );
+        return await axios.get(url, config);
     } catch (err) {
         return err.response;
     }

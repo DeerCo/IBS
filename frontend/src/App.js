@@ -90,11 +90,10 @@ function App() {
                         <Route path="/admin" element={<Admin_page />}></Route>
                         <Route path="/admin/course/:course_id/task" element={<Admin_task />} />
                         <Route path="/admin/impersonate" element={<AdminImpersonate />} />
-                        {/*TODO: Backend endpoint for admin's all grades doesn't exist*/}
-                        {/*<Route*/}
-                        {/*    path="/admin/course/:courseId/all-grades"*/}
-                        {/*    element={<AggregatedGrades />}*/}
-                        {/*/>*/}
+                        <Route
+                            path="/admin/course/:courseId/all-grades"
+                            element={<AggregatedGrades />}
+                        />
                         <Route
                             path="/admin/course/:course_id/task"
                             element={<Admin_task />}
