@@ -245,6 +245,7 @@ const AggregatedGradesTable = ({ headCells, rows }) => {
                                     {stableSort(rows, getComparator(order, orderBy))
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row, index) => {
+                                            console.log(row);
                                             const isItemSelected = isSelected(row.student);
                                             const labelId = `grades-table-checkbox-${index}`;
 
@@ -281,22 +282,23 @@ const AggregatedGradesTable = ({ headCells, rows }) => {
                                                             </Box>
                                                         </Box>
                                                     </TableCell>
-                                                    {headCells.map((jsonObj) => {
-                                                        if (jsonObj.id !== 'student') {
-                                                            return (
-                                                                <TableCell>
+                                                    {headCells.map(
+                                                        (jsonObj) =>
+                                                            jsonObj.id !== 'student' && (
+                                                                <TableCell
+                                                                    key={`${row.id}-${jsonObj.id}-tbCell`}
+                                                                >
                                                                     <Typography
                                                                         color="textSecondary"
                                                                         variant="h6"
                                                                         fontWeight="400"
+                                                                        key={`${row.id}-${jsonObj.id}-typography`}
                                                                     >
                                                                         {row[jsonObj.id]}
                                                                     </Typography>
                                                                 </TableCell>
-                                                            );
-                                                        }
-                                                        return <></>;
-                                                    })}
+                                                            )
+                                                    )}
                                                 </TableRow>
                                             );
                                         })}
@@ -347,7 +349,7 @@ const AggregatedGradesTable = ({ headCells, rows }) => {
 AggregatedGradesTable.propTypes = {
     // Must be in form of { id: string, numeric: boolean, disablePadding: boolean, label: string }
     headCells: PropTypes.array.isRequired,
-    // Must be in form of { id: string, student: string, grade: string }
+    // Must be in form of { id: string, student: string, <taskName>: string }
     rows: PropTypes.array.isRequired
 };
 
