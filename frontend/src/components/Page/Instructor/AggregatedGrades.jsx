@@ -1,7 +1,7 @@
 import AggregatedGradesTable from '../../General/AggregatedGradesTable/AggregatedGradesTable';
 import Grid from '@mui/material/Unstable_Grid2';
 import NavBar from '../../Module/Navigation/NavBar';
-import { Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import StaffApi from '../../../api/staff_api';
@@ -126,8 +126,18 @@ const AggregatedGrades = (props) => {
                 <NavBar role="instructor" page="Grades" />
             </Grid>
             <Grid xs={12}>
-                {/*TODO: Handle case where no marks have been uploaded*/}
-                {rows !== [] && <AggregatedGradesTable headCells={headCells} rows={rows} />}
+                <Container>
+                    <Typography color="textPrimary" variant="h2" fontWeight="600" sx={{ ml: 3 }}>
+                        All Grades for Course ID: {courseId}
+                    </Typography>
+                    {rows !== [] && (
+                        <AggregatedGradesTable
+                            headCells={headCells}
+                            rows={rows}
+                            tableWidth="100%"
+                        />
+                    )}
+                </Container>
             </Grid>
         </Grid>
     );

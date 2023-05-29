@@ -158,7 +158,7 @@ AggregatedGradesTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired
 };
 
-const AggregatedGradesTable = ({ headCells, rows }) => {
+const AggregatedGradesTable = ({ headCells, rows, tableWidth }) => {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('student');
     const [selected, setSelected] = React.useState([]);
@@ -221,11 +221,11 @@ const AggregatedGradesTable = ({ headCells, rows }) => {
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     return (
-        <Card>
+        <Card sx={{ width: tableWidth }}>
             <CardContent>
                 <Box>
-                    <Paper sx={{ width: '100%', mb: 2 }}>
-                        <AggregatedGradesTableToolbar numSelected={selected.length} />
+                    <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
+                        {/*<AggregatedGradesTableToolbar numSelected={selected.length} />*/}
                         <TableContainer>
                             <Table
                                 sx={{ minWidth: 750 }}
@@ -350,7 +350,9 @@ AggregatedGradesTable.propTypes = {
     // Must be in form of { id: string, numeric: boolean, disablePadding: boolean, label: string }
     headCells: PropTypes.array.isRequired,
     // Must be in form of { id: string, student: string, <taskName>: string }
-    rows: PropTypes.array.isRequired
+    rows: PropTypes.array.isRequired,
+    // Adjust width of table
+    tableWidth: PropTypes.number.isRequired
 };
 
 export default AggregatedGradesTable;
