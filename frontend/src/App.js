@@ -5,7 +5,7 @@ import LoginPage from './views/authentication/Login';
 import ResetPasswordPage from './views/authentication/ResetPassword';
 import Error from './views/authentication/Error';
 import Home from './components/Page/General/HomePage';
-
+import NotFoundPage from './components/Page/General/NotFoundPage';
 import StudentMarkPage from './components/Page/Student/StudentMarkPage';
 import StudentFilePage from './components/Page/Student/StudentFilePage';
 import StudentInterviewPage from './components/Page/Student/StudentInterviewPage';
@@ -25,6 +25,7 @@ import { CssBaseline } from '@mui/material';
 import ThemeSettings from './layouts/full-layout/customizer/ThemeSettings';
 import { useSelector } from 'react-redux';
 import RTL from './layouts/full-layout/customizer/RTL';
+import StudentListPage from './components/Page/Student/StudentListPage';
 
 function App() {
     const theme = ThemeSettings();
@@ -36,35 +37,38 @@ function App() {
                 <ToastContainer limit={3} position="top-center" />
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/" element={<LoginPage />} />
-                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/" element={<LoginPage />}></Route>
+                        <Route path="/login" element={<LoginPage />}></Route>
+                        <Route path="/reset" element={<ResetPasswordPage />}></Route>
+                        <Route path="/home" element={<Home />}></Route>
 
-                        <Route path="/reset" element={<ResetPasswordPage />} />
-                        <Route path="/home" element={<Home />} />
-
-                        <Route path="/course/:course_id/task" element={<StudentTaskPage />} />
+                        <Route path="/course/:course_id/task" element={<StudentTaskPage />}></Route>
+                        <Route
+                            path="/course/:course_id/student-list"
+                            element={<StudentListPage />}
+                        ></Route>
                         <Route
                             path="/course/:course_id/task/:task/details"
                             element={<StudentDetailsPage />}
-                        />
+                        ></Route>
                         <Route
                             path="/course/:course_id/task/:task/interview"
                             element={<StudentInterviewPage />}
-                        />
+                        ></Route>
                         <Route
                             path="/course/:course_id/task/:task/mark"
                             element={<StudentMarkPage />}
-                        />
+                        ></Route>
                         <Route
                             path="/course/:course_id/task/:task/file"
                             element={<StudentFilePage />}
-                        />
+                        ></Route>
 
-                        <Route path="/ta/course/:course_id/task" element={<TaTaskPage />} />
+                        <Route path="/ta/course/:course_id/task" element={<TaTaskPage />}></Route>
                         <Route
                             path="/ta/course/:course_id/task/:task/interview"
                             element={<TaInterviewPage />}
-                        />
+                        ></Route>
 
                         <Route
                             path="/instructor/course/:course_id/task"
@@ -78,10 +82,20 @@ function App() {
                             path="/instructor/all-grades/:courseId"
                             element={<AggregatedGrades />}
                         />
+                        <Route
+                            path="/instructor/course/:course_id/impersonate"
+                            element={<InstructorImpersonate />}
+                        ></Route>
 
+                        <Route path="/admin" element={<Admin_page />}></Route>
                         <Route path="/admin/course/:course_id/task" element={<Admin_task />} />
                         <Route path="/admin/impersonate" element={<AdminImpersonate />} />
                         <Route path="/admin/all-grades/:courseId" element={<AggregatedGrades />} />
+                        <Route
+                            path="/admin/course/:course_id/task"
+                            element={<Admin_task />}
+                        ></Route>
+                        <Route path="/admin/impersonate" element={<AdminImpersonate />}></Route>
 
                         <Route path="*" element={<Error />} />
                     </Routes>
