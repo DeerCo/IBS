@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const middleware = require("../module/auth/instructor/middleware");
+const get_role = require("../module/role/staff/get");
 const get_token = require("../module/token/staff/get");
 const change_token = require("../module/token/staff/change");
 const all_tasks = require("../module/task/staff/all");
@@ -45,12 +46,15 @@ const download_submissions = require("../module/submission/staff/download");
 const check_submission = require("../module/submission/staff/check");
 const impersonate = require("../module/impersonate/instructor/impersonate");
 
-router.use("/", function(req, res, next) {
-    next();
-})
+router.use("/", function (req, res, next) {
+  next();
+});
 
 // Middleware
 router.use("/course/", middleware);
+
+// Role
+router.use("/course/:course_id/role/get", get_role);
 
 // Token
 router.use("/course/:course_id/token/get", get_token);
@@ -106,8 +110,14 @@ router.use("/course/:course_id/interview/delete", delete_interview);
 
 // Submission
 router.use("/course/:course_id/submission/collect/one", collect_one_submission);
-router.use("/course/:course_id/submission/collect/all", collect_all_submissions);
-router.use("/course/:course_id/submission/collect/manual", manual_collect_submission);
+router.use(
+  "/course/:course_id/submission/collect/all",
+  collect_all_submissions
+);
+router.use(
+  "/course/:course_id/submission/collect/manual",
+  manual_collect_submission
+);
 router.use("/course/:course_id/submission/download", download_submissions);
 router.use("/course/:course_id/submission/check", check_submission);
 
