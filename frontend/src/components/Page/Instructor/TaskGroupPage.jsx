@@ -73,7 +73,7 @@ const TaskGroupPage = (props) => {
                 }
             }
         });
-    }, [courseId, rowIdCounter, tgRows]);
+    }, [courseId, tgRows]);
 
     return (
         <Grid container spacing={2}>
