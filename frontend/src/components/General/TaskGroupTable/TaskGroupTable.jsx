@@ -164,119 +164,109 @@ const TaskGroupTable = ({ headCells, rows, tableWidth }) => {
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     return (
-        <Card sx={{ width: tableWidth }}>
-            <CardContent>
-                <Box>
-                    <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
-                        <TableContainer>
-                            <Table
-                                sx={{ minWidth: 750 }}
-                                aria-labelledby="tableTitle"
-                                size={dense ? 'small' : 'medium'}
-                            >
-                                <TaskGroupTableHead
-                                    numSelected={selected.length}
-                                    order={order}
-                                    orderBy={orderBy}
-                                    onSelectAllClick={handleSelectAllClick}
-                                    onRequestSort={handleRequestSort}
-                                    rowCount={rows.length}
-                                    headCells={headCells}
-                                />
-                                <TableBody>
-                                    {stableSort(rows, getComparator(order, orderBy))
-                                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                        .map((row, index) => {
-                                            console.log(row);
-                                            const isItemSelected = isSelected(row.taskGroupId);
-                                            const labelId = `grades-table-checkbox-${index}`;
-
-                                            return (
-                                                <TableRow
-                                                    hover
-                                                    onClick={(event) =>
-                                                        handleClick(event, row.taskGroupId)
-                                                    }
-                                                    role="checkbox"
-                                                    aria-checked={isItemSelected}
-                                                    tabIndex={-1}
-                                                    key={row.id}
-                                                    selected={isItemSelected}
-                                                >
-                                                    <TableCell padding="checkbox">
-                                                        <CustomCheckbox
-                                                            color="primary"
-                                                            checked={isItemSelected}
-                                                            inputprops={{
-                                                                'aria-labelledby': labelId
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Box display="flex" alignItems="center">
-                                                            <Box>
-                                                                <Typography
-                                                                    variant="h6"
-                                                                    fontWeight="600"
-                                                                >
-                                                                    {row.taskGroupId}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography
-                                                            color="textSecondary"
-                                                            variant="h6"
-                                                            fontWeight="400"
-                                                        >
-                                                            {row.maxTokens}
-                                                        </Typography>
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    {emptyRows > 0 && (
-                                        <TableRow
-                                            style={{
-                                                height: (dense ? 33 : 53) * emptyRows
-                                            }}
-                                        >
-                                            <TableCell colSpan={6} />
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25]}
-                            component="div"
-                            count={rows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            // For correcting offset in text for "Rows per page:" and "1-5 of 5"
-                            sx={{
-                                '.MuiTablePagination-displayedRows': {
-                                    'margin-top': '0.5em',
-                                    'margin-bottom': '1em'
-                                },
-                                '.MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel':
-                                    {
-                                        'margin-top': '1em',
-                                        'margin-bottom': '1em'
-                                    }
-                            }}
+        <>
+            <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
+                <TableContainer>
+                    <Table
+                        sx={{ minWidth: 750 }}
+                        aria-labelledby="tableTitle"
+                        size={dense ? 'small' : 'medium'}
+                    >
+                        <TaskGroupTableHead
+                            numSelected={selected.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onSelectAllClick={handleSelectAllClick}
+                            onRequestSort={handleRequestSort}
+                            rowCount={rows.length}
+                            headCells={headCells}
                         />
-                    </Paper>
-                    <FormControlLabel
-                        control={<CustomSwitch checked={dense} onChange={handleChangeDense} />}
-                        label="Dense padding"
-                    />
-                </Box>
-            </CardContent>
-        </Card>
+                        <TableBody>
+                            {stableSort(rows, getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                    console.log(row);
+                                    const isItemSelected = isSelected(row.taskGroupId);
+                                    const labelId = `grades-table-checkbox-${index}`;
+
+                                    return (
+                                        <TableRow
+                                            hover
+                                            onClick={(event) => handleClick(event, row.taskGroupId)}
+                                            role="checkbox"
+                                            aria-checked={isItemSelected}
+                                            tabIndex={-1}
+                                            key={row.id}
+                                            selected={isItemSelected}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <CustomCheckbox
+                                                    color="primary"
+                                                    checked={isItemSelected}
+                                                    inputprops={{
+                                                        'aria-labelledby': labelId
+                                                    }}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box display="flex" alignItems="center">
+                                                    <Box>
+                                                        <Typography variant="h6" fontWeight="600">
+                                                            {row.taskGroupId}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography
+                                                    color="textSecondary"
+                                                    variant="h6"
+                                                    fontWeight="400"
+                                                >
+                                                    {row.maxTokens}
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <TableRow
+                                    style={{
+                                        height: (dense ? 33 : 53) * emptyRows
+                                    }}
+                                >
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    // For correcting offset in text for "Rows per page:" and "1-5 of 5"
+                    sx={{
+                        '.MuiTablePagination-displayedRows': {
+                            'margin-top': '0.5em',
+                            'margin-bottom': '1em'
+                        },
+                        '.MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel': {
+                            'margin-top': '1em',
+                            'margin-bottom': '1em'
+                        }
+                    }}
+                />
+            </Paper>
+            <FormControlLabel
+                control={<CustomSwitch checked={dense} onChange={handleChangeDense} />}
+                label="Dense padding"
+            />
+        </>
     );
 };
 
@@ -284,9 +274,7 @@ TaskGroupTable.propTypes = {
     // Must be in form of { id: string, numeric: boolean, disablePadding: boolean, label: string }
     headCells: PropTypes.array.isRequired,
     // Must be in form of { id: string, taskGroupId: string, maxTokens: string }
-    rows: PropTypes.array.isRequired,
-    // Adjust width of table
-    tableWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired
+    rows: PropTypes.array.isRequired
 };
 
 export default TaskGroupTable;

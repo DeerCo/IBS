@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Unstable_Grid2';
 import NavBar from '../../Module/Navigation/NavBar';
-import { Container } from '@mui/material';
+import { Box, Button, Card, CardContent, Container } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import StaffApi from '../../../api/staff_api';
 import TaskGroupTable from '../../General/TaskGroupTable/TaskGroupTable';
+import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
+import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 
 const TaskGroupPage = (props) => {
     const { role } = props;
@@ -58,6 +60,9 @@ const TaskGroupPage = (props) => {
         });
     }, [courseId, navigate]);
 
+    // Event handler for adding new task group
+    const handleAddTg = () => {};
+
     return (
         <Grid container spacing={2}>
             <Grid xs={12}>
@@ -65,7 +70,38 @@ const TaskGroupPage = (props) => {
             </Grid>
             <Grid xs={12}>
                 <Container>
-                    <TaskGroupTable headCells={tgCols} tableWidth="100%" rows={tgRows} />
+                    <Card sx={{ width: '100%' }}>
+                        <CardContent>
+                            <Box>
+                                <TaskGroupTable headCells={tgCols} rows={tgRows} />
+                            </Box>
+                            <Box sx={{ mt: 8 }}>
+                                <CustomFormLabel
+                                    sx={{
+                                        mt: 0
+                                    }}
+                                    htmlFor="max-tokens-field"
+                                >
+                                    Maximum Tokens Count
+                                </CustomFormLabel>
+                                <CustomTextField
+                                    id="max-tokens-field"
+                                    variant="outlined"
+                                    size="small"
+                                    type="number"
+                                    sx={{ width: 160 }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleAddTg}
+                                    sx={{ ml: 2 }}
+                                >
+                                    Add Task Group
+                                </Button>
+                            </Box>
+                        </CardContent>
+                    </Card>
                 </Container>
             </Grid>
         </Grid>
