@@ -14,6 +14,13 @@ const TaskGroupPage = (props) => {
     const { courseId } = useParams();
     const navigate = useNavigate();
 
+    // For TextField when adding task group
+    const [newMaxTokens, setNewMaxTokens] = useState(null);
+    // For displaying success message for adding task group
+    const [displayMessage, setDisplayMessage] = useState(null);
+
+    const [rowIdCounter, setRowIdCounter] = useState(0);
+
     // Rows for TaskGroupTable
     const [tgRows, setTgRows] = useState([]);
     // Columns for TaskGroupTable
@@ -32,18 +39,26 @@ const TaskGroupPage = (props) => {
         }
     ];
 
+    // Event handler for adding new task group
+    const handleAddTg = () => {
+        // Use newMaxTokens state to request backend API
+        if (newMaxTokens !== null) {
+            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {
+                setDisplayMessage('Successfully added task group');
+            });
+        }
+    };
+
     useEffect(() => {
         // Call backend API
         StaffApi.getAllTaskGroups(courseId).then((res) => {
             // Handle response
-            let idCounter = 0;
-            console.log(res);
             const taskGroups = res.data.task_group;
             for (const taskGroup of taskGroups) {
                 // Set TaskGroupRows
                 setTgRows((prevState) => {
                     let newRow = {
-                        id: idCounter,
+                        id: rowIdCounter,
                         taskGroupId: taskGroup.task_group_id,
                         maxTokens: taskGroup.max_token
                     };
@@ -53,15 +68,12 @@ const TaskGroupPage = (props) => {
                             return [...prevState];
                         }
                     }
-                    idCounter++;
+                    setRowIdCounter(rowIdCounter + 1);
                     return [...prevState, newRow];
                 });
             }
         });
-    }, [courseId, navigate]);
-
-    // Event handler for adding new task group
-    const handleAddTg = () => {};
+    }, [courseId, navigate, displayMessage]);
 
     return (
         <Grid container spacing={2}>
@@ -93,6 +105,10 @@ const TaskGroupPage = (props) => {
                                     size="small"
                                     type="number"
                                     sx={{ width: 160 }}
+                                    value={newMaxTokens === null ? 0 : newMaxTokens}
+                                    onChange={(event) => {
+                                        setNewMaxTokens(event.target.value);
+                                    }}
                                 />
                                 <Button
                                     variant="contained"
@@ -102,6 +118,11 @@ const TaskGroupPage = (props) => {
                                 >
                                     Add Task Group
                                 </Button>
+                                {displayMessage !== null && (
+                                    <Typography variant="body1" sx={{ mt: 2 }}>
+                                        {displayMessage}
+                                    </Typography>
+                                )}
                             </Box>
                         </CardContent>
                     </Card>

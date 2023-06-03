@@ -125,7 +125,6 @@ const TaskGroupTable = ({ headCells, rows, tableWidth }) => {
     };
 
     const handleClick = (event, name) => {
-        console.log(name);
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
 
@@ -185,7 +184,6 @@ const TaskGroupTable = ({ headCells, rows, tableWidth }) => {
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    console.log(row);
                                     const isItemSelected = isSelected(row.taskGroupId);
                                     const labelId = `grades-table-checkbox-${index}`;
 
