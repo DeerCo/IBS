@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Unstable_Grid2';
 import NavBar from '../../Module/Navigation/NavBar';
-import { Box, Button, Card, CardContent, Container } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import StaffApi from '../../../api/staff_api';
@@ -70,7 +70,10 @@ const TaskGroupPage = (props) => {
             </Grid>
             <Grid xs={12}>
                 <Container>
-                    <Card sx={{ width: '100%' }}>
+                    <Typography variant="h2" fontWeight={600} sx={{ mt: 10, ml: '10vw' }}>
+                        Task Groups for Course: {courseId}
+                    </Typography>
+                    <Card sx={{ width: '70%', margin: 'auto', mt: 4 }}>
                         <CardContent>
                             <Box>
                                 <TaskGroupTable headCells={tgCols} rows={tgRows} />
