@@ -4,6 +4,7 @@ import NavBar from '../../Module/Navigation/NavBar';
 import { Container } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import StaffApi from '../../../api/staff_api';
 
 const TaskGroupPage = (props) => {
     const { role } = props;
@@ -19,11 +20,20 @@ const TaskGroupPage = (props) => {
             numeric: false,
             disablePadding: false,
             label: 'Task Group ID'
+        },
+        {
+            id: 'maxTokens',
+            numeric: false,
+            disablePadding: false,
+            label: 'Max. Tokens'
         }
     ]);
 
     useEffect(() => {
         // Call backend API
+        StaffApi.getAllTaskGroups(courseId).then((res) => {
+            // Handle response
+        });
     }, [courseId, navigate]);
 
     return (
