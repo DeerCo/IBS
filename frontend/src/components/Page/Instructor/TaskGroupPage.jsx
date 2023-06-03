@@ -8,6 +8,7 @@ import StaffApi from '../../../api/staff_api';
 import TaskGroupTable from '../../General/TaskGroupTable/TaskGroupTable';
 import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
+import { toast } from 'react-toastify';
 
 const TaskGroupPage = (props) => {
     const { role } = props;
@@ -41,7 +42,9 @@ const TaskGroupPage = (props) => {
     const handleAddTg = () => {
         // Use newMaxTokens state to request backend API
         if (newMaxTokens !== null) {
-            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {});
+            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {
+                toast.success('Added new task group', { theme: 'colored' });
+            });
         }
     };
 
