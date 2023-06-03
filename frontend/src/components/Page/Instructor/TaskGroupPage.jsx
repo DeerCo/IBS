@@ -13,7 +13,6 @@ import { toast } from 'react-toastify';
 const TaskGroupPage = (props) => {
     const { role } = props;
     const { courseId } = useParams();
-    const navigate = useNavigate();
 
     // For TextField when adding task group
     const [newMaxTokens, setNewMaxTokens] = useState(null);
@@ -53,26 +52,28 @@ const TaskGroupPage = (props) => {
         StaffApi.getAllTaskGroups(courseId).then((res) => {
             // Handle response
             const taskGroups = res.data.task_group;
-            for (const taskGroup of taskGroups) {
-                // Set TaskGroupRows
-                setTgRows((prevState) => {
-                    let newRow = {
-                        id: rowIdCounter,
-                        taskGroupId: taskGroup.task_group_id,
-                        maxTokens: taskGroup.max_token
-                    };
-                    for (const prevRow of prevState) {
-                        if (prevRow.taskGroupId === newRow.taskGroupId) {
-                            prevRow.maxTokens = newRow.maxTokens;
-                            return [...prevState];
+            if (Array.isArray(taskGroups)) {
+                for (const taskGroup of taskGroups) {
+                    // Set TaskGroupRows
+                    setTgRows((prevState) => {
+                        let newRow = {
+                            id: rowIdCounter,
+                            taskGroupId: taskGroup.task_group_id,
+                            maxTokens: taskGroup.max_token
+                        };
+                        for (const prevRow of prevState) {
+                            if (prevRow.taskGroupId === newRow.taskGroupId) {
+                                prevRow.maxTokens = newRow.maxTokens;
+                                return [...prevState];
+                            }
                         }
-                    }
-                    setRowIdCounter(rowIdCounter + 1);
-                    return [...prevState, newRow];
-                });
+                        setRowIdCounter(rowIdCounter + 1);
+                        return [...prevState, newRow];
+                    });
+                }
             }
         });
-    }, [courseId, navigate, rowIdCounter, tgRows]);
+    }, [courseId, rowIdCounter, tgRows]);
 
     return (
         <Grid container spacing={2}>
