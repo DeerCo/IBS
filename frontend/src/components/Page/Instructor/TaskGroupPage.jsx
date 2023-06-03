@@ -16,8 +16,6 @@ const TaskGroupPage = (props) => {
 
     // For TextField when adding task group
     const [newMaxTokens, setNewMaxTokens] = useState(null);
-    // For displaying success message for adding task group
-    const [displayMessage, setDisplayMessage] = useState(null);
 
     const [rowIdCounter, setRowIdCounter] = useState(0);
 
@@ -43,9 +41,7 @@ const TaskGroupPage = (props) => {
     const handleAddTg = () => {
         // Use newMaxTokens state to request backend API
         if (newMaxTokens !== null) {
-            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {
-                setDisplayMessage('Successfully added task group');
-            });
+            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {});
         }
     };
 
@@ -73,7 +69,7 @@ const TaskGroupPage = (props) => {
                 });
             }
         });
-    }, [courseId, navigate, displayMessage]);
+    }, [courseId, navigate, rowIdCounter, tgRows]);
 
     return (
         <Grid container spacing={2}>
@@ -118,11 +114,6 @@ const TaskGroupPage = (props) => {
                                 >
                                     Add Task Group
                                 </Button>
-                                {displayMessage !== null && (
-                                    <Typography variant="body1" sx={{ mt: 2 }}>
-                                        {displayMessage}
-                                    </Typography>
-                                )}
                             </Box>
                         </CardContent>
                     </Card>
