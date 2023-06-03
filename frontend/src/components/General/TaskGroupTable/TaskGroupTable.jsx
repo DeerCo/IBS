@@ -286,7 +286,7 @@ TaskGroupTable.propTypes = {
     // Must be in form of { id: string, taskGroupId: string, maxTokens: string }
     rows: PropTypes.array.isRequired,
     // Adjust width of table
-    tableWidth: PropTypes.number.isRequired
+    tableWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired
 };
 
 export default TaskGroupTable;
