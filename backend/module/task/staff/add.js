@@ -3,7 +3,7 @@ const router = express.Router();
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
     res.status(400).json({ message: "The task is missing or invalid." });
     return;
@@ -23,6 +23,20 @@ router.post("/", (req, res) => {
       .json({ message: "The weight property is missing or invalid." });
     return;
   }
+  let isWeightExceeded = await helpers.weight_validate(
+    typeof req.body["weight"] === "string"
+      ? parseInt(req.body["weight"])
+      : req.body["weight"],
+    res.locals["course_id"]
+  );
+
+  if (isWeightExceeded) {
+    res
+      .status(400)
+      .json({ message: "The accumulated weight of all tasks exceeds 100" });
+    return;
+  }
+
   if (!("hidden" in req.body) || helpers.boolean_validate(req.body["hidden"])) {
     res
       .status(400)
