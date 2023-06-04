@@ -40,9 +40,11 @@ const Homecard = ({ data }) => {
             {staffRoles.includes(data.role) && (
                 <>
                     <HomeCardLink to={courseStudentListPageLink} name="Enrolled Students" />
-                    <HomeCardLink to={allGradesPageLink} name="View Grades" />
                     {data.role === 'instructor' && (
-                        <HomeCardLink to={submitMarksPageLink} name="Submit Marks" />
+                        <>
+                            <HomeCardLink to={allGradesPageLink} name="View Grades" />{' '}
+                            <HomeCardLink to={submitMarksPageLink} name="Submit Marks" />{' '}
+                        </>
                     )}
                 </>
             )}
