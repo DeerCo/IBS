@@ -5,6 +5,7 @@ import { Container, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import StaffApi from '../../../api/staff_api';
+import PropTypes from 'prop-types';
 
 const sampleRows = [
     {
@@ -51,6 +52,8 @@ const sampleHeadCells = [
 
 const AggregatedGrades = (props) => {
     const navigate = useNavigate();
+
+    const { role } = props;
 
     const [rows, setRows] = useState([]);
     const [headCells, setHeadCells] = useState([
@@ -122,7 +125,7 @@ const AggregatedGrades = (props) => {
     return (
         <Grid container spacing={2}>
             <Grid xs={12}>
-                <NavBar role="instructor" page="Grades" />
+                <NavBar role={role} page="Grades" />
             </Grid>
             <Grid xs={12}>
                 <Container>
@@ -141,6 +144,10 @@ const AggregatedGrades = (props) => {
             </Grid>
         </Grid>
     );
+};
+
+AggregatedGrades.propTypes = {
+    role: PropTypes.string.isRequired
 };
 
 export default AggregatedGrades;
