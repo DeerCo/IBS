@@ -503,6 +503,25 @@ async function format_marks_one_task(json, course_id, task, total) {
   return marks;
 }
 
+/**
+ * Given course_id and task_name, return the task weight belonging to said task_name.
+ * @param course_id string
+ * @param task_name string
+ * @returns {Promise<*|string>}
+ */
+async function get_task_weight(course_id, task_name) {
+  let pg_res = await db.query(
+    "SELECT weight FROM course_" + course_id + ".task WHERE task = ($1)",
+    [task_name]
+  );
+
+  if (pg_res.rowCount === 0) {
+    return "";
+  } else {
+    return pg_res.rows[0]["weight"];
+  }
+}
+
 async function format_marks_all_tasks(json, course_id) {
   let marks = {};
   let total_out_of = await get_total_out_of(course_id);
@@ -512,7 +531,12 @@ async function format_marks_all_tasks(json, course_id) {
     if (!(username in marks)) {
       marks[username] = {};
       for (let task in total_out_of) {
-        marks[username][task] = { mark: 0, out_of: total_out_of[task] };
+        const task_weight = await get_task_weight(course_id, row["task"]);
+        marks[username][task] = {
+          mark: 0,
+          out_of: total_out_of[task],
+          weight: task_weight,
+        };
       }
     }
 
