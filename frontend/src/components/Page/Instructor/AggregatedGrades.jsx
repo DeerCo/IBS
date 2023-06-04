@@ -79,7 +79,6 @@ const AggregatedGrades = (props) => {
             //     }
             // }
             const studentsArr = res.data.marks;
-            // console.log(studentsArr);
             for (const student in studentsArr) {
                 for (const taskName in res.data.marks[student]) {
                     setHeadCells((prevState) => {
@@ -135,6 +134,7 @@ const AggregatedGrades = (props) => {
                             headCells={headCells}
                             rows={rows}
                             tableWidth="100%"
+                            courseId={courseId}
                         />
                     )}
                 </Container>
