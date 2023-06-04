@@ -17,11 +17,9 @@ router.post("/", (req, res) => {
     !("course_session" in req.body) ||
     helpers.name_validate(req.body["course_session"])
   ) {
-    res
-      .status(400)
-      .json({
-        message: "The course session is missing or has invalid format.",
-      });
+    res.status(400).json({
+      message: "The course session is missing or has invalid format.",
+    });
     return;
   }
 
@@ -78,11 +76,9 @@ router.post("/", (req, res) => {
         err.code === "23505" &&
         err.constraint === "course_course_code_course_session_key"
       ) {
-        res
-          .status(409)
-          .json({
-            message: "The course must have unique course code and session.",
-          });
+        res.status(409).json({
+          message: "The course must have unique course code and session.",
+        });
       } else if (
         err.code === "23505" &&
         err.constraint === "course_gitlab_group_id_key"
@@ -127,11 +123,12 @@ router.post("/", (req, res) => {
         "CREATE TABLE " +
         task_table_name +
         " (" +
-        "task character varying NOT NULL, due_date timestamp with time zone NOT NULL, " +
+        "task character varying NOT NULL, long_name character varying NOT NULL, " +
+        "due_date timestamp with time zone NOT NULL, hidden boolean NOT NULL DEFAULT true, " +
         "weight integer NOT NULL DEFAULT 0, " +
-        "hidden boolean NOT NULL DEFAULT true,  min_member integer NOT NULL DEFAULT 1, " +
-        "max_member integer NOT NULL DEFAULT 1, max_token integer NOT NULL DEFAULT 0, " +
-        "change_group boolean NOT NULL DEFAULT true, hide_interview boolean NOT NULL DEFAULT true, " +
+        "min_member integer NOT NULL DEFAULT 1, max_member integer NOT NULL DEFAULT 1, " +
+        "max_token integer NOT NULL DEFAULT 0, change_group boolean NOT NULL DEFAULT true, " +
+        "hide_interview boolean NOT NULL DEFAULT true, hide_file boolean NOT NULL DEFAULT true, " +
         "interview_group character varying, task_group_id integer, starter_code_url character varying, " +
         "PRIMARY KEY (task), UNIQUE (task), " +
         "CONSTRAINT task_group_id FOREIGN KEY (task_group_id) REFERENCES " +
@@ -250,21 +247,17 @@ router.post("/", (req, res) => {
       client.query(sql_all, [], (err_add_tables, pg_res_add_tables) => {
         if (err_add_tables) {
           console.log(err_add_tables);
-          res
-            .status(404)
-            .json({
-              message:
-                "The course is added but the course specific tables cannot be created.",
-              course_id: course_id,
-            });
+          res.status(404).json({
+            message:
+              "The course is added but the course specific tables cannot be created.",
+            course_id: course_id,
+          });
         } else {
-          res
-            .status(200)
-            .json({
-              message:
-                "The course is added and the course specific tables have been created.",
-              course_id: course_id,
-            });
+          res.status(200).json({
+            message:
+              "The course is added and the course specific tables have been created.",
+            course_id: course_id,
+          });
         }
       });
     }
