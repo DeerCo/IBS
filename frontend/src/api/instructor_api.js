@@ -80,7 +80,38 @@ let impersonate = async (course_id, username) => {
 // 	}
 // };
 
+let allTasks = async (course_id) => {
+	let token = sessionStorage.getItem("token");
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/task/all", config);
+	} catch (err) {
+		return err.response;
+	}
+};
+
+let allGroups = async (course_id, task) => {
+	let token = sessionStorage.getItem("token")
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/group/all?task=" + task, config);
+	} catch (err) {
+		return err.response;
+	}
+}
+
 let taskGroups = async (course_id, task) => {
+	/**
+	 * Gets all groups for a particular task within a course.
+	 */
 	let token = sessionStorage.getItem("token");
 
 	let config = {
@@ -96,12 +127,15 @@ let taskGroups = async (course_id, task) => {
 
 
 let InstructorApi = {
+	//Course related
+	allTasks,
 	// Task related
 	impersonate,
-	taskGroups
+	taskGroups,
   //
 	// // Group related
 	// check_group,
+	allGroups,
   //
 	// // Interview related
 	// all_interviews,

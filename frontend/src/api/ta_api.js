@@ -28,7 +28,7 @@ let check_group = async (course_id, group_id) => {
 	}
 };
 
-let get_group = async (course_id, task) => {
+let allGroups = async (course_id, task) => {
 	let token = sessionStorage.getItem("token")
 
 	let config = {
@@ -97,7 +97,7 @@ let TaApi = {
 
 	// Group related
 	check_group,
-	get_group,
+	allGroups,
 
 	// Interview related
 	all_interviews,
