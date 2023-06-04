@@ -26,7 +26,7 @@ import ThemeSettings from './layouts/full-layout/customizer/ThemeSettings';
 import { useSelector } from 'react-redux';
 import RTL from './layouts/full-layout/customizer/RTL';
 import StudentListPage from './components/Page/Student/StudentListPage';
-import AssignmentGroupListPage from './components/General/AssignmentGroupList/AssignmentGroupListPage';
+import AssignmentGroupListPage from './components/General/TaskGroupList/TaskGroupListPage';
 
 function App() {
     const theme = ThemeSettings();

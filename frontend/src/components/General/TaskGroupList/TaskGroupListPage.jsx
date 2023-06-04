@@ -8,7 +8,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { getCourses } from '../../../../utilities/courses';
 import NavBar from '../../Module/Navigation/NavBar';
 import { makeStyles } from '@mui/styles';
-import { AssignmentGroupList } from './AssignmentGroupList';
+import { AssignmentGroupList } from './TaskGroupList';
+import { getTasks } from '../../../../utilities/tasks';
 
 const useStyles = makeStyles({
     container: {
@@ -27,21 +28,18 @@ const useStyles = makeStyles({
 
 const AssignmentGroupListPage = () => {
     const classes = useStyles();
-    const [courseOptions, setCourseOptions] = useState([]);
-    const [taskOptions, setTaskOptions] = useState([]);
+    const courseOptions = getCourses();
 
     const [course, setCourse] = useState('');
     const [task, setTask] = useState('');
+    const [taskOptions, setTaskOptions] = useState([]);
 
     useEffect(() => {
-        const courses = getCourses();
-        setCourseOptions(courses);
-    }, []);
-
-    const handleCourseChange = (event, value) => {
-        let tasks = InstructorApi.allTasks(value.courseId);
-        setTaskOptions(tasks);
-    };
+        if (course) {
+            const tasks = getTasks();
+            setTaskOptions(tasks);
+        }
+    }, [course]);
 
     return (
         <Grid container direction="column" height="100%" wrap="nowrap">
@@ -57,30 +55,32 @@ const AssignmentGroupListPage = () => {
                                 {...params}
                                 size="small"
                                 placeholder="Select Course"
-                                aria-label="Select course"
+                                aria-label="Select Course"
                             />
                         )}
                         options={courseOptions}
-                        onChange={(event, value) => handleCourseChange(event, value)}
+                        onChange={(value) => setCourse(value)}
                     />
                 </div>
-                <div>
-                    <Autocomplete
-                        disablePortal
-                        id="task-selection-dropdown"
-                        options={taskOptions}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                size="small"
-                                placeholder="Select Task"
-                                aria-label="Select course"
-                            />
-                        )}
-                    />
-                </div>
+                {task && (
+                    <div>
+                        <Autocomplete
+                            disablePortal
+                            id="task-selection-dropdown"
+                            options={taskOptions}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    size="small"
+                                    placeholder="Select Task"
+                                    aria-label="Select Task"
+                                />
+                            )}
+                            onChange={(value) => setTask(value)}
+                        />
+                    </div>
+                )}
             </div>
-
             <Grid
                 item
                 container
