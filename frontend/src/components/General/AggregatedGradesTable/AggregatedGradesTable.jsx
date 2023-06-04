@@ -26,6 +26,7 @@ import { visuallyHidden } from '@mui/utils';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../FlexyMainComponents/forms/custom-elements/CustomCheckbox';
 import CustomSwitch from '../../FlexyMainComponents/forms/custom-elements/CustomSwitch';
+import GetMarksCsvButton from './GetMarksCsvButton';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -158,7 +159,7 @@ AggregatedGradesTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired
 };
 
-const AggregatedGradesTable = ({ headCells, rows, tableWidth }) => {
+const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('student');
     const [selected, setSelected] = React.useState([]);
@@ -182,7 +183,6 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth }) => {
     };
 
     const handleClick = (event, name) => {
-        console.log(name);
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
 
@@ -226,6 +226,7 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth }) => {
                 <Box>
                     <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
                         {/*<AggregatedGradesTableToolbar numSelected={selected.length} />*/}
+                        <GetMarksCsvButton courseId={courseId} />
                         <TableContainer>
                             <Table
                                 sx={{ minWidth: 750 }}
@@ -245,7 +246,6 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth }) => {
                                     {stableSort(rows, getComparator(order, orderBy))
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row, index) => {
-                                            console.log(row);
                                             const isItemSelected = isSelected(row.student);
                                             const labelId = `grades-table-checkbox-${index}`;
 

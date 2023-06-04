@@ -2,6 +2,31 @@ import axios from 'axios';
 
 // Accessible to any of TA/Instructor/Admin
 
+let all_tasks = async (course_id) => {
+    let token = sessionStorage.getItem('token');
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    const role = findRoleInCourse(course_id);
+    let url;
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${course_id}/task/all`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${course_id}/task/all`;
+    } else {
+        // in this case role === 'ta'
+        url = `${process.env.REACT_APP_API_URL}/ta/course/${course_id}/task/all`;
+    }
+
+    try {
+        return await axios.get(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 /**
  *
  * @param courseId
@@ -234,7 +259,8 @@ const StaffApi = {
     getAllTaskGroups,
     addTaskGroup,
     changeTaskGroup,
-    deleteTaskGroup
+    deleteTaskGroup,
+    all_tasks
 };
 
 export default StaffApi;

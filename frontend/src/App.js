@@ -81,7 +81,7 @@ function App() {
                         />
                         <Route
                             path="/instructor/course/:courseId/all-grades"
-                            element={<AggregatedGrades />}
+                            element={<AggregatedGrades role="instructor" />}
                         />
                         <Route
                             path="/instructor/course/:course_id/impersonate"
@@ -97,7 +97,7 @@ function App() {
                         <Route path="/admin/impersonate" element={<AdminImpersonate />} />
                         <Route
                             path="/admin/course/:courseId/all-grades"
-                            element={<AggregatedGrades />}
+                            element={<AggregatedGrades role="admin" />}
                         />
                         <Route
                             path="/admin/course/:course_id/task"
