@@ -39,6 +39,32 @@ let impersonate = async (course_id, username) => {
     }
 };
 
+let submitMark = async (courseId, task, criteria, username, mark) => {
+    let token = sessionStorage.getItem('token');
+
+    const data = {
+        username,
+        task,
+        mark,
+        criteria,
+        overwrite: true
+    };
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    try {
+        return await axios.post(
+            process.env.REACT_APP_API_URL + '/instructor/course/' + courseId + '/mark/submit',
+            data,
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
+};
+
 // let check_group = async (course_id, group_id) => {
 // 	let token = sessionStorage.getItem("token");
 //
@@ -104,7 +130,8 @@ let impersonate = async (course_id, username) => {
 let InstructorApi = {
     // Task related
     all_tasks,
-    impersonate
+    impersonate,
+    submitMark
     //
     // // Group related
     // check_group,
