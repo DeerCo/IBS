@@ -78,7 +78,7 @@ function App() {
                         ></Route>
 
                         <Route 
-                            path="/instructor/course/:course_id/:task_id/groups"
+                            path="/instructor/course/:courseId/task/:taskId/groups"
                             element={<AssignmentGroupListPage />} 
                         />
                         

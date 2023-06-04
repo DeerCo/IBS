@@ -8,7 +8,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { getCourses } from '../../../../utilities/courses';
 import NavBar from '../../Module/Navigation/NavBar';
 import { makeStyles } from '@mui/styles';
-import { AssignmentGroupList } from './AssignmentGroupsList';
+import { AssignmentGroupList } from './AssignmentGroupList';
 
 const useStyles = makeStyles({
     container: {
@@ -17,35 +17,34 @@ const useStyles = makeStyles({
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
         margin: '16px',
-        padding: '16px',
+        padding: '16px'
     },
 
     dropdown: {
         display: 'inline-block'
-    },
+    }
 });
 
 const AssignmentGroupListPage = () => {
-
     const classes = useStyles();
     const [courseOptions, setCourseOptions] = useState([]);
     const [taskOptions, setTaskOptions] = useState([]);
 
+    const [course, setCourse] = useState('');
+    const [task, setTask] = useState('');
+
     useEffect(() => {
         const courses = getCourses();
         setCourseOptions(courses);
-    }, [])
+    }, []);
 
     const handleCourseChange = (event, value) => {
-        let tasks = InstructorApi.allTasks(value.courseId)
+        let tasks = InstructorApi.allTasks(value.courseId);
         setTaskOptions(tasks);
-    }
+    };
 
     return (
-        <Grid container
-            direction="column"
-            height="100%"
-            wrap="nowrap">
+        <Grid container direction="column" height="100%" wrap="nowrap">
             <NavBar item page="Home" />
 
             <div className={classes.dropdown}>
@@ -54,11 +53,15 @@ const AssignmentGroupListPage = () => {
                         disablePortal
                         id="course-selection-dropdown"
                         renderInput={(params) => (
-                            <TextField {...params} size="small" placeholder="Select Course" aria-label="Select course" />
+                            <TextField
+                                {...params}
+                                size="small"
+                                placeholder="Select Course"
+                                aria-label="Select course"
+                            />
                         )}
                         options={courseOptions}
                         onChange={(event, value) => handleCourseChange(event, value)}
-
                     />
                 </div>
                 <div>
@@ -67,26 +70,31 @@ const AssignmentGroupListPage = () => {
                         id="task-selection-dropdown"
                         options={taskOptions}
                         renderInput={(params) => (
-                            <TextField {...params} size="small" placeholder="Select Task" aria-label="Select course" />
+                            <TextField
+                                {...params}
+                                size="small"
+                                placeholder="Select Task"
+                                aria-label="Select course"
+                            />
                         )}
                     />
                 </div>
             </div>
 
-            <Grid item container
+            <Grid
+                item
+                container
                 spacing={2}
                 direction="row"
                 justifyContent="center"
                 alignContent="center"
                 justify="center"
-                flex="1 1 auto">
-                <AssignmentGroupList
-                    courseId={courseId}
-                    task={task}
-                />
+                flex="1 1 auto"
+            >
+                <AssignmentGroupList courseId={courseId} task={task} />
             </Grid>
         </Grid>
     );
-}
+};
 
 export default AssignmentGroupListPage;
