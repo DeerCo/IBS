@@ -8,7 +8,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { getCourses } from '../../../../utilities/courses';
 import NavBar from '../../Module/Navigation/NavBar';
 import { makeStyles } from '@mui/styles';
-import { AssignmentGroupList } from './TaskGroupList';
+import AssignmentGroupList from './TaskGroupList';
 import { getTasks } from '../../../../utilities/tasks';
 
 const useStyles = makeStyles({

@@ -1,6 +1,5 @@
 import React, { Children } from 'react';
 import BaseCard from '../../FlexyMainComponents/base-card/BaseCard';
-import { getAllGroups } from '../../../../utilities/groups';
 import InstructorApi from '../../../api/instructor_api';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -35,4 +34,4 @@ const AssignmentGroupList = ({ courseId, task }) => {
     );
 };
 
-export default AssignmentGroupCard;
+export default AssignmentGroupList;
