@@ -187,9 +187,10 @@ const TaskGroupTable = ({ headCells, rows, courseId, alerts }) => {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    React.useEffect(() => {
-        console.log(selected);
-    }, [selected]);
+    // For testing purposes
+    // React.useEffect(() => {
+    //     console.log(selected);
+    // }, [selected]);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
