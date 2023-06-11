@@ -8,7 +8,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { getCourses } from '../../../../utilities/courses';
 import NavBar from '../../Module/Navigation/NavBar';
 import { makeStyles } from '@mui/styles';
-import AssignmentGroupList from './TaskGroupList';
+import TaskGroupList from './TaskGroupList';
 import { getTasks } from '../../../../utilities/tasks';
 
 const useStyles = makeStyles({
@@ -26,13 +26,19 @@ const useStyles = makeStyles({
     }
 });
 
-const AssignmentGroupListPage = () => {
+const TaskGroupListPage = () => {
     const classes = useStyles();
     const courseOptions = getCourses();
 
     const [course, setCourse] = useState('');
+    const [courseId, setCourseId] = useState(null);
     const [task, setTask] = useState('');
     const [taskOptions, setTaskOptions] = useState([]);
+
+    const handleCourseChange = (option) => {
+        setCourse(option.label);
+        setCourseId(option.course_id);
+    };
 
     useEffect(() => {
         if (course) {
@@ -59,7 +65,7 @@ const AssignmentGroupListPage = () => {
                             />
                         )}
                         options={courseOptions}
-                        onChange={(value) => setCourse(value)}
+                        onChange={(event, value) => handleCourseChange(value)}
                     />
                 </div>
                 {task && (
@@ -76,7 +82,7 @@ const AssignmentGroupListPage = () => {
                                     aria-label="Select Task"
                                 />
                             )}
-                            onChange={(value) => setTask(value)}
+                            onChange={(event, value) => setTask(value)}
                         />
                     </div>
                 )}
@@ -91,10 +97,10 @@ const AssignmentGroupListPage = () => {
                 justify="center"
                 flex="1 1 auto"
             >
-                <AssignmentGroupList courseId={courseId} task={task} />
+                <TaskGroupList courseId={courseId} task={task} />
             </Grid>
         </Grid>
     );
 };
 
-export default AssignmentGroupListPage;
+export default TaskGroupListPage;

@@ -3,8 +3,9 @@ import BaseCard from '../../FlexyMainComponents/base-card/BaseCard';
 import InstructorApi from '../../../api/instructor_api';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { Grid } from '@mui/material';
 
-const AssignmentGroupList = ({ courseId, task }) => {
+const TaskGroupList = ({ courseId, task }) => {
     let groups = [];
     InstructorApi.allGroups(courseId, task)
         .then((res) => {
@@ -34,4 +35,4 @@ const AssignmentGroupList = ({ courseId, task }) => {
     );
 };
 
-export default AssignmentGroupList;
+export default TaskGroupList;
