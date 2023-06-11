@@ -17,6 +17,9 @@ const TaskGroupPage = (props) => {
     // For TextField when adding task group
     const [newMaxTokens, setNewMaxTokens] = useState(null);
 
+    // For useEffect
+    const [alert, setAlert] = useState(false);
+
     const [rowIdCounter, setRowIdCounter] = useState(0);
 
     // Rows for TaskGroupTable
@@ -37,18 +40,11 @@ const TaskGroupPage = (props) => {
         }
     ];
 
-    // Event handler for adding new task group
-    const handleAddTg = () => {
-        // Use newMaxTokens state to request backend API
-        if (newMaxTokens !== null) {
-            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {
-                toast.success('Added new task group', { theme: 'colored' });
-            });
-        }
-    };
-
-    useEffect(() => {
-        // Call backend API
+    /**
+     * Call GET Get all task groups endpoint and update states appropriately.
+     * @constructor
+     */
+    const FetchGetAllTaskGroups = () => {
         StaffApi.getAllTaskGroups(courseId).then((res) => {
             // Handle response
             const taskGroups = res.data.task_group;
@@ -73,7 +69,40 @@ const TaskGroupPage = (props) => {
                 }
             }
         });
-    }, [courseId, tgRows]);
+    };
+
+    // Event handler for adding new task group
+    const handleAddTg = () => {
+        // Use newMaxTokens state to request backend API
+        if (newMaxTokens !== null) {
+            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {
+                toast.success('Added new task group', { theme: 'colored' });
+                setAlert(true);
+            });
+        }
+    };
+
+    // For loading data initially
+    useEffect(() => {
+        let mounted = true;
+        if (tgRows.length) {
+            return;
+        }
+        // Call backend API
+        FetchGetAllTaskGroups();
+
+        return () => (mounted = false);
+    }, [courseId]);
+
+    // For refreshing data when new task group is added
+    useEffect(() => {
+        if (alert) {
+            let mounted = true;
+            FetchGetAllTaskGroups();
+            setAlert(false);
+            return () => (mounted = false);
+        }
+    }, [courseId, alert]);
 
     return (
         <Grid container spacing={2}>
