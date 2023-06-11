@@ -3,7 +3,7 @@ const router = express.Router();
 const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   if (!("task" in req.body) || helpers.name_validate(req.body["task"])) {
     res.status(400).json({ message: "The task is missing or invalid." });
     return;
@@ -17,6 +17,26 @@ router.post("/", (req, res) => {
       .json({ message: "The due date is missing or not correct." });
     return;
   }
+  if (!("weight" in req.body) || helpers.number_validate(req.body["weight"])) {
+    res
+      .status(400)
+      .json({ message: "The weight property is missing or invalid." });
+    return;
+  }
+  let isWeightExceeded = await helpers.weight_validate(
+    typeof req.body["weight"] === "string"
+      ? parseInt(req.body["weight"])
+      : req.body["weight"],
+    res.locals["course_id"]
+  );
+
+  if (isWeightExceeded) {
+    res
+      .status(400)
+      .json({ message: "The accumulated weight of all tasks exceeds 100" });
+    return;
+  }
+
   if (!("hidden" in req.body) || helpers.boolean_validate(req.body["hidden"])) {
     res
       .status(400)
@@ -48,22 +68,18 @@ router.post("/", (req, res) => {
     !("hide_interview" in req.body) ||
     helpers.boolean_validate(req.body["hide_interview"])
   ) {
-    res
-      .status(400)
-      .json({
-        message: "The hide interview property is missing or not correct.",
-      });
+    res.status(400).json({
+      message: "The hide interview property is missing or not correct.",
+    });
     return;
   }
   if (
     !("change_group" in req.body) ||
     helpers.boolean_validate(req.body["change_group"])
   ) {
-    res
-      .status(400)
-      .json({
-        message: "The change group property is missing or not correct.",
-      });
+    res.status(400).json({
+      message: "The change group property is missing or not correct.",
+    });
     return;
   }
 
@@ -93,12 +109,10 @@ router.post("/", (req, res) => {
       helpers.string_validate(req.body["starter_code_url"]) ||
       !req.body["starter_code_url"].includes(".git")
     ) {
-      res
-        .status(400)
-        .json({
-          message:
-            "The starter code url is invalid. It should start with https:// and end with .git",
-        });
+      res.status(400).json({
+        message:
+          "The starter code url is invalid. It should start with https:// and end with .git",
+      });
       return;
     } else {
       starter_code_url = req.body["starter_code_url"];
@@ -109,10 +123,11 @@ router.post("/", (req, res) => {
   let sql_add =
     "INSERT INTO course_" +
     res.locals["course_id"] +
-    ".task (task, due_date, hidden, min_member, max_member, max_token, change_group, hide_interview, interview_group, task_group_id, starter_code_url, long_name) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8), ($9), ($10), ($11), ($12))";
+    ".task (task, due_date, weight, hidden, min_member, max_member, max_token, change_group, hide_interview, interview_group, task_group_id, starter_code_url, long_name) VALUES (($1), ($2), ($3), ($4), ($5), ($6), ($7), ($8), ($9), ($10), ($11), ($12), ($13))";
   let sql_add_data = [
     req.body["task"],
     due_date,
+    req.body["weight"],
     req.body["hidden"],
     req.body["min_member"],
     req.body["max_member"],

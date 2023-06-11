@@ -5,7 +5,6 @@ import LoginPage from './views/authentication/Login';
 import ResetPasswordPage from './views/authentication/ResetPassword';
 import Error from './views/authentication/Error';
 import Home from './components/Page/General/HomePage';
-import NotFoundPage from './components/Page/General/NotFoundPage';
 import StudentMarkPage from './components/Page/Student/StudentMarkPage';
 import StudentFilePage from './components/Page/Student/StudentFilePage';
 import StudentInterviewPage from './components/Page/Student/StudentInterviewPage';
@@ -26,6 +25,7 @@ import ThemeSettings from './layouts/full-layout/customizer/ThemeSettings';
 import { useSelector } from 'react-redux';
 import RTL from './layouts/full-layout/customizer/RTL';
 import StudentListPage from './components/Page/Student/StudentListPage';
+import SubmitMarks from './components/Page/Instructor/SubmitMarks';
 import TaskGroupPage from './components/Page/Instructor/TaskGroupPage';
 
 function App() {
@@ -91,6 +91,10 @@ function App() {
                             path="/instructor/course/:courseId/task-group"
                             element={<TaskGroupPage role="instructor" />}
                         />
+                        <Route
+                            path="/instructor/course/:courseId/submit-marks"
+                            element={<SubmitMarks />}
+                        ></Route>
 
                         <Route path="/admin" element={<Admin_page />}></Route>
                         <Route path="/admin/course/:course_id/task" element={<Admin_task />} />
