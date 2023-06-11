@@ -116,7 +116,7 @@ const TaskGroupTableToolbar = (props) => {
             Promise.all(
                 selectedObj.selected.map((selectedId) =>
                     StaffApi.deleteTaskGroup(courseId, selectedId).then((res) => {
-                        toast.warn(`Deleted task group ${selectedId}`, { theme: 'colored' });
+                        toast.info(`Deleted task group ${selectedId}`, { theme: 'colored' });
                     })
                 )
             ).then(() => {
