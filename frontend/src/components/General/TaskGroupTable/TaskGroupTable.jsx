@@ -14,11 +14,18 @@ import {
     FormControlLabel,
     Card,
     CardContent,
-    Typography
+    Typography,
+    IconButton,
+    Tooltip,
+    Toolbar
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import CustomCheckbox from '../../FlexyMainComponents/forms/custom-elements/CustomCheckbox';
 import CustomSwitch from '../../FlexyMainComponents/forms/custom-elements/CustomSwitch';
+import FeatherIcon from 'feather-icons-react';
+import { alpha } from '@mui/material/styles';
+import StaffApi from '../../../api/staff_api';
+import { toast } from 'react-toastify';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -101,13 +108,88 @@ TaskGroupTableHead.propTypes = {
     headCells: PropTypes.array.isRequired
 };
 
-const TaskGroupTable = ({ headCells, rows, tableWidth }) => {
+const TaskGroupTableToolbar = (props) => {
+    const { numSelected, selectedObj, courseId, alerts } = props;
+
+    const DeleteTaskGroup = () => {
+        if (Array.isArray(selectedObj.selected)) {
+            Promise.all(
+                selectedObj.selected.map((selectedId) =>
+                    StaffApi.deleteTaskGroup(courseId, selectedId).then((res) => {
+                        toast.warn(`Deleted task group ${selectedId}`, { theme: 'colored' });
+                    })
+                )
+            ).then(() => {
+                // Refresh/reload the selected state
+                selectedObj.setSelected([]);
+                // Let TaskGroupPage (parent) component know to refresh the data in table
+                alerts.setAlert(true);
+            });
+        }
+    };
+
+    return (
+        <Toolbar
+            sx={{
+                pl: { sm: 2 },
+                pr: { xs: 1, sm: 1 },
+                ...(numSelected > 0 && {
+                    bgcolor: (theme) =>
+                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+                })
+            }}
+        >
+            {numSelected > 0 ? (
+                <Typography
+                    sx={{ flex: '1 1 100%' }}
+                    color="inherit"
+                    variant="subtitle2"
+                    component="div"
+                >
+                    {numSelected} selected
+                </Typography>
+            ) : (
+                <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
+                    Filter
+                </Typography>
+            )}
+
+            {numSelected > 0 ? (
+                <Tooltip
+                    title="Delete"
+                    onClick={() => {
+                        DeleteTaskGroup();
+                    }}
+                >
+                    <IconButton>
+                        <FeatherIcon icon="trash-2" width="18" />
+                    </IconButton>
+                </Tooltip>
+            ) : (
+                <></>
+            )}
+        </Toolbar>
+    );
+};
+
+TaskGroupTableToolbar.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+    selectedObj: PropTypes.object.isRequired,
+    courseId: PropTypes.string.isRequired,
+    alerts: PropTypes.object.isRequired
+};
+
+const TaskGroupTable = ({ headCells, rows, courseId, alerts }) => {
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('taskGroupId');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+    React.useEffect(() => {
+        console.log(selected);
+    }, [selected]);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -165,6 +247,12 @@ const TaskGroupTable = ({ headCells, rows, tableWidth }) => {
     return (
         <>
             <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
+                <TaskGroupTableToolbar
+                    numSelected={selected.length}
+                    selectedObj={{ selected, setSelected }}
+                    courseId={courseId}
+                    alerts={alerts}
+                />
                 <TableContainer>
                     <Table
                         sx={{ minWidth: 750 }}
@@ -272,7 +360,11 @@ TaskGroupTable.propTypes = {
     // Must be in form of { id: string, numeric: boolean, disablePadding: boolean, label: string }
     headCells: PropTypes.array.isRequired,
     // Must be in form of { id: string, taskGroupId: string, maxTokens: string }
-    rows: PropTypes.array.isRequired
+    rows: PropTypes.array.isRequired,
+    // Course ID from useParams
+    courseId: PropTypes.string.isRequired,
+    // setAlert hook for reloading data in table
+    alerts: PropTypes.object.isRequired
 };
 
 export default TaskGroupTable;

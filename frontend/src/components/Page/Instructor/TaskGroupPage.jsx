@@ -21,6 +21,7 @@ const TaskGroupPage = (props) => {
     const [alert, setAlert] = useState(false);
 
     const [rowIdCounter, setRowIdCounter] = useState(0);
+    const [rowIdMap, setRowIdMap] = useState({});
 
     // Rows for TaskGroupTable
     const [tgRows, setTgRows] = useState([]);
@@ -49,24 +50,30 @@ const TaskGroupPage = (props) => {
             // Handle response
             const taskGroups = res.data.task_group;
             if (Array.isArray(taskGroups)) {
+                // Initialize new rows array
+                let newRows = [];
+                let newIdCounter = rowIdCounter;
+                let newIdMap = { ...rowIdMap };
                 for (const taskGroup of taskGroups) {
-                    // Set TaskGroupRows
-                    setTgRows((prevState) => {
-                        let newRow = {
-                            id: rowIdCounter,
-                            taskGroupId: taskGroup.task_group_id,
-                            maxTokens: taskGroup.max_token
-                        };
-                        for (const prevRow of prevState) {
-                            if (prevRow.taskGroupId === newRow.taskGroupId) {
-                                prevRow.maxTokens = newRow.maxTokens;
-                                return [...prevState];
-                            }
-                        }
-                        setRowIdCounter(rowIdCounter + 1);
-                        return [...prevState, newRow];
-                    });
+                    // Get rowId from rowIdMap if exists else create new one
+                    let rowId = newIdMap[taskGroup.task_group_id];
+                    if (!rowId) {
+                        newIdCounter++;
+                        rowId = newIdCounter;
+                        newIdMap[taskGroup.task_group_id] = rowId;
+                    }
+                    // Construct new row
+                    let newRow = {
+                        id: rowId,
+                        taskGroupId: taskGroup.task_group_id,
+                        maxTokens: taskGroup.max_token
+                    };
+                    newRows.push(newRow);
                 }
+                // Update states
+                setTgRows(newRows);
+                setRowIdCounter(newIdCounter);
+                setRowIdMap(newIdMap);
             }
         });
     };
@@ -117,7 +124,12 @@ const TaskGroupPage = (props) => {
                     <Card sx={{ width: '70%', margin: 'auto', mt: 4 }}>
                         <CardContent>
                             <Box>
-                                <TaskGroupTable headCells={tgCols} rows={tgRows} />
+                                <TaskGroupTable
+                                    headCells={tgCols}
+                                    rows={tgRows}
+                                    courseId={courseId}
+                                    alerts={{ alert, setAlert }}
+                                />
                             </Box>
                             <Box sx={{ mt: 8 }}>
                                 <CustomFormLabel
