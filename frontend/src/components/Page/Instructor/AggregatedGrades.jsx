@@ -151,7 +151,7 @@ const AggregatedGrades = (props) => {
                     id: 'finalGrade',
                     numeric: false,
                     disablePadding: false,
-                    label: 'Final Grade'
+                    label: 'Current Grade'
                 }
             ]);
             setRows((prevState) => {
