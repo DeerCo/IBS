@@ -73,6 +73,17 @@ const AggregatedGrades = (props) => {
         StaffApi.getAllMarks(courseId).then((res) => res.data)
     );
 
+    const calculateFinalGrade = (tasks) => {
+        let finalGrade = 0;
+        for (const taskName in tasks) {
+            const taskData = tasks[taskName];
+            const weight = taskData['weight'];
+            const taskScore = (taskData.mark / taskData.out_of) * weight;
+            finalGrade += taskScore;
+        }
+        return finalGrade;
+    };
+
     useEffect(() => {
         if (isLoading || error) return;
         // StaffApi.getAllMarks(courseId).then((res) => {
@@ -93,9 +104,12 @@ const AggregatedGrades = (props) => {
         const studentsArr = data.marks;
         // console.log(studentsArr);
         for (const student in studentsArr) {
+            let finalGrade = calculateFinalGrade(data.marks[student]);
+
             for (const taskName in data.marks[student]) {
                 setHeadCells((prevState) => {
-                    const weight = data.marks[student][taskName]['weight'];
+                    const taskDataObj = data.marks[student][taskName];
+                    const weight = taskDataObj['weight'];
                     const newState = {
                         id: taskName,
                         numeric: false,
@@ -129,7 +143,25 @@ const AggregatedGrades = (props) => {
                     return [...prevState, newRow];
                 });
             } // taskName iteration end
-            // TODO: Add a final column called Final Grades which calculates all students' final grades
+
+            // Add final grades column and add the final grade for current student to rows state.
+            setHeadCells((prevState) => [
+                ...prevState,
+                {
+                    id: 'finalGrade',
+                    numeric: false,
+                    disablePadding: false,
+                    label: 'Final Grade'
+                }
+            ]);
+            setRows((prevState) => {
+                return prevState.map((row) => {
+                    if (row.student === student) {
+                        return { ...row, finalGrade: finalGrade.toFixed(2) + '%' };
+                    }
+                    return row;
+                });
+            });
         } // student iteration end
     }, [courseId, navigate, data, isLoading, error]);
 
