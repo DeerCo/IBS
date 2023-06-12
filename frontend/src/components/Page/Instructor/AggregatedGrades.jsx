@@ -84,7 +84,8 @@ const AggregatedGrades = (props) => {
         //     "student1": {
         //         "task1": {
         //             "mark": 12,
-        //             "out_of": 57
+        //             "out_of": 57,
+        //             "weight": 81
         //         }
         //     }
         //     }
@@ -94,11 +95,12 @@ const AggregatedGrades = (props) => {
         for (const student in studentsArr) {
             for (const taskName in data.marks[student]) {
                 setHeadCells((prevState) => {
+                    const weight = data.marks[student][taskName]['weight'];
                     const newState = {
                         id: taskName,
                         numeric: false,
                         disablePadding: false,
-                        label: taskName
+                        label: `${taskName} (${weight}%)`
                     };
                     for (const col of prevState) {
                         if (col.id === taskName) {
@@ -126,8 +128,9 @@ const AggregatedGrades = (props) => {
                     idCounter++;
                     return [...prevState, newRow];
                 });
-            }
-        }
+            } // taskName iteration end
+            // TODO: Add a final column called Final Grades which calculates all students' final grades
+        } // student iteration end
     }, [courseId, navigate, data, isLoading, error]);
 
     const viewersRole = findRoleInCourse(courseId);
