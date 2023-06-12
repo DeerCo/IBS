@@ -352,7 +352,7 @@ AggregatedGradesTable.propTypes = {
     // Must be in form of { id: string, student: string, <taskName>: string }
     rows: PropTypes.array.isRequired,
     // Adjust width of table
-    tableWidth: PropTypes.number.isRequired
+    tableWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
 };
 
 export default AggregatedGradesTable;
