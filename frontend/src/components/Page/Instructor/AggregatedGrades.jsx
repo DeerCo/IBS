@@ -87,8 +87,8 @@ const AggregatedGrades = (props) => {
 
     useEffect(() => {
         StaffApi.getCourseContent(courseId).then((res) => {
-            console.log(res);
-            setCourseName(res.data.course['course_code']);
+            if (role === 'admin') setCourseName(res.data.course[0]['course_code']);
+            else setCourseName(res.data.course['course_code']);
         });
     }, [courseId]);
 

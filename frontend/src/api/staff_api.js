@@ -159,7 +159,7 @@ const getCourseContent = async (courseId) => {
 
     let url = '';
     if (role === 'admin') {
-        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/get`;
+        url = `${process.env.REACT_APP_API_URL}/admin/course/get?course_id=${courseId}`;
     } else if (role === 'instructor') {
         url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/get`;
     } else {
