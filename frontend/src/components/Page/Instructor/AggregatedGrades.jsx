@@ -68,6 +68,7 @@ const AggregatedGrades = (props) => {
     ]);
 
     const { courseId } = useParams();
+    const [courseName, setCourseName] = useState('');
 
     const { data, isLoading, error } = useSWR('/mark/all', () =>
         StaffApi.getAllMarks(courseId).then((res) => res.data)
@@ -83,6 +84,13 @@ const AggregatedGrades = (props) => {
         }
         return finalGrade;
     };
+
+    useEffect(() => {
+        StaffApi.getCourseContent(courseId).then((res) => {
+            console.log(res);
+            setCourseName(res.data.course['course_code']);
+        });
+    }, [courseId]);
 
     useEffect(() => {
         if (isLoading || error) return;
@@ -144,16 +152,7 @@ const AggregatedGrades = (props) => {
                 });
             } // taskName iteration end
 
-            // Add final grades column and add the final grade for current student to rows state.
-            setHeadCells((prevState) => [
-                ...prevState,
-                {
-                    id: 'finalGrade',
-                    numeric: false,
-                    disablePadding: false,
-                    label: 'Current Grade'
-                }
-            ]);
+            // Add final grade for current student to rows state.
             setRows((prevState) => {
                 return prevState.map((row) => {
                     if (row.student === student) {
@@ -163,6 +162,17 @@ const AggregatedGrades = (props) => {
                 });
             });
         } // student iteration end
+
+        // Add final grades column only once
+        setHeadCells((prevState) => [
+            ...prevState,
+            {
+                id: 'finalGrade',
+                numeric: false,
+                disablePadding: false,
+                label: 'Current Grade'
+            }
+        ]);
     }, [courseId, navigate, data, isLoading, error]);
 
     const viewersRole = findRoleInCourse(courseId);
@@ -185,7 +195,7 @@ const AggregatedGrades = (props) => {
                             fontWeight="600"
                             sx={{ ml: 3 }}
                         >
-                            All Grades for Course ID: {courseId}
+                            All Grades of {courseName}
                         </Typography>
                     </Grid>
                     <Grid container columnSpacing={2}>
