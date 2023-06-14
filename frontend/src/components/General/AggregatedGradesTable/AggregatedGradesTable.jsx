@@ -132,7 +132,7 @@ const AggregatedGradesTableToolbar = (props) => {
                 <TableSearchbar
                     originalRows={originalRows}
                     setCurrRows={setCurrRows}
-                    placeholder="Search"
+                    placeholder="Search for student"
                     width="20vw"
                 />
             )}
