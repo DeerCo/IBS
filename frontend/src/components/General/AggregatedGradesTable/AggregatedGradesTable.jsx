@@ -27,6 +27,7 @@ import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../FlexyMainComponents/forms/custom-elements/CustomCheckbox';
 import CustomSwitch from '../../FlexyMainComponents/forms/custom-elements/CustomSwitch';
 import GetMarksCsvButton from './GetMarksCsvButton';
+import TableSearchbar from './TableSearchbar';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -110,53 +111,22 @@ AggregatedGradesTableHead.propTypes = {
 };
 
 const AggregatedGradesTableToolbar = (props) => {
-    const { numSelected } = props;
+    const { rows } = props;
 
     return (
         <Toolbar
             sx={{
                 pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
-                })
+                pr: { xs: 1, sm: 1 }
             }}
         >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle2"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-                    Filter
-                </Typography>
-            )}
-
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <FeatherIcon icon="trash-2" width="18" />
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FeatherIcon icon="filter" width="18" />
-                    </IconButton>
-                </Tooltip>
-            )}
+            {rows.length > 0 && <TableSearchbar rows={rows} placeholder="Search" width="20vw" />}
         </Toolbar>
     );
 };
 
 AggregatedGradesTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired
+    rows: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
@@ -225,8 +195,8 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
             <CardContent>
                 <Box>
                     <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
-                        {/*<AggregatedGradesTableToolbar numSelected={selected.length} />*/}
                         <GetMarksCsvButton courseId={courseId} />
+                        <AggregatedGradesTableToolbar rows={rows} />
                         <TableContainer>
                             <Table
                                 sx={{ minWidth: 750 }}
