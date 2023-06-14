@@ -1,13 +1,35 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Autocomplete, Stack, TextField } from '@mui/material';
+import { Autocomplete, IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import FeatherIcon from 'feather-icons-react';
 const TableSearchbar = (props) => {
-    const { rows, placeholder, width } = props;
+    const { originalRows, setCurrRows, placeholder, width } = props;
+    const [value, setValue] = React.useState('');
+
+    // React.useEffect(() => {}, [value]);
+
     return (
         <Autocomplete
             freeSolo
             id="table-searchbar"
             disableClearable
-            options={rows.map((option) => option.student)}
+            options={originalRows.map((option) => option.student)}
+            onChange={(event, newValue) => {
+                setCurrRows((prevState) => {
+                    // We use original rows because prevState could've been changed from previous
+                    // autocomplete
+                    const newState = [];
+                    if (Array.isArray(originalRows)) {
+                        for (const studentObj of originalRows) {
+                            if (studentObj.student === newValue) {
+                                newState.push(studentObj);
+                            }
+                        }
+                    }
+                    console.log(newState);
+                    return newState;
+                });
+            }}
             renderInput={(params) => (
                 <TextField
                     {...params}
@@ -25,8 +47,10 @@ const TableSearchbar = (props) => {
 };
 
 TableSearchbar.propTypes = {
-    // Rows for autocomplete (from table rows). Must be array of { ..., student: string }
-    rows: PropTypes.arrayOf(PropTypes.object).isRequired,
+    // Original rows which is fetched from backend (displays all possible rows)
+    originalRows: PropTypes.arrayOf(PropTypes.object).isRequired,
+    // setCurrRows useState callback function to set rows to be displayed on table
+    setCurrRows: PropTypes.func.isRequired,
     // Placeholder text for the searchbar
     placeholder: PropTypes.string.isRequired,
     // Width of searchbar. Either string like '100%' or a numeric integer value.

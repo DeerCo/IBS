@@ -79,20 +79,28 @@ function AggregatedGradesTableHead(props) {
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
-                        <TableSortLabel
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : 'asc'}
-                            onClick={createSortHandler(headCell.id)}
-                        >
+                        {headCell.id !== 'finalGrade' ? (
+                            <TableSortLabel
+                                active={orderBy === headCell.id}
+                                direction={orderBy === headCell.id ? order : 'asc'}
+                                onClick={createSortHandler(headCell.id)}
+                            >
+                                <Typography variant="subtitle1" fontWeight="500">
+                                    {headCell.label}
+                                </Typography>
+                                {orderBy === headCell.id ? (
+                                    <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc'
+                                            ? 'sorted descending'
+                                            : 'sorted ascending'}
+                                    </Box>
+                                ) : null}
+                            </TableSortLabel>
+                        ) : (
                             <Typography variant="subtitle1" fontWeight="500">
                                 {headCell.label}
                             </Typography>
-                            {orderBy === headCell.id ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                        </TableSortLabel>
+                        )}
                     </TableCell>
                 ))}
             </TableRow>
@@ -111,7 +119,7 @@ AggregatedGradesTableHead.propTypes = {
 };
 
 const AggregatedGradesTableToolbar = (props) => {
-    const { rows } = props;
+    const { originalRows, setCurrRows } = props;
 
     return (
         <Toolbar
@@ -120,13 +128,23 @@ const AggregatedGradesTableToolbar = (props) => {
                 pr: { xs: 1, sm: 1 }
             }}
         >
-            {rows.length > 0 && <TableSearchbar rows={rows} placeholder="Search" width="20vw" />}
+            {originalRows.length > 0 && (
+                <TableSearchbar
+                    originalRows={originalRows}
+                    setCurrRows={setCurrRows}
+                    placeholder="Search"
+                    width="20vw"
+                />
+            )}
         </Toolbar>
     );
 };
 
 AggregatedGradesTableToolbar.propTypes = {
-    rows: PropTypes.arrayOf(PropTypes.object).isRequired
+    // Original rows that are fetched from backend API call
+    originalRows: PropTypes.arrayOf(PropTypes.object).isRequired,
+    // To set the current state of rows
+    setCurrRows: PropTypes.func.isRequired
 };
 
 const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
@@ -136,6 +154,12 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [currRows, setCurrRows] = React.useState(rows === undefined ? [] : rows);
+
+    React.useEffect(() => {
+        setCurrRows(rows);
+        console.log(rows);
+    }, [rows]);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -145,7 +169,7 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.student);
+            const newSelecteds = currRows.map((n) => n.student);
             setSelected(newSelecteds);
             return;
         }
@@ -188,7 +212,7 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - currRows.length) : 0;
 
     return (
         <Card sx={{ width: tableWidth }}>
@@ -196,7 +220,10 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
                 <Box>
                     <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
                         <GetMarksCsvButton courseId={courseId} />
-                        <AggregatedGradesTableToolbar rows={rows} />
+                        <AggregatedGradesTableToolbar
+                            originalRows={rows}
+                            setCurrRows={setCurrRows}
+                        />
                         <TableContainer>
                             <Table
                                 sx={{ minWidth: 750 }}
@@ -209,11 +236,11 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
                                     orderBy={orderBy}
                                     onSelectAllClick={handleSelectAllClick}
                                     onRequestSort={handleRequestSort}
-                                    rowCount={rows.length}
+                                    rowCount={currRows.length}
                                     headCells={headCells}
                                 />
                                 <TableBody>
-                                    {stableSort(rows, getComparator(order, orderBy))
+                                    {stableSort(currRows, getComparator(order, orderBy))
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row, index) => {
                                             const isItemSelected = isSelected(row.student);
@@ -287,7 +314,7 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25]}
                             component="div"
-                            count={rows.length}
+                            count={currRows.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}
