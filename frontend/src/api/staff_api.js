@@ -2,6 +2,31 @@ import axios from 'axios';
 
 // Accessible to any of TA/Instructor/Admin
 
+let all_tasks = async (course_id) => {
+    let token = sessionStorage.getItem('token');
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    const role = findRoleInCourse(course_id);
+    let url;
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${course_id}/task/all`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${course_id}/task/all`;
+    } else {
+        // in this case role === 'ta'
+        url = `${process.env.REACT_APP_API_URL}/ta/course/${course_id}/task/all`;
+    }
+
+    try {
+        return await axios.get(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 /**
  *
  * @param courseId
@@ -36,6 +61,30 @@ let get_students_in_course = async (courseId) => {
 
 // Accessible to any of TA/Admin
 
+// Accessible to TA/Instructor
+let getCriteriaForTask = async (courseId, task) => {
+    let token = sessionStorage.getItem('token');
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    const role = findRoleInCourse(courseId);
+    let url;
+    if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/criteria/all?task=${task}`;
+    } else {
+        // in this case role === 'ta'
+        url = `${process.env.REACT_APP_API_URL}/ta/course/${courseId}/criteria/all?task=${task}`;
+    }
+
+    try {
+        return await axios.get(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 // Helpers
 export const findRoleInCourse = (courseId) => {
     const rolesStr = sessionStorage.getItem('roles');
@@ -63,8 +112,42 @@ export const findCourseCodeInCourse = (courseId) => {
     return null;
 };
 
+/**
+ * Get all marks endpoint for Admins and Instructors' use only.
+ * @param courseId string
+ * @returns {Promise<axios.AxiosResponse<any>|*>}
+ */
+let getAllMarks = async (courseId) => {
+    let token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/mark/all`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/mark/all`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
+    try {
+        return await axios.get(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 const StaffApi = {
-    get_students_in_course
+    get_students_in_course,
+    getAllMarks,
+    getCriteriaForTask,
+    all_tasks
 };
 
 export default StaffApi;
