@@ -12,7 +12,7 @@ import StudentTaskPage from './components/Page/Student/StudentTaskPage';
 import StudentDetailsPage from './components/Page/Student/StudentDetailsPage';
 import TaTaskPage from './components/Page/Ta/TaTaskPage';
 import TaInterviewPage from './components/Page/Ta/TaInterviewPage';
-import Admin_page from './components/Page/Admin/Admin_page';
+import AdminPage from './components/Page/Admin/AdminPage';
 import { ThemeProvider } from '@mui/material/styles';
 import 'react-toastify/dist/ReactToastify.css';
 import InstructorTaskPage from './components/Page/Instructor/InstructorTaskPage';
@@ -91,7 +91,7 @@ function App() {
                             element={<SubmitMarks />}
                         ></Route>
 
-                        <Route path="/admin" element={<Admin_page />}></Route>
+                        <Route path="/admin" element={<AdminPage />}></Route>
                         <Route path="/admin/course/:course_id/task" element={<Admin_task />} />
                         <Route path="/admin/impersonate" element={<AdminImpersonate />} />
                         <Route
