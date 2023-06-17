@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import Homecard from '../../Module/Course/Homecard';
 import { Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
 
-let AdminPage = () => {
+const AdminPage = () => {
     const [courses, setCourses] = useState({});
     const { register: register1, handleSubmit: handleSubmit1 } = useForm();
     const { register: register2, handleSubmit: handleSubmit2 } = useForm();

@@ -19,7 +19,7 @@ TabPanel.propTypes = {
 };
 
 const FlexyTabs = (props) => {
-    const { tabs } = props;
+    const { tabs, width, height } = props;
 
     const [value, setValue] = useState(0);
 
@@ -28,7 +28,7 @@ const FlexyTabs = (props) => {
     };
 
     return (
-        <Card sx={{ p: { xs: '20px', sm: '35px', lg: '35px' } }}>
+        <Card sx={{ p: { xs: '20px', sm: '35px', lg: '35px' }, width: width, height: height }}>
             <CardContent sx={{ p: 0 }}>
                 <Box sx={{ width: '100%' }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -84,6 +84,8 @@ FlexyTabs.propTypes = {
             tabSubheading: PropTypes.string.isRequired,
             tabContent: PropTypes.elementType.isRequired
         })
-    ).isRequired
+    ).isRequired,
+    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
 };
 export default FlexyTabs;
