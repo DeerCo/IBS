@@ -6,8 +6,11 @@ import {
     Box,
     Button,
     FormControlLabel,
+    InputLabel,
+    MenuItem,
     Radio,
     RadioGroup,
+    Select,
     TextField,
     Typography
 } from '@mui/material';
@@ -95,16 +98,25 @@ const AdminCourseCRUD = (props) => {
                                     field: { onChange, onBlur, value, name, ref },
                                     fieldState: { invalid, isTouched, isDirty, error }
                                 }) => (
-                                    <TextField
-                                        margin="normal"
-                                        required
-                                        fullWidth
-                                        label="Role"
-                                        value={value}
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        inputRef={ref}
-                                    />
+                                    <>
+                                        <InputLabel id="select-role">Select Role *</InputLabel>
+                                        <Select
+                                            labelId="select-role"
+                                            onChange={onChange}
+                                            value={value}
+                                            sx={{ width: 300, maxWidth: 300 }}
+                                        >
+                                            <MenuItem key="admin" value="admin">
+                                                Admin
+                                            </MenuItem>
+                                            <MenuItem key="instructor" value="instructor">
+                                                Instructor
+                                            </MenuItem>
+                                            <MenuItem key="ta" value="ta">
+                                                TA
+                                            </MenuItem>
+                                        </Select>
+                                    </>
                                 )}
                                 name="role"
                                 control={controlAdd}
