@@ -2,7 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import FlexyTabs from '../FlexyTabs/FlexyTabs';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    FormControlLabel,
+    Radio,
+    RadioGroup,
+    TextField,
+    Typography
+} from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 
 const AdminCourseCRUD = (props) => {
@@ -36,6 +44,32 @@ const AdminCourseCRUD = (props) => {
                         maxWidth={300}
                     >
                         <Box component="form" onSubmit={AddRole} noValidate sx={{ mt: 1 }}>
+                            <Controller
+                                render={({
+                                    field: { onChange, onBlur, value, name, ref },
+                                    fieldState: { invalid, isTouched, isDirty, error }
+                                }) => (
+                                    <>
+                                        <Typography variant="body1">Update User Info?</Typography>
+                                        <RadioGroup row value={value} onChange={onChange}>
+                                            <FormControlLabel
+                                                control={<Radio />}
+                                                label="True"
+                                                value={true}
+                                            />
+                                            <FormControlLabel
+                                                control={<Radio />}
+                                                label="False"
+                                                value={false}
+                                            />
+                                        </RadioGroup>
+                                    </>
+                                )}
+                                name="update_user_info"
+                                control={controlAdd}
+                                defaultValue={false}
+                                rules={{ required: true }}
+                            />
                             <Controller
                                 render={({
                                     field: { onChange, onBlur, value, name, ref },
@@ -93,27 +127,6 @@ const AdminCourseCRUD = (props) => {
                                     />
                                 )}
                                 name="email"
-                                control={controlAdd}
-                                rules={{ required: true }}
-                            />
-
-                            <Controller
-                                render={({
-                                    field: { onChange, onBlur, value, name, ref },
-                                    fieldState: { invalid, isTouched, isDirty, error }
-                                }) => (
-                                    <TextField
-                                        margin="normal"
-                                        required
-                                        fullWidth
-                                        label="Update user info"
-                                        value={value}
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        inputRef={ref}
-                                    />
-                                )}
-                                name="update_user_info"
                                 control={controlAdd}
                                 rules={{ required: true }}
                             />
