@@ -43,6 +43,7 @@ const FlexyTabs = (props) => {
                             {tabs.map((tab) => {
                                 return (
                                     <Tab
+                                        key={tab.tabName}
                                         sx={{ textTransform: 'capitalize' }}
                                         label={tab.tabName}
                                         id={tab.tabId}
@@ -53,7 +54,12 @@ const FlexyTabs = (props) => {
                     </Box>
                     {tabs.map((tab) => {
                         return (
-                            <TabPanel value={value} index={tab.tabId} component="div">
+                            <TabPanel
+                                key={`tabPanel-${tab.tabName}`}
+                                value={value}
+                                index={tab.tabId}
+                                component="div"
+                            >
                                 <Typography
                                     fontWeight="500"
                                     sx={{
@@ -66,7 +72,7 @@ const FlexyTabs = (props) => {
                                 >
                                     {tab.tabSubheading}
                                 </Typography>
-                                {tab.tabContext}
+                                {tab.tabContent}
                             </TabPanel>
                         );
                     })}
@@ -82,7 +88,7 @@ FlexyTabs.propTypes = {
             tabName: PropTypes.string.isRequired,
             tabId: PropTypes.number.isRequired,
             tabSubheading: PropTypes.string.isRequired,
-            tabContent: PropTypes.elementType.isRequired
+            tabContent: PropTypes.object.isRequired
         })
     ).isRequired,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

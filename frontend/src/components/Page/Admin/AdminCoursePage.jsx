@@ -352,7 +352,13 @@ const AdminCoursePage = () => {
             <Grid xs={12} sx={{ mt: 3 }}>
                 <Grid container justifyContent="center" direction="column" alignItems="center">
                     <Grid xs={12}>
-                        <AdminCourseCRUD />
+                        <AdminCourseCRUD
+                            onSubmitFunctions={{
+                                AddRole: addRole,
+                                UploadRoles: uploadRole,
+                                DeleteRole: deleteRole
+                            }}
+                        />
                     </Grid>
                 </Grid>
             </Grid>
