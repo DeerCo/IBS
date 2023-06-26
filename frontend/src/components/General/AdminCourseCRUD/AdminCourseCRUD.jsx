@@ -31,12 +31,14 @@ const AdminCourseCRUD = (props) => {
         handleSubmit: handleSubmitDelete,
         register: registerDelete
     } = useForm();
-    // TODO: Taking pieces from AdminCoursePage, complete the below components
-    // Form handling should be done within each components below
+
+    // Determine if current user to be added is a new user
+    const [isNewUser, setIsNewUser] = React.useState(true);
+
     const AddRoleComponent = () => {
         return (
-            <Grid container>
-                <Grid xs>
+            <Grid container columns={12}>
+                <Grid xs={6}>
                     <Box
                         sx={{
                             margin: 3,
@@ -47,6 +49,25 @@ const AdminCourseCRUD = (props) => {
                         maxWidth={300}
                     >
                         <Box component="form" onSubmit={AddRole} noValidate sx={{ mt: 1 }}>
+                            <>
+                                <Typography variant="body1">Does the user exist?</Typography>
+                                <RadioGroup
+                                    row
+                                    value={isNewUser}
+                                    onChange={(event, value) => setIsNewUser(value === 'true')}
+                                >
+                                    <FormControlLabel
+                                        control={<Radio />}
+                                        label="Yes"
+                                        value={true}
+                                    />
+                                    <FormControlLabel
+                                        control={<Radio />}
+                                        label="No"
+                                        value={false}
+                                    />
+                                </RadioGroup>
+                            </>
                             <Controller
                                 render={({
                                     field: { onChange, onBlur, value, name, ref },
@@ -126,26 +147,28 @@ const AdminCourseCRUD = (props) => {
                                 control={controlAdd}
                                 rules={{ required: true }}
                             />
-                            {/*<Controller*/}
-                            {/*    render={({*/}
-                            {/*        field: { onChange, onBlur, value, name, ref },*/}
-                            {/*        fieldState: { invalid, isTouched, isDirty, error }*/}
-                            {/*    }) => (*/}
-                            {/*        <TextField*/}
-                            {/*            margin="normal"*/}
-                            {/*            required*/}
-                            {/*            fullWidth*/}
-                            {/*            label="Email"*/}
-                            {/*            value={value}*/}
-                            {/*            onChange={onChange}*/}
-                            {/*            onBlur={onBlur}*/}
-                            {/*            inputRef={ref}*/}
-                            {/*        />*/}
-                            {/*    )}*/}
-                            {/*    name="email"*/}
-                            {/*    control={controlAdd}*/}
-                            {/*    rules={{ required: true }}*/}
-                            {/*/>*/}
+                            {!isNewUser && (
+                                <Controller
+                                    render={({
+                                        field: { onChange, onBlur, value, name, ref },
+                                        fieldState: { invalid, isTouched, isDirty, error }
+                                    }) => (
+                                        <TextField
+                                            margin="normal"
+                                            required
+                                            fullWidth
+                                            label="Email"
+                                            value={value}
+                                            onChange={onChange}
+                                            onBlur={onBlur}
+                                            inputRef={ref}
+                                        />
+                                    )}
+                                    name="email"
+                                    control={controlAdd}
+                                    rules={{ required: true }}
+                                />
+                            )}
                             <Button
                                 type="submit"
                                 fullWidth
@@ -156,6 +179,28 @@ const AdminCourseCRUD = (props) => {
                             </Button>
                         </Box>
                     </Box>
+                </Grid>
+                <Grid xs={6} sx={{ maxWidth: 500 }}>
+                    <Typography variant="body1" fontWeight={600} sx={{ mb: 1 }}>
+                        Notes:
+                    </Typography>
+                    <ul>
+                        <li>
+                            <Typography variant="body1">
+                                Adding (or assigning) a new role for a user doesn't necessarily need
+                                a user to already exist in the database. If a user doesn't exist in
+                                the database, a new user will be created and will be assigned the
+                                role. Otherwise, the intended role will be assigned to an
+                                already-existing user.
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body1" sx={{ mt: 1 }}>
+                                It is the responsibility of the new user to set their "new" password
+                                on account/user creation.
+                            </Typography>
+                        </li>
+                    </ul>
                 </Grid>
             </Grid>
         );
