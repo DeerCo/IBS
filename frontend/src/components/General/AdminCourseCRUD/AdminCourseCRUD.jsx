@@ -53,7 +53,9 @@ const AdminCourseCRUD = (props) => {
                                     fieldState: { invalid, isTouched, isDirty, error }
                                 }) => (
                                     <>
-                                        <Typography variant="body1">Update User Info?</Typography>
+                                        <Typography variant="body1">
+                                            Add existing user into this course?
+                                        </Typography>
                                         <RadioGroup row value={value} onChange={onChange}>
                                             <FormControlLabel
                                                 control={<Radio />}
@@ -99,7 +101,9 @@ const AdminCourseCRUD = (props) => {
                                     fieldState: { invalid, isTouched, isDirty, error }
                                 }) => (
                                     <>
-                                        <InputLabel id="select-role">Select Role *</InputLabel>
+                                        <InputLabel id="select-role" sx={{ mt: 1, mb: 0.5 }}>
+                                            Select Role for User *
+                                        </InputLabel>
                                         <Select
                                             labelId="select-role"
                                             onChange={onChange}
@@ -122,26 +126,26 @@ const AdminCourseCRUD = (props) => {
                                 control={controlAdd}
                                 rules={{ required: true }}
                             />
-                            <Controller
-                                render={({
-                                    field: { onChange, onBlur, value, name, ref },
-                                    fieldState: { invalid, isTouched, isDirty, error }
-                                }) => (
-                                    <TextField
-                                        margin="normal"
-                                        required
-                                        fullWidth
-                                        label="Email"
-                                        value={value}
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        inputRef={ref}
-                                    />
-                                )}
-                                name="email"
-                                control={controlAdd}
-                                rules={{ required: true }}
-                            />
+                            {/*<Controller*/}
+                            {/*    render={({*/}
+                            {/*        field: { onChange, onBlur, value, name, ref },*/}
+                            {/*        fieldState: { invalid, isTouched, isDirty, error }*/}
+                            {/*    }) => (*/}
+                            {/*        <TextField*/}
+                            {/*            margin="normal"*/}
+                            {/*            required*/}
+                            {/*            fullWidth*/}
+                            {/*            label="Email"*/}
+                            {/*            value={value}*/}
+                            {/*            onChange={onChange}*/}
+                            {/*            onBlur={onBlur}*/}
+                            {/*            inputRef={ref}*/}
+                            {/*        />*/}
+                            {/*    )}*/}
+                            {/*    name="email"*/}
+                            {/*    control={controlAdd}*/}
+                            {/*    rules={{ required: true }}*/}
+                            {/*/>*/}
                             <Button
                                 type="submit"
                                 fullWidth
@@ -171,9 +175,9 @@ const AdminCourseCRUD = (props) => {
 
     const tabs = [
         {
-            tabName: 'Add Role',
+            tabName: 'Assign Roles',
             tabId: 0,
-            tabSubheading: 'Add Roles for Course',
+            tabSubheading: 'Assign Roles for Users',
             tabContent: <AddRoleComponent />
         },
         {
