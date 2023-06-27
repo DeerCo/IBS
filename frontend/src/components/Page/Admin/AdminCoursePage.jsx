@@ -22,7 +22,13 @@ const AdminCoursePage = () => {
     const addRole = (data) => {
         AdminApi.add_role({ ...data, course_id: course_id }).then((response) => {
             console.log(response);
-            toast(response.data.message);
+            if (response.status === 200)
+                toast.success('The role has been assigned and/or user has been created', {
+                    theme: 'colored'
+                });
+            else {
+                toast.error(response.data.message, { theme: 'colored' });
+            }
         });
     };
 
@@ -36,7 +42,12 @@ const AdminCoursePage = () => {
     const deleteRole = (data) => {
         AdminApi.delete_role({ ...data, course_id: course_id }).then((response) => {
             console.log(response);
-            toast(response.data.message);
+            const numRolesRemoved = response.data.count;
+            if (numRolesRemoved > 0) {
+                toast.success(`${numRolesRemoved} roles deleted`, { theme: 'colored' });
+            } else {
+                toast.error('No roles have been deleted', { theme: 'colored' });
+            }
         });
     };
 

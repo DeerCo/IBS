@@ -15,25 +15,52 @@ import {
     Typography
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
+import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
+import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 
 const AdminCourseCRUD = (props) => {
     const { onSubmitFunctions } = props;
     const { AddRole, UploadRoles, DeleteRole } = onSubmitFunctions;
 
-    const { control: controlAdd, handleSubmit: handleSubmitAdd, register: registerAdd } = useForm();
+    const {
+        control: controlAdd,
+        handleSubmit: handleSubmitAdd,
+        register: registerAdd,
+        formState: formStateAdd
+    } = useForm();
     const {
         control: controlUploads,
         handleSubmit: handleSubmitUploads,
-        register: registerUploads
+        register: registerUploads,
+        formState: formStateUploads
     } = useForm();
     const {
         control: controlDelete,
         handleSubmit: handleSubmitDelete,
-        register: registerDelete
+        register: registerDelete,
+        formState: formStateDelete
     } = useForm();
 
     // Determine if current user to be added is a new user
     const [isNewUser, setIsNewUser] = React.useState(true);
+
+    const [deleteAllUsers, setDeleteAllUsers] = React.useState(false);
+
+    React.useEffect(() => {
+        if (
+            Object.keys(formStateAdd.errors).length > 0 ||
+            Object.keys(formStateUploads.errors).length > 0 ||
+            Object.keys(formStateDelete.errors).length > 0
+        ) {
+            console.log('[-] Form State (Add):');
+            console.log(formStateAdd.errors);
+            console.log('[-] Form State (Uploads):');
+            console.log(formStateUploads.errors);
+            console.log('[-] Form State (Delete): ');
+            console.log(formStateDelete.errors);
+        }
+    }, [formStateAdd, formStateUploads, formStateDelete]);
 
     const AddRoleComponent = () => {
         return (
@@ -48,7 +75,12 @@ const AdminCourseCRUD = (props) => {
                         }}
                         maxWidth={300}
                     >
-                        <Box component="form" onSubmit={AddRole} noValidate sx={{ mt: 1 }}>
+                        <Box
+                            component="form"
+                            onSubmit={handleSubmitAdd(AddRole)}
+                            noValidate
+                            sx={{ mt: 1 }}
+                        >
                             <>
                                 <Typography variant="body1">Does the user exist?</Typography>
                                 <RadioGroup
@@ -93,27 +125,36 @@ const AdminCourseCRUD = (props) => {
                                 )}
                                 name="update_user_info"
                                 control={controlAdd}
-                                defaultValue={false}
-                                rules={{ required: true }}
+                                defaultValue="false"
+                                rules={{ required: false }}
                             />
                             <Controller
                                 render={({
                                     field: { onChange, onBlur, value, name, ref },
                                     fieldState: { invalid, isTouched, isDirty, error }
                                 }) => (
-                                    <TextField
-                                        margin="normal"
-                                        required
-                                        fullWidth
-                                        label="Username"
-                                        value={value}
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        inputRef={ref}
-                                    />
+                                    <>
+                                        <CustomFormLabel htmlFor="username-add-role" sx={{ mb: 0 }}>
+                                            Username *
+                                        </CustomFormLabel>
+                                        <CustomTextField
+                                            margin="normal"
+                                            required
+                                            fullWidth
+                                            variant="outlined"
+                                            size="medium"
+                                            id="username-add-role"
+                                            value={value}
+                                            onChange={onChange}
+                                            onBlur={onBlur}
+                                            inputRef={ref}
+                                            sx={{ mt: 1 }}
+                                        />
+                                    </>
                                 )}
                                 name="username"
                                 control={controlAdd}
+                                defaultValue=""
                                 rules={{ required: true }}
                             />
                             <Controller
@@ -122,29 +163,32 @@ const AdminCourseCRUD = (props) => {
                                     fieldState: { invalid, isTouched, isDirty, error }
                                 }) => (
                                     <>
-                                        <InputLabel id="select-role" sx={{ mt: 1, mb: 0.5 }}>
+                                        <CustomFormLabel id="select-role" sx={{ mt: 1, mb: 0 }}>
                                             Select Role for User *
-                                        </InputLabel>
-                                        <Select
+                                        </CustomFormLabel>
+                                        <CustomSelect
                                             labelId="select-role"
                                             onChange={onChange}
                                             value={value}
-                                            sx={{ width: 300, maxWidth: 300 }}
+                                            size="medium"
+                                            variant="outlined"
+                                            sx={{ width: 300, maxWidth: 300, mt: 1 }}
                                         >
-                                            <MenuItem key="admin" value="admin">
-                                                Admin
-                                            </MenuItem>
                                             <MenuItem key="instructor" value="instructor">
                                                 Instructor
                                             </MenuItem>
                                             <MenuItem key="ta" value="ta">
                                                 TA
                                             </MenuItem>
-                                        </Select>
+                                            <MenuItem key="student" value="student">
+                                                Student
+                                            </MenuItem>
+                                        </CustomSelect>
                                     </>
                                 )}
                                 name="role"
                                 control={controlAdd}
+                                defaultValue=""
                                 rules={{ required: true }}
                             />
                             {!isNewUser && (
@@ -153,19 +197,32 @@ const AdminCourseCRUD = (props) => {
                                         field: { onChange, onBlur, value, name, ref },
                                         fieldState: { invalid, isTouched, isDirty, error }
                                     }) => (
-                                        <TextField
-                                            margin="normal"
-                                            required
-                                            fullWidth
-                                            label="Email"
-                                            value={value}
-                                            onChange={onChange}
-                                            onBlur={onBlur}
-                                            inputRef={ref}
-                                        />
+                                        <>
+                                            <CustomFormLabel
+                                                htmlFor="add-role-email"
+                                                sx={{ mb: 0 }}
+                                            >
+                                                Email *
+                                            </CustomFormLabel>
+                                            <CustomTextField
+                                                margin="normal"
+                                                id="add-role-email"
+                                                required
+                                                fullWidth
+                                                value={value}
+                                                type="email"
+                                                variant="outlined"
+                                                size="medium"
+                                                onChange={onChange}
+                                                onBlur={onBlur}
+                                                inputRef={ref}
+                                                sx={{ mt: 1 }}
+                                            />
+                                        </>
                                     )}
                                     name="email"
                                     control={controlAdd}
+                                    defaultValue=""
                                     rules={{ required: true }}
                                 />
                             )}
@@ -206,16 +263,131 @@ const AdminCourseCRUD = (props) => {
         );
     };
 
-    const UpdateRoleComponent = () => {
-        return <></>;
-    };
-
     const UploadRolesComponent = () => {
         return <></>;
     };
 
     const DeleteRoleComponent = () => {
-        return <></>;
+        return (
+            <Grid container columns={12}>
+                <Grid xs={6}>
+                    <Box
+                        sx={{
+                            margin: 3,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center'
+                        }}
+                        maxWidth={300}
+                    >
+                        <Box
+                            component="form"
+                            onSubmit={handleSubmitDelete(DeleteRole)}
+                            noValidate
+                            sx={{ mt: 1 }}
+                        >
+                            <Controller
+                                render={({
+                                    field: { onChange, onBlur, value, name, ref },
+                                    fieldState: { invalid, isTouched, isDirty, error }
+                                }) => (
+                                    <>
+                                        <Typography variant="body1">
+                                            Do you want to delete all users' roles?
+                                        </Typography>
+                                        <RadioGroup
+                                            row
+                                            value={value}
+                                            onChange={(event, value) => {
+                                                onChange(event, value);
+                                                setDeleteAllUsers(value === 'true');
+                                            }}
+                                        >
+                                            <FormControlLabel
+                                                control={<Radio />}
+                                                label="Yes"
+                                                value={true}
+                                            />
+                                            <FormControlLabel
+                                                control={<Radio />}
+                                                label="No"
+                                                value={false}
+                                            />
+                                        </RadioGroup>
+                                    </>
+                                )}
+                                name="delete_all"
+                                control={controlDelete}
+                                defaultValue={false}
+                                rules={{ required: true }}
+                            />
+                            {!deleteAllUsers && (
+                                <Controller
+                                    render={({
+                                        field: { onChange, onBlur, value, name, ref },
+                                        fieldState: { invalid, isTouched, isDirty, error }
+                                    }) => (
+                                        <>
+                                            <CustomFormLabel
+                                                htmlFor="username-delete-role"
+                                                sx={{ mb: 0 }}
+                                            >
+                                                Username *
+                                            </CustomFormLabel>
+                                            <CustomTextField
+                                                id="username-delete-role"
+                                                margin="normal"
+                                                variant="outlined"
+                                                size="medium"
+                                                required
+                                                fullWidth
+                                                value={value}
+                                                onChange={onChange}
+                                                onBlur={onBlur}
+                                                inputRef={ref}
+                                                sx={{ mt: 1 }}
+                                            />
+                                        </>
+                                    )}
+                                    name="username"
+                                    control={controlDelete}
+                                    defaultValue=""
+                                    rules={{ required: true }}
+                                />
+                            )}
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="error"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Remove Role
+                            </Button>
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid xs={6} sx={{ maxWidth: 500 }}>
+                    <Typography variant="body1" fontWeight={600} sx={{ mb: 1 }}>
+                        Notes:
+                    </Typography>
+                    <ul>
+                        <li>
+                            <Typography variant="body1">
+                                Enter the username of the user you wish for the role to be deleted
+                                from.
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body1">
+                                Deleting all users' roles will delete every role assigned to each
+                                user in the database.
+                            </Typography>
+                        </li>
+                    </ul>
+                </Grid>
+            </Grid>
+        );
     };
 
     const tabs = [
@@ -226,20 +398,14 @@ const AdminCourseCRUD = (props) => {
             tabContent: <AddRoleComponent />
         },
         {
-            tabName: 'Update/Change Role',
-            tabId: 1,
-            tabSubheading: 'Update/Modify Roles from Course',
-            tabContent: <UpdateRoleComponent />
-        },
-        {
             tabName: 'Upload Roles',
-            tabId: 2,
+            tabId: 1,
             tabSubheading: 'Upload Roles from File',
             tabContent: <UploadRolesComponent />
         },
         {
             tabName: 'Delete Role',
-            tabId: 3,
+            tabId: 2,
             tabSubheading: 'Remove Roles from Course',
             tabContent: <DeleteRoleComponent />
         }
