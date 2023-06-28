@@ -174,9 +174,148 @@ const getCourseContent = async (courseId) => {
     }
 };
 
+/**
+ * GET All task group (Instructors + Admins)
+ * @param courseId string
+ * @returns {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+let getAllTaskGroups = async (courseId) => {
+    const token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/task_group/all`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/task_group/all`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
+    try {
+        return await axios.get(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
+/**
+ * POST Add task group (Instructors + Admins)
+ * @param courseId string
+ * @param maxTokens number
+ * @returns {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+let addTaskGroup = async (courseId, maxTokens) => {
+    const token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/task_group/add`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/task_group/add`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
+    try {
+        return await axios.post(url, { max_token: maxTokens }, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
+/**
+ * PUT Change task group (Instructors + Admins)
+ * @param courseId string
+ * @param taskGroupId string
+ * @param newMaxTokens number
+ * @returns {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+let changeTaskGroup = async (courseId, taskGroupId, newMaxTokens) => {
+    const token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/task_group/change`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/task_group/change`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
+    try {
+        return await axios.put(
+            url,
+            { task_group_id: taskGroupId, max_token: newMaxTokens },
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
+};
+
+/**
+ * DELETE Delete task group (Instructors + Admins)
+ * @param courseId string
+ * @param taskGroupId string
+ * @returns {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+let deleteTaskGroup = async (courseId, taskGroupId) => {
+    const token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { task_group_id: taskGroupId }
+    };
+
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/${courseId}/task_group/delete`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/task_group/delete`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
+    try {
+        return await axios.delete(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+  
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
+
+    getAllTaskGroups,
+    addTaskGroup,
+    changeTaskGroup,
+    deleteTaskGroup,
+
     getCriteriaForTask,
     all_tasks,
     getCourseContent

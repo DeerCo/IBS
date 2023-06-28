@@ -127,19 +127,67 @@ let submitMark = async (courseId, task, criteria, username, mark) => {
 // 	}
 // };
 
+let allTasks = async (course_id) => {
+	let token = sessionStorage.getItem("token");
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/task/all", config);
+	} catch (err) {
+		return err.response;
+	}
+};
+
+let allGroups = async (course_id, task) => {
+	let token = sessionStorage.getItem("token")
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/group/all?task=" + task, config);
+	} catch (err) {
+		return err.response;
+	}
+}
+
+let taskGroups = async (course_id, task) => {
+	/**
+	 * Gets all groups for a particular task within a course.
+	 */
+	let token = sessionStorage.getItem("token");
+
+	let config = {
+		headers: { Authorization: `Bearer ${token}` }
+	};
+
+	try {
+		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/group/all?task=" + task, config);
+	} catch (err) {
+		return err.response;
+	}
+}
+
+
 let InstructorApi = {
-    // Task related
-    all_tasks,
-    impersonate,
-    submitMark
-    //
-    // // Group related
-    // check_group,
-    //
-    // // Interview related
-    // all_interviews,
-    // schedule_interview,
-    // delete_interview,
+	//Course related
+	allTasks,
+	// Task related
+	impersonate,
+	taskGroups,
+  //
+	// // Group related
+	// check_group,
+	allGroups,
+  //
+	// // Interview related
+	// all_interviews,
+	// schedule_interview,
+	// delete_interview,
 };
 
 export default InstructorApi;
