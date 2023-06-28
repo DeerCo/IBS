@@ -19,6 +19,9 @@ import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/Cus
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 
+// Globally change maxWidth for each tab-list component
+const MAX_WIDTH = 300;
+
 const AdminCourseCRUD = (props) => {
     const { onSubmitFunctions } = props;
     const { AddRole, UploadRoles, DeleteRole } = onSubmitFunctions;
@@ -33,7 +36,8 @@ const AdminCourseCRUD = (props) => {
         control: controlUploads,
         handleSubmit: handleSubmitUploads,
         register: registerUploads,
-        formState: formStateUploads
+        formState: formStateUploads,
+        watch: watchUploads
     } = useForm();
     const {
         control: controlDelete,
@@ -45,7 +49,17 @@ const AdminCourseCRUD = (props) => {
     // Determine if current user to be added is a new user
     const [isNewUser, setIsNewUser] = React.useState(true);
 
+    // Determine whether to delete all users from DB
     const [deleteAllUsers, setDeleteAllUsers] = React.useState(false);
+
+    // For updating filename on uploading file
+    const [filename, setFilename] = React.useState('');
+
+    // Watch for filename within 'file' property
+    const selectedFile = watchUploads('file', '');
+    React.useEffect(() => {
+        if (selectedFile.length > 0) setFilename(selectedFile[0].name);
+    }, [selectedFile]);
 
     React.useEffect(() => {
         if (
@@ -73,7 +87,7 @@ const AdminCourseCRUD = (props) => {
                             flexDirection: 'column',
                             alignItems: 'center'
                         }}
-                        maxWidth={300}
+                        maxWidth={MAX_WIDTH}
                     >
                         <Box
                             component="form"
@@ -264,7 +278,144 @@ const AdminCourseCRUD = (props) => {
     };
 
     const UploadRolesComponent = () => {
-        return <></>;
+        return (
+            <Grid container columns={12}>
+                <Grid xs={6}>
+                    <Box
+                        sx={{
+                            margin: 3,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center'
+                        }}
+                        maxWidth={MAX_WIDTH + 100}
+                    >
+                        <Box
+                            component="form"
+                            onSubmit={handleSubmitUploads(UploadRoles)}
+                            noValidate
+                            sx={{ mt: 1 }}
+                        >
+                            <Typography variant="body1" sx={{ mb: 1.5 }}>
+                                Acceptable File Extensions: <strong>*.csv</strong>
+                                <br />
+                                Refer to the "Notes" section for the format of file.
+                            </Typography>
+                            <Box display="flex" alignItems="center" gap={4}>
+                                <Button variant="contained" component="label" sx={{ mb: 3 }}>
+                                    Upload File
+                                    <input
+                                        hidden
+                                        multiple={false}
+                                        type="file"
+                                        accept=".csv"
+                                        {...registerUploads('file')}
+                                    />
+                                </Button>
+                                <Typography variant="body1" sx={{ mb: 3 }}>
+                                    File Uploaded: {filename}
+                                </Typography>
+                            </Box>
+                            <Controller
+                                render={({
+                                    field: { onChange, onBlur, value, name, ref },
+                                    fieldState: { invalid, isTouched, isDirty, error }
+                                }) => (
+                                    <>
+                                        <CustomFormLabel id="select-role" sx={{ mt: 1, mb: 0 }}>
+                                            Select Role for Users in File *
+                                        </CustomFormLabel>
+                                        <CustomSelect
+                                            labelId="select-role"
+                                            onChange={onChange}
+                                            value={value}
+                                            size="medium"
+                                            variant="outlined"
+                                            sx={{
+                                                width: MAX_WIDTH + 100,
+                                                maxWidth: MAX_WIDTH + 100,
+                                                mt: 1
+                                            }}
+                                        >
+                                            <MenuItem key="instructor" value="instructor">
+                                                Instructor
+                                            </MenuItem>
+                                            <MenuItem key="ta" value="ta">
+                                                TA
+                                            </MenuItem>
+                                            <MenuItem key="student" value="student">
+                                                Student
+                                            </MenuItem>
+                                        </CustomSelect>
+                                    </>
+                                )}
+                                name="role"
+                                control={controlUploads}
+                                defaultValue=""
+                                rules={{ required: true }}
+                            />
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Submit
+                            </Button>
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid xs={6} sx={{ maxWidth: 500 }}>
+                    <Typography variant="body1" fontWeight={600} sx={{ mb: 1 }}>
+                        Notes:
+                    </Typography>
+                    <ul>
+                        <li>
+                            <Typography variant="body1">
+                                <u>Precondition</u>:
+                                <br />
+                                Users in the file need to already exist in the database.
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body1">
+                                The format of the csv file being uploaded should be as follows:
+                                <br />
+                                <code>
+                                    username,email
+                                    <br />
+                                    user1,user1@example.com
+                                    <br />
+                                    user2,user2@example.com
+                                    <br />
+                                    ...
+                                </code>
+                                <br />
+                                Note that the email field may be left blank and is optional. i.e.
+                                the csv file format can be
+                                <br />
+                                <code>
+                                    username,email
+                                    <br />
+                                    user1,user1@example.com
+                                    <br />
+                                    user2,
+                                    <br />
+                                    user3,user3@example.com
+                                    <br />
+                                    ...
+                                </code>
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body1">
+                                There is no requirement on the name of the file.
+                            </Typography>
+                        </li>
+                    </ul>
+                </Grid>
+            </Grid>
+        );
     };
 
     const DeleteRoleComponent = () => {
@@ -278,7 +429,7 @@ const AdminCourseCRUD = (props) => {
                             flexDirection: 'column',
                             alignItems: 'center'
                         }}
-                        maxWidth={300}
+                        maxWidth={MAX_WIDTH}
                     >
                         <Box
                             component="form"

@@ -33,9 +33,26 @@ const AdminCoursePage = () => {
     };
 
     const uploadRole = (data) => {
-        AdminApi.add_role({ ...data, course_id: course_id }).then((response) => {
+        // Create FormData object to send to endpoint
+        const formData = new FormData();
+        if (data['file'][0] !== undefined) {
+            formData.append('file', data['file'][0]);
+        }
+        if (data['role'] !== undefined) {
+            formData.append('role', data['role']);
+        }
+        formData.append('course_id', course_id);
+        formData.append('update_user_info', false);
+
+        AdminApi.upload_role(formData).then((response) => {
             console.log(response);
-            toast(response.data.message);
+            if (response.status === 200)
+                toast.success('The users in file have been assigned the specified role', {
+                    theme: 'colored'
+                });
+            else {
+                toast.error(response.data.message, { theme: 'colored' });
+            }
         });
     };
 
