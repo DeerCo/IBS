@@ -372,6 +372,13 @@ const AdminCourseCRUD = (props) => {
                     <ul>
                         <li>
                             <Typography variant="body1">
+                                <u>Precondition</u>:
+                                <br />
+                                Users in the file need to already exist in the database.
+                            </Typography>
+                        </li>
+                        <li>
+                            <Typography variant="body1">
                                 The format of the csv file being uploaded should be as follows:
                                 <br />
                                 <code>

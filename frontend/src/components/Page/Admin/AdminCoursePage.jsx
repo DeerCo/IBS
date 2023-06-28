@@ -36,8 +36,8 @@ const AdminCoursePage = () => {
         // Create FormData object to send to endpoint
         console.log(data);
         const formData = new FormData();
-        if (data['file'] !== undefined) {
-            formData.append('file', data['file']);
+        if (data['file'][0] !== undefined) {
+            formData.append('file', data['file'][0]);
         }
         if (data['role'] !== undefined) {
             formData.append('role', data['role']);
