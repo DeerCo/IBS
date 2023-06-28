@@ -144,6 +144,37 @@ let getAllMarks = async (courseId) => {
 };
 
 /**
+ * Get current course's details for Admins and Instructors' use only.
+ * @param courseId string
+ * @returns {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+const getCourseContent = async (courseId) => {
+    let token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    let url = '';
+    if (role === 'admin') {
+        url = `${process.env.REACT_APP_API_URL}/admin/course/get?course_id=${courseId}`;
+    } else if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/get`;
+    } else {
+        // insufficient access
+        return null;
+    }
+
+    try {
+        return await axios.get(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
+/**
  * GET All task group (Instructors + Admins)
  * @param courseId string
  * @returns {Promise<axios.AxiosResponse<any>|*|null>}
@@ -275,7 +306,7 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
         return err.response;
     }
 };
-
+  
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -286,7 +317,8 @@ const StaffApi = {
     deleteTaskGroup,
 
     getCriteriaForTask,
-    all_tasks
+    all_tasks,
+    getCourseContent
 };
 
 export default StaffApi;

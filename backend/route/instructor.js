@@ -45,6 +45,7 @@ const manual_collect_submission = require("../module/submission/staff/collect_ma
 const download_submissions = require("../module/submission/staff/download");
 const check_submission = require("../module/submission/staff/check");
 const impersonate = require("../module/impersonate/instructor/impersonate");
+const get_course = require("../module/course/instructor/get");
 
 router.use("/", function (req, res, next) {
   next();
@@ -52,6 +53,9 @@ router.use("/", function (req, res, next) {
 
 // Middleware
 router.use("/course/", middleware);
+
+// Course Content
+router.use("/course/:course_id/get", get_course);
 
 // Role
 router.use("/course/:course_id/role/get", get_role);

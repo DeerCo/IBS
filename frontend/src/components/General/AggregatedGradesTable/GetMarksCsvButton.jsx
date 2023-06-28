@@ -60,7 +60,7 @@ const getMarksCsvButton = ({ courseId }) => {
     };
 
     return (
-        <Button onClick={handleClick} startIcon={<GetAppIcon />}>
+        <Button sx={{ mt: 2, ml: 2 }} onClick={handleClick} startIcon={<GetAppIcon />}>
             Download as CSV
         </Button>
     );

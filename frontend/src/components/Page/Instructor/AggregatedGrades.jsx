@@ -68,10 +68,29 @@ const AggregatedGrades = (props) => {
     ]);
 
     const { courseId } = useParams();
+    const [courseName, setCourseName] = useState('');
 
     const { data, isLoading, error } = useSWR('/mark/all', () =>
         StaffApi.getAllMarks(courseId).then((res) => res.data)
     );
+
+    const calculateFinalGrade = (tasks) => {
+        let finalGrade = 0;
+        for (const taskName in tasks) {
+            const taskData = tasks[taskName];
+            const weight = taskData['weight'];
+            const taskScore = (taskData.mark / taskData.out_of) * weight;
+            finalGrade += taskScore;
+        }
+        return finalGrade;
+    };
+
+    useEffect(() => {
+        StaffApi.getCourseContent(courseId).then((res) => {
+            if (role === 'admin') setCourseName(res.data.course[0]['course_code']);
+            else setCourseName(res.data.course['course_code']);
+        });
+    }, [courseId]);
 
     useEffect(() => {
         if (isLoading || error) return;
@@ -84,7 +103,8 @@ const AggregatedGrades = (props) => {
         //     "student1": {
         //         "task1": {
         //             "mark": 12,
-        //             "out_of": 57
+        //             "out_of": 57,
+        //             "weight": 81
         //         }
         //     }
         //     }
@@ -92,13 +112,17 @@ const AggregatedGrades = (props) => {
         const studentsArr = data.marks;
         // console.log(studentsArr);
         for (const student in studentsArr) {
+            let finalGrade = calculateFinalGrade(data.marks[student]);
+
             for (const taskName in data.marks[student]) {
                 setHeadCells((prevState) => {
+                    const taskDataObj = data.marks[student][taskName];
+                    const weight = taskDataObj['weight'];
                     const newState = {
                         id: taskName,
                         numeric: false,
                         disablePadding: false,
-                        label: taskName
+                        label: `${taskName} (${weight}%)`
                     };
                     for (const col of prevState) {
                         if (col.id === taskName) {
@@ -126,8 +150,29 @@ const AggregatedGrades = (props) => {
                     idCounter++;
                     return [...prevState, newRow];
                 });
+            } // taskName iteration end
+
+            // Add final grade for current student to rows state.
+            setRows((prevState) => {
+                return prevState.map((row) => {
+                    if (row.student === student) {
+                        return { ...row, finalGrade: finalGrade.toFixed(2) + '%' };
+                    }
+                    return row;
+                });
+            });
+        } // student iteration end
+
+        // Add final grades column only once
+        setHeadCells((prevState) => [
+            ...prevState,
+            {
+                id: 'finalGrade',
+                numeric: false,
+                disablePadding: false,
+                label: 'Current Grade'
             }
-        }
+        ]);
     }, [courseId, navigate, data, isLoading, error]);
 
     const viewersRole = findRoleInCourse(courseId);
@@ -150,7 +195,7 @@ const AggregatedGrades = (props) => {
                             fontWeight="600"
                             sx={{ ml: 3 }}
                         >
-                            All Grades for Course ID: {courseId}
+                            All Grades of {courseName}
                         </Typography>
                     </Grid>
                     <Grid container columnSpacing={2}>
