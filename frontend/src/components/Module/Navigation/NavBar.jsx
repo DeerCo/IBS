@@ -186,12 +186,20 @@ let NavBar = (props) => {
                             </Button>
                             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
                                 {role === 'admin' && (
-                                    <MenuItem
-                                        component={Link}
-                                        to={(role ? '/' + role : '') + '/impersonate/'}
-                                    >
-                                        Student View
-                                    </MenuItem>
+                                    <>
+                                        <MenuItem
+                                            component={Link}
+                                            to={`${role ? `/${role}` : ''}/`}
+                                        >
+                                            Admin Panel
+                                        </MenuItem>
+                                        <MenuItem
+                                            component={Link}
+                                            to={(role ? '/' + role : '') + '/impersonate/'}
+                                        >
+                                            Student View
+                                        </MenuItem>
+                                    </>
                                 )}
                                 {role === 'instructor' && (
                                     <MenuItem
