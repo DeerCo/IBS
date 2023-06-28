@@ -1,135 +1,141 @@
-import {Button, Typography} from "@mui/material";
+import React, { useState } from "react";
 import Countdown from "react-countdown";
-import React from "react";
-import {makeStyles} from "@mui/styles";
-import Accordion from "../../General/Accordion";
-import {Link} from "react-router-dom"
+import { makeStyles } from "@mui/styles";
+import { Link } from "react-router-dom";
+import { Button, Typography, Grid, Menu, MenuItem } from '@mui/material';
+import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
+
 
 const useStyles = makeStyles({
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    margin: '16px',
-    padding: '16px',
-  },
-  card: {
-    display: 'flex',
-    boxShadow: '0px 2px 10px 1px #e6e9ed',
-    flexDirection: 'column',
-    margin: '32px',
-    borderRadius: '15px 15px 15px 15px',
-    padding: '12px 8px 12px 8px'
-  },
-  cardHeader: {
-    borderBottom: 'solid ghostwhite',
-    paddingBottom: '8px',
-  },
-  cardSubtitle: {
-    margin: '12px',
-    color: 'green',
-  },
+
   buttonGroup: {
     display: 'flex',
-    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    margin: '16px 0 16px 0',
   },
-  button: {
-    color: '#202126',
-    borderRadius: '8px 8px 8px 8px',
-    padding: '4px 8px 4px 8px',
-    border: 'solid 1px #adcadd99',
-    boxShadow: 'inset 5px 5px 10px 0px #adcadd17',
-    fontSize: 'small',
-    width: '100px'
+  menu: {
+    padding: '16px',
+    borderRadius: '20px',
   },
-  meeting: {
+  mitem: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '8px 0 0 8px',
-    marginTop: '8px',
-    borderTop: 'solid ghostwhite',
+    padding: '8px 16px',
+  },
+  meeting: {
+    marginRight: '16px'
   }
+
 });
-const Taskcard = ({data, course_id, role}) => {
+
+const Taskcard = ({ data, course_id, role }) => {
+
   const classes = useStyles();
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
   return (
-    <div className={classes.card} key={data.task}>
-      <div>
-        <div className={classes.cardHeader}>
-          <Typography variant="h5">
-            {data.task}
-          </Typography>
-        </div>
-        {data.interview_group === null &&
-          <div className={classes.cardSubtitle}>
-            <Countdown date={data.due_date} renderer={({days, hours, minutes, completed}) => {
-              if (completed) {
-                return <Typography color='#a71111fc '>
-                  Due Date Past
-                </Typography>;
-              } else {
-                return `${days} Days and ${hours} Hours and ${minutes} Minutes Left`;
-              }
-            }}/>
-          </div>
-        }
-        <div className={classes.buttonGroup}>
+    <Grid item sx='10' sm='9' md='6' lg='4' xl='2'>
+      <DashboardCard key={data.task} title={data.task}
+        customheaderpadding='12px 12px 0 12px'
+        custompadding='16px'
+        children={
           <div>
-            {data.interview_group === null &&
-              <Button component={Link} to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/details"}>
-                <div className={classes.button}>
-                  Details
-                </div>
+            <div>
+              <Countdown
+                date={data.due_date}
+                renderer={({ days, hours, minutes, completed }) => {
+                  if (completed) {
+                    return <Typography color='error'>
+                      Due Date Past
+                    </Typography>;
+                  } else {
+                    return <Typography color='#00c292'>
+                      {days} Days and {hours} Hours and {minutes} Minutes Left
+                    </Typography>;
+                  }
+                }} />
+            </div>
+
+            <div className={classes.buttonGroup}>
+              <Button
+                href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/details"}
+                variant="outlined"
+                size="small">
+                Details
               </Button>
-            }
-            {data.interview_group === null &&
-              <Button component={Link} to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/mark"}>
-                <div className={classes.button}>
-                  Mark
-                </div>
+              <Button
+                href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/mark"}
+                variant="outlined"
+                size="small">
+                Mark
               </Button>
-            }
-            {data.interview_group === null &&
-              <Button component={Link} to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/file"}>
-                <div className={classes.button}>
-                  Feedback
-                </div>
+              <Button
+                href={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/file"}
+                variant="outlined"
+                size="small">
+                Feedback
               </Button>
-            }
-          </div>
-          <Accordion title='Mentor Sessions and Final Interview'
-                     content={
-                       <div>
-                         {data.hide_interview === false &&
-                           <div className={classes.meeting}>
-                             <Typography variant="subtitle1"> Final Interview </Typography>
-                             <Button component={Link}
-                                     to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}>
-                               <div className={classes.button}>
-                                 {(role === "instructor" ? "Manage" : "Book")}
-                               </div>
-                             </Button>
-                           </div>
-                         }
-                         {data.subtasks.map((subtask, index) => (
-                           <div className={classes.meeting} key={index}>
-                             <Typography variant="subtitle1"> Mentor Session </Typography>
-                             <Button component={Link}
-                                     to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}>
-                               <div className={classes.button}>
-                                 {(role === "instructor" ? "Manage" : "Book")}
-                               </div>
-                             </Button>
-                           </div>
-                         ))}
-                       </div>
-                     }/>
-        </div>
-      </div>
-    </div>
+              <Button
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+                variant="outlined"
+                size="small">
+                Interviews
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                PopoverClasses={classes.menu}
+                className={classes.menu}
+                sx={{
+                  padding: '16px',
+                  borderRadius: '20px'
+                }}
+              >
+                {data.hide_interview === false &&
+                  <MenuItem className={classes.mitem}>
+                    <Typography variant="subtitle1" className={classes.meeting}> Final Interview </Typography>
+                    <Button component={Link}
+                      to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}
+                      variant="contained"
+                      size="small">
+                      {(role === "instructor" ? "Manage" : "Book")}
+                    </Button>
+                  </MenuItem>
+                }
+                {data.subtasks.map((subtask, index) => (
+                  <MenuItem className={classes.mitem} key={index}>
+                    <Typography variant="subtitle1" className={classes.meeting}> Mentor Session </Typography>
+                    <Button component={Link}
+                      to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}
+                      variant="outlined"
+                      size="small">
+                      {(role === "instructor" ? "Manage" : "Book")}
+                    </Button>
+                  </MenuItem>
+                ))}
+              </Menu>
+
+
+
+            </div>
+
+          </div>}
+      />
+    </Grid>
+
   );
 }
 
