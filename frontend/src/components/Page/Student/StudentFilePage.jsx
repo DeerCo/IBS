@@ -3,131 +3,112 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import StudentApi from "../../../api/student_api";
 import NavBar from "../../Module/Navigation/NavBar";
-import '../../../styles/style.css';
+import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
+import { Table, TableBody, TableCell, TableRow, TableHead, Typography, IconButton, Button } from '@mui/material';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
 
 let StudentFilePage = () => {
-	let navigate = useNavigate();
+  let navigate = useNavigate();
+  let { course_id, task } = useParams();
+  let [files, setFiles] = useState([]);
 
-	let { course_id, task } = useParams();
+  useEffect(() => {
+    StudentApi.all_files(course_id, task).then(
+      (response) => {
+        if (!response || !("status" in response)) {
+          toast.error("Unknown error", { theme: "colored" });
+          navigate("/login");
+        } else if (response["status"] === 200) {
+          setFiles(response["data"]["files"]);
+        } else if (response["status"] === 401 || response["status"] === 403) {
+          toast.warn("You need to login again", { theme: "colored" });
+          navigate("/login");
+        } else {
+          toast.error("Unknown error", { theme: "colored" });
+          navigate("/login");
+        }
+      })
+  }, [course_id, task, navigate]);
 
-	let [files, setFiles] = useState([]);
-	let [checkboxes, setCheckboxes] = useState([]);
+  let download = (file_id, file_name) => {
+    StudentApi.download_file(course_id, task, file_id, file_name).then(
+      (response) => {
+        if (!response || !("status" in response)) {
+          toast.error("Unknown error", { theme: "colored" });
+          navigate("/login");
+        } else if (response["status"] === 200) {
+          toast.info("Your download should start shortly", { theme: "colored" });
+        } else {
+          toast.warn("The selected file cannot be downloaded", { theme: "colored" });
+        }
+      }
+    );
+  };
 
-	useEffect(() => {
-		StudentApi.all_files(course_id, task).then(
-			(response) => {
-				if (!response || !("status" in response)) {
-					toast.error("Unknown error", { theme: "colored" });
-					navigate("/login");
-				} else if (response["status"] === 200) {
-					setFiles(response["data"]["files"]);
-				} else if (response["status"] === 401 || response["status"] === 403) {
-					toast.warn("You need to login again", { theme: "colored" });
-					navigate("/login");
-				} else {
-					toast.error("Unknown error", { theme: "colored" });
-					navigate("/login");
-				}
-			})
-	}, [course_id, task, navigate]);
+  let download_all = () => {
+    for (let file of files) {
+      download(file.file_id, file.file_name.substring(file.file_name.lastIndexOf('/') + 1));
+    }
+  }
 
-	let download = (file_id, file_name) => {
-		StudentApi.download_file(course_id, task, file_id, file_name).then(
-			(response) => {
-				if (!response || !("status" in response)) {
-					toast.error("Unknown error", { theme: "colored" });
-					navigate("/login");
-				} else if (response["status"] === 200) {
-					toast.info("Your download should start shortly", { theme: "colored" });
-				} else {
-					toast.warn("The selected file cannot be downloaded", { theme: "colored" });
-				}
-			}
-		);
-	};
 
-	// download all of the selected files
-	let download_all = () => {
-		if (checkboxes.length === 0){
-			toast.warn("You need to select at least 1 file", { theme: "colored" });
-		}
-		for (let checkbox of checkboxes){
-			download(checkbox.file_id, checkbox.file_name);
-		}
-	}
+  return (
 
-	// handle click
-	let handleClick = (file_id, file_name) => {
-		let last_slash = file_name.lastIndexOf('/');
-		file_name = file_name.substring(last_slash + 1);
+    <PageContainer
+      title={`${task} feedback`}
+      description={`Contains the feedback files for the task '${task}'`}
+    >
+      <NavBar page="Feedback" />
 
-		// check if the value is stored already
-		let isFound = checkboxes.some(checkbox => {
-			if (checkbox.file_id === file_id) {
-				return true;
-			}
-			return false;
-		});
+      <DashboardCard
+        title={task}
+        children=
+        {<div>
+          {files.length === 0 ? <Typography> No feedback file is available. </Typography> :
+            <div>
+              <Table aria-label="Files table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      File
+                    </TableCell>
+                    <TableCell align="right">
+                      Download
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {files.map((file) => (
+                    <TableRow>
+                      <TableCell>
+                        <Typography>
+                          {file.file_name.split('/').length === 2 ? file.file_name.substring(1) : file.file_name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <IconButton
+                          aria-label="download"
+                          color="primary"
+                          onClick={() => { download(file.file_id, file.file_name.substring(file.file_name.lastIndexOf('/') + 1)); }}>
+                          <FileDownloadIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <br />
 
-		// update the states
-		if (!isFound) { // this click was to check the box
-			setCheckboxes(current => [...current, { file_id: file_id, file_name: file_name }]);
-		} else {
-			updateState(file_id);
-		}
-	};
+              <Button onClick={download_all} startIcon={<FileDownloadIcon />}>Download All</Button>
+            </div>}
+        </div >
+        } />
 
-	// update value
-	let updateState = (file_id) => {
-		setCheckboxes((current) =>
-			current.filter((curr) => curr.file_id !== file_id)
-		);
-	};
+    </PageContainer >
 
-	if (files.length === 0) {
-		return (
-			<div>
-				<div>
-					<NavBar page="File" />
-
-					<h1>No feedback file is available</h1>
-				</div>
-			</div>
-		);
-	} else {
-		return (
-			<div>
-				<div>
-					<NavBar page="Feedback File" />
-
-					<div className="card-box row">
-						<ol className="list-group list-unstyled">
-							<li className="d-flex justify-content-between flex-row mb-1">
-								<div className="ms-2 me-auto">
-									<div className="fw-bold">File Name</div>
-								</div>
-								<span className="fw-bold">Select File</span>
-							</li>
-							{files.map((file) => (
-								<li className="list-group-item flex-row" key={file.file_id}>
-									<div className=" d-flex justify-content-between">
-										<span>{file.file_name.split('/').length === 2 ? file.file_name.substring(1) : file.file_name}</span>
-										<div className="form-check form-switch">
-											<input className="form-check-input" type="checkbox" onChange={() => { handleClick(file.file_id, file.file_name) }} />
-										</div>
-									</div>
-								</li>
-							))}
-
-							<br />
-							
-							<button type="button" onClick={download_all} className="btn btn-sm btn-outline-secondary">Download</button>
-						</ol>
-					</div>
-				</div>
-			</div>
-		);
-	}
+  );
 };
 
 
