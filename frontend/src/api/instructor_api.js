@@ -17,6 +17,7 @@ let all_tasks = async (course_id) => {
     }
 };
 
+
 let impersonate = async (course_id, username) => {
     let token = sessionStorage.getItem('token');
 
@@ -127,19 +128,6 @@ let submitMark = async (courseId, task, criteria, username, mark) => {
 // 	}
 // };
 
-let allTasks = async (course_id) => {
-	let token = sessionStorage.getItem("token");
-
-	let config = {
-		headers: { Authorization: `Bearer ${token}` }
-	};
-
-	try {
-		return await axios.get(process.env.REACT_APP_API_URL + "/instructor/course/" + course_id + "/task/all", config);
-	} catch (err) {
-		return err.response;
-	}
-};
 
 let allGroups = async (course_id, task) => {
 	let token = sessionStorage.getItem("token")
@@ -175,7 +163,7 @@ let taskGroups = async (course_id, task) => {
 
 let InstructorApi = {
 	//Course related
-	allTasks,
+	all_tasks,
 	// Task related
 	impersonate,
 	taskGroups,
