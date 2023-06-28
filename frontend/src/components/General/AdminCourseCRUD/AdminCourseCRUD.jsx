@@ -323,7 +323,7 @@ const AdminCourseCRUD = (props) => {
                                 }) => (
                                     <>
                                         <CustomFormLabel id="select-role" sx={{ mt: 1, mb: 0 }}>
-                                            Select Role for User *
+                                            Select Role for Users in File *
                                         </CustomFormLabel>
                                         <CustomSelect
                                             labelId="select-role"

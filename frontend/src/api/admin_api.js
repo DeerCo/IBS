@@ -122,7 +122,7 @@ let upload_role = async (formData) => {
     };
 
     try {
-        return await axios.post(
+        return await axios.postForm(
             `${process.env.REACT_APP_API_URL}/admin/role/upload`,
             formData,
             config
