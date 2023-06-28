@@ -25,6 +25,7 @@ import ThemeSettings from './layouts/full-layout/customizer/ThemeSettings';
 import { useSelector } from 'react-redux';
 import RTL from './layouts/full-layout/customizer/RTL';
 import StudentListPage from './components/Page/Student/StudentListPage';
+import TaskGroupListPage from './components/General/TaskGroupList/TaskGroupListPage';
 import SubmitMarks from './components/Page/Instructor/SubmitMarks';
 import TaskGroupPage from './components/Page/Instructor/TaskGroupPage';
 
@@ -74,7 +75,14 @@ function App() {
                         <Route
                             path="/instructor/course/:course_id/task"
                             element={<InstructorTaskPage />}
+                        >
+                        </Route>
+
+                        <Route
+                            path="/instructor/course/:courseId/task/:taskId/groups"
+                            element={<TaskGroupListPage />}
                         />
+                    
                         <Route
                             path="/instructor/course/:course_id/impersonate"
                             element={<InstructorImpersonate />}
