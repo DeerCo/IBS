@@ -7,14 +7,13 @@ import { Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
 
 const AdminPage = () => {
     const [courses, setCourses] = useState({});
-    const { register: register1, handleSubmit: handleSubmit1 } = useForm();
-    const { register: register2, handleSubmit: handleSubmit2 } = useForm();
-    const { register: register3, handleSubmit: handleSubmit3 } = useForm();
-    const { register: register4, handleSubmit: handleSubmit4 } = useForm();
-    const { register: register5, handleSubmit: handleSubmit5 } = useForm();
-    const { register: register6, handleSubmit: handleSubmit6 } = useForm();
-    const [checked, setChecked] = useState(true);
     const [role, setRole] = useState({});
+
+    const { register: registerAdd, handleSubmit: handleAdd } = useForm();
+    const { register: registerChange, handleSubmit: handleChange } = useForm();
+    const { register: registerGetRole, handleSubmit: handleGetRole } = useForm();
+    const [checked, setChecked] = useState(true);
+
     const addCourse = (data) => {
         AdminApi.add_course(data).then((response) => {
             console.log(response);
@@ -24,6 +23,7 @@ const AdminPage = () => {
             });
         });
     };
+
     const changeCourse = (data) => {
         AdminApi.change_course(data).then((response) => {
             console.log(response);
@@ -92,38 +92,38 @@ const AdminPage = () => {
                 ></input>
                 <p>{checked ? 'add course' : 'change course'}</p>
                 {checked ? (
-                    <form onSubmit={handleSubmit1(addCourse)}>
+                    <form onSubmit={handleAdd(addCourse)}>
                         <p>course_code</p>
-                        <input {...register1('course_code')} />
+                        <input {...registerAdd('course_code')} />
                         <p>course_session</p>
-                        <input {...register1('course_session')} />
+                        <input {...registerAdd('course_session')} />
                         <p>gitlab_group_id</p>
-                        <input {...register1('gitlab_group_id')} />
+                        <input {...registerAdd('gitlab_group_id')} />
                         <p>default_token_count</p>
-                        <input {...register1('default_token_count')} />
+                        <input {...registerAdd('default_token_count')} />
                         <p>token_length</p>
-                        <input {...register1('token_length')} />
+                        <input {...registerAdd('token_length')} />
                         <p>hidden</p>
-                        <input {...register1('hidden')} />
+                        <input {...registerAdd('hidden')} />
                         <p></p>
                         <input type="submit" />
                     </form>
                 ) : (
-                    <form onSubmit={handleSubmit2(changeCourse)}>
+                    <form onSubmit={handleChange(changeCourse)}>
                         <p>course_id</p>
-                        <input {...register2('course_id')} />
+                        <input {...registerChange('course_id')} />
                         <p>course_code</p>
-                        <input {...register2('course_code')} />
+                        <input {...registerChange('course_code')} />
                         <p>course_session</p>
-                        <input {...register2('course_session')} />
+                        <input {...registerChange('course_session')} />
                         <p>gitlab_group_id</p>
-                        <input {...register2('gitlab_group_id')} />
+                        <input {...registerChange('gitlab_group_id')} />
                         <p>default_token_count</p>
-                        <input {...register2('default_token_count')} />
+                        <input {...registerChange('default_token_count')} />
                         <p>token_length</p>
-                        <input {...register2('token_length')} />
+                        <input {...registerChange('token_length')} />
                         <p>hidden</p>
-                        <input {...register2('hidden')} />
+                        <input {...registerChange('hidden')} />
                         <p></p>
                         <input type="submit" />
                     </form>
@@ -131,8 +131,8 @@ const AdminPage = () => {
             </div>
             <div>
                 <h2>Get role</h2>
-                <form onSubmit={handleSubmit3(getRole)}>
-                    <input {...register3('username')} />
+                <form onSubmit={handleGetRole(getRole)}>
+                    <input {...registerGetRole('username')} />
                     <p style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(role, null, 2)}</p>
                     <input type={'submit'} />
                 </form>
