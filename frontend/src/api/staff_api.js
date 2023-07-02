@@ -1,6 +1,29 @@
 import axios from 'axios';
+import http from './client';
 
 // Accessible to any of TA/Instructor/Admin
+
+let collectAllSubmissionsForTask = async (courseId, task, overwrite = false) => {
+    try {
+        return await http.post(`/instructor/course/${courseId}/submission/collect/all`, {
+            task,
+            overwrite
+        });
+    } catch (err) {
+        return err.response;
+    }
+};
+
+let collectOneSubmission = async (courseId, groupId, overwrite = false) => {
+    try {
+        return await http.post(`/instructor/course/${courseId}/submission/collect/one`, {
+            group_id: groupId,
+            overwrite
+        });
+    } catch (err) {
+        return err.response;
+    }
+};
 
 let all_tasks = async (course_id) => {
     let token = sessionStorage.getItem('token');
@@ -306,7 +329,7 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
         return err.response;
     }
 };
-  
+
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -318,7 +341,10 @@ const StaffApi = {
 
     getCriteriaForTask,
     all_tasks,
-    getCourseContent
+    getCourseContent,
+
+    collectAllSubmissionsForTask,
+    collectOneSubmission
 };
 
 export default StaffApi;
