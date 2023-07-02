@@ -109,7 +109,9 @@ const Taskcard = ({ data, course_id, role }) => {
                             >
                                 Feedback
                             </Button>
-                            <SubmissionsMenu course_id={course_id} task={data.task} />
+                            {role !== 'student' && (
+                                <SubmissionsMenu course_id={course_id} task={data.task} />
+                            )}
                             <Button
                                 aria-haspopup="true"
                                 aria-expanded={open ? 'true' : undefined}
