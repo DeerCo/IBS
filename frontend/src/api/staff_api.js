@@ -4,8 +4,9 @@ import http from './client';
 // Accessible to any of TA/Instructor/Admin
 
 let collectAllSubmissionsForTask = async (courseId, task, overwrite = false) => {
+    const role = findRoleInCourse(courseId);
     try {
-        return await http.post(`/instructor/course/${courseId}/submission/collect/all`, {
+        return await http.post(`/${role}/course/${courseId}/submission/collect/all`, {
             task,
             overwrite
         });
@@ -15,8 +16,9 @@ let collectAllSubmissionsForTask = async (courseId, task, overwrite = false) => 
 };
 
 let collectOneSubmission = async (courseId, groupId, overwrite = false) => {
+    const role = findRoleInCourse(courseId);
     try {
-        return await http.post(`/instructor/course/${courseId}/submission/collect/one`, {
+        return await http.post(`/${role}/course/${courseId}/submission/collect/one`, {
             group_id: groupId,
             overwrite
         });
