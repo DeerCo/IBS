@@ -3,6 +3,16 @@ import http from './client';
 
 // Accessible to any of TA/Instructor/Admin
 
+let downloadSubmissions = async (courseId, task) => {
+    const role = findRoleInCourse(courseId);
+
+    try {
+        return await http.get(`/${role}/course/${courseId}/submission/download?task=${task}`);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 let collectAllSubmissionsForTask = async (courseId, task, overwrite = false) => {
     const role = findRoleInCourse(courseId);
     try {
@@ -346,7 +356,8 @@ const StaffApi = {
     getCourseContent,
 
     collectAllSubmissionsForTask,
-    collectOneSubmission
+    collectOneSubmission,
+    downloadSubmissions
 };
 
 export default StaffApi;
