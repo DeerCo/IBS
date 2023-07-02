@@ -16,7 +16,7 @@ const CollectSubmissionButton = ({ course_id, task, group_id }) => {
             return StaffApi.collectOneSubmission(course_id, group_id, true)
                 .then(() => {
                     toast.success(
-                        `Submissions for ${task} successfully collected. Click Submissions > Download to download them.`,
+                        `Submissions of group '${group_id}' for ${task} successfully collected. Click Submissions > Download to download them.`,
                         {
                             theme: 'colored'
                         }
