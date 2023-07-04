@@ -164,10 +164,10 @@ const AdminPage = () => {
 
     const CurrentCoursesComponent = () => {
         return (
-            <Grid container columns={12} spacing={2}>
+            <Grid container spacing={2}>
                 {courses?.map?.((data, index) => (
-                    <Grid item key={index}>
-                        <Homecard data={{ ...data, ['role']: 'admin' }} />
+                    <Grid key={index}>
+                        <Homecard data={{ ...data, role: 'admin' }} />
                     </Grid>
                 ))}
             </Grid>
