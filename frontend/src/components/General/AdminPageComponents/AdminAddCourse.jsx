@@ -34,7 +34,6 @@ const AdminAddCourse = (props) => {
                         noValidate
                         sx={{ mt: 1 }}
                     >
-                        {/* TODO: Add controllers like in AdminCourseCRUD component */}
                         <Controller
                             name="hidden"
                             control={useFormObject.control}
@@ -146,6 +145,7 @@ const AdminAddCourse = (props) => {
                                     <CustomTextField
                                         id="add-course-gitlab-group-id"
                                         margin="normal"
+                                        type="number"
                                         variant="outlined"
                                         size="small"
                                         required
@@ -244,9 +244,39 @@ const AdminAddCourse = (props) => {
                 </Box>
             </Grid>
             <Grid xs={6} sx={{ maxWidth: 500 }}>
+                {/* TODO: Add notes to each input, describing the effect on produced course */}
                 <Typography variant="body1" fontWeight={600} sx={{ mb: 1 }}>
                     Notes:
                 </Typography>
+                <Typography variant="body1" fontWeight={400} sx={{ mb: 1 }}>
+                    Details of each input:
+                </Typography>
+                <ul>
+                    <li>
+                        <strong>Hidden</strong>
+                        <br />
+                    </li>
+                    <li>
+                        <strong>Course Code</strong> (Course Name)
+                    </li>
+                    <li>
+                        <strong>Course Session</strong>
+                        <br />
+                        The term that the course is being offered in.
+                    </li>
+                    <li>
+                        <strong>GitLab Group ID</strong>
+                        <br />
+                    </li>
+                    <li>
+                        <strong>Default Token Count</strong>
+                        <br />
+                    </li>
+                    <li>
+                        <strong>Token Length</strong>
+                        <br />
+                    </li>
+                </ul>
             </Grid>
         </Grid>
     );
