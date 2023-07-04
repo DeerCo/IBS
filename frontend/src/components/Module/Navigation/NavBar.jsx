@@ -42,7 +42,6 @@ let NavBar = (props) => {
 
     let { course_id, task } = useParams();
     const role = props.role === undefined || props.role === 'student' ? '' : props.role;
-    console.log(role);
     //console.log(props.role, role);
 
     let course_code = null;
@@ -186,20 +185,17 @@ let NavBar = (props) => {
                             </Button>
                             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
                                 {role === 'admin' && (
-                                    <>
-                                        <MenuItem
-                                            component={Link}
-                                            to={`${role ? `/${role}` : ''}/`}
-                                        >
-                                            Admin Panel
-                                        </MenuItem>
-                                        <MenuItem
-                                            component={Link}
-                                            to={(role ? '/' + role : '') + '/impersonate/'}
-                                        >
-                                            Student View
-                                        </MenuItem>
-                                    </>
+                                    <MenuItem component={Link} to={`${role ? `/${role}` : ''}/`}>
+                                        Admin Panel
+                                    </MenuItem>
+                                )}
+                                {role === 'admin' && (
+                                    <MenuItem
+                                        component={Link}
+                                        to={(role ? '/' + role : '') + '/impersonate/'}
+                                    >
+                                        Student View
+                                    </MenuItem>
                                 )}
                                 {role === 'instructor' && (
                                     <MenuItem
