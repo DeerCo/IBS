@@ -37,9 +37,19 @@ const AdminPage = () => {
     const [checked, setChecked] = useState(true);
 
     const addCourse = (data) => {
-        AdminApi.add_course(data).then((response) => {
+        // console.log(data);
+        // Convert data.token_length from hours to minutes (for backend)
+        let newData = structuredClone(data);
+        if (newData['token_length'] !== undefined) {
+            newData['token_length'] = newData['token_length'] * 60;
+        }
+        AdminApi.add_course(newData).then((response) => {
             console.log(response);
-            toast(response.data.message);
+            if (response.status !== 200) {
+                toast.error(response.data.message, { theme: 'colored' });
+            } else {
+                toast.success('The course has been created', { theme: 'colored' });
+            }
             AdminApi.all_courses().then((response) => {
                 setCourses(response.data.course);
             });
@@ -49,7 +59,11 @@ const AdminPage = () => {
     const changeCourse = (data) => {
         AdminApi.change_course(data).then((response) => {
             console.log(response);
-            toast(response.data.message);
+            if (response.status !== 200) {
+                toast.error(response.data.message, { theme: 'colored' });
+            } else {
+                toast.success('The course has been modified', { theme: 'colored' });
+            }
             AdminApi.all_courses().then((response) => {
                 setCourses(response.data.course);
             });
@@ -60,7 +74,12 @@ const AdminPage = () => {
         console.log(data);
         AdminApi.get_role(data.username).then((response) => {
             console.log(response);
-            toast(response.data.message);
+            if (response.status !== 200) {
+                toast.error(response.data.message, { theme: 'colored' });
+            } else {
+                toast.success('Retrieved role', { theme: 'colored' });
+                toast.success(response.data.message, { theme: 'colored' });
+            }
             setRole(response.data);
         });
     };
@@ -91,6 +110,21 @@ const AdminPage = () => {
             setCourses(response.data.course);
         });
     }, []);
+
+    useEffect(() => {
+        if (Object.keys(formStateAdd.errors).length > 0) {
+            console.log('[-] Form State (Add Course):');
+            console.log(formStateAdd.errors);
+        }
+        if (Object.keys(formStateChange.errors).length > 0) {
+            console.log('[-] Form State (Change Course):');
+            console.log(formStateChange.errors);
+        }
+        if (Object.keys(formStateGetRole.errors).length > 0) {
+            console.log('[-] Form State (Get Role):');
+            console.log(formStateGetRole.errors);
+        }
+    }, [formStateAdd, formStateChange, formStateGetRole]);
 
     const oldComponent = (
         <div style={{ margin: '0.5ch', justifyContent: 'left', textAlign: 'left' }}>
