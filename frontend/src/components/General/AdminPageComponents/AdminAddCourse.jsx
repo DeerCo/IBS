@@ -1,10 +1,20 @@
 import React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Box, Button, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    FormControlLabel,
+    InputAdornment,
+    Link,
+    Radio,
+    RadioGroup,
+    Typography
+} from '@mui/material';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
+import CustomOutlinedInput from './CustomOutlinedInput';
 
 /**
  * Component for adding new courses via admin panel
@@ -38,7 +48,7 @@ const AdminAddCourse = (props) => {
                             name="hidden"
                             control={useFormObject.control}
                             defaultValue="false"
-                            rules={{ required: true }}
+                            rules={{ required: false }}
                             render={({
                                 field: { onChange, onBlur, value, name, ref },
                                 fieldState: { invalid, isTouched, isDirty, error }
@@ -175,13 +185,13 @@ const AdminAddCourse = (props) => {
                                     >
                                         Default Token Count *
                                     </CustomFormLabel>
-                                    <CustomTextField
+                                    <CustomOutlinedInput
                                         id="add-course-default-token-count"
-                                        margin="normal"
                                         type="number"
-                                        InputProps={{
-                                            inputProps: { min: 0 }
-                                        }}
+                                        inputProps={{ min: 0 }}
+                                        endAdornment={
+                                            <InputAdornment position="end">tokens</InputAdornment>
+                                        }
                                         variant="outlined"
                                         size="small"
                                         required
@@ -209,15 +219,15 @@ const AdminAddCourse = (props) => {
                                         htmlFor="add-course-token-length"
                                         sx={{ mb: 0 }}
                                     >
-                                        Token Length *
+                                        Token Length (of 1 Token) *
                                     </CustomFormLabel>
-                                    <CustomTextField
+                                    <CustomOutlinedInput
                                         id="add-course-token-length"
-                                        margin="normal"
                                         type="number"
-                                        InputProps={{
-                                            inputProps: { min: 0 }
-                                        }}
+                                        inputProps={{ min: 0 }}
+                                        endAdornment={
+                                            <InputAdornment position="end">hrs</InputAdornment>
+                                        }
                                         variant="outlined"
                                         size="small"
                                         required
@@ -244,7 +254,6 @@ const AdminAddCourse = (props) => {
                 </Box>
             </Grid>
             <Grid xs={6} sx={{ maxWidth: 500 }}>
-                {/* TODO: Add notes to each input, describing the effect on produced course */}
                 <Typography variant="body1" fontWeight={600} sx={{ mb: 1 }}>
                     Notes:
                 </Typography>
@@ -253,28 +262,58 @@ const AdminAddCourse = (props) => {
                 </Typography>
                 <ul>
                     <li>
-                        <strong>Hidden</strong>
+                        <strong>Hidden</strong>:
                         <br />
+                        Enabling this option allows you to hide the course from students. e.g. in
+                        most cases, you might not want to show the course in the beginning when
+                        you're still setting up the course.
                     </li>
                     <li>
-                        <strong>Course Code</strong> (Course Name)
+                        <strong>Course Code</strong> (Course Name): Self-Explanatory
                     </li>
                     <li>
-                        <strong>Course Session</strong>
+                        <strong>Course Session</strong>:
                         <br />
                         The term that the course is being offered in.
                     </li>
                     <li>
-                        <strong>GitLab Group ID</strong>
-                        <br />
+                        <strong>GitLab Group ID</strong>: Self-Explanatory
                     </li>
                     <li>
-                        <strong>Default Token Count</strong>
+                        <strong>Default Token Count</strong>:
                         <br />
+                        Number of tokens that's available (by default) to all students.
+                        <br />
+                        Later on, for extraordinary circumstances, you can manage specific groups of
+                        students' maximum number of tokens by putting them into "task groups".
                     </li>
                     <li>
-                        <strong>Token Length</strong>
+                        <strong>Token Length (of 1 Token)</strong>:
                         <br />
+                        Number of hours assigned to each (grace) token. Note that the backend
+                        handles this in minutes. However, the frontend handles conversion of hours
+                        to minutes so the input takes in number of hours per token.
+                    </li>
+                </ul>
+                <Typography variant="body1" fontWeight={400} sx={{ mb: 1 }}>
+                    Further details:
+                </Typography>
+                <ul>
+                    <li>
+                        If <code>tokenCount == 4 && tokenLength == 4</code>, then each student gets
+                        at max 16 hours worth of grace tokens.
+                    </li>
+                    <li>
+                        Note: The purpose of GitLab groups are to easily control the access of
+                        students. e.g. Let all students who use <code>IBS</code> be part of group 1.
+                        Let all students in <code>CSC309</code> be part of group 2. Let 3 students
+                        who are working on <code>Assignment 1 (A1)</code> be part of group 3.
+                        Moreover, say that there is a project which includes the repository where
+                        the 3 students can work on their code. Then, group 2 is a sub-group of group
+                        1 and group 3 is a sub-group of group 2. This way, everything in{' '}
+                        <code>CSC309</code> is a sub-group of group 2. Refer to{' '}
+                        <Link href="https://docs.gitlab.com/ee/user/group/">GitLab Groups</Link> for
+                        more information.
                     </li>
                 </ul>
             </Grid>
