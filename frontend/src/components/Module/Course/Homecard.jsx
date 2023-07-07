@@ -45,7 +45,6 @@ const Homecard = ({ data }) => {
                     <HomeCardLink to={taskGroupsPageLink} name="Edit Task Groups" />
                     {data.role === 'instructor' && (
                         <>
-                            <HomeCardLink to={allGradesPageLink} name="View Grades" />{' '}
                             <HomeCardLink to={submitMarksPageLink} name="Submit Marks" />{' '}
                         </>
                     )}
