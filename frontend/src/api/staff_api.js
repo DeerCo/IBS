@@ -1,6 +1,41 @@
 import axios from 'axios';
+import http from './client';
 
 // Accessible to any of TA/Instructor/Admin
+
+let downloadSubmissions = async (courseId, task) => {
+    const role = findRoleInCourse(courseId);
+
+    try {
+        return await http.get(`/${role}/course/${courseId}/submission/download?task=${task}`);
+    } catch (err) {
+        return err.response;
+    }
+};
+
+let collectAllSubmissionsForTask = async (courseId, task, overwrite = false) => {
+    const role = findRoleInCourse(courseId);
+    try {
+        return await http.post(`/${role}/course/${courseId}/submission/collect/all`, {
+            task,
+            overwrite
+        });
+    } catch (err) {
+        return err.response;
+    }
+};
+
+let collectOneSubmission = async (courseId, groupId, overwrite = false) => {
+    const role = findRoleInCourse(courseId);
+    try {
+        return await http.post(`/${role}/course/${courseId}/submission/collect/one`, {
+            group_id: groupId,
+            overwrite
+        });
+    } catch (err) {
+        return err.response;
+    }
+};
 
 let all_tasks = async (course_id) => {
     let token = sessionStorage.getItem('token');
@@ -306,7 +341,7 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
         return err.response;
     }
 };
-  
+
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -318,7 +353,11 @@ const StaffApi = {
 
     getCriteriaForTask,
     all_tasks,
-    getCourseContent
+    getCourseContent,
+
+    collectAllSubmissionsForTask,
+    collectOneSubmission,
+    downloadSubmissions
 };
 
 export default StaffApi;
