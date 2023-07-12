@@ -25,7 +25,8 @@ const AdminPage = () => {
         register: registerChange,
         formState: formStateChange,
         control: controlChange,
-        handleSubmit: handleChange
+        handleSubmit: handleChange,
+        setValue: setValueChange
     } = useForm();
     const {
         register: registerGetRole,
@@ -57,7 +58,12 @@ const AdminPage = () => {
     };
 
     const changeCourse = (data) => {
-        AdminApi.change_course(data).then((response) => {
+        // Convert data.token_length from hours to minutes (for backend)
+        let newData = structuredClone(data);
+        if (newData['token_length'] !== undefined) {
+            newData['token_length'] = newData['token_length'] * 60;
+        }
+        AdminApi.change_course(newData).then((response) => {
             console.log(response);
             if (response.status !== 200) {
                 toast.error(response.data.message, { theme: 'colored' });
@@ -241,7 +247,8 @@ const AdminPage = () => {
                         register: registerChange,
                         handleSubmit: handleChange,
                         control: controlChange,
-                        formState: formStateChange
+                        formState: formStateChange,
+                        setValue: setValueChange
                     }}
                     apiCall={changeCourse}
                 />
@@ -273,7 +280,7 @@ const AdminPage = () => {
             <Grid xs={12} sx={{ mt: 3 }}>
                 <Grid container justifyContent="center" direction="column" alignItems="center">
                     <Grid xs={12}>
-                        <FlexyTabs tabs={tabs} width={1600} height={1000} />
+                        <FlexyTabs tabs={tabs} width={1600} height="auto" />
                     </Grid>
                 </Grid>
             </Grid>
