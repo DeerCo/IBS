@@ -12,7 +12,11 @@ const AdminCoursePage = () => {
     const { register: register4, handleSubmit: handleSubmit4, control: control4 } = useForm();
     const { register: register5, handleSubmit: handleSubmit5, control: control5 } = useForm();
     const { register: register6, handleSubmit: handleSubmit6, control: control6 } = useForm();
+
     let { course_id } = useParams();
+
+    const [getRoleResponse, setGetRoleResponse] = useState([]);
+
     const changeCourse = (data) => {
         AdminApi.change_course({ ...data, course_id: course_id }).then((response) => {
             console.log(response);
@@ -28,6 +32,22 @@ const AdminCoursePage = () => {
                 });
             else {
                 toast.error(response.data.message, { theme: 'colored' });
+            }
+        });
+    };
+
+    const getRole = (data) => {
+        AdminApi.get_role(data.username).then((response) => {
+            console.log(response);
+            if (response.status !== 200) {
+                toast.error(response.data.message, { theme: 'colored' });
+            } else {
+                if (response.data.role.length === 0) {
+                    toast.warning('No roles associated to given username', { theme: 'colored' });
+                } else {
+                    toast.success('Retrieved role', { theme: 'colored' });
+                    setGetRoleResponse(response.data.role);
+                }
             }
         });
     };
@@ -384,8 +404,10 @@ const AdminCoursePage = () => {
                             onSubmitFunctions={{
                                 AddRole: addRole,
                                 UploadRoles: uploadRole,
-                                DeleteRole: deleteRole
+                                DeleteRole: deleteRole,
+                                GetRole: getRole
                             }}
+                            getRoleResponse={getRoleResponse}
                         />
                     </Grid>
                 </Grid>

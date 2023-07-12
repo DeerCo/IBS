@@ -28,12 +28,6 @@ const AdminPage = () => {
         handleSubmit: handleChange,
         setValue: setValueChange
     } = useForm();
-    const {
-        register: registerGetRole,
-        formState: formStateGetRole,
-        control: controlGetRole,
-        handleSubmit: handleGetRole
-    } = useForm();
 
     const [checked, setChecked] = useState(true);
 
@@ -76,20 +70,6 @@ const AdminPage = () => {
         });
     };
 
-    const getRole = (data) => {
-        console.log(data);
-        AdminApi.get_role(data.username).then((response) => {
-            console.log(response);
-            if (response.status !== 200) {
-                toast.error(response.data.message, { theme: 'colored' });
-            } else {
-                toast.success('Retrieved role', { theme: 'colored' });
-                toast.success(response.data.message, { theme: 'colored' });
-            }
-            setRole(response.data);
-        });
-    };
-
     const addRole = (data) => {
         AdminApi.add_role(data).then((response) => {
             console.log(response);
@@ -126,81 +106,7 @@ const AdminPage = () => {
             console.log('[-] Form State (Change Course):');
             console.log(formStateChange.errors);
         }
-        if (Object.keys(formStateGetRole.errors).length > 0) {
-            console.log('[-] Form State (Get Role):');
-            console.log(formStateGetRole.errors);
-        }
-    }, [formStateAdd, formStateChange, formStateGetRole]);
-
-    const oldComponent = (
-        <div style={{ margin: '0.5ch', justifyContent: 'left', textAlign: 'left' }}>
-            <h1>Admin Page</h1>
-            <Grid container spacing={2}>
-                {courses?.map?.((data, index) => (
-                    <Grid item key={index}>
-                        <Homecard data={{ ...data, ['role']: 'admin' }} />
-                    </Grid>
-                ))}
-            </Grid>
-            {/*<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, 15em)"}}>*/}
-
-            {/*</div>*/}
-            <div>
-                <h2>Change/Add Course</h2>
-                <input
-                    type={'checkbox'}
-                    checked={checked}
-                    onChange={() => setChecked((c) => !c)}
-                ></input>
-                <p>{checked ? 'add course' : 'change course'}</p>
-                {checked ? (
-                    <form onSubmit={handleAdd(addCourse)}>
-                        <p>course_code</p>
-                        <input {...registerAdd('course_code')} />
-                        <p>course_session</p>
-                        <input {...registerAdd('course_session')} />
-                        <p>gitlab_group_id</p>
-                        <input {...registerAdd('gitlab_group_id')} />
-                        <p>default_token_count</p>
-                        <input {...registerAdd('default_token_count')} />
-                        <p>token_length</p>
-                        <input {...registerAdd('token_length')} />
-                        <p>hidden</p>
-                        <input {...registerAdd('hidden')} />
-                        <p></p>
-                        <input type="submit" />
-                    </form>
-                ) : (
-                    <form onSubmit={handleChange(changeCourse)}>
-                        <p>course_id</p>
-                        <input {...registerChange('course_id')} />
-                        <p>course_code</p>
-                        <input {...registerChange('course_code')} />
-                        <p>course_session</p>
-                        <input {...registerChange('course_session')} />
-                        <p>gitlab_group_id</p>
-                        <input {...registerChange('gitlab_group_id')} />
-                        <p>default_token_count</p>
-                        <input {...registerChange('default_token_count')} />
-                        <p>token_length</p>
-                        <input {...registerChange('token_length')} />
-                        <p>hidden</p>
-                        <input {...registerChange('hidden')} />
-                        <p></p>
-                        <input type="submit" />
-                    </form>
-                )}
-            </div>
-            <div>
-                <h2>Get role</h2>
-                <form onSubmit={handleGetRole(getRole)}>
-                    <input {...registerGetRole('username')} />
-                    <p style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(role, null, 2)}</p>
-                    <input type={'submit'} />
-                </form>
-            </div>
-        </div>
-    );
+    }, [formStateAdd, formStateChange]);
 
     const CurrentCoursesComponent = () => {
         return (
@@ -251,22 +157,6 @@ const AdminPage = () => {
                         setValue: setValueChange
                     }}
                     apiCall={changeCourse}
-                />
-            )
-        },
-        {
-            tabName: 'Get Role',
-            tabId: 3,
-            tabSubheading: 'Get role from username',
-            tabContent: (
-                <AdminGetRole
-                    useFormObject={{
-                        register: registerGetRole,
-                        handleSubmit: handleGetRole,
-                        control: controlGetRole,
-                        formState: formStateGetRole
-                    }}
-                    apiCall={getRole}
                 />
             )
         }
