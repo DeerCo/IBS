@@ -312,7 +312,11 @@ const AdminCourseCRUD = (props) => {
                                 Refer to the "Notes" section for the format of file.
                             </Typography>
                             <Box display="flex" alignItems="center" gap={4}>
-                                <Button variant="contained" component="label" sx={{ mb: 3 }}>
+                                <Button
+                                    variant="contained"
+                                    component="label"
+                                    sx={{ mb: 3, width: 200, height: 50 }}
+                                >
                                     Upload File
                                     <input
                                         hidden
