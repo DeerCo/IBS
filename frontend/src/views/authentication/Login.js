@@ -51,6 +51,7 @@ const Login = () => {
                     sessionStorage.setItem('roles', JSON.stringify(response['data']['roles']));
                     if (
                         Array.isArray(response.data.roles) &&
+                        response.data.roles.length > 0 &&
                         response.data.roles[0].role === 'admin'
                     ) {
                         navigate('/admin');
