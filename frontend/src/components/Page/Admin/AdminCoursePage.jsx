@@ -31,6 +31,10 @@ const AdminCoursePage = () => {
                     theme: 'colored'
                 });
             else {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                    return;
+                }
                 toast.error(response.data.message, { theme: 'colored' });
             }
         });
@@ -40,10 +44,14 @@ const AdminCoursePage = () => {
         AdminApi.get_role(data.username).then((response) => {
             console.log(response);
             if (response.status !== 200) {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                }
                 toast.error(response.data.message, { theme: 'colored' });
             } else {
                 if (response.data.role.length === 0) {
                     toast.warning('No roles associated to given username', { theme: 'colored' });
+                    return;
                 } else {
                     toast.success('Retrieved role', { theme: 'colored' });
                     setGetRoleResponse(response.data.role);
@@ -74,6 +82,10 @@ const AdminCoursePage = () => {
                     theme: 'colored'
                 });
             else {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                    return;
+                }
                 toast.error(response.data.message, { theme: 'colored' });
             }
         });
@@ -86,6 +98,10 @@ const AdminCoursePage = () => {
             if (numRolesRemoved > 0) {
                 toast.success(`${numRolesRemoved} roles deleted`, { theme: 'colored' });
             } else {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                    return;
+                }
                 toast.error('No roles have been deleted', { theme: 'colored' });
             }
         });
