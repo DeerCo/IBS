@@ -62,12 +62,15 @@ const AdminCoursePage = () => {
             formData.append('role', data['role']);
         }
         formData.append('course_id', course_id);
-        formData.append('update_user_info', false);
+
+        // Note: Even if no email is supplied for (>= 1) user,
+        //       they will be added to DB with email set to null.
+        formData.append('update_user_info', true);
 
         AdminApi.upload_role(formData).then((response) => {
             console.log(response);
             if (response.status === 200)
-                toast.success('The users in file have been assigned the specified role', {
+                toast.success(response.data.message, {
                     theme: 'colored'
                 });
             else {
