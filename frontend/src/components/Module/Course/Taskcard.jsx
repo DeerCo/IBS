@@ -42,10 +42,11 @@ const useStyles = makeStyles({
 const Taskcard = ({ data, course_id, role }) => {
 
   const classes = useStyles();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
