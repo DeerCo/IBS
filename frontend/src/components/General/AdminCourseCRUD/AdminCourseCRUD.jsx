@@ -18,13 +18,14 @@ import { Controller, useForm } from 'react-hook-form';
 import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
+import AdminGetRole from '../AdminPageComponents/AdminGetRole';
 
 // Globally change maxWidth for each tab-list component
 const MAX_WIDTH = 300;
 
 const AdminCourseCRUD = (props) => {
-    const { onSubmitFunctions } = props;
-    const { AddRole, UploadRoles, DeleteRole } = onSubmitFunctions;
+    const { onSubmitFunctions, getRoleResponse } = props;
+    const { AddRole, UploadRoles, DeleteRole, GetRole } = onSubmitFunctions;
 
     const {
         control: controlAdd,
@@ -44,6 +45,12 @@ const AdminCourseCRUD = (props) => {
         handleSubmit: handleSubmitDelete,
         register: registerDelete,
         formState: formStateDelete
+    } = useForm();
+    const {
+        register: registerGetRole,
+        formState: formStateGetRole,
+        control: controlGetRole,
+        handleSubmit: handleGetRole
     } = useForm();
 
     // Determine if current user to be added is a new user
@@ -65,7 +72,8 @@ const AdminCourseCRUD = (props) => {
         if (
             Object.keys(formStateAdd.errors).length > 0 ||
             Object.keys(formStateUploads.errors).length > 0 ||
-            Object.keys(formStateDelete.errors).length > 0
+            Object.keys(formStateDelete.errors).length > 0 ||
+            Object.keys(formStateGetRole.errors).length > 0
         ) {
             console.log('[-] Form State (Add):');
             console.log(formStateAdd.errors);
@@ -73,8 +81,10 @@ const AdminCourseCRUD = (props) => {
             console.log(formStateUploads.errors);
             console.log('[-] Form State (Delete): ');
             console.log(formStateDelete.errors);
+            console.log('[-] Form State (Get):');
+            console.log(formStateGetRole.errors);
         }
-    }, [formStateAdd, formStateUploads, formStateDelete]);
+    }, [formStateAdd, formStateUploads, formStateDelete, formStateGetRole]);
 
     const AddRoleComponent = () => {
         return (
@@ -559,6 +569,23 @@ const AdminCourseCRUD = (props) => {
             tabId: 2,
             tabSubheading: 'Remove Roles from Course',
             tabContent: <DeleteRoleComponent />
+        },
+        {
+            tabName: 'Get Role',
+            tabId: 3,
+            tabSubheading: 'Get roles from username',
+            tabContent: (
+                <AdminGetRole
+                    useFormObject={{
+                        register: registerGetRole,
+                        handleSubmit: handleGetRole,
+                        control: controlGetRole,
+                        formState: formStateGetRole
+                    }}
+                    apiCall={GetRole}
+                    rolesResponse={getRoleResponse}
+                />
+            )
         }
     ];
     return (
@@ -569,8 +596,16 @@ const AdminCourseCRUD = (props) => {
 };
 
 AdminCourseCRUD.propTypes = {
-    // Should be { AddRole, UploadRoles, DeleteRole }
-    onSubmitFunctions: PropTypes.objectOf(PropTypes.func).isRequired
+    // Should be { AddRole, UploadRoles, DeleteRole, GetRole }
+    onSubmitFunctions: PropTypes.objectOf(PropTypes.func).isRequired,
+    // Response array from hitting GetRole endpoint
+    getRoleResponse: PropTypes.arrayOf(
+        PropTypes.shape({
+            username: PropTypes.string,
+            course_id: PropTypes.number,
+            role: PropTypes.string
+        })
+    ).isRequired
 };
 
 export default AdminCourseCRUD;
