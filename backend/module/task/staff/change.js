@@ -23,11 +23,12 @@ router.put("/", async (req, res) => {
       .json({ message: "The weight property is missing or invalid." });
     return;
   }
-  let isWeightExceeded = await helpers.weight_validate(
+  let isWeightExceeded = await helpers.new_weight_validate(
     typeof req.body["weight"] === "string"
       ? parseInt(req.body["weight"])
       : req.body["weight"],
-    res.locals["course_id"]
+    res.locals["course_id"],
+    res.locals["task"]
   );
 
   if (isWeightExceeded) {
@@ -123,7 +124,7 @@ router.put("/", async (req, res) => {
   let sql_update =
     "UPDATE course_" +
     res.locals["course_id"] +
-    ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), change_group = ($6), hide_interview = ($7), interview_group = ($8), task_group_id = ($9), starter_code_url = ($10), weight = ($11) WHERE task = ($12)";
+    ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), change_group = ($6), hide_interview = ($7), interview_group = ($8), task_group_id = ($9), starter_code_url = ($10), weight = ($11), long_name = ($12) WHERE task = ($13)";
   let sql_update_data = [
     due_date,
     req.body["hidden"],
@@ -136,6 +137,7 @@ router.put("/", async (req, res) => {
     task_group_id,
     starter_code_url,
     req.body["weight"],
+    req.body["long_name"],
     res.locals["task"],
   ];
 

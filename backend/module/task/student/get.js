@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
   }
 
   let sql_task =
-    "SELECT task, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, weight, min_member, max_member, max_token, change_group, hide_interview, interview_group, starter_code_url FROM course_" +
+    "SELECT task, long_name, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, hidden, weight, min_member, max_member, max_token, change_group, hide_interview, hide_file, interview_group, task_group_id, starter_code_url FROM course_" +
     res.locals["course_id"] +
     ".task WHERE task = ($1) AND hidden = 'false'";
   client.query(sql_task, [res.locals["task"]], (err, pg_res) => {
