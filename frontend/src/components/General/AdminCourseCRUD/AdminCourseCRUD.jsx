@@ -386,9 +386,8 @@ const AdminCourseCRUD = (props) => {
                     <ul>
                         <li>
                             <Typography variant="body1">
-                                <u>Precondition</u>:
-                                <br />
-                                Users in the file need to already exist in the database.
+                                If users do not exist in DB, they will be created with{' '}
+                                <code>email</code> set to <code>initial</code>.
                             </Typography>
                         </li>
                         <li>
@@ -419,6 +418,9 @@ const AdminCourseCRUD = (props) => {
                                     <br />
                                     ...
                                 </code>
+                                <br />
+                                If the emails are left blank, the default email in the DB will be
+                                set to <code>null</code>.
                             </Typography>
                         </li>
                         <li>
