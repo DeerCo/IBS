@@ -14,6 +14,8 @@ const Homecard = ({ data }) => {
 
     const submitMarksPageLink = `/instructor/course/${data.course_id}/submit-marks`;
 
+    const addTaskPageLink = `/instructor/course/${data.course_id}/add-task`;
+
     return (
         <Card>
             <CardActionArea component={Link} to={coursePageLink}>
@@ -44,6 +46,8 @@ const Homecard = ({ data }) => {
                         <>
                             <HomeCardLink to={allGradesPageLink} name="View Grades" />{' '}
                             <HomeCardLink to={submitMarksPageLink} name="Submit Marks" />{' '}
+                            <HomeCardLink to={addTaskPageLink} name="Add Task" />{' '}
+
                         </>
                     )}
                 </>

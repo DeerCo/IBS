@@ -56,6 +56,25 @@ async function weight_validate(new_task_weight, course_id) {
   return total_weight + new_task_weight > 100 ? 1 : 0;
 }
 
+/**
+ * Return true if accumulated weight of all tasks minus the old weight of the task being changed in course with course_id exceeds 100.
+ * Otherwise, return false.
+ */
+async function new_weight_validate(new_weight, course_id, task_name) {
+  let pg_res_task = await db.query(
+    "SELECT sum(weight) AS total_weight FROM course_" + course_id + ".task"
+  );
+  let total_weight = pg_res_task.rows[0].total_weight || 0;
+  let curr_weight = await get_task_weight(course_id, task_name);
+  if (typeof total_weight === "string") {
+    total_weight = parseInt(total_weight);
+  }
+  if (typeof curr_weight === "string") {
+    curr_weight = parseInt(curr_weight);
+  }
+  return total_weight + new_weight - curr_weight > 100 ? 1 : 0;
+}
+
 function boolean_validate(string) {
   if (
     string !== true &&
@@ -1579,6 +1598,7 @@ module.exports = {
   password_validate: password_validate,
   task_validate: task_validate,
   weight_validate: weight_validate,
+  new_weight_validate: new_weight_validate,
 
   // Utility
   interview_data_filter: interview_data_filter,

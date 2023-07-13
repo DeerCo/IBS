@@ -26,6 +26,9 @@ import { useSelector } from 'react-redux';
 import RTL from './layouts/full-layout/customizer/RTL';
 import StudentListPage from './components/Page/Student/StudentListPage';
 import SubmitMarks from './components/Page/Instructor/SubmitMarks';
+import AddTask from './components/Page/Instructor/AddTask';
+import ModifyTask from './components/Page/Instructor/ModifyTask';
+
 
 function App() {
     const theme = ThemeSettings();
@@ -83,9 +86,13 @@ function App() {
                             element={<AggregatedGrades role="instructor" />}
                         />
                         <Route
-                            path="/instructor/course/:course_id/impersonate"
-                            element={<InstructorImpersonate />}
-                        ></Route>
+                            path="/instructor/course/:course_id/add-task"
+                            element={<AddTask />}
+                        />
+                        <Route
+                            path="/instructor/course/:course_id/task/:task/modify"
+                            element={<ModifyTask />}
+                        />
                         <Route
                             path="/instructor/course/:courseId/submit-marks"
                             element={<SubmitMarks />}

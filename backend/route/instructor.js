@@ -9,6 +9,7 @@ const all_tasks = require("../module/task/staff/all");
 const get_task = require("../module/task/staff/get");
 const add_task = require("../module/task/staff/add");
 const change_task = require("../module/task/staff/change");
+const delete_task = require("../module/task/staff/delete");
 const all_task_group = require("../module/task_group/staff/all");
 const add_task_group = require("../module/task_group/staff/add");
 const change_task_group = require("../module/task_group/staff/change");
@@ -71,6 +72,7 @@ router.use("/course/:course_id/task/all", all_tasks);
 router.use("/course/:course_id/task/get", get_task);
 router.use("/course/:course_id/task/add", add_task);
 router.use("/course/:course_id/task/change", change_task);
+router.use("/course/:course_id/task/delete", delete_task);
 
 // Criteria
 router.use("/course/:course_id/criteria/all", all_criteria);

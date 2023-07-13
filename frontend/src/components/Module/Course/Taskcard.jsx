@@ -1,9 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Countdown from "react-countdown";
 import { makeStyles } from "@mui/styles";
 import { Link } from "react-router-dom";
-import { Button, Typography, Grid, Menu, MenuItem } from '@mui/material';
+import { Button, Typography, Grid, Menu, MenuItem, IconButton } from '@mui/material';
 import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InstructorApi from '../../../api/instructor_api';
+import ConfirmDialog from '../../General/DeleteConfirmation';
+import { mutate } from 'swr';
 
 
 const useStyles = makeStyles({
@@ -17,7 +24,7 @@ const useStyles = makeStyles({
     padding: '16px',
     borderRadius: '20px',
   },
-  mitem: {
+  item: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -25,6 +32,10 @@ const useStyles = makeStyles({
   },
   meeting: {
     marginRight: '16px'
+  },
+  icons: {
+    display: 'flex',
+    direction: 'row',
   }
 
 });
@@ -32,9 +43,11 @@ const useStyles = makeStyles({
 const Taskcard = ({ data, course_id, role }) => {
 
   const classes = useStyles();
-
+  let navigate = useNavigate();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -42,10 +55,50 @@ const Taskcard = ({ data, course_id, role }) => {
     setAnchorEl(null);
   };
 
+  const delete_task = () => {
+    InstructorApi.delete_task(course_id, data.task).then((task_response) => {
+      if (!task_response || !('status' in task_response)) {
+        toast.error('Unknown error', { theme: 'colored' });
+        return;
+      } else if (task_response['status'] === 200) {
+        mutate('/task/all');
+      } else if (task_response['status'] === 401 || task_response['status'] === 403) {
+        toast.warn('You need to login again', { theme: 'colored' });
+        return;
+      } else {
+        toast.error('Unknown error', { theme: 'colored' });
+        return;
+      }
+    });
+  };
 
   return (
     <Grid item sx='10' sm='9' md='6' lg='4' xl='2'>
-      <DashboardCard key={data.task} title={data.task}
+      <DashboardCard
+        key={data.task}
+        title={data.task}
+        action={role === 'instructor' &&
+          <div className={classes.icons}>
+            <IconButton
+              aria-label="delete"
+              color="error"
+              onClick={() => setConfirmOpen(true)}>
+              <DeleteIcon />
+            </IconButton>
+            <ConfirmDialog
+              open={confirmOpen}
+              setOpen={setConfirmOpen}
+              onConfirm={delete_task}
+            >
+              Are you sure you want to delete this task?
+            </ConfirmDialog>
+            <IconButton
+              component={Link}
+              to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/modify"}
+              color="primary">
+              <EditIcon />
+            </IconButton>
+          </div>}
         customheaderpadding='12px 12px 0 12px'
         custompadding='16px'
         children={
@@ -105,7 +158,7 @@ const Taskcard = ({ data, course_id, role }) => {
                 }}
               >
                 {data.hide_interview === false &&
-                  <MenuItem className={classes.mitem}>
+                  <MenuItem className={classes.item}>
                     <Typography variant="subtitle1" className={classes.meeting}> Final Interview </Typography>
                     <Button component={Link}
                       to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + data.task + "/interview"}
@@ -116,7 +169,7 @@ const Taskcard = ({ data, course_id, role }) => {
                   </MenuItem>
                 }
                 {data.subtasks.map((subtask, index) => (
-                  <MenuItem className={classes.mitem} key={index}>
+                  <MenuItem className={classes.item} key={index}>
                     <Typography variant="subtitle1" className={classes.meeting}> Mentor Session </Typography>
                     <Button component={Link}
                       to={(role ? "/" + role : "") + "/course/" + course_id + "/task/" + subtask.task + "/interview"}
@@ -127,9 +180,6 @@ const Taskcard = ({ data, course_id, role }) => {
                   </MenuItem>
                 ))}
               </Menu>
-
-
-
             </div>
 
           </div>}
