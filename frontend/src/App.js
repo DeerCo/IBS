@@ -75,14 +75,13 @@ function App() {
                         <Route
                             path="/instructor/course/:course_id/task"
                             element={<InstructorTaskPage />}
-                        >
-                        </Route>
+                        ></Route>
 
                         <Route
                             path="/instructor/course/:courseId/task/:taskId/groups"
                             element={<TaskGroupListPage />}
                         />
-                    
+
                         <Route
                             path="/instructor/course/:course_id/impersonate"
                             element={<InstructorImpersonate />}
@@ -111,11 +110,6 @@ function App() {
                             path="/admin/course/:courseId/all-grades"
                             element={<AggregatedGrades role="admin" />}
                         />
-                        <Route
-                            path="/admin/course/:course_id/task"
-                            element={<AdminCoursePage />}
-                        ></Route>
-                        <Route path="/admin/impersonate" element={<AdminImpersonate />}></Route>
                         <Route
                             path="/admin/course/:courseId/task-group"
                             element={<TaskGroupPage role="admin" />}

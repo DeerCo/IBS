@@ -3,43 +3,70 @@ import AdminApi from '../../../api/admin_api';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Homecard from '../../Module/Course/Homecard';
-import { Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
+import NavBar from '../../Module/Navigation/NavBar';
+import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
+import AdminAddCourse from '../../General/AdminPageComponents/AdminAddCourse';
+import AdminChangeCourse from '../../General/AdminPageComponents/AdminChangeCourse';
+import AdminGetRole from '../../General/AdminPageComponents/AdminGetRole';
+import { Box, Typography } from '@mui/material';
 
 const AdminPage = () => {
     const [courses, setCourses] = useState({});
-    const { register: register1, handleSubmit: handleSubmit1 } = useForm();
-    const { register: register2, handleSubmit: handleSubmit2 } = useForm();
-    const { register: register3, handleSubmit: handleSubmit3 } = useForm();
-    const { register: register4, handleSubmit: handleSubmit4 } = useForm();
-    const { register: register5, handleSubmit: handleSubmit5 } = useForm();
-    const { register: register6, handleSubmit: handleSubmit6 } = useForm();
-    const [checked, setChecked] = useState(true);
     const [role, setRole] = useState({});
+
+    const {
+        register: registerAdd,
+        formState: formStateAdd,
+        control: controlAdd,
+        handleSubmit: handleAdd
+    } = useForm();
+    const {
+        register: registerChange,
+        formState: formStateChange,
+        control: controlChange,
+        handleSubmit: handleChange,
+        setValue: setValueChange
+    } = useForm();
+
+    const [checked, setChecked] = useState(true);
+
     const addCourse = (data) => {
-        AdminApi.add_course(data).then((response) => {
+        // console.log(data);
+        // Convert data.token_length from hours to minutes (for backend)
+        let newData = structuredClone(data);
+        if (newData['token_length'] !== undefined) {
+            newData['token_length'] = newData['token_length'] * 60;
+        }
+        AdminApi.add_course(newData).then((response) => {
             console.log(response);
-            toast(response.data.message);
-            AdminApi.all_courses().then((response) => {
-                setCourses(response.data.course);
-            });
-        });
-    };
-    const changeCourse = (data) => {
-        AdminApi.change_course(data).then((response) => {
-            console.log(response);
-            toast(response.data.message);
+            if (response.status !== 200) {
+                toast.error(response.data.message, { theme: 'colored' });
+            } else {
+                toast.success('The course has been created', { theme: 'colored' });
+            }
             AdminApi.all_courses().then((response) => {
                 setCourses(response.data.course);
             });
         });
     };
 
-    const getRole = (data) => {
-        console.log(data);
-        AdminApi.get_role(data.username).then((response) => {
+    const changeCourse = (data) => {
+        // Convert data.token_length from hours to minutes (for backend)
+        let newData = structuredClone(data);
+        if (newData['token_length'] !== undefined) {
+            newData['token_length'] = newData['token_length'] * 60;
+        }
+        AdminApi.change_course(newData).then((response) => {
             console.log(response);
-            toast(response.data.message);
-            setRole(response.data);
+            if (response.status !== 200) {
+                toast.error(response.data.message, { theme: 'colored' });
+            } else {
+                toast.success('The course has been modified', { theme: 'colored' });
+            }
+            AdminApi.all_courses().then((response) => {
+                setCourses(response.data.course);
+            });
         });
     };
 
@@ -70,74 +97,84 @@ const AdminPage = () => {
         });
     }, []);
 
-    return (
-        <div style={{ margin: '0.5ch', justifyContent: 'left', textAlign: 'left' }}>
-            <h1>Admin Page</h1>
+    useEffect(() => {
+        if (Object.keys(formStateAdd.errors).length > 0) {
+            console.log('[-] Form State (Add Course):');
+            console.log(formStateAdd.errors);
+        }
+        if (Object.keys(formStateChange.errors).length > 0) {
+            console.log('[-] Form State (Change Course):');
+            console.log(formStateChange.errors);
+        }
+    }, [formStateAdd, formStateChange]);
+
+    const CurrentCoursesComponent = () => {
+        return (
             <Grid container spacing={2}>
                 {courses?.map?.((data, index) => (
-                    <Grid item key={index}>
-                        <Homecard data={{ ...data, ['role']: 'admin' }} />
+                    <Grid key={index}>
+                        <Homecard data={{ ...data, role: 'admin' }} />
                     </Grid>
                 ))}
             </Grid>
-            {/*<div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, 15em)"}}>*/}
+        );
+    };
 
-            {/*</div>*/}
-            <div>
-                <h2>Change/Add Course</h2>
-                <input
-                    type={'checkbox'}
-                    checked={checked}
-                    onChange={() => setChecked((c) => !c)}
-                ></input>
-                <p>{checked ? 'add course' : 'change course'}</p>
-                {checked ? (
-                    <form onSubmit={handleSubmit1(addCourse)}>
-                        <p>course_code</p>
-                        <input {...register1('course_code')} />
-                        <p>course_session</p>
-                        <input {...register1('course_session')} />
-                        <p>gitlab_group_id</p>
-                        <input {...register1('gitlab_group_id')} />
-                        <p>default_token_count</p>
-                        <input {...register1('default_token_count')} />
-                        <p>token_length</p>
-                        <input {...register1('token_length')} />
-                        <p>hidden</p>
-                        <input {...register1('hidden')} />
-                        <p></p>
-                        <input type="submit" />
-                    </form>
-                ) : (
-                    <form onSubmit={handleSubmit2(changeCourse)}>
-                        <p>course_id</p>
-                        <input {...register2('course_id')} />
-                        <p>course_code</p>
-                        <input {...register2('course_code')} />
-                        <p>course_session</p>
-                        <input {...register2('course_session')} />
-                        <p>gitlab_group_id</p>
-                        <input {...register2('gitlab_group_id')} />
-                        <p>default_token_count</p>
-                        <input {...register2('default_token_count')} />
-                        <p>token_length</p>
-                        <input {...register2('token_length')} />
-                        <p>hidden</p>
-                        <input {...register2('hidden')} />
-                        <p></p>
-                        <input type="submit" />
-                    </form>
-                )}
-            </div>
-            <div>
-                <h2>Get role</h2>
-                <form onSubmit={handleSubmit3(getRole)}>
-                    <input {...register3('username')} />
-                    <p style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(role, null, 2)}</p>
-                    <input type={'submit'} />
-                </form>
-            </div>
-        </div>
+    const tabs = [
+        {
+            tabName: 'List of Courses',
+            tabId: 0,
+            tabSubheading: 'Current Courses',
+            tabContent: <CurrentCoursesComponent />
+        },
+        {
+            tabName: 'Add Courses',
+            tabId: 1,
+            tabSubheading: 'Add new courses',
+            tabContent: (
+                <AdminAddCourse
+                    useFormObject={{
+                        register: registerAdd,
+                        handleSubmit: handleAdd,
+                        control: controlAdd,
+                        formState: formStateAdd
+                    }}
+                    apiCall={addCourse}
+                />
+            )
+        },
+        {
+            tabName: 'Change Course',
+            tabId: 2,
+            tabSubheading: 'Change existing course details',
+            tabContent: (
+                <AdminChangeCourse
+                    useFormObject={{
+                        register: registerChange,
+                        handleSubmit: handleChange,
+                        control: controlChange,
+                        formState: formStateChange,
+                        setValue: setValueChange
+                    }}
+                    apiCall={changeCourse}
+                />
+            )
+        }
+    ];
+
+    return (
+        <Grid container>
+            <Grid xs={12}>
+                <NavBar page="Admin Panel" role="admin" />
+            </Grid>
+            <Grid xs={12} sx={{ mt: 3 }}>
+                <Grid container justifyContent="center" direction="column" alignItems="center">
+                    <Grid xs={12}>
+                        <FlexyTabs tabs={tabs} width={1600} height="auto" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
     );
 };
 
