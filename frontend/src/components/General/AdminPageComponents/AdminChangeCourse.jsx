@@ -168,7 +168,6 @@ const AdminChangeCourse = (props) => {
                                         onChange={onChange}
                                         value={value}
                                         size="small"
-                                        disabled
                                         sx={{
                                             '& .MuiOutlinedInput-notchedOutline': {
                                                 borderColor: (theme) =>
