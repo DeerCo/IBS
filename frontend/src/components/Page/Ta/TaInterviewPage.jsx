@@ -25,35 +25,35 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { parseISO } from 'date-fns';
 
 let TaInterviewPage = () => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
-    let { course_id, task } = useParams();
+    const { course_id, task } = useParams();
 
-    let [calendarData, setCalendarData] = useState([]);
+    const [calendarData, setCalendarData] = useState([]);
 
     // track data of the interview being selected
-    let [selectedId, setSelectedId] = useState('');
-    let [selectedStart, setSelectedStart] = useState('');
-    let [selectedEnd, setSelectedEnd] = useState('');
-    let [selectedLocation, setSelectedLocation] = useState('');
-    let [selectedGroupId, setSelectedGroupId] = useState('');
-    let [selectedUsername, setSelectedUsername] = useState('');
-    let [selectedHost, setSelectedHost] = useState('');
-    let [selectedLength, setSelectedLength] = useState('');
-    let [selectedNote, setSelectedNote] = useState('');
-    let [selectedCancelled, setSelectedCancelled] = useState('');
+    const [selectedId, setSelectedId] = useState('');
+    const [selectedStart, setSelectedStart] = useState('');
+    const [selectedEnd, setSelectedEnd] = useState('');
+    const [selectedLocation, setSelectedLocation] = useState('');
+    const [selectedGroupId, setSelectedGroupId] = useState('');
+    const [selectedUsername, setSelectedUsername] = useState('');
+    const [selectedHost, setSelectedHost] = useState('');
+    const [selectedLength, setSelectedLength] = useState('');
+    const [selectedNote, setSelectedNote] = useState('');
+    const [selectedCancelled, setSelectedCancelled] = useState('');
 
     // for select dropdown when scheduling interview
     const [isOnline, setIsOnline] = useState(false);
     const [selectVal, setSelectVal] = useState('In-Person');
 
     // track the entered
-    let [enteredTime, setEnteredTime] = useState('');
-    let [enteredLength, setEnteredLength] = useState('');
-    let [enteredLocation, setEnteredLocation] = useState('');
+    const [enteredTime, setEnteredTime] = useState('');
+    const [enteredLength, setEnteredLength] = useState('');
+    const [enteredLocation, setEnteredLocation] = useState('');
 
-    let [open, setOpen] = useState(false);
-    let [version, setVersion] = useState(0); // data is refreshed if version is changed
+    const [open, setOpen] = useState(false);
+    const [version, setVersion] = useState(0); // data is refreshed if version is changed
 
     useEffect(() => {
         TaApi.all_interviews(course_id, task).then((response) => {
@@ -118,7 +118,7 @@ let TaInterviewPage = () => {
 
     // the book interview function
     // add task later into the ta input
-    let schedule_interview = (time, length, location) => {
+    const schedule_interview = (time, length, location) => {
         if (time === '') {
             toast.error('The time cannot be empty', { theme: 'colored' });
         } else if (length === '') {
@@ -150,7 +150,7 @@ let TaInterviewPage = () => {
     };
 
     // the cancel interview function
-    let delete_interview = (task, id) => {
+    const delete_interview = (task, id) => {
         TaApi.delete_interview(course_id, task, id).then((response) => {
             if (!response || !('status' in response)) {
                 toast.error('Unknown error', { theme: 'colored' });
@@ -171,7 +171,7 @@ let TaInterviewPage = () => {
         });
     };
 
-    let check_group = (group_id) => {
+    const check_group = (group_id) => {
         if (group_id === null) {
             return;
         }
@@ -198,18 +198,23 @@ let TaInterviewPage = () => {
         });
     };
 
-    let onChangeTime = (e) => {
-        let time = e.target.value;
+    // change interview
+    const rescheduleInterview = (course_id) => {
+        // TaApi.changeInterview(course_id, task).then((res) => {});
+    };
+
+    const onChangeTime = (event) => {
+        let time = event.target.value;
         setEnteredTime(time);
     };
 
-    let onChangeLength = (e) => {
-        let length = e.target.value;
+    const onChangeLength = (event) => {
+        let length = event.target.value;
         setEnteredLength(length);
     };
 
-    let onChangeLocation = (e) => {
-        let location = e.target.value;
+    const onChangeLocation = (event) => {
+        let location = event.target.value;
         setEnteredLocation(location);
     };
 
