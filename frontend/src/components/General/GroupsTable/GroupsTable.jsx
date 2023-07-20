@@ -285,14 +285,17 @@ const GroupsTable = ({ headCells, rows, tableWidth, courseId }) => {
                                                         <Box display="flex" alignItems="center">
                                                             <Box>
                                                                 <Typography variant="body1">
-                                                                    {row.users.map(
-                                                                        (user, index) => {
-                                                                            return index !==
-                                                                                row.users.length - 1
-                                                                                ? `${user}, `
-                                                                                : user;
-                                                                        }
-                                                                    )}
+                                                                    {row.users !== undefined &&
+                                                                        row.users.map(
+                                                                            (user, index) => {
+                                                                                return index !==
+                                                                                    row.users
+                                                                                        .length -
+                                                                                        1
+                                                                                    ? `${user}, `
+                                                                                    : user;
+                                                                            }
+                                                                        )}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>

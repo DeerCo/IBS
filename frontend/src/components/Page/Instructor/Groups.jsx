@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import React from 'react';
 import useSWR from 'swr';
 import instructor_api from '../../../api/instructor_api';
-import { Container, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import NavBar from '../../Module/Navigation/NavBar';
 import PropTypes from 'prop-types';
 
@@ -37,7 +37,7 @@ const Groups = (props) => {
         let rowIdCounter = 0;
 
         const groupsArr = data.groups;
-        for (const groupObj in groupsArr) {
+        for (const groupObj of groupsArr) {
             setRows((prevState) => {
                 let newRow = {
                     id: rowIdCounter,
@@ -48,7 +48,6 @@ const Groups = (props) => {
                 return [...prevState, newRow];
             });
         }
-        console.log(data);
     }, [courseId, navigate, data, isLoading, error]);
 
     if (isLoading) return <Typography variant="h1">Loading...</Typography>;
@@ -68,13 +67,15 @@ const Groups = (props) => {
                 </Container>
             </Grid>
             {rows !== [] && (
-                <Grid xs={12} sx={{ marginX: 50 }}>
-                    <GroupsTable
-                        headCells={headCells}
-                        rows={rows}
-                        tableWidth="100%"
-                        courseId={courseId}
-                    />
+                <Grid xs={12} sx={{ marginX: 20 }}>
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <GroupsTable
+                            headCells={headCells}
+                            rows={rows}
+                            tableWidth="50%"
+                            courseId={courseId}
+                        />
+                    </Box>
                 </Grid>
             )}
         </Grid>
