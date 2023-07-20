@@ -65,6 +65,26 @@ let submitMark = async (courseId, task, criteria, username, mark) => {
     }
 };
 
+let allGroups = async (course_id, task) => {
+    let token = sessionStorage.getItem('token');
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    try {
+        return await axios.get(
+            process.env.REACT_APP_API_URL +
+                '/instructor/course/' +
+                course_id +
+                '/group/all?task=' +
+                task,
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
+};
 
 // let check_group = async (course_id, group_id) => {
 // 	let token = sessionStorage.getItem("token");
@@ -136,7 +156,7 @@ let InstructorApi = {
     //
     // // Group related
     // check_group,
-    copyGroup
+    allGroups
     //
     // // Interview related
     // all_interviews,

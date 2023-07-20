@@ -26,7 +26,6 @@ import { visuallyHidden } from '@mui/utils';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../FlexyMainComponents/forms/custom-elements/CustomCheckbox';
 import CustomSwitch from '../../FlexyMainComponents/forms/custom-elements/CustomSwitch';
-import GetMarksCsvButton from './GetMarksCsvButton';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -246,14 +245,14 @@ const GroupsTable = ({ headCells, rows, tableWidth, courseId }) => {
                                     {stableSort(rows, getComparator(order, orderBy))
                                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                         .map((row, index) => {
-                                            const isItemSelected = isSelected(row.student);
+                                            const isItemSelected = isSelected(row.groupId);
                                             const labelId = `grades-table-checkbox-${index}`;
 
                                             return (
                                                 <TableRow
                                                     hover
                                                     onClick={(event) =>
-                                                        handleClick(event, row.student)
+                                                        handleClick(event, row.groupId)
                                                     }
                                                     role="checkbox"
                                                     aria-checked={isItemSelected}
@@ -277,28 +276,27 @@ const GroupsTable = ({ headCells, rows, tableWidth, courseId }) => {
                                                                     variant="h6"
                                                                     fontWeight="600"
                                                                 >
-                                                                    {row.student}
+                                                                    {row.groupId}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
                                                     </TableCell>
-                                                    {headCells.map(
-                                                        (jsonObj) =>
-                                                            jsonObj.id !== 'student' && (
-                                                                <TableCell
-                                                                    key={`${row.id}-${jsonObj.id}-tbCell`}
-                                                                >
-                                                                    <Typography
-                                                                        color="textSecondary"
-                                                                        variant="h6"
-                                                                        fontWeight="400"
-                                                                        key={`${row.id}-${jsonObj.id}-typography`}
-                                                                    >
-                                                                        {row[jsonObj.id]}
-                                                                    </Typography>
-                                                                </TableCell>
-                                                            )
-                                                    )}
+                                                    <TableCell>
+                                                        <Box display="flex" alignItems="center">
+                                                            <Box>
+                                                                <Typography variant="body1">
+                                                                    {row.users.map(
+                                                                        (user, index) => {
+                                                                            return index !==
+                                                                                row.users.length - 1
+                                                                                ? `${user}, `
+                                                                                : user;
+                                                                        }
+                                                                    )}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+                                                    </TableCell>
                                                 </TableRow>
                                             );
                                         })}
@@ -352,7 +350,7 @@ GroupsTable.propTypes = {
     // Must be in form of { id: string, student: string, <taskName>: string }
     rows: PropTypes.array.isRequired,
     // Adjust width of table
-    tableWidth: PropTypes.number.isRequired
+    tableWidth: PropTypes.oneOf([PropTypes.number, PropTypes.string]).isRequired
 };
 
 export default GroupsTable;
