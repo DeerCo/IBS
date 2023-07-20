@@ -65,6 +65,7 @@ let submitMark = async (courseId, task, criteria, username, mark) => {
     }
 };
 
+
 // let check_group = async (course_id, group_id) => {
 // 	let token = sessionStorage.getItem("token");
 //
@@ -131,10 +132,11 @@ let InstructorApi = {
     // Task related
     all_tasks,
     impersonate,
-    submitMark
+    submitMark,
     //
     // // Group related
     // check_group,
+    copyGroup
     //
     // // Interview related
     // all_interviews,
