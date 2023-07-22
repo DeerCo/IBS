@@ -498,6 +498,7 @@ let TaInterviewPage = () => {
                             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                                 <CardContent sx={{ pb: 0 }}>
                                     {/* TODO: Change existing info to make them editable via input fields */}
+                                    {/* TODO: On change for input fields, update toNewFieldsObj state */}
                                     <Box>
                                         <Typography variant="h4" sx={{ mb: 2 }}>
                                             Selected Interview for Rescheduling
