@@ -143,6 +143,11 @@ const changeInterview = async (
         headers: { Authorization: `Bearer ${token}` }
     };
 
+    // delete all undefined/null fields from config.data
+    config.data = Object.fromEntries(
+        Object.entries(config.data).filter(([key, value]) => value != null)
+    );
+
     try {
         return await axios.put(
             process.env.REACT_APP_API_URL + '/ta/course/' + courseId + '/interview/change',

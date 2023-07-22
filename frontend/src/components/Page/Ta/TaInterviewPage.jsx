@@ -47,6 +47,30 @@ let TaInterviewPage = () => {
     const [isOnline, setIsOnline] = useState(false);
     const [selectVal, setSelectVal] = useState('In-Person');
 
+    // whether user wants to change interview from a selected interview
+    const [shouldChange, setShouldChange] = useState(false);
+    // for backend query to changeInterview API
+    const [toNewFieldsObj, setToNewFieldsObj] = useState({
+        set_time: null,
+        set_group_id: null,
+        set_length: null,
+        set_location: null,
+        set_note: null,
+        set_cancelled: null
+    });
+
+    const [fromOldFieldsObj, setFromOldFieldsObj] = useState({
+        interview_id: null,
+        booked: null,
+        time: null,
+        date: null,
+        group_id: null,
+        length: null,
+        location: null,
+        note: null,
+        cancelled: null
+    });
+
     // track the entered
     const [enteredTime, setEnteredTime] = useState('');
     const [enteredLength, setEnteredLength] = useState('');
@@ -199,7 +223,7 @@ let TaInterviewPage = () => {
     };
 
     // change interview
-    const rescheduleInterview = (course_id) => {
+    const rescheduleInterview = (task, toNewFieldsObj, fromOldFieldsObj) => {
         // TaApi.changeInterview(course_id, task).then((res) => {});
     };
 
@@ -372,6 +396,19 @@ let TaInterviewPage = () => {
                                 setSelectedCancelled(event.extendedProps.cancelled);
                                 check_group(event.extendedProps.group_id);
 
+                                setFromOldFieldsObj({
+                                    interview_id: event.extendedProps.id,
+                                    booked: true,
+                                    // TODO: Set time and date according to selected event for changing interviews
+                                    time: null,
+                                    date: null,
+                                    group_id: event.extendedProps.group_id,
+                                    length: event.extendedProps.length,
+                                    location: event.extendedProps.location,
+                                    note: event.extendedProps.note,
+                                    cancelled: event.extendedProps.cancelled
+                                });
+
                                 setOpen(true);
                             }}
                             selectSlotHandler={(slotInfo) => setOpen(false)}
@@ -379,7 +416,7 @@ let TaInterviewPage = () => {
                         />
                     </Grid>
                     <Grid xs>
-                        {open && (
+                        {open && !shouldChange && (
                             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                                 <CardContent sx={{ pb: 0 }}>
                                     <Box>
@@ -442,6 +479,86 @@ let TaInterviewPage = () => {
                                             style={{ minWidth: 120, marginTop: 3 }}
                                         >
                                             Delete
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                setShouldChange(true);
+                                            }}
+                                            variant="contained"
+                                            size="large"
+                                            style={{ minWidth: 120, marginTop: 3 }}
+                                        >
+                                            Re-schedule Interview
+                                        </Button>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        )}
+                        {shouldChange && (
+                            <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
+                                <CardContent sx={{ pb: 0 }}>
+                                    {/* TODO: Change existing info to make them editable via input fields */}
+                                    <Box>
+                                        <Typography variant="h4" sx={{ mb: 2 }}>
+                                            Selected Interview for Rescheduling
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ mt: 0 }}>
+                                        <CardItem
+                                            title="Start time"
+                                            desc={moment(selectedStart).format(
+                                                'MM/DD/YYYY, h:mm:ss a'
+                                            )}
+                                        />
+                                        <CardItem
+                                            title="End time"
+                                            desc={moment(selectedEnd).format(
+                                                'MM/DD/YYYY, h:mm:ss a'
+                                            )}
+                                        />
+                                        <CardItem title="Interview ID" desc={selectedId} />
+                                        <CardItem title="Host" desc={selectedHost} />
+                                        <CardItem title="Length" desc={selectedLength.toString()} />
+                                        {selectedNote === null ? (
+                                            <div></div>
+                                        ) : (
+                                            <CardItem title="Note" desc={selectedNote} />
+                                        )}
+                                        <CardItem
+                                            title="Cancelled"
+                                            desc={selectedCancelled === false ? 'No' : 'Yes'}
+                                        />
+                                        <CardItem
+                                            title="Location"
+                                            desc={
+                                                selectedLocation === 'online'
+                                                    ? 'Online'
+                                                    : selectedLocation
+                                            }
+                                        />
+                                        {selectedGroupId === null ? (
+                                            <div></div>
+                                        ) : (
+                                            <CardItem title="Group ID" desc={selectedGroupId} />
+                                        )}
+                                        {selectedGroupId === null ? (
+                                            <div></div>
+                                        ) : (
+                                            <CardItem
+                                                title="Group Members"
+                                                desc={<pre>{selectedUsername}</pre>}
+                                            />
+                                        )}
+                                        <Button
+                                            onClick={() => {
+                                                rescheduleInterview(course_id);
+                                                setShouldChange(false);
+                                            }}
+                                            variant="contained"
+                                            size="large"
+                                            style={{ minWidth: 120, marginTop: 3 }}
+                                        >
+                                            Confirm Change
                                         </Button>
                                     </Box>
                                 </CardContent>
