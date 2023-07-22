@@ -551,7 +551,11 @@ let TaInterviewPage = () => {
                                         )}
                                         <Button
                                             onClick={() => {
-                                                rescheduleInterview(course_id);
+                                                rescheduleInterview(
+                                                    task,
+                                                    toNewFieldsObj,
+                                                    fromOldFieldsObj
+                                                );
                                                 setShouldChange(false);
                                             }}
                                             variant="contained"
