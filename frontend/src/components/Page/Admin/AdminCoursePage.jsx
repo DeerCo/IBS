@@ -12,7 +12,11 @@ const AdminCoursePage = () => {
     const { register: register4, handleSubmit: handleSubmit4, control: control4 } = useForm();
     const { register: register5, handleSubmit: handleSubmit5, control: control5 } = useForm();
     const { register: register6, handleSubmit: handleSubmit6, control: control6 } = useForm();
+
     let { course_id } = useParams();
+
+    const [getRoleResponse, setGetRoleResponse] = useState([]);
+
     const changeCourse = (data) => {
         AdminApi.change_course({ ...data, course_id: course_id }).then((response) => {
             console.log(response);
@@ -27,7 +31,31 @@ const AdminCoursePage = () => {
                     theme: 'colored'
                 });
             else {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                    return;
+                }
                 toast.error(response.data.message, { theme: 'colored' });
+            }
+        });
+    };
+
+    const getRole = (data) => {
+        AdminApi.get_role(data.username).then((response) => {
+            console.log(response);
+            if (response.status !== 200) {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                }
+                toast.error(response.data.message, { theme: 'colored' });
+            } else {
+                if (response.data.role.length === 0) {
+                    toast.warning('No roles associated to given username', { theme: 'colored' });
+                    return;
+                } else {
+                    toast.success('Retrieved role', { theme: 'colored' });
+                    setGetRoleResponse(response.data.role);
+                }
             }
         });
     };
@@ -42,15 +70,22 @@ const AdminCoursePage = () => {
             formData.append('role', data['role']);
         }
         formData.append('course_id', course_id);
-        formData.append('update_user_info', false);
+
+        // Note: Even if no email is supplied for (>= 1) user,
+        //       they will be added to DB with email set to null.
+        formData.append('update_user_info', true);
 
         AdminApi.upload_role(formData).then((response) => {
             console.log(response);
             if (response.status === 200)
-                toast.success('The users in file have been assigned the specified role', {
+                toast.success(response.data.message, {
                     theme: 'colored'
                 });
             else {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                    return;
+                }
                 toast.error(response.data.message, { theme: 'colored' });
             }
         });
@@ -63,6 +98,10 @@ const AdminCoursePage = () => {
             if (numRolesRemoved > 0) {
                 toast.success(`${numRolesRemoved} roles deleted`, { theme: 'colored' });
             } else {
+                if (response.status === 401) {
+                    toast.warning(response.data.message, { theme: 'colored' });
+                    return;
+                }
                 toast.error('No roles have been deleted', { theme: 'colored' });
             }
         });
@@ -384,8 +423,10 @@ const AdminCoursePage = () => {
                             onSubmitFunctions={{
                                 AddRole: addRole,
                                 UploadRoles: uploadRole,
-                                DeleteRole: deleteRole
+                                DeleteRole: deleteRole,
+                                GetRole: getRole
                             }}
+                            getRoleResponse={getRoleResponse}
                         />
                     </Grid>
                 </Grid>

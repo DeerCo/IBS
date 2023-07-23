@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
+import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import HomeCardLink from './HomeCardLink';
 
@@ -18,7 +18,7 @@ const Homecard = ({ data }) => {
     const addTaskPageLink = `/instructor/course/${data.course_id}/add-task`;
 
     return (
-        <Card>
+        <Card sx={{ width: { xs: 300, sm: 300, md: 400, lg: 400 } }}>
             <CardActionArea component={Link} to={coursePageLink}>
                 <CardMedia
                     component="img"
