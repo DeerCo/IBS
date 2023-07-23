@@ -96,8 +96,9 @@ function App() {
                             path="/instructor/course/:course_id/task/:task/modify"
                             element={<ModifyTask />}
                         />
-                        path="/instructor/course/:course_id/task/:task_id/mark" element=
-                        {<InstructorTaskMarksPage />}
+                        <Route
+                            path="/instructor/course/:course_id/task/:task_id/mark"
+                            element={<InstructorTaskMarksPage />}
                         />
                         <Route
                             path="/instructor/course/:course_id/impersonate"
