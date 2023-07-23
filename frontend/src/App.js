@@ -28,6 +28,8 @@ import StudentListPage from './components/Page/Student/StudentListPage';
 import TaskGroupListPage from './components/General/TaskGroupList/TaskGroupListPage';
 import SubmitMarks from './components/Page/Instructor/SubmitMarks';
 import TaskGroupPage from './components/Page/Instructor/TaskGroupPage';
+import AddTask from './components/Page/Instructor/AddTask';
+import ModifyTask from './components/Page/Instructor/ModifyTask';
 import InstructorTaskMarksPage from './components/Page/Instructor/InstructorTaskMarksPage';
 
 function App() {
@@ -44,7 +46,6 @@ function App() {
                         <Route path="/login" element={<LoginPage />}></Route>
                         <Route path="/reset" element={<ResetPasswordPage />}></Route>
                         <Route path="/home" element={<Home />}></Route>
-
                         <Route path="/course/:course_id/task" element={<StudentTaskPage />}></Route>
                         <Route
                             path="/course/:course_id/student-list"
@@ -66,23 +67,19 @@ function App() {
                             path="/course/:course_id/task/:task/file"
                             element={<StudentFilePage />}
                         ></Route>
-
                         <Route path="/ta/course/:course_id/task" element={<TaTaskPage />}></Route>
                         <Route
                             path="/ta/course/:course_id/task/:task/interview"
                             element={<TaInterviewPage />}
                         ></Route>
-
                         <Route
                             path="/instructor/course/:course_id/task"
                             element={<InstructorTaskPage />}
                         ></Route>
-
                         <Route
                             path="/instructor/course/:courseId/task/:taskId/groups"
                             element={<TaskGroupListPage />}
                         />
-
                         <Route
                             path="/instructor/course/:course_id/impersonate"
                             element={<InstructorImpersonate />}
@@ -92,8 +89,15 @@ function App() {
                             element={<AggregatedGrades role="instructor" />}
                         />
                         <Route
-                            path="/instructor/course/:course_id/task/:task_id/mark"
-                            element={<InstructorTaskMarksPage />}
+                            path="/instructor/course/:course_id/add-task"
+                            element={<AddTask />}
+                        />
+                        <Route
+                            path="/instructor/course/:course_id/task/:task/modify"
+                            element={<ModifyTask />}
+                        />
+                        path="/instructor/course/:course_id/task/:task_id/mark" element=
+                        {<InstructorTaskMarksPage />}
                         />
                         <Route
                             path="/instructor/course/:course_id/impersonate"
@@ -107,7 +111,6 @@ function App() {
                             path="/instructor/course/:courseId/submit-marks"
                             element={<SubmitMarks />}
                         ></Route>
-
                         <Route path="/admin" element={<AdminPage />}></Route>
                         <Route path="/admin/course/:course_id/task" element={<AdminCoursePage />} />
                         <Route path="/admin/impersonate" element={<AdminImpersonate />} />
@@ -119,7 +122,6 @@ function App() {
                             path="/admin/course/:courseId/task-group"
                             element={<TaskGroupPage role="admin" />}
                         />
-
                         <Route path="*" element={<Error />} />
                     </Routes>
                 </BrowserRouter>
