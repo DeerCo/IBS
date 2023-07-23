@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import InstructorApi from '../../../api/instructor_api';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 /**
  * Triggers a download of a CSV file containing marks for a given task within
@@ -33,8 +34,13 @@ const GetMarkCSVButton = ({ task, course_id }) => {
     };
 
     return (
-        <Button variant="contained" size="small" onClick={handleExport}>
-            Export Marks (CSV)
+        <Button
+            startIcon={<FileDownloadIcon />}
+            variant="contained"
+            size="small"
+            onClick={handleExport}
+        >
+            Export Marks
         </Button>
     );
 };
