@@ -59,16 +59,8 @@ let submitMark = async (courseId, task, criteria, username, mark) => {
         overwrite: true
     };
 
-    let config = {
-        headers: { Authorization: `Bearer ${token}` }
-    };
-
     try {
-        return await axios.post(
-            process.env.REACT_APP_API_URL + '/instructor/course/' + courseId + '/mark/submit',
-            data,
-            config
-        );
+        return await http.post(`/instructor/course/${courseId}/mark/submit`, data);
     } catch (err) {
         return err.response;
     }
@@ -198,7 +190,8 @@ let InstructorApi = {
     // delete_interview,
 
     // Mark related
-    get_marks_csv
+    get_marks_csv,
+    submitMark
 };
 
 export default InstructorApi;

@@ -28,6 +28,7 @@ import StudentListPage from './components/Page/Student/StudentListPage';
 import TaskGroupListPage from './components/General/TaskGroupList/TaskGroupListPage';
 import SubmitMarks from './components/Page/Instructor/SubmitMarks';
 import TaskGroupPage from './components/Page/Instructor/TaskGroupPage';
+import InstructorTaskMarksPage from './components/Page/Instructor/InstructorTaskMarksPage';
 
 function App() {
     const theme = ThemeSettings();
@@ -89,6 +90,10 @@ function App() {
                         <Route
                             path="/instructor/course/:courseId/all-grades"
                             element={<AggregatedGrades role="instructor" />}
+                        />
+                        <Route
+                            path="/instructor/course/:course_id/task/:task_id/mark"
+                            element={<InstructorTaskMarksPage />}
                         />
                         <Route
                             path="/instructor/course/:course_id/impersonate"
