@@ -1,5 +1,6 @@
 import axios from 'axios';
 import http from './client';
+import { INSTRUCTOR, TA } from '../Constants/roles';
 
 // Accessible to any of TA/Instructor/Admin
 
@@ -59,6 +60,21 @@ let all_tasks = async (course_id) => {
         return await axios.get(url, config);
     } catch (err) {
         return err.response;
+    }
+};
+
+let getMarksForTask = async (courseId, taskId) => {
+    const role = findRoleInCourse(courseId);
+    if (role === INSTRUCTOR || role === TA) {
+        try {
+            const res = await http.get(`${role}/course/${courseId}/mark/all?task=${taskId}`);
+            const { marks } = res.data;
+            return marks;
+        } catch (err) {
+            return err.response;
+        }
+    } else {
+        return null;
     }
 };
 
@@ -345,6 +361,7 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
+    getMarksForTask,
 
     getAllTaskGroups,
     addTaskGroup,
