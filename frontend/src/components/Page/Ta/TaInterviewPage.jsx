@@ -13,6 +13,7 @@ import {
     Card,
     CardContent,
     Container,
+    IconButton,
     Link,
     MenuItem,
     Typography
@@ -23,6 +24,7 @@ import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/Custom
 import { LocalizationProvider, DesktopDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { parseISO } from 'date-fns';
+import CloseIcon from '@mui/icons-material/Close';
 
 let TaInterviewPage = () => {
     const navigate = useNavigate();
@@ -420,9 +422,23 @@ let TaInterviewPage = () => {
                             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                                 <CardContent sx={{ pb: 0 }}>
                                     <Box>
-                                        <Typography variant="h4" sx={{ mb: 2 }}>
-                                            Selected Interview
-                                        </Typography>
+                                        <Grid container spacing={0}>
+                                            <Grid xs={6}>
+                                                <Typography variant="h4" sx={{ mt: 0.9 }}>
+                                                    Selected Interview
+                                                </Typography>
+                                            </Grid>
+                                            <Grid xs={6}>
+                                                <IconButton
+                                                    aria-label="close"
+                                                    onClick={() => setOpen(false)}
+                                                    style={{ float: 'right' }}
+                                                    disableRipple
+                                                >
+                                                    <CloseIcon />
+                                                </IconButton>
+                                            </Grid>
+                                        </Grid>
                                     </Box>
                                     <Box sx={{ mt: 0 }}>
                                         <CardItem
@@ -486,7 +502,7 @@ let TaInterviewPage = () => {
                                             }}
                                             variant="contained"
                                             size="large"
-                                            style={{ minWidth: 120, marginTop: 3 }}
+                                            style={{ minWidth: 120, marginTop: 3, marginLeft: 10 }}
                                         >
                                             Re-schedule Interview
                                         </Button>
@@ -500,9 +516,23 @@ let TaInterviewPage = () => {
                                     {/* TODO: Change existing info to make them editable via input fields */}
                                     {/* TODO: On change for input fields, update toNewFieldsObj state */}
                                     <Box>
-                                        <Typography variant="h4" sx={{ mb: 2 }}>
-                                            Selected Interview for Rescheduling
-                                        </Typography>
+                                        <Grid container spacing={0}>
+                                            <Grid xs={6}>
+                                                <Typography variant="h4" sx={{ mt: 0.9 }}>
+                                                    Selected Interview for Rescheduling
+                                                </Typography>
+                                            </Grid>
+                                            <Grid xs={6}>
+                                                <IconButton
+                                                    aria-label="close"
+                                                    onClick={() => setShouldChange(false)}
+                                                    style={{ float: 'right' }}
+                                                    disableRipple
+                                                >
+                                                    <CloseIcon />
+                                                </IconButton>
+                                            </Grid>
+                                        </Grid>
                                     </Box>
                                     <Box sx={{ mt: 0 }}>
                                         <CardItem
