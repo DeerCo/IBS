@@ -7,27 +7,10 @@ import '../../../styles/style.css';
 import NavBar from '../../Module/Navigation/NavBar';
 import Grid from '@mui/material/Unstable_Grid2';
 import InterviewCalendar from '../../General/InterviewCalendar/InterviewCalendar';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Container,
-    FormControlLabel,
-    IconButton,
-    Link,
-    MenuItem,
-    Radio,
-    RadioGroup,
-    Typography
-} from '@mui/material';
-import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
-import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
-import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
-import { LocalizationProvider, DesktopDateTimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { parseISO } from 'date-fns';
+import { Box, Button, Card, CardContent, IconButton, Link, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import TaRescheduleInterview from '../../General/TaInterviewComponents/TaRescheduleInterview';
+import TaScheduleInterview from '../../General/TaInterviewComponents/TaScheduleInterview';
 
 let TaInterviewPage = () => {
     const navigate = useNavigate();
@@ -47,43 +30,6 @@ let TaInterviewPage = () => {
     const [selectedLength, setSelectedLength] = useState('');
     const [selectedNote, setSelectedNote] = useState('');
     const [selectedCancelled, setSelectedCancelled] = useState('');
-
-    // for select dropdown when scheduling interview
-    const [isOnline, setIsOnline] = useState(false);
-    const [selectVal, setSelectVal] = useState('In-Person');
-
-    // whether user wants to change interview from a selected interview
-    const [shouldChange, setShouldChange] = useState(false);
-    // for backend query to changeInterview API
-    const [toNewFieldsObj, setToNewFieldsObj] = useState({
-        set_time: null,
-        set_group_id: null,
-        set_length: null,
-        set_location: null,
-        set_note: null,
-        set_cancelled: null
-    });
-
-    const [filterInputFieldsObj, setFilterInputFieldsObj] = useState({
-        interview_id: null,
-        booked: null,
-        time: null,
-        date: null,
-        group_id: null,
-        length: null,
-        location: null,
-        note: null,
-        cancelled: null
-    });
-
-    // for change interview's new location select
-    const [isNewLocOnline, setIsNewLocOnline] = useState(true);
-    const [newLocSelectVal, setNewLocSelectVal] = useState('Online');
-
-    // track the entered
-    const [enteredTime, setEnteredTime] = useState('');
-    const [enteredLength, setEnteredLength] = useState('');
-    const [enteredLocation, setEnteredLocation] = useState('');
 
     const [open, setOpen] = useState(false);
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
@@ -149,39 +95,6 @@ let TaInterviewPage = () => {
         });
     }, [course_id, task, version, navigate]);
 
-    // the book interview function
-    // add task later into the ta input
-    const schedule_interview = (time, length, location) => {
-        if (time === '') {
-            toast.error('The time cannot be empty', { theme: 'colored' });
-        } else if (length === '') {
-            toast.error('The length cannot be empty', { theme: 'colored' });
-        } else if (location === '') {
-            toast.error('The location cannot be empty', { theme: 'colored' });
-        } else {
-            TaApi.schedule_interview(course_id, task, length, time, location).then((response) => {
-                if (!response || !('status' in response)) {
-                    toast.error('Unknown error', { theme: 'colored' });
-                    navigate('/login');
-                } else if (response['status'] === 200) {
-                    setOpen(false);
-                    setVersion(version + 1);
-                    toast.success('You have scheduled the interview successfully', {
-                        theme: 'colored'
-                    });
-                } else if (response['status'] === 400 || response['status'] === 409) {
-                    toast.error(response['data']['message'], { theme: 'colored' });
-                } else if (response['status'] === 401 || response['status'] === 403) {
-                    toast.warn('You need to login again', { theme: 'colored' });
-                    navigate('/login');
-                } else {
-                    toast.error('Unknown error', { theme: 'colored' });
-                    navigate('/login');
-                }
-            });
-        }
-    };
-
     // the cancel interview function
     const delete_interview = (task, id) => {
         TaApi.delete_interview(course_id, task, id).then((response) => {
@@ -231,26 +144,6 @@ let TaInterviewPage = () => {
         });
     };
 
-    // change interview
-    const rescheduleInterview = (task, toNewFieldsObj, filterInputFieldsObj) => {
-        // TaApi.changeInterview(course_id, task).then((res) => {});
-    };
-
-    const onChangeTime = (event) => {
-        let time = event.target.value;
-        setEnteredTime(time);
-    };
-
-    const onChangeLength = (event) => {
-        let length = event.target.value;
-        setEnteredLength(length);
-    };
-
-    const onChangeLocation = (event) => {
-        let location = event.target.value;
-        setEnteredLocation(location);
-    };
-
     const CardItem = ({ title, desc }) => {
         return (
             <Box key={desc} sx={{ pb: 2, pt: 2, display: 'flex', alignItems: 'center' }}>
@@ -272,149 +165,19 @@ let TaInterviewPage = () => {
         );
     };
 
-    const EditCardItem = ({ title, oldDesc, newInput }) => {
-        return (
-            <Box
-                key={`${oldDesc}-edit`}
-                sx={{ pb: 2, pt: 2, display: 'flex', alignItems: 'start' }}
-            >
-                <Box sx={{ ml: 2 }}>
-                    <Typography color="textSecondary" variant="h5">
-                        {title}:
-                    </Typography>
-                </Box>
-                <Box sx={{ ml: 'auto' }}>
-                    <Typography color="textSecondary" variant="h5" fontWeight="400">
-                        {typeof oldDesc === 'string' && oldDesc.startsWith('http') ? (
-                            <Link href={oldDesc}>Link ✈</Link>
-                        ) : (
-                            <div>{oldDesc}</div>
-                        )}
-                    </Typography>
-                    {newInput}
-                </Box>
-            </Box>
-        );
-    };
-
     return (
         <Grid container>
             <Grid xs={12}>
                 <NavBar page="Interview" role={'ta'} />
             </Grid>
             <Grid xs={12} sx={{ mt: 3, marginX: 2 }}>
-                <Container>
-                    <Typography fontWeight="500" variant="h2" sx={{ ml: 3 }}>
-                        Schedule Interview
-                    </Typography>
-                    <CardContent sx={{ padding: '30px' }}>
-                        <Grid container spacing={2} direction="row">
-                            <Grid xs>
-                                <CustomFormLabel sx={{ mt: 0 }} htmlFor="interview-time">
-                                    Time
-                                </CustomFormLabel>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <DesktopDateTimePicker
-                                        placeholder="Start date"
-                                        onChange={(value) => {
-                                            setEnteredTime(
-                                                moment(value).format('YYYY-MM-DD HH:mm:ss')
-                                            );
-                                        }}
-                                        // renderInput={(inputProps) => (
-                                        //     <CustomTextField
-                                        //         fullWidth
-                                        //         variant="outlined"
-                                        //         size="small"
-                                        //         inputProps={{ 'aria-label': 'basic date picker' }}
-                                        //         {...inputProps}
-                                        //     />
-                                        // )}
-                                        slotProps={{
-                                            textField: {
-                                                variant: 'outlined',
-                                                size: 'small'
-                                            }
-                                        }}
-                                        value={parseISO(enteredTime)}
-                                    />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid xs>
-                                <CustomFormLabel sx={{ mt: 0 }} htmlFor="interview-length">
-                                    Length
-                                </CustomFormLabel>
-                                <CustomTextField
-                                    id="interview-length"
-                                    variant="outlined"
-                                    helperText="Length (in minutes)"
-                                    size="small"
-                                    type="number"
-                                    value={enteredLength}
-                                    onChange={onChangeLength}
-                                />
-                            </Grid>
-                            <Grid xs>
-                                <CustomFormLabel sx={{ mt: 0 }} htmlFor="location-select">
-                                    Location
-                                </CustomFormLabel>
-                                <CustomSelect
-                                    labelId="location-select-label"
-                                    id="location-select"
-                                    value={selectVal}
-                                    onChange={(event, newVal) => {
-                                        setSelectVal(event.target.value);
-                                        if (event.target.value === 'Online') {
-                                            setIsOnline(true);
-                                            setEnteredLocation(event.target.value);
-                                        } else {
-                                            setIsOnline(false);
-                                        }
-                                    }}
-                                    fullWidth
-                                    size="small"
-                                >
-                                    <MenuItem value="In-Person">In-Person</MenuItem>
-                                    <MenuItem value="Online">Online</MenuItem>
-                                </CustomSelect>
-                                {!isOnline && (
-                                    <div>
-                                        <CustomFormLabel
-                                            sx={{ mt: 1.5 }}
-                                            htmlFor="inperson-location"
-                                        >
-                                            Enter Room
-                                        </CustomFormLabel>
-                                        <CustomTextField
-                                            id="inperson-location"
-                                            variant="outlined"
-                                            size="small"
-                                            value={enteredLocation}
-                                            onChange={onChangeLocation}
-                                        />
-                                    </div>
-                                )}
-                            </Grid>
-                            <Grid xs>
-                                <Button
-                                    color="primary"
-                                    variant="contained"
-                                    sx={{ mt: 3 }}
-                                    size="large"
-                                    onClick={() => {
-                                        schedule_interview(
-                                            enteredTime,
-                                            enteredLength,
-                                            enteredLocation
-                                        );
-                                    }}
-                                >
-                                    Schedule
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </CardContent>
-                </Container>
+                <TaScheduleInterview
+                    courseId={course_id}
+                    taskId={task}
+                    setOpen={setOpen}
+                    setVersion={setVersion}
+                />
+                {/* Interview Calendar + Popup for Interview */}
                 <Grid container spacing={2} direction="row" sx={{ m: 'auto' }}>
                     <Grid xs={6}>
                         <InterviewCalendar
@@ -435,28 +198,28 @@ let TaInterviewPage = () => {
                                 console.log(event);
 
                                 // For setting default values to old fields of change interview endpoint.
-                                setFilterInputFieldsObj({
-                                    interview_id: event.extendedProps.id,
-                                    booked: true,
-                                    time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                                    date: moment(event.start).format('YYYY-MM-DD'),
-                                    group_id: event.extendedProps.group_id,
-                                    length: event.extendedProps.length,
-                                    location: event.extendedProps.location,
-                                    note: event.extendedProps.note,
-                                    cancelled: event.extendedProps.cancelled
-                                });
+                                // setFilterInputFieldsObj({
+                                //     interview_id: event.extendedProps.id,
+                                //     booked: true,
+                                //     time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                                //     date: moment(event.start).format('YYYY-MM-DD'),
+                                //     group_id: event.extendedProps.group_id,
+                                //     length: event.extendedProps.length,
+                                //     location: event.extendedProps.location,
+                                //     note: event.extendedProps.note,
+                                //     cancelled: event.extendedProps.cancelled
+                                // });
 
                                 // For setting default values to new fields of change interview endpoint.
                                 // Used to render default values to input fields.
-                                setToNewFieldsObj({
-                                    set_time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                                    set_group_id: event.extendedProps.group_id,
-                                    set_length: event.extendedProps.length,
-                                    set_location: event.extendedProps.location, // event.extendedProps.location
-                                    set_note: event.extendedProps.note,
-                                    set_cancelled: event.extendedProps.cancelled
-                                });
+                                // setToNewFieldsObj({
+                                //     set_time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                                //     set_group_id: event.extendedProps.group_id,
+                                //     set_length: event.extendedProps.length,
+                                //     set_location: event.extendedProps.location, // event.extendedProps.location
+                                //     set_note: event.extendedProps.note,
+                                //     set_cancelled: event.extendedProps.cancelled
+                                // });
                                 // TODO: In the case that some fields are omitted in sending, delete omitted fields.
                                 // e.g. if set_time is not set to new value, delete set_time key from toNewFieldsObj.
 
@@ -467,7 +230,7 @@ let TaInterviewPage = () => {
                         />
                     </Grid>
                     <Grid xs>
-                        {open && !shouldChange && (
+                        {open && (
                             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                                 <CardContent sx={{ pb: 0 }}>
                                     <Box>
@@ -545,256 +308,13 @@ let TaInterviewPage = () => {
                                         >
                                             Delete
                                         </Button>
-                                        <Button
-                                            onClick={() => {
-                                                setShouldChange(true);
-                                            }}
-                                            variant="contained"
-                                            size="large"
-                                            style={{ minWidth: 120, marginTop: 3, marginLeft: 10 }}
-                                        >
-                                            Re-schedule Interview
-                                        </Button>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        )}
-                        {shouldChange && (
-                            <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
-                                <CardContent sx={{ pb: 0 }}>
-                                    {/* TODO: Change existing info to make them editable via input fields */}
-                                    {/* TODO: On change for input fields, update toNewFieldsObj state */}
-                                    <Box>
-                                        <Grid container spacing={0}>
-                                            <Grid xs={6}>
-                                                <Typography variant="h4" sx={{ mt: 0.9 }}>
-                                                    Selected Interview for Rescheduling
-                                                </Typography>
-                                            </Grid>
-                                            <Grid xs={6}>
-                                                <IconButton
-                                                    aria-label="close"
-                                                    onClick={() => setShouldChange(false)}
-                                                    style={{ float: 'right' }}
-                                                    disableRipple
-                                                >
-                                                    <CloseIcon />
-                                                </IconButton>
-                                            </Grid>
-                                        </Grid>
-                                    </Box>
-                                    <Box sx={{ mt: 0 }}>
-                                        <EditCardItem
-                                            title="Set new starting time"
-                                            oldDesc={undefined}
-                                            newInput={
-                                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                                    <DesktopDateTimePicker
-                                                        placeholder="Start date"
-                                                        onChange={(value) => {
-                                                            // value is Date object
-                                                            const dateToString =
-                                                                moment(value).format(
-                                                                    'YYYY-MM-DD HH:mm:ss'
-                                                                );
-                                                            setToNewFieldsObj((prevState) => {
-                                                                const newState = prevState;
-                                                                if (
-                                                                    prevState.set_time !==
-                                                                    dateToString
-                                                                ) {
-                                                                    newState.set_time =
-                                                                        dateToString;
-                                                                }
-                                                                return newState;
-                                                            });
-                                                        }}
-                                                        slotProps={{
-                                                            textField: {
-                                                                variant: 'outlined',
-                                                                size: 'small'
-                                                            }
-                                                        }}
-                                                        value={parseISO(toNewFieldsObj.set_time)}
-                                                    />
-                                                </LocalizationProvider>
-                                            }
-                                        />
-                                        <EditCardItem
-                                            title="Set new length of interview"
-                                            oldDesc={undefined}
-                                            newInput={
-                                                <CustomTextField
-                                                    id="set-length-field"
-                                                    variant="outlined"
-                                                    size="small"
-                                                    type="number"
-                                                    helperText="Length (in minutes)"
-                                                    value={toNewFieldsObj.set_length}
-                                                    onChange={(event) =>
-                                                        setToNewFieldsObj((prevState) => {
-                                                            const newState = prevState;
-                                                            if (
-                                                                prevState.set_length !==
-                                                                event.target.value
-                                                            ) {
-                                                                newState.set_length =
-                                                                    event.target.value;
-                                                            }
-                                                            return newState;
-                                                        })
-                                                    }
-                                                />
-                                            }
-                                        />
-                                        <EditCardItem
-                                            title="Will interview be cancelled?"
-                                            oldDesc={undefined}
-                                            newInput={
-                                                <>
-                                                    <RadioGroup
-                                                        row
-                                                        value={toNewFieldsObj.set_cancelled}
-                                                        onChange={(event) =>
-                                                            setToNewFieldsObj((prevState) => {
-                                                                const newState = prevState;
-                                                                if (
-                                                                    prevState.set_cancelled !==
-                                                                    event.target.value
-                                                                ) {
-                                                                    newState.set_cancelled =
-                                                                        event.target.value;
-                                                                }
-                                                                return newState;
-                                                            })
-                                                        }
-                                                    >
-                                                        <FormControlLabel
-                                                            control={<Radio />}
-                                                            label="Yes"
-                                                            value={true}
-                                                        />
-                                                        <FormControlLabel
-                                                            control={<Radio />}
-                                                            label="No"
-                                                            value={false}
-                                                        />
-                                                    </RadioGroup>
-                                                </>
-                                            }
-                                        />
-                                        <EditCardItem
-                                            title="New Interview Location"
-                                            oldDesc={undefined}
-                                            newInput={
-                                                <>
-                                                    <CustomSelect
-                                                        labelId="new-location-select-label"
-                                                        id="new-location-select"
-                                                        value={newLocSelectVal}
-                                                        onChange={(event, newVal) => {
-                                                            setNewLocSelectVal(event.target.value);
-                                                            if (event.target.value === 'Online') {
-                                                                setIsNewLocOnline(true);
-                                                                setToNewFieldsObj((prevState) => {
-                                                                    const newState = prevState;
-                                                                    if (
-                                                                        prevState.set_location !==
-                                                                        event.target.value
-                                                                    ) {
-                                                                        newState.set_location =
-                                                                            event.target.value;
-                                                                    }
-                                                                    return newState;
-                                                                });
-                                                            } else {
-                                                                setIsNewLocOnline(false);
-                                                            }
-                                                        }}
-                                                        fullWidth
-                                                        size="small"
-                                                    >
-                                                        <MenuItem value="In-Person">
-                                                            In-Person
-                                                        </MenuItem>
-                                                        <MenuItem value="Online">Online</MenuItem>
-                                                    </CustomSelect>
-                                                    {!isNewLocOnline && (
-                                                        <div>
-                                                            <CustomFormLabel
-                                                                sx={{ mt: 1.5 }}
-                                                                htmlFor="inperson-new-location"
-                                                            >
-                                                                Enter Room
-                                                            </CustomFormLabel>
-                                                            <CustomTextField
-                                                                id="inperson-new-location"
-                                                                variant="outlined"
-                                                                size="small"
-                                                                value={
-                                                                    toNewFieldsObj.set_location ===
-                                                                    'Online'
-                                                                        ? ''
-                                                                        : toNewFieldsObj.set_location
-                                                                }
-                                                                onChange={(event) => {
-                                                                    setToNewFieldsObj(
-                                                                        (prevState) => {
-                                                                            const newState =
-                                                                                prevState;
-                                                                            if (
-                                                                                prevState.set_location !==
-                                                                                event.target.value
-                                                                            ) {
-                                                                                newState.set_location =
-                                                                                    event.target.value;
-                                                                            }
-                                                                            return newState;
-                                                                        }
-                                                                    );
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </>
-                                            }
-                                        />
-                                        {/*TODO: Implement set_group_id input*/}
-                                        {/*TODO: Implement set_note input*/}
-                                        {selectedGroupId === null ? (
-                                            <div></div>
-                                        ) : (
-                                            <CardItem title="Group ID" desc={selectedGroupId} />
-                                        )}
-                                        {selectedGroupId === null ? (
-                                            <div></div>
-                                        ) : (
-                                            <CardItem
-                                                title="Group Members"
-                                                desc={<pre>{selectedUsername}</pre>}
-                                            />
-                                        )}
-                                        <Button
-                                            onClick={() => {
-                                                rescheduleInterview(
-                                                    task,
-                                                    toNewFieldsObj,
-                                                    filterInputFieldsObj
-                                                );
-                                                setShouldChange(false);
-                                            }}
-                                            variant="contained"
-                                            size="large"
-                                            style={{ minWidth: 120, marginTop: 3 }}
-                                        >
-                                            Confirm Change
-                                        </Button>
                                     </Box>
                                 </CardContent>
                             </Card>
                         )}
                     </Grid>
                 </Grid>
+                <TaRescheduleInterview courseId={course_id} taskId={task} />
             </Grid>
         </Grid>
     );
