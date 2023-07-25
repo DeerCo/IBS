@@ -21,6 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import TaRescheduleInterview from '../../General/TaInterviewComponents/TaRescheduleInterview/TaRescheduleInterview';
 import TaScheduleInterview from '../../General/TaInterviewComponents/TaScheduleInterview';
 import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
+import UpcomingInterviews from '../../General/UpcomingInterviews/UpcomingInterviews';
 
 let TaInterviewPage = () => {
     const navigate = useNavigate();
@@ -357,7 +358,7 @@ let TaInterviewPage = () => {
             tabName: 'Upcoming Interviews',
             tabId: 2,
             tabSubheading: `Upcoming Interviews for ${sessionStorage.getItem('username')}`,
-            tabContent: <></>
+            tabContent: <UpcomingInterviews courseId={course_id} taskId={task} />
         }
     ];
 
