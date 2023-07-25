@@ -18,7 +18,7 @@ import {
     Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import TaRescheduleInterview from '../../General/TaInterviewComponents/TaRescheduleInterview';
+import TaRescheduleInterview from '../../General/TaInterviewComponents/TaRescheduleInterview/TaRescheduleInterview';
 import TaScheduleInterview from '../../General/TaInterviewComponents/TaScheduleInterview';
 import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 

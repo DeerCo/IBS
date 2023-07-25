@@ -16,11 +16,11 @@ import {
 import Grid from '@mui/material/Unstable_Grid2';
 import { DesktopDateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import moment from 'moment/moment';
+import moment from 'moment';
 import { parseISO } from 'date-fns';
-import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
-import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
-import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
+import CustomTextField from '../../../FlexyMainComponents/forms/custom-elements/CustomTextField';
+import CustomSelect from '../../../FlexyMainComponents/forms/custom-elements/CustomSelect';
+import CustomFormLabel from '../../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 
 const EditCardItem = ({ title, oldDesc, newInput }) => {
     return (
@@ -44,7 +44,7 @@ const EditCardItem = ({ title, oldDesc, newInput }) => {
     );
 };
 
-const TaRescheduleInterview = (props) => {
+const TaRescheduleUpdatedFields = (props) => {
     // for backend query to changeInterview API
     const [toNewFieldsObj, setToNewFieldsObj] = React.useState({
         set_time: null,
@@ -86,7 +86,7 @@ const TaRescheduleInterview = (props) => {
                         <Grid container spacing={0}>
                             <Grid xs={6}>
                                 <Typography variant="h4" sx={{ mt: 0.9 }}>
-                                    Selected Interview for Rescheduling
+                                    Updated Information
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -271,11 +271,11 @@ const TaRescheduleInterview = (props) => {
     );
 };
 
-TaRescheduleInterview.propTypes = {
+TaRescheduleUpdatedFields.propTypes = {
     // Current Course ID
     courseId: PropTypes.string.isRequired,
     // Current Task ID
     taskId: PropTypes.string.isRequired
 };
 
-export default TaRescheduleInterview;
+export default TaRescheduleUpdatedFields;
