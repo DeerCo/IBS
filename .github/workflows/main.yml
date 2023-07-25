@@ -13,7 +13,11 @@ jobs:
         run: |
           echo "${{ secrets.FRONTEND_ENV }}" > ./frontend/.env;
           echo "${{ secrets.BACKEND_ENV }}" > ./backend/.env;
-
+       
+      # TODO: Commented out because they break the pipeline. Fix required. 
+      # - name: Rootless Docker
+      #  uses: ScribeMD/rootless-docker@0.2.2
+        
       - name: compose build
         run: docker compose build
 

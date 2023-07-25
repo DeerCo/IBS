@@ -212,6 +212,6 @@
          ```
 
 ### Note
-For questions/issues regarding hot-reloading on the frontend read [this](frontend_hot_reloading.md)
+For questions/issues regarding hot-reloading on the frontend read [this](hot_reloading.md)
 
 **Written by Eric Ryu**

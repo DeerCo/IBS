@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app",
+    "dev": "nodemon app.js --legacy-watch",
     "deploy": "pm2 start --env production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,5 +34,8 @@
     "nodemailer": "^6.7.2",
     "pg": "^8.7.1",
     "pg-format": "^1.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

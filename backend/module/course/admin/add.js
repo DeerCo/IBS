@@ -13,69 +13,87 @@ router.post("/", (req, res) => {
         return;
     }
 
-    if (req.body["hidden"] === true || req.body["hidden"] === "true") {
-        var hidden = true;
+  if (req.body["hidden"] === true || req.body["hidden"] === "true") {
+    var hidden = true;
+  } else {
+    var hidden = false;
+  }
+
+  let default_token_count = 0;
+  if ("default_token_count" in req.body) {
+    if (helpers.number_validate(req.body["default_token_count"])) {
+      res.status(400).json({ message: "The default token count is invalid." });
+      return;
     } else {
-        var hidden = false;
+      default_token_count = req.body["default_token_count"];
     }
+  }
 
-    let default_token_count = 0;
-    if ("default_token_count" in req.body) {
-        if (helpers.number_validate(req.body["default_token_count"])) {
-            res.status(400).json({ message: "The default token count is invalid." });
-            return;
-        } else {
-            default_token_count = req.body["default_token_count"];
-        }
+  let token_length = 0;
+  if ("token_length" in req.body) {
+    if (helpers.number_validate(req.body["token_length"])) {
+      res.status(400).json({ message: "The token length is invalid." });
+      return;
+    } else {
+      token_length = req.body["token_length"];
     }
+  }
 
-    let token_length = 0;
-    if ("token_length" in req.body) {
-        if (helpers.number_validate(req.body["token_length"])) {
-            res.status(400).json({ message: "The token length is invalid." });
-            return;
-        } else {
-            token_length = req.body["token_length"];
-        }
+  let gitlab_group_id = null;
+  if ("gitlab_group_id" in req.body) {
+    if (helpers.number_validate(req.body["gitlab_group_id"])) {
+      res.status(400).json({ message: "The gitlab group id is invalid." });
+      return;
+    } else {
+      gitlab_group_id = req.body["gitlab_group_id"];
     }
+  }
 
-    let gitlab_group_id = null;
-    if ("gitlab_group_id" in req.body) {
-        if (helpers.number_validate(req.body["gitlab_group_id"])) {
-            res.status(400).json({ message: "The gitlab group id is invalid." });
-            return;
-        } else {
-            gitlab_group_id = req.body["gitlab_group_id"];
-        }
-    }
+  let sql_add_course =
+    "INSERT INTO course (course_code, course_session, gitlab_group_id, default_token_count, token_length, hidden) VALUES (($1), ($2), ($3), ($4), ($5), ($6)) RETURNING course_id";
+  let sql_add_data = [
+    req.body["course_code"],
+    req.body["course_session"],
+    gitlab_group_id,
+    default_token_count,
+    token_length,
+    hidden,
+  ];
 
-    let sql_add_course = "INSERT INTO course (course_code, course_session, gitlab_group_id, default_token_count, token_length, hidden) VALUES (($1), ($2), ($3), ($4), ($5), ($6)) RETURNING course_id";
-    let sql_add_data = [req.body["course_code"], req.body["course_session"], gitlab_group_id, default_token_count, token_length, hidden];
+  client.query(sql_add_course, sql_add_data, (err, pg_res_add_course) => {
+    if (err) {
+      if (
+        err.code === "23505" &&
+        err.constraint === "course_course_code_course_session_key"
+      ) {
+        res.status(409).json({
+          message: "The course must have unique course code and session.",
+        });
+      } else if (
+        err.code === "23505" &&
+        err.constraint === "course_gitlab_group_id_key"
+      ) {
+        res
+          .status(409)
+          .json({ message: "The course must have unique Gitlab group id." });
+      } else {
+        res.status(404).json({ message: "Unknown error." });
+        console.log(err);
+      }
+    } else if (pg_res_add_course.rowCount === 1) {
+      var course_id = pg_res_add_course.rows[0]["course_id"];
 
-    client.query(sql_add_course, sql_add_data, (err, pg_res_add_course) => {
-        if (err) {
-            if (err.code === "23505" && err.constraint === "course_course_code_course_session_key") {
-                res.status(409).json({ message: "The course must have unique course code and session." });
-            } else if (err.code === "23505" && err.constraint === "course_gitlab_group_id_key") {
-                res.status(409).json({ message: "The course must have unique Gitlab group id." });
-            } else {
-                res.status(404).json({ message: "Unknown error." });
-                console.log(err);
-            }
-        } else if (pg_res_add_course.rowCount === 1) {
-            var course_id = pg_res_add_course.rows[0]["course_id"];
+      let user_table_name = "course_" + course_id + ".user";
+      let toekn_group_table_name = "course_" + course_id + ".task_group";
+      let task_table_name = "course_" + course_id + ".task";
+      let criteria_table_name = "course_" + course_id + ".criteria";
+      let mark_table_name = "course_" + course_id + ".mark";
+      let group_table_name = "course_" + course_id + ".group";
+      let group_user_table_name = "course_" + course_id + ".group_user";
+      let submission_table_name = "course_" + course_id + ".submission";
+      let interview_table_name = "course_" + course_id + ".interview";
 
-            let user_table_name = "course_" + course_id + ".user";
-            let toekn_group_table_name = "course_" + course_id + ".task_group";
-            let task_table_name = "course_" + course_id + ".task";
-            let criteria_table_name = "course_" + course_id + ".criteria";
-            let mark_table_name = "course_" + course_id + ".mark";
-            let group_table_name = "course_" + course_id + ".group";
-            let group_user_table_name = "course_" + course_id + ".group_user";
-            let submission_table_name = "course_" + course_id + ".submission";
-            let interview_table_name = "course_" + course_id + ".interview";
-
-            let sql_add_schema = "CREATE SCHEMA course_" + course_id + "; ";
+			let sql_add_schema = "CREATE SCHEMA course_" + course_id + "; ";
             let sql_add_user_table =
                 "CREATE TABLE " + user_table_name + "(" +
                 "username character varying NOT NULL, token_count integer NOT NULL DEFAULT -1, PRIMARY KEY (username), " +
@@ -95,8 +113,7 @@ router.post("/", (req, res) => {
                 "min_member integer NOT NULL DEFAULT 1, max_member integer NOT NULL DEFAULT 1, " +
                 "max_token integer NOT NULL DEFAULT 0, change_group boolean NOT NULL DEFAULT true, " +
                 "hide_interview boolean NOT NULL DEFAULT true, hide_file boolean NOT NULL DEFAULT true, " +
-                "interview_group character varying, task_group_id integer, starter_code_url character varying, " +
-                "PRIMARY KEY (task), UNIQUE (task), " +
+                "interview_group character varying, task_group_id integer, starter_code_url character varying, PRIMARY KEY (task)" +
                 "CONSTRAINT task_group_id FOREIGN KEY (task_group_id) REFERENCES " + toekn_group_table_name + " (task_group_id) MATCH SIMPLE " +
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
@@ -160,20 +177,36 @@ router.post("/", (req, res) => {
                 "ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID" +
                 ");";
 
-            let sql_all = sql_add_schema + sql_add_user_table + sql_add_task_group_table + sql_add_task_table + sql_add_criteria_table +
-                sql_add_mark_table + sql_add_group_table + sql_add_group_user_table + sql_add_submission_table
-                + sql_add_interview_table;
+      let sql_all =
+        sql_add_schema +
+        sql_add_user_table +
+        sql_add_task_group_table +
+        sql_add_task_table +
+        sql_add_criteria_table +
+        sql_add_mark_table +
+        sql_add_group_table +
+        sql_add_group_user_table +
+        sql_add_submission_table +
+        sql_add_interview_table;
 
-            client.query(sql_all, [], (err_add_tables, pg_res_add_tables) => {
-                if (err_add_tables) {
-                    console.log(err_add_tables);
-                    res.status(404).json({ message: "The course is added but the course specific tables cannot be created.", course_id: course_id });
-                } else {
-                    res.status(200).json({ message: "The course is added and the course specific tables have been created.", course_id: course_id });
-                }
-            });
+      client.query(sql_all, [], (err_add_tables, pg_res_add_tables) => {
+        if (err_add_tables) {
+          console.log(err_add_tables);
+          res.status(404).json({
+            message:
+              "The course is added but the course specific tables cannot be created.",
+            course_id: course_id,
+          });
+        } else {
+          res.status(200).json({
+            message:
+              "The course is added and the course specific tables have been created.",
+            course_id: course_id,
+          });
         }
-    });
-})
+      });
+    }
+  });
+});
 
 module.exports = router;

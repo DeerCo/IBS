@@ -3,12 +3,12 @@ const router = express.Router();
 const client = require("../../../setup/db");
 
 router.get("/", (req, res) => {
-    if (res.locals["task"] === "") {
-        res.status(400).json({ message: "The task is missing or invalid." });
-        return;
-    }
+  if (res.locals["task"] === "") {
+    res.status(400).json({ message: "The task is missing or invalid." });
+    return;
+  }
 
-    let sql_task = "SELECT task, long_name, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, due_date AS due_date_utc, min_member, max_member, max_token, change_group, hide_interview, hide_file, interview_group, starter_code_url FROM course_" + res.locals["course_id"] + ".task WHERE task = ($1) AND hidden = 'false'";
+    let sql_task = "SELECT task, long_name, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, due_date AS due_date_utc, hidden, weight, min_member, max_member, max_token, change_group, hide_interview, hide_file, interview_group, task_group_id, starter_code_url FROM course_" + res.locals["course_id"] + ".task WHERE task = ($1) AND hidden = 'false'";
     client.query(sql_task, [res.locals["task"]], (err, pg_res) => {
         if (err) {
             res.status(404).json({ message: "Unknown error." });
