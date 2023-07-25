@@ -6,11 +6,11 @@ import TaRescheduleFilterFields from './TaRescheduleFilterFields';
 import {
     FilterFieldsProvider,
     FilterFieldsContext
-} from './RescheduleContexts/FilterFieldsContext';
+} from '../../../../contexts/RescheduleContexts/FilterFieldsContext';
 import {
     UpdatedFieldsProvider,
     UpdatedFieldsContext
-} from './RescheduleContexts/UpdatedFieldsContext';
+} from '../../../../contexts/RescheduleContexts/UpdatedFieldsContext';
 import { Button } from '@mui/material';
 
 const TaRescheduleInterview = (props) => {

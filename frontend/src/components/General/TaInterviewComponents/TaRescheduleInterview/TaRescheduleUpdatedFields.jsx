@@ -21,7 +21,7 @@ import { parseISO } from 'date-fns';
 import CustomTextField from '../../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 import CustomSelect from '../../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 import CustomFormLabel from '../../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
-import { UpdatedFieldsContext } from './RescheduleContexts/UpdatedFieldsContext';
+import { UpdatedFieldsContext } from '../../../../contexts/RescheduleContexts/UpdatedFieldsContext';
 
 const EditCardItem = ({ title, oldDesc, newInput }) => {
     return (
