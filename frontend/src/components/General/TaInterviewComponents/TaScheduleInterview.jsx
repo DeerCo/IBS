@@ -73,9 +73,6 @@ const TaScheduleInterview = (props) => {
     return (
         <>
             <Container>
-                <Typography fontWeight="500" variant="h2" sx={{ ml: 3 }}>
-                    Schedule Interview
-                </Typography>
                 <CardContent sx={{ padding: '30px' }}>
                     <Grid container spacing={2} direction="row">
                         <Grid xs>

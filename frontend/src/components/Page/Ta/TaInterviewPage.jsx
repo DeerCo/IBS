@@ -7,10 +7,20 @@ import '../../../styles/style.css';
 import NavBar from '../../Module/Navigation/NavBar';
 import Grid from '@mui/material/Unstable_Grid2';
 import InterviewCalendar from '../../General/InterviewCalendar/InterviewCalendar';
-import { Box, Button, Card, CardContent, IconButton, Link, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Container,
+    IconButton,
+    Link,
+    Typography
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import TaRescheduleInterview from '../../General/TaInterviewComponents/TaRescheduleInterview';
 import TaScheduleInterview from '../../General/TaInterviewComponents/TaScheduleInterview';
+import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 
 let TaInterviewPage = () => {
     const navigate = useNavigate();
@@ -165,156 +175,192 @@ let TaInterviewPage = () => {
         );
     };
 
+    const flexyTabs = [
+        {
+            tabName: 'Schedule/Delete Interviews',
+            tabId: 0,
+            tabSubheading: 'Schedule/Delete Interviews',
+            tabContent: (
+                <>
+                    <TaScheduleInterview
+                        courseId={course_id}
+                        taskId={task}
+                        setOpen={setOpen}
+                        setVersion={setVersion}
+                    />
+                    {/* Interview Calendar + Popup for Interview */}
+                    <Grid container spacing={2} direction="row" sx={{ m: 'auto' }} columns={12}>
+                        <Grid xs={7}>
+                            <InterviewCalendar
+                                events={calendarData}
+                                eventClickHandler={(event) => {
+                                    // For setting states of selected calendar event for display in new window.
+                                    setSelectedId(event.extendedProps.id);
+                                    setSelectedStart(event.start);
+                                    setSelectedEnd(event.end);
+                                    setSelectedLocation(event.extendedProps.location);
+                                    setSelectedGroupId(event.extendedProps.group_id);
+                                    setSelectedHost(event.extendedProps.host);
+                                    setSelectedLength(event.extendedProps.length);
+                                    setSelectedNote(event.extendedProps.note);
+                                    setSelectedCancelled(event.extendedProps.cancelled);
+                                    check_group(event.extendedProps.group_id);
+
+                                    console.log(event);
+
+                                    // For setting default values to old fields of change interview endpoint.
+                                    // setFilterInputFieldsObj({
+                                    //     interview_id: event.extendedProps.id,
+                                    //     booked: true,
+                                    //     time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                                    //     date: moment(event.start).format('YYYY-MM-DD'),
+                                    //     group_id: event.extendedProps.group_id,
+                                    //     length: event.extendedProps.length,
+                                    //     location: event.extendedProps.location,
+                                    //     note: event.extendedProps.note,
+                                    //     cancelled: event.extendedProps.cancelled
+                                    // });
+
+                                    // For setting default values to new fields of change interview endpoint.
+                                    // Used to render default values to input fields.
+                                    // setToNewFieldsObj({
+                                    //     set_time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+                                    //     set_group_id: event.extendedProps.group_id,
+                                    //     set_length: event.extendedProps.length,
+                                    //     set_location: event.extendedProps.location, // event.extendedProps.location
+                                    //     set_note: event.extendedProps.note,
+                                    //     set_cancelled: event.extendedProps.cancelled
+                                    // });
+                                    // TODO: In the case that some fields are omitted in sending, delete omitted fields.
+                                    // e.g. if set_time is not set to new value, delete set_time key from toNewFieldsObj.
+
+                                    setOpen(true);
+                                }}
+                                selectSlotHandler={(slotInfo) => setOpen(false)}
+                                width={1000}
+                            />
+                        </Grid>
+                        <Grid xs={5}>
+                            {open && (
+                                <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
+                                    <CardContent sx={{ pb: 0 }}>
+                                        <Box>
+                                            <Grid container spacing={0}>
+                                                <Grid xs={6}>
+                                                    <Typography variant="h4" sx={{ mt: 0.9 }}>
+                                                        Selected Interview
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid xs={6}>
+                                                    <IconButton
+                                                        aria-label="close"
+                                                        onClick={() => setOpen(false)}
+                                                        style={{ float: 'right' }}
+                                                        disableRipple
+                                                    >
+                                                        <CloseIcon />
+                                                    </IconButton>
+                                                </Grid>
+                                            </Grid>
+                                        </Box>
+                                        <Box sx={{ mt: 0 }}>
+                                            <CardItem
+                                                title="Start time"
+                                                desc={moment(selectedStart).format(
+                                                    'MM/DD/YYYY, h:mm:ss a'
+                                                )}
+                                            />
+                                            <CardItem
+                                                title="End time"
+                                                desc={moment(selectedEnd).format(
+                                                    'MM/DD/YYYY, h:mm:ss a'
+                                                )}
+                                            />
+                                            <CardItem title="Interview ID" desc={selectedId} />
+                                            <CardItem title="Host" desc={selectedHost} />
+                                            <CardItem
+                                                title="Length"
+                                                desc={selectedLength.toString()}
+                                            />
+                                            {selectedNote === null ? (
+                                                <div></div>
+                                            ) : (
+                                                <CardItem title="Note" desc={selectedNote} />
+                                            )}
+                                            <CardItem
+                                                title="Cancelled"
+                                                desc={selectedCancelled === false ? 'No' : 'Yes'}
+                                            />
+                                            <CardItem
+                                                title="Location"
+                                                desc={
+                                                    selectedLocation === 'online'
+                                                        ? 'Online'
+                                                        : selectedLocation
+                                                }
+                                            />
+                                            {selectedGroupId === null ? (
+                                                <div></div>
+                                            ) : (
+                                                <CardItem title="Group ID" desc={selectedGroupId} />
+                                            )}
+                                            {selectedGroupId === null ? (
+                                                <div></div>
+                                            ) : (
+                                                <CardItem
+                                                    title="Group Members"
+                                                    desc={<pre>{selectedUsername}</pre>}
+                                                />
+                                            )}
+                                            <Button
+                                                onClick={() => {
+                                                    delete_interview(task, selectedId);
+                                                }}
+                                                variant="contained"
+                                                size="large"
+                                                style={{ minWidth: 120, marginTop: 3 }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </Grid>
+                    </Grid>
+                </>
+            )
+        },
+        {
+            tabName: 'Re-schedule Interviews',
+            tabId: 1,
+            tabSubheading: 'Re-schedule Interview(s)',
+            tabContent: <TaRescheduleInterview courseId={course_id} taskId={task} />
+        },
+        {
+            tabName: 'Upcoming Interviews',
+            tabId: 2,
+            tabSubheading: `Upcoming Interviews for ${sessionStorage.getItem('username')}`,
+            tabContent: <></>
+        }
+    ];
+
     return (
         <Grid container>
             <Grid xs={12}>
                 <NavBar page="Interview" role={'ta'} />
             </Grid>
-            <Grid xs={12} sx={{ mt: 3, marginX: 2 }}>
-                <TaScheduleInterview
-                    courseId={course_id}
-                    taskId={task}
-                    setOpen={setOpen}
-                    setVersion={setVersion}
-                />
-                {/* Interview Calendar + Popup for Interview */}
-                <Grid container spacing={2} direction="row" sx={{ m: 'auto' }}>
-                    <Grid xs={6}>
-                        <InterviewCalendar
-                            events={calendarData}
-                            eventClickHandler={(event) => {
-                                // For setting states of selected calendar event for display in new window.
-                                setSelectedId(event.extendedProps.id);
-                                setSelectedStart(event.start);
-                                setSelectedEnd(event.end);
-                                setSelectedLocation(event.extendedProps.location);
-                                setSelectedGroupId(event.extendedProps.group_id);
-                                setSelectedHost(event.extendedProps.host);
-                                setSelectedLength(event.extendedProps.length);
-                                setSelectedNote(event.extendedProps.note);
-                                setSelectedCancelled(event.extendedProps.cancelled);
-                                check_group(event.extendedProps.group_id);
-
-                                console.log(event);
-
-                                // For setting default values to old fields of change interview endpoint.
-                                // setFilterInputFieldsObj({
-                                //     interview_id: event.extendedProps.id,
-                                //     booked: true,
-                                //     time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                                //     date: moment(event.start).format('YYYY-MM-DD'),
-                                //     group_id: event.extendedProps.group_id,
-                                //     length: event.extendedProps.length,
-                                //     location: event.extendedProps.location,
-                                //     note: event.extendedProps.note,
-                                //     cancelled: event.extendedProps.cancelled
-                                // });
-
-                                // For setting default values to new fields of change interview endpoint.
-                                // Used to render default values to input fields.
-                                // setToNewFieldsObj({
-                                //     set_time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                                //     set_group_id: event.extendedProps.group_id,
-                                //     set_length: event.extendedProps.length,
-                                //     set_location: event.extendedProps.location, // event.extendedProps.location
-                                //     set_note: event.extendedProps.note,
-                                //     set_cancelled: event.extendedProps.cancelled
-                                // });
-                                // TODO: In the case that some fields are omitted in sending, delete omitted fields.
-                                // e.g. if set_time is not set to new value, delete set_time key from toNewFieldsObj.
-
-                                setOpen(true);
-                            }}
-                            selectSlotHandler={(slotInfo) => setOpen(false)}
-                            width={1000}
-                        />
-                    </Grid>
-                    <Grid xs>
-                        {open && (
-                            <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
-                                <CardContent sx={{ pb: 0 }}>
-                                    <Box>
-                                        <Grid container spacing={0}>
-                                            <Grid xs={6}>
-                                                <Typography variant="h4" sx={{ mt: 0.9 }}>
-                                                    Selected Interview
-                                                </Typography>
-                                            </Grid>
-                                            <Grid xs={6}>
-                                                <IconButton
-                                                    aria-label="close"
-                                                    onClick={() => setOpen(false)}
-                                                    style={{ float: 'right' }}
-                                                    disableRipple
-                                                >
-                                                    <CloseIcon />
-                                                </IconButton>
-                                            </Grid>
-                                        </Grid>
-                                    </Box>
-                                    <Box sx={{ mt: 0 }}>
-                                        <CardItem
-                                            title="Start time"
-                                            desc={moment(selectedStart).format(
-                                                'MM/DD/YYYY, h:mm:ss a'
-                                            )}
-                                        />
-                                        <CardItem
-                                            title="End time"
-                                            desc={moment(selectedEnd).format(
-                                                'MM/DD/YYYY, h:mm:ss a'
-                                            )}
-                                        />
-                                        <CardItem title="Interview ID" desc={selectedId} />
-                                        <CardItem title="Host" desc={selectedHost} />
-                                        <CardItem title="Length" desc={selectedLength.toString()} />
-                                        {selectedNote === null ? (
-                                            <div></div>
-                                        ) : (
-                                            <CardItem title="Note" desc={selectedNote} />
-                                        )}
-                                        <CardItem
-                                            title="Cancelled"
-                                            desc={selectedCancelled === false ? 'No' : 'Yes'}
-                                        />
-                                        <CardItem
-                                            title="Location"
-                                            desc={
-                                                selectedLocation === 'online'
-                                                    ? 'Online'
-                                                    : selectedLocation
-                                            }
-                                        />
-                                        {selectedGroupId === null ? (
-                                            <div></div>
-                                        ) : (
-                                            <CardItem title="Group ID" desc={selectedGroupId} />
-                                        )}
-                                        {selectedGroupId === null ? (
-                                            <div></div>
-                                        ) : (
-                                            <CardItem
-                                                title="Group Members"
-                                                desc={<pre>{selectedUsername}</pre>}
-                                            />
-                                        )}
-                                        <Button
-                                            onClick={() => {
-                                                delete_interview(task, selectedId);
-                                            }}
-                                            variant="contained"
-                                            size="large"
-                                            style={{ minWidth: 120, marginTop: 3 }}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        )}
-                    </Grid>
+            <Grid xs={12} sx={{ mt: 3, marginX: 'auto' }}>
+                <Grid
+                    container
+                    spacing={0}
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    sx={{ minHeight: '100vh' }}
+                >
+                    <FlexyTabs tabs={flexyTabs} width="95vw" height="120vh" />
                 </Grid>
-                <TaRescheduleInterview courseId={course_id} taskId={task} />
             </Grid>
         </Grid>
     );
