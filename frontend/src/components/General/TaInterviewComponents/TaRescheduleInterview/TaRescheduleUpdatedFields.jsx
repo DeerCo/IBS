@@ -21,6 +21,7 @@ import { parseISO } from 'date-fns';
 import CustomTextField from '../../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 import CustomSelect from '../../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 import CustomFormLabel from '../../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
+import { UpdatedFieldsContext } from './RescheduleContexts/UpdatedFieldsContext';
 
 const EditCardItem = ({ title, oldDesc, newInput }) => {
     return (
@@ -46,14 +47,7 @@ const EditCardItem = ({ title, oldDesc, newInput }) => {
 
 const TaRescheduleUpdatedFields = (props) => {
     // for backend query to changeInterview API
-    const [toNewFieldsObj, setToNewFieldsObj] = React.useState({
-        set_time: null,
-        set_group_id: null,
-        set_length: null,
-        set_location: null,
-        set_note: null,
-        set_cancelled: null
-    });
+    const { updatedFields, setUpdatedFields } = React.useContext(UpdatedFieldsContext);
 
     const [filterInputFieldsObj, setFilterInputFieldsObj] = React.useState({
         interview_id: null,
@@ -71,17 +65,12 @@ const TaRescheduleUpdatedFields = (props) => {
     const [isNewLocOnline, setIsNewLocOnline] = React.useState(true);
     const [newLocSelectVal, setNewLocSelectVal] = React.useState('Online');
 
-    // change interview
-    const rescheduleInterview = (task, toNewFieldsObj, filterInputFieldsObj) => {
-        // TaApi.changeInterview(course_id, task).then((res) => {});
-    };
-
     return (
         <Container>
             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                 <CardContent sx={{ pb: 0 }}>
                     {/* TODO: Change existing info to make them editable via input fields */}
-                    {/* TODO: On change for input fields, update toNewFieldsObj state */}
+                    {/* TODO: On change for input fields, update updatedInfo state */}
                     <Box>
                         <Grid container spacing={0}>
                             <Grid xs={6}>
@@ -103,12 +92,11 @@ const TaRescheduleUpdatedFields = (props) => {
                                             // value is Date object
                                             const dateToString =
                                                 moment(value).format('YYYY-MM-DD HH:mm:ss');
-                                            setToNewFieldsObj((prevState) => {
-                                                const newState = prevState;
+                                            setUpdatedFields((prevState) => {
                                                 if (prevState.set_time !== dateToString) {
-                                                    newState.set_time = dateToString;
+                                                    return { ...prevState, set_time: dateToString };
                                                 }
-                                                return newState;
+                                                return prevState;
                                             });
                                         }}
                                         slotProps={{
@@ -117,7 +105,7 @@ const TaRescheduleUpdatedFields = (props) => {
                                                 size: 'small'
                                             }
                                         }}
-                                        value={parseISO(toNewFieldsObj.set_time)}
+                                        value={parseISO(updatedFields.set_time)}
                                     />
                                 </LocalizationProvider>
                             }
@@ -132,14 +120,16 @@ const TaRescheduleUpdatedFields = (props) => {
                                     size="small"
                                     type="number"
                                     helperText="Length (in minutes)"
-                                    value={toNewFieldsObj.set_length}
+                                    value={updatedFields.set_length || 0}
                                     onChange={(event) =>
-                                        setToNewFieldsObj((prevState) => {
-                                            const newState = prevState;
+                                        setUpdatedFields((prevState) => {
                                             if (prevState.set_length !== event.target.value) {
-                                                newState.set_length = event.target.value;
+                                                return {
+                                                    ...prevState,
+                                                    set_length: event.target.value
+                                                };
                                             }
-                                            return newState;
+                                            return prevState;
                                         })
                                     }
                                 />
@@ -152,16 +142,18 @@ const TaRescheduleUpdatedFields = (props) => {
                                 <>
                                     <RadioGroup
                                         row
-                                        value={toNewFieldsObj.set_cancelled}
+                                        value={updatedFields.set_cancelled || false}
                                         onChange={(event) =>
-                                            setToNewFieldsObj((prevState) => {
-                                                const newState = prevState;
+                                            setUpdatedFields((prevState) => {
                                                 if (
                                                     prevState.set_cancelled !== event.target.value
                                                 ) {
-                                                    newState.set_cancelled = event.target.value;
+                                                    return {
+                                                        ...prevState,
+                                                        set_cancelled: event.target.value
+                                                    };
                                                 }
-                                                return newState;
+                                                return prevState;
                                             })
                                         }
                                     >
@@ -192,15 +184,17 @@ const TaRescheduleUpdatedFields = (props) => {
                                             setNewLocSelectVal(event.target.value);
                                             if (event.target.value === 'Online') {
                                                 setIsNewLocOnline(true);
-                                                setToNewFieldsObj((prevState) => {
-                                                    const newState = prevState;
+                                                setUpdatedFields((prevState) => {
                                                     if (
                                                         prevState.set_location !==
                                                         event.target.value
                                                     ) {
-                                                        newState.set_location = event.target.value;
+                                                        return {
+                                                            ...prevState,
+                                                            set_location: event.target.value
+                                                        };
                                                     }
-                                                    return newState;
+                                                    return prevState;
                                                 });
                                             } else {
                                                 setIsNewLocOnline(false);
@@ -225,21 +219,22 @@ const TaRescheduleUpdatedFields = (props) => {
                                                 variant="outlined"
                                                 size="small"
                                                 value={
-                                                    toNewFieldsObj.set_location === 'Online'
+                                                    updatedFields.set_location === 'Online'
                                                         ? ''
-                                                        : toNewFieldsObj.set_location
+                                                        : updatedFields.set_location
                                                 }
                                                 onChange={(event) => {
-                                                    setToNewFieldsObj((prevState) => {
-                                                        const newState = prevState;
+                                                    setUpdatedFields((prevState) => {
                                                         if (
                                                             prevState.set_location !==
                                                             event.target.value
                                                         ) {
-                                                            newState.set_location =
-                                                                event.target.value;
+                                                            return {
+                                                                ...prevState,
+                                                                set_location: event.target.value
+                                                            };
                                                         }
-                                                        return newState;
+                                                        return prevState;
                                                     });
                                                 }}
                                             />
@@ -250,20 +245,6 @@ const TaRescheduleUpdatedFields = (props) => {
                         />
                         {/*TODO: Implement set_group_id input*/}
                         {/*TODO: Implement set_note input*/}
-                        <Button
-                            onClick={() => {
-                                rescheduleInterview(
-                                    props.taskId,
-                                    toNewFieldsObj,
-                                    filterInputFieldsObj
-                                );
-                            }}
-                            variant="contained"
-                            size="large"
-                            style={{ minWidth: 120, marginTop: 3 }}
-                        >
-                            Confirm Change
-                        </Button>
                     </Box>
                 </CardContent>
             </Card>
