@@ -1591,6 +1591,7 @@ module.exports = {
   get_total_out_of,
   get_group_task,
   get_group_id,
+  get_group_users,
   get_all_group_users,
   copy_groups,
 
