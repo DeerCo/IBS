@@ -358,6 +358,27 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
     }
 };
 
+const getAllInterviews = async (courseId, taskId) => {
+    const token = sessionStorage.getItem('token');
+    const role = findRoleInCourse(courseId);
+
+    const axiosConfig = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    if (role === 'instructor' || role === 'ta') {
+        const url = `${process.env.REACT_APP_API_URL}/${role}/course/${courseId}/interview/all?task=${taskId}`;
+        try {
+            return await axios.get(url, axiosConfig);
+        } catch (err) {
+            return err.response;
+        }
+    } else {
+        // insufficient access
+        return null;
+    }
+};
+
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -374,7 +395,9 @@ const StaffApi = {
 
     collectAllSubmissionsForTask,
     collectOneSubmission,
-    downloadSubmissions
+    downloadSubmissions,
+
+    getAllInterviews
 };
 
 export default StaffApi;
