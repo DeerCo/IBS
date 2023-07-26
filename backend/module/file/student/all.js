@@ -7,6 +7,10 @@ router.get("", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (res.locals["hide_file"] === true) {
+        res.status(400).json({ message: "The files are not ready yet." });
+        return;
+    }
 
     helpers.get_group_id(res.locals["course_id"], res.locals["task"], res.locals["username"]).then(group_id => {
         let files = helpers.search_files(res.locals["username"], group_id, res.locals["course_id"], res.locals["task"] + "/");

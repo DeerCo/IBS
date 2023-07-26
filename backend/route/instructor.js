@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const middleware = require("../module/auth/instructor/middleware");
+const get_course = require("../module/course/instructor/get");
 const get_role = require("../module/role/staff/get");
 const get_token = require("../module/token/staff/get");
 const change_token = require("../module/token/staff/change");
@@ -46,7 +47,6 @@ const manual_collect_submission = require("../module/submission/staff/collect_ma
 const download_submissions = require("../module/submission/staff/download");
 const check_submission = require("../module/submission/staff/check");
 const impersonate = require("../module/impersonate/instructor/impersonate");
-const get_course = require("../module/course/instructor/get");
 
 router.use("/", function (req, res, next) {
   next();

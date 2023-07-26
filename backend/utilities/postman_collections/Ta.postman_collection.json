@@ -1,11 +1,44 @@
 {
 	"info": {
-		"_postman_id": "ffdc7b00-6284-4fdd-8a2f-b202b854c156",
+		"_postman_id": "cdfa7952-7d65-4793-b649-00bf978ea911",
 		"name": "Ta",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19282045"
 	},
 	"item": [
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "Get role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ta/course/{{course_id}}/role/get",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ta",
+								"course",
+								"{{course_id}}",
+								"role",
+								"get"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Task",
 			"item": [
@@ -454,7 +487,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/ta/course/{{course_id}}/mark/all?task=",
+							"raw": "{{base_url}}/ta/course/{{course_id}}/mark/all",
 							"host": [
 								"{{base_url}}"
 							],
