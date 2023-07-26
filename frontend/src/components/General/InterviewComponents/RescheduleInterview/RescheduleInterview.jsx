@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Unstable_Grid2';
-import TaRescheduleUpdatedFields from './TaRescheduleUpdatedFields';
-import TaRescheduleFilterFields from './TaRescheduleFilterFields';
+import RescheduleUpdatedFields from './RescheduleUpdatedFields';
+import RescheduleFilterFields from './RescheduleFilterFields';
 import {
     FilterFieldsProvider,
     FilterFieldsContext
@@ -13,7 +13,7 @@ import {
 } from '../../../../contexts/RescheduleContexts/UpdatedFieldsContext';
 import { Button } from '@mui/material';
 
-const TaRescheduleInterview = (props) => {
+const RescheduleInterview = (props) => {
     const { filterInputFieldsObj, setFilterInputFieldsObj } = React.useContext(FilterFieldsContext);
     const { updatedInfo, setUpdatedInfo } = React.useContext(UpdatedFieldsContext);
 
@@ -27,13 +27,10 @@ const TaRescheduleInterview = (props) => {
             <UpdatedFieldsProvider>
                 <Grid container columns={12}>
                     <Grid xs={6}>
-                        <TaRescheduleFilterFields courseId={props.courseId} taskId={props.taskId} />
+                        <RescheduleFilterFields courseId={props.courseId} taskId={props.taskId} />
                     </Grid>
                     <Grid xs={6}>
-                        <TaRescheduleUpdatedFields
-                            courseId={props.courseId}
-                            taskId={props.taskId}
-                        />
+                        <RescheduleUpdatedFields courseId={props.courseId} taskId={props.taskId} />
                     </Grid>
                     <Button
                         onClick={() => {
@@ -51,11 +48,11 @@ const TaRescheduleInterview = (props) => {
     );
 };
 
-TaRescheduleInterview.propTypes = {
+RescheduleInterview.propTypes = {
     // Current Course ID
     courseId: PropTypes.string.isRequired,
     // Current Task ID
     taskId: PropTypes.string.isRequired
 };
 
-export default TaRescheduleInterview;
+export default RescheduleInterview;

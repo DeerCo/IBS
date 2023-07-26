@@ -45,7 +45,7 @@ const EditCardItem = ({ title, oldDesc, newInput }) => {
     );
 };
 
-const TaRescheduleUpdatedFields = (props) => {
+const RescheduleUpdatedFields = (props) => {
     // for backend query to changeInterview API
     const { updatedFields, setUpdatedFields } = React.useContext(UpdatedFieldsContext);
 
@@ -252,11 +252,11 @@ const TaRescheduleUpdatedFields = (props) => {
     );
 };
 
-TaRescheduleUpdatedFields.propTypes = {
+RescheduleUpdatedFields.propTypes = {
     // Current Course ID
     courseId: PropTypes.string.isRequired,
     // Current Task ID
     taskId: PropTypes.string.isRequired
 };
 
-export default TaRescheduleUpdatedFields;
+export default RescheduleUpdatedFields;

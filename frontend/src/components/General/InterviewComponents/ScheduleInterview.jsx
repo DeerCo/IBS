@@ -12,8 +12,9 @@ import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/Custom
 import { toast } from 'react-toastify';
 import TaApi from '../../../api/ta_api';
 import { useNavigate } from 'react-router-dom';
+import StaffApi from '../../../api/staff_api';
 
-const TaScheduleInterview = (props) => {
+const ScheduleInterview = (props) => {
     const { navigate } = useNavigate();
 
     // for select dropdown when scheduling interview
@@ -35,7 +36,7 @@ const TaScheduleInterview = (props) => {
         } else if (location === '') {
             toast.error('The location cannot be empty', { theme: 'colored' });
         } else {
-            TaApi.schedule_interview(props.courseId, props.taskId, length, time, location).then(
+            StaffApi.scheduleInterview(props.courseId, props.taskId, length, time, location).then(
                 (response) => {
                     if (!response || !('status' in response)) {
                         toast.error('Unknown error', { theme: 'colored' });
@@ -176,7 +177,7 @@ const TaScheduleInterview = (props) => {
     );
 };
 
-TaScheduleInterview.propTypes = {
+ScheduleInterview.propTypes = {
     // Current Course ID
     courseId: PropTypes.string.isRequired,
     // Current Task ID
@@ -187,4 +188,4 @@ TaScheduleInterview.propTypes = {
     setVersion: PropTypes.func.isRequired
 };
 
-export default TaScheduleInterview;
+export default ScheduleInterview;

@@ -11,7 +11,7 @@ import StudentInterviewPage from './components/Page/Student/StudentInterviewPage
 import StudentTaskPage from './components/Page/Student/StudentTaskPage';
 import StudentDetailsPage from './components/Page/Student/StudentDetailsPage';
 import TaTaskPage from './components/Page/Ta/TaTaskPage';
-import TaInterviewPage from './components/Page/Ta/TaInterviewPage';
+import InterviewPage from './components/Page/Staff/InterviewPage';
 import AdminPage from './components/Page/Admin/AdminPage';
 import { ThemeProvider } from '@mui/material/styles';
 import 'react-toastify/dist/ReactToastify.css';
@@ -70,7 +70,7 @@ function App() {
                         <Route path="/ta/course/:course_id/task" element={<TaTaskPage />}></Route>
                         <Route
                             path="/ta/course/:course_id/task/:task/interview"
-                            element={<TaInterviewPage />}
+                            element={<InterviewPage />}
                         ></Route>
                         <Route
                             path="/instructor/course/:course_id/task"
@@ -100,6 +100,10 @@ function App() {
                             path="/instructor/course/:course_id/task/:task_id/mark"
                             element={<InstructorTaskMarksPage />}
                         />
+                        <Route
+                            path="/instructor/course/:course_id/task/:task/interview"
+                            element={<InterviewPage />}
+                        ></Route>
                         <Route
                             path="/instructor/course/:course_id/impersonate"
                             element={<InstructorImpersonate />}

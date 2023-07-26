@@ -20,7 +20,7 @@ import CustomTextField from '../../../FlexyMainComponents/forms/custom-elements/
 import { FilterFieldsContext } from '../../../../contexts/RescheduleContexts/FilterFieldsContext';
 import CustomSelect from '../../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 
-const TaRescheduleFilterFields = (props) => {
+const RescheduleFilterFields = (props) => {
     const { filterFields, setFilterFields } = React.useContext(FilterFieldsContext);
 
     const [showFilterInputs, setShowFilterInputs] = React.useState({
@@ -419,11 +419,11 @@ const TaRescheduleFilterFields = (props) => {
     );
 };
 
-TaRescheduleFilterFields.propTypes = {
+RescheduleFilterFields.propTypes = {
     // Current Course ID
     courseId: PropTypes.string.isRequired,
     // Current Task ID
     taskId: PropTypes.string.isRequired
 };
 
-export default TaRescheduleFilterFields;
+export default RescheduleFilterFields;

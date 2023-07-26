@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import moment from 'moment';
-import TaApi from '../../../api/ta_api';
+import StaffApi, { findRoleInCourse } from '../../../api/staff_api';
 import '../../../styles/style.css';
 import NavBar from '../../Module/Navigation/NavBar';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -18,12 +18,12 @@ import {
     Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import TaRescheduleInterview from '../../General/TaInterviewComponents/TaRescheduleInterview/TaRescheduleInterview';
-import TaScheduleInterview from '../../General/TaInterviewComponents/TaScheduleInterview';
+import RescheduleInterview from '../../General/InterviewComponents/RescheduleInterview/RescheduleInterview';
+import ScheduleInterview from '../../General/InterviewComponents/ScheduleInterview';
 import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 import UpcomingInterviews from '../../General/UpcomingInterviews/UpcomingInterviews';
 
-let TaInterviewPage = () => {
+let InterviewPage = () => {
     const navigate = useNavigate();
 
     const { course_id, task } = useParams();
@@ -46,7 +46,7 @@ let TaInterviewPage = () => {
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
 
     useEffect(() => {
-        TaApi.all_interviews(course_id, task).then((response) => {
+        StaffApi.getAllInterviews(course_id, task).then((response) => {
             if (!response || !('status' in response)) {
                 toast.error('Unknown error', { theme: 'colored' });
                 navigate('/login');
@@ -108,7 +108,7 @@ let TaInterviewPage = () => {
 
     // the cancel interview function
     const delete_interview = (task, id) => {
-        TaApi.delete_interview(course_id, task, id).then((response) => {
+        StaffApi.deleteInterview(course_id, task, id).then((response) => {
             if (!response || !('status' in response)) {
                 toast.error('Unknown error', { theme: 'colored' });
                 navigate('/login');
@@ -133,7 +133,7 @@ let TaInterviewPage = () => {
             return;
         }
 
-        TaApi.check_group(course_id, group_id).then((response) => {
+        StaffApi.checkGroup(course_id, group_id).then((response) => {
             if (!response || !('status' in response)) {
                 toast.error('Unknown error', { theme: 'colored' });
                 navigate('/login');
@@ -183,7 +183,7 @@ let TaInterviewPage = () => {
             tabSubheading: 'Schedule/Delete Interviews',
             tabContent: (
                 <>
-                    <TaScheduleInterview
+                    <ScheduleInterview
                         courseId={course_id}
                         taskId={task}
                         setOpen={setOpen}
@@ -352,7 +352,7 @@ let TaInterviewPage = () => {
             tabName: 'Re-schedule Interviews',
             tabId: 1,
             tabSubheading: 'Re-schedule Interview(s)',
-            tabContent: <TaRescheduleInterview courseId={course_id} taskId={task} />
+            tabContent: <RescheduleInterview courseId={course_id} taskId={task} />
         },
         {
             tabName: 'Upcoming Interviews',
@@ -362,10 +362,12 @@ let TaInterviewPage = () => {
         }
     ];
 
+    const currRole = findRoleInCourse(course_id);
+
     return (
         <Grid container>
             <Grid xs={12}>
-                <NavBar page="Interview" role={'ta'} />
+                <NavBar page="Interview" role={currRole} />
             </Grid>
             <Grid xs={12} sx={{ mt: 3, marginX: 'auto' }}>
                 <Grid
@@ -382,4 +384,4 @@ let TaInterviewPage = () => {
     );
 };
 
-export default TaInterviewPage;
+export default InterviewPage;
