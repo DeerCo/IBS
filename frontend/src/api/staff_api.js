@@ -358,6 +358,175 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
     }
 };
 
+const checkGroup = async (courseId, groupId) => {
+    const token = sessionStorage.getItem('token');
+    const role = findRoleInCourse(courseId);
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    if (role === 'instructor' || role === 'ta') {
+        const url = `${process.env.REACT_APP_API_URL}/${role}/course/${courseId}/group/check?group_id=${groupId}`;
+        try {
+            return await axios.get(url, config);
+        } catch (err) {
+            return err.response;
+        }
+    } else return null;
+};
+
+/**
+ * Get array of interview objects for staff
+ * @param courseId current course ID
+ * @param taskId current task ID
+ * @returns {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+const getAllInterviews = async (courseId, taskId) => {
+    const token = sessionStorage.getItem('token');
+    const role = findRoleInCourse(courseId);
+
+    const axiosConfig = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    if (role === 'instructor' || role === 'ta') {
+        const url = `${process.env.REACT_APP_API_URL}/${role}/course/${courseId}/interview/all?task=${taskId}`;
+        try {
+            return await axios.get(url, axiosConfig);
+        } catch (err) {
+            return err.response;
+        }
+    } else {
+        // insufficient access
+        return null;
+    }
+};
+
+/**
+ * Schedule an interview
+ * @param course_id current course ID
+ * @param curr_task current task ID
+ * @param length length specified in minutes
+ * @param time starting time
+ * @param location location: "Online" or room
+ * @returns {Promise<axios.AxiosResponse<any>|*>}
+ */
+let scheduleInterview = async (course_id, curr_task, length, time, location) => {
+    let token = sessionStorage.getItem('token');
+    const role = findRoleInCourse(course_id);
+
+    const data = {
+        task: curr_task,
+        length: length.toString(),
+        time: time.toString(),
+        location: location
+    };
+
+    if (role === 'instructor' || role === 'ta') {
+        const url = `${process.env.REACT_APP_API_URL}/${role}/course/${course_id}/interview/schedule`;
+        try {
+            return await axios.post(url, data, { headers: { Authorization: `Bearer ${token}` } });
+        } catch (err) {
+            return err.response;
+        }
+    } else return null;
+};
+
+/**
+ * Delete interview from course/task
+ * @param course_id current course ID
+ * @param curr_task current task ID
+ * @param id interview ID
+ * @returns {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+let deleteInterview = async (course_id, curr_task, id) => {
+    let token = sessionStorage.getItem('token');
+    const role = findRoleInCourse(course_id);
+
+    let config = {
+        data: { task: curr_task, interview_id: id.toString() },
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    if (role === 'instructor' || role === 'ta') {
+        const url = `${process.env.REACT_APP_API_URL}/${role}/course/${course_id}/interview/delete`;
+        try {
+            return await axios.delete(url, config);
+        } catch (err) {
+            return err.response;
+        }
+    } else return null;
+};
+
+/**
+ * Given the arguments (3rd and 4th have optional fields... i.e. can have null/undefined values),
+ * call backend API to change interviews from corresponding "old" fields to "new" (set_) fields.
+ * @param courseId current course id
+ * @param task current task id
+ * @param set_time new time for interview
+ * @param set_group_id new group id for interview
+ * @param set_length new length for interview
+ * @param set_location new location for interview
+ * @param set_note new note for interview
+ * @param set_cancelled new cancelled field for interview
+ * @param interview_id old interview id
+ * @param booked old booked field for interview
+ * @param time old (starting) time for interview
+ * @param date old (starting) date for interview
+ * @param group_id old group id for interview
+ * @param length old interview length
+ * @param location old location for interview
+ * @param note old note for interview
+ * @param cancelled old cancelled field for interview
+ * @returns {Promise<axios.AxiosResponse<any>|*>}
+ */
+const changeInterview = async (
+    courseId,
+    task,
+    { set_time, set_group_id, set_length, set_location, set_note, set_cancelled },
+    { interview_id, booked, time, date, group_id, length, location, note, cancelled }
+) => {
+    let token = sessionStorage.getItem('token');
+
+    let config = {
+        data: {
+            task,
+            set_time,
+            set_group_id,
+            set_length,
+            set_location,
+            set_note,
+            set_cancelled,
+            interview_id,
+            booked,
+            time,
+            date,
+            group_id,
+            length,
+            location,
+            note,
+            cancelled
+        },
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    // delete all undefined/null fields from config.data
+    config.data = Object.fromEntries(
+        Object.entries(config.data).filter(([key, value]) => value != null)
+    );
+
+    const role = findRoleInCourse(courseId);
+    if (role === 'instructor' || role === 'ta') {
+        const url = `${process.env.REACT_APP_API_URL}/${role}/course/${courseId}/interview/change`;
+        try {
+            return await axios.put(url, config);
+        } catch (err) {
+            return err.response;
+        }
+    } else return null;
+};
+
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -374,7 +543,14 @@ const StaffApi = {
 
     collectAllSubmissionsForTask,
     collectOneSubmission,
-    downloadSubmissions
+    downloadSubmissions,
+
+    checkGroup,
+
+    getAllInterviews,
+    scheduleInterview,
+    deleteInterview,
+    changeInterview
 };
 
 export default StaffApi;

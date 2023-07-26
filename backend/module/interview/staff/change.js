@@ -4,10 +4,10 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.put("/", (req, res) => {
-	if (res.locals["task"] === "") {
-		res.status(400).json({ message: "The task is missing or invalid." });
-		return;
-	}
+  if (res.locals["task"] === "") {
+    res.status(400).json({ message: "The task is missing or invalid." });
+    return;
+  }
 
 	let temp_set = helpers.interview_data_set_new(req.body, 2);
 	let set = temp_set["set"];
@@ -51,7 +51,5 @@ router.put("/", (req, res) => {
 			res.status(200).json({ message: message });
 		}
 	});
-
-})
 
 module.exports = router;
