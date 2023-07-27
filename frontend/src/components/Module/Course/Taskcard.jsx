@@ -66,7 +66,6 @@ const Taskcard = ({ data, course_id, role }) => {
   useEffect(() => {
     if (isLoading) return;
     if (error) navigate("/login");
-    console.log(data.task, mark);
     if (mark) {
       setMarkIsSubmited(true);
       setMarkIsHidden(mark.hidden);
