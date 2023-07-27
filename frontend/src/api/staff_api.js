@@ -342,6 +342,41 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
     }
 };
 
+/**
+ *
+ * @param {int} courseId: Course ID to submit marks to
+ * @param {file} file: The [CSV] file containing the marks
+ * @param {int} taskId: The ID of the task pertaining the marks
+ * @param {boolean} overwrite: Overwrite current marks in this category
+ *
+ * Access Permissions: Instructor
+ *
+ * @returns  {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+const uploadMarksCSV = async (courseId, file, taskId, overwrite = true) => {
+    const token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { task_group_id: taskGroupId }
+    };
+
+    let url;
+    if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/mark/upload`;
+    } else {
+        return null;
+    }
+
+    try {
+        return await axios.post(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -357,7 +392,8 @@ const StaffApi = {
 
     collectAllSubmissionsForTask,
     collectOneSubmission,
-    downloadSubmissions
+    downloadSubmissions,
+    uploadMarksCSV
 };
 
 export default StaffApi;
