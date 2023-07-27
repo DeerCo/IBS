@@ -4,12 +4,12 @@ const client = require("../../../setup/db");
 const helpers = require("../../../utilities/helpers");
 
 router.put("/", (req, res) => {
-	if (res.locals["task"] === "") {
-		res.status(400).json({ message: "The task is missing or invalid." });
-		return;
-	}
+  if (res.locals["task"] === "") {
+    res.status(400).json({ message: "The task is missing or invalid." });
+    return;
+  }
 
-	let temp_set = helpers.interview_data_set_new(req.body, 3);
+	let temp_set = helpers.interview_data_set_new(req.body, 2);
 	let set = temp_set["set"];
 	let set_data = temp_set["data"];
 	let set_data_id = temp_set["data_id"];
@@ -18,7 +18,11 @@ router.put("/", (req, res) => {
 		return;
 	}
 
-	let temp_filter = helpers.interview_data_filter(req.body, set_data_id, false, res.locals["username"]);
+	if (res.locals["type"] === "instructor") {
+		var temp_filter = helpers.interview_data_filter(req.body, set_data_id, true, res.locals["username"]);
+	} else {
+		var temp_filter = helpers.interview_data_filter(req.body, set_data_id, false, res.locals["username"]);
+	}
 	let filter = temp_filter["filter"];
 	let filter_data = temp_filter["data"];
 	if (filter === "") {
@@ -27,12 +31,12 @@ router.put("/", (req, res) => {
 	}
 
 	if (req.body["force"] === true || req.body["force"] === "true") {
-		var sql_change = "UPDATE course_" + res.locals["course_id"] + ".interview SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND host = ($2)" + filter;
+		var sql_change = "UPDATE course_" + res.locals["course_id"] + ".interview SET" + set.substring(0, set.length - 1) + " WHERE task = ($1)" + filter;
 	} else {
-		var sql_change = "UPDATE course_" + res.locals["course_id"] + ".interview SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND host = ($2) AND group_id IS NULL" + filter;
+		var sql_change = "UPDATE course_" + res.locals["course_id"] + ".interview SET" + set.substring(0, set.length - 1) + " WHERE task = ($1) AND group_id IS NULL" + filter;
 	}
 
-	client.query(sql_change, [res.locals["task"], res.locals["username"]].concat(set_data).concat(filter_data), (err, pgRes) => {
+	client.query(sql_change, [res.locals["task"]].concat(set_data).concat(filter_data), (err, pgRes) => {
 		if (err) {
 			if (err.code === "23505") {
 				res.status(409).json({ message: "You have another interview at the same time." });
@@ -47,7 +51,5 @@ router.put("/", (req, res) => {
 			res.status(200).json({ message: message });
 		}
 	});
-
-})
 
 module.exports = router;

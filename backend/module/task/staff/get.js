@@ -8,19 +8,14 @@ router.get("/", (req, res) => {
     return;
   }
 
-  let sql_task =
-    "SELECT task, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, weight, min_member, max_member, max_token, change_group, hide_interview, interview_group, task_group_id, starter_code_url FROM course_" +
-    res.locals["course_id"] +
-    ".task WHERE task = ($1)";
-  client.query(sql_task, [res.locals["task"]], (err, pg_res) => {
-    if (err) {
-      res.status(404).json({ message: "Unknown error." });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Task details are returned.", task: pg_res.rows[0] });
-    }
-  });
-});
+    let sql_task = "SELECT task, long_name, to_char(due_date AT TIME ZONE 'America/Toronto', 'YYYY-MM-DD HH24:MI:SS') AS due_date, due_date AS due_date_utc, hidden, weight, min_member, max_member, max_token, change_group, hide_interview, hide_file, interview_group, task_group_id, starter_code_url FROM course_" + res.locals["course_id"] + ".task WHERE task = ($1)";
+    client.query(sql_task, [res.locals["task"]], (err, pg_res) => {
+        if (err) {
+            res.status(404).json({ message: "Unknown error." });
+        } else{
+            res.status(200).json({ message: "Task details are returned.", task: pg_res.rows[0] });
+        }
+    });
+})
 
 module.exports = router;

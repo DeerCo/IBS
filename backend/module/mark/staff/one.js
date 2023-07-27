@@ -9,25 +9,25 @@ router.get("/", (req, res) => {
         return;
     }
 
+    if (req.query["total"] === true || req.query["total"] === "true") {
+        var total = true;
+    } else {
+        var total = false;
+    }
+
     if (res.locals["task"] === "") {
         let sql_mark = "SELECT username, task, SUM(mark) AS sum FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) GROUP BY username, task";
         client.query(sql_mark, [req.query["username"]], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });
             } else {
-                helpers.format_marks_all_tasks(pgRes.rows, res.locals["course_id"]).then(marks => {
+                helpers.format_marks_all_tasks(pgRes.rows, res.locals["course_id"], total).then(marks => {
                     res.json({ marks: marks });
                 });
             }
         });
     } else {
-        if (req.query["total"] === true || req.query["total"] === "true") {
-            var total = true;
-        } else {
-            var total = false;
-        }
-
-        let sql_mark = "SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) AND task = ($2) ORDER BY criteria_id";
+        let sql_mark = "SELECT * FROM course_" + res.locals["course_id"] + ".mark WHERE username = ($1) AND task = ($2)";
         client.query(sql_mark, [req.query["username"], res.locals["task"]], (err, pgRes) => {
             if (err) {
                 res.status(404).json({ message: "Unknown error." });

@@ -19,7 +19,7 @@ TabPanel.propTypes = {
 };
 
 const FlexyTabs = (props) => {
-    const { tabs } = props;
+    const { tabs, width, height } = props;
 
     const [value, setValue] = useState(0);
 
@@ -28,7 +28,7 @@ const FlexyTabs = (props) => {
     };
 
     return (
-        <Card sx={{ p: { xs: '20px', sm: '35px', lg: '35px' } }}>
+        <Card sx={{ p: { xs: '20px', sm: '35px', lg: '35px' }, width: width, height: height }}>
             <CardContent sx={{ p: 0 }}>
                 <Box sx={{ width: '100%' }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -43,6 +43,7 @@ const FlexyTabs = (props) => {
                             {tabs.map((tab) => {
                                 return (
                                     <Tab
+                                        key={tab.tabName}
                                         sx={{ textTransform: 'capitalize' }}
                                         label={tab.tabName}
                                         id={tab.tabId}
@@ -53,7 +54,12 @@ const FlexyTabs = (props) => {
                     </Box>
                     {tabs.map((tab) => {
                         return (
-                            <TabPanel value={value} index={tab.tabId} component="div">
+                            <TabPanel
+                                key={`tabPanel-${tab.tabName}`}
+                                value={value}
+                                index={tab.tabId}
+                                component="div"
+                            >
                                 <Typography
                                     fontWeight="500"
                                     sx={{
@@ -66,7 +72,7 @@ const FlexyTabs = (props) => {
                                 >
                                     {tab.tabSubheading}
                                 </Typography>
-                                {tab.tabContext}
+                                {tab.tabContent}
                             </TabPanel>
                         );
                     })}
@@ -82,8 +88,10 @@ FlexyTabs.propTypes = {
             tabName: PropTypes.string.isRequired,
             tabId: PropTypes.number.isRequired,
             tabSubheading: PropTypes.string.isRequired,
-            tabContent: PropTypes.elementType.isRequired
+            tabContent: PropTypes.object.isRequired
         })
-    ).isRequired
+    ).isRequired,
+    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
 };
 export default FlexyTabs;

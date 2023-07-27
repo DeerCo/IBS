@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "30ac4416-78df-463a-88d8-5cfd8258faef",
+		"_postman_id": "377c9518-b4c7-4298-8328-a3a5e1e0dee5",
 		"name": "Admin",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19282045"
@@ -202,7 +202,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/admin/role/get?username=",
+							"raw": "{{base_url}}/admin/role/get",
 							"host": [
 								"{{base_url}}"
 							],
@@ -214,7 +214,8 @@
 							"query": [
 								{
 									"key": "username",
-									"value": ""
+									"value": "",
+									"disabled": true
 								},
 								{
 									"key": "course_id",
@@ -370,7 +371,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/admin/user/get?username=",
+							"raw": "{{base_url}}/admin/user/get",
 							"host": [
 								"{{base_url}}"
 							],
@@ -382,7 +383,8 @@
 							"query": [
 								{
 									"key": "username",
-									"value": ""
+									"value": "",
+									"disabled": true
 								}
 							]
 						}

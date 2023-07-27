@@ -7,6 +7,10 @@ router.get("/", (req, res) => {
         res.status(400).json({ message: "The task is missing or invalid." });
         return;
     }
+    if (res.locals["hide_file"] === true) {
+        res.status(400).json({ message: "The files are not ready yet." });
+        return;
+    }
 
     if (!("file_id" in req.query) || helpers.number_validate(req.query["file_id"])) {
         res.status(400).json({ message: "The file id is not a valid integer." });
