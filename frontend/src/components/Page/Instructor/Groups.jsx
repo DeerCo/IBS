@@ -2,17 +2,21 @@ import GroupsTable from '../../General/GroupsTable/GroupsTable';
 import StaffApi from '../../../api/staff_api';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useNavigate, useParams } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
 import useSWR from 'swr';
 import instructor_api from '../../../api/instructor_api';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Select, Typography } from '@mui/material';
 import NavBar from '../../Module/Navigation/NavBar';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
+import CopyGroupsButton from '../../General/GroupsTable/CopyGroupsButton';
 
 const Groups = (props) => {
     const { navigate } = useNavigate();
     const { courseId, task } = useParams();
 
+    const [toTask, setToTask] = useState('');
+    const [taskOptions, setTaskOptions] = useState([]);
     const [rows, setRows] = React.useState([]);
     const headCells = [
         {
@@ -48,7 +52,15 @@ const Groups = (props) => {
                 return [...prevState, newRow];
             });
         }
-    }, [courseId, navigate, data, isLoading, error]);
+
+        StaffApi.all_tasks(courseId)
+            .then((res) => {
+                setTaskOptions(res.data);
+            })
+            .catch((err) => {
+                toast.error('Error loading task data', { theme: 'colored' });
+            });
+    }, [courseId, navigate, data, isLoading, error, taskOptions]);
 
     if (isLoading) return <Typography variant="h1">Loading...</Typography>;
 
@@ -64,6 +76,23 @@ const Groups = (props) => {
                     <Typography color="textPrimary" variant="h2" fontWeight="600" sx={{ ml: 3 }}>
                         {task} groups
                     </Typography>
+                </Container>
+            </Grid>
+            <Grid xs={12}>
+                <Container>
+                    <Select
+                        key="tasks"
+                        label="Select Task to Move Groups"
+                        value={toTask}
+                        onChange={setToTask}
+                    >
+                        {taskOptions}
+                    </Select>
+                    <CopyGroupsButton
+                        courseId={{ courseId }}
+                        fromTask={{ task }}
+                        toTask={{ toTask }}
+                    />
                 </Container>
             </Grid>
             {rows !== [] && (

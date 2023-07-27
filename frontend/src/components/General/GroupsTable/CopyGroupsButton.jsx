@@ -3,10 +3,10 @@ import { Button } from '@mui/material';
 import StaffApi from '../../../api/staff_api';
 import { toast } from 'react-toastify';
 
-const copyGroupsButton = ({ courseId, fromTask, toTask }) => {
+const CopyGroupsButton = (courseId, fromTask, toTask) => {
     return (
         <Button
-            onClick={(courseId, fromTask, toTask) => {
+            onClick={() => {
                 StaffApi.copyGroups(courseId, fromTask, toTask)
                     .then((res) => {
                         toast.success(`Groups successfully copied from ${fromTask} to ${toTask}.`);
@@ -17,8 +17,10 @@ const copyGroupsButton = ({ courseId, fromTask, toTask }) => {
                         );
                     });
             }}
-        ></Button>
+        >
+            Copy Groups
+        </Button>
     );
 };
 
-export default copyGroupsButton;
+export default CopyGroupsButton;
