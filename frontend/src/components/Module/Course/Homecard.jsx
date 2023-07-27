@@ -15,6 +15,8 @@ const Homecard = ({ data }) => {
     const taskGroupsPageLink = `${role ? `/${role}` : ''}/course/${data.course_id}/task-group`;
     const submitMarksPageLink = `/instructor/course/${data.course_id}/submit-marks`;
 
+    const addTaskPageLink = `/instructor/course/${data.course_id}/add-task`;
+
     return (
         <Card sx={{ width: { xs: 300, sm: 300, md: 400, lg: 400 } }}>
             <CardActionArea component={Link} to={coursePageLink}>
@@ -46,6 +48,8 @@ const Homecard = ({ data }) => {
                     {data.role === 'instructor' && (
                         <>
                             <HomeCardLink to={submitMarksPageLink} name="Submit Marks" />{' '}
+                            <HomeCardLink to={addTaskPageLink} name="Add Task" />{' '}
+
                         </>
                     )}
                 </>

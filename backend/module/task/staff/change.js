@@ -8,6 +8,10 @@ router.put("/", async (req, res) => {
     res.status(400).json({ message: "The task is missing or invalid." });
     return;
   }
+  if ("long_name" in req.body && helpers.string_validate(req.body["long_name"])) {
+        res.status(400).json({ message: "The long name is not correct." });
+        return;
+  }
   if (
     !("due_date" in req.body) ||
     helpers.time_validate(req.body["due_date"])
@@ -23,11 +27,12 @@ router.put("/", async (req, res) => {
       .json({ message: "The weight property is missing or invalid." });
     return;
   }
-  let isWeightExceeded = await helpers.weight_validate(
+  let isWeightExceeded = await helpers.new_weight_validate(
     typeof req.body["weight"] === "string"
       ? parseInt(req.body["weight"])
       : req.body["weight"],
-    res.locals["course_id"]
+    res.locals["course_id"],
+    res.locals["task"]
   );
 
   if (isWeightExceeded) {
@@ -72,6 +77,10 @@ router.put("/", async (req, res) => {
       message: "The hide interview property is missing or not correct.",
     });
     return;
+  }
+  if (!("hide_file" in req.body) || helpers.boolean_validate(req.body["hide_file"])) {
+        res.status(400).json({ message: "The hide file property is missing or not correct." });
+        return;
   }
   if (
     !("change_group" in req.body) ||
@@ -123,7 +132,7 @@ router.put("/", async (req, res) => {
   let sql_update =
     "UPDATE course_" +
     res.locals["course_id"] +
-    ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), change_group = ($6), hide_interview = ($7), interview_group = ($8), task_group_id = ($9), starter_code_url = ($10), weight = ($11) WHERE task = ($12)";
+    ".task SET due_date = ($1), hidden = ($2), min_member = ($3), max_member = ($4) , max_token = ($5), change_group = ($6), hide_interview = ($7), hide_file = ($8), interview_group = ($9), task_group_id = ($10), starter_code_url = ($11), weight = ($12), long_name = ($13) WHERE task = ($14)";
   let sql_update_data = [
     due_date,
     req.body["hidden"],
@@ -132,10 +141,12 @@ router.put("/", async (req, res) => {
     req.body["max_token"],
     req.body["change_group"],
     req.body["hide_interview"],
+	req.body["hide_file"],
     interview_group,
     task_group_id,
     starter_code_url,
     req.body["weight"],
+    req.body["long_name"],
     res.locals["task"],
   ];
 
