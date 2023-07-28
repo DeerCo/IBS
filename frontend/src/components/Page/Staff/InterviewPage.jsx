@@ -209,7 +209,7 @@ const InterviewPageMain = () => {
                     {/* Interview Calendar + Popup for Interview */}
                     <Grid
                         container
-                        spacing={1}
+                        spacing={2}
                         direction="row"
                         alignItems="center"
                         justifyContent="center"
@@ -235,7 +235,7 @@ const InterviewPageMain = () => {
                                         setOpen(true);
                                     }}
                                     selectSlotHandler={(slotInfo) => setOpen(false)}
-                                    width={1000}
+                                    width={800}
                                 />
                             </Container>
                         </Grid>
