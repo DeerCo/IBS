@@ -209,13 +209,13 @@ const InterviewPageMain = () => {
                     {/* Interview Calendar + Popup for Interview */}
                     <Grid
                         container
-                        spacing={2}
-                        direction="column"
+                        spacing={1}
+                        direction="row"
                         alignItems="center"
                         justifyContent="center"
                         columns={12}
                     >
-                        <Grid xs={12}>
+                        <Grid xs={6}>
                             <Container>
                                 <InterviewCalendar
                                     events={calendarData}
@@ -232,34 +232,6 @@ const InterviewPageMain = () => {
                                         setSelectedCancelled(event.extendedProps.cancelled);
                                         check_group(event.extendedProps.group_id);
 
-                                        console.log(event);
-
-                                        // For setting default values to old fields of change interview endpoint.
-                                        // setFilterInputFieldsObj({
-                                        //     interview_id: event.extendedProps.id,
-                                        //     booked: true,
-                                        //     time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                                        //     date: moment(event.start).format('YYYY-MM-DD'),
-                                        //     group_id: event.extendedProps.group_id,
-                                        //     length: event.extendedProps.length,
-                                        //     location: event.extendedProps.location,
-                                        //     note: event.extendedProps.note,
-                                        //     cancelled: event.extendedProps.cancelled
-                                        // });
-
-                                        // For setting default values to new fields of change interview endpoint.
-                                        // Used to render default values to input fields.
-                                        // setToNewFieldsObj({
-                                        //     set_time: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                                        //     set_group_id: event.extendedProps.group_id,
-                                        //     set_length: event.extendedProps.length,
-                                        //     set_location: event.extendedProps.location, // event.extendedProps.location
-                                        //     set_note: event.extendedProps.note,
-                                        //     set_cancelled: event.extendedProps.cancelled
-                                        // });
-                                        // TODO: In the case that some fields are omitted in sending, delete omitted fields.
-                                        // e.g. if set_time is not set to new value, delete set_time key from toNewFieldsObj.
-
                                         setOpen(true);
                                     }}
                                     selectSlotHandler={(slotInfo) => setOpen(false)}
@@ -267,10 +239,10 @@ const InterviewPageMain = () => {
                                 />
                             </Container>
                         </Grid>
-                        <Grid xs={12}>
+                        <Grid xs>
                             {open && (
                                 <Container>
-                                    <Card sx={{ pb: 0, mb: 4, width: 1000 }}>
+                                    <Card sx={{ pb: 0, mb: 4, width: '35vw' }}>
                                         <CardContent sx={{ pb: 0 }}>
                                             <Box>
                                                 <Grid container spacing={0}>
@@ -308,7 +280,7 @@ const InterviewPageMain = () => {
                                                 <CardItem title="Host" desc={selectedHost} />
                                                 <CardItem
                                                     title="Length"
-                                                    desc={selectedLength.toString()}
+                                                    desc={selectedLength.toString() + ' min.'}
                                                 />
                                                 {selectedNote === null ? (
                                                     <div></div>
