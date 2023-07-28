@@ -15,12 +15,18 @@ import { Box, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
 import StaffApi from '../../../../api/staff_api';
 import { useNavigate } from 'react-router-dom';
+import {
+    RefreshInterviewsContext,
+    RefreshInterviewsProvider
+} from '../../../../contexts/RescheduleContexts/RefreshInterviewsContext';
 
 const RescheduleInterview = (props) => {
     return (
         <FilterFieldsProvider>
             <UpdatedFieldsProvider>
-                <RescheduleInterviewContent {...props} />
+                <RefreshInterviewsProvider>
+                    <RescheduleInterviewContent {...props} />
+                </RefreshInterviewsProvider>
             </UpdatedFieldsProvider>
         </FilterFieldsProvider>
     );
@@ -30,6 +36,7 @@ const RescheduleInterviewContent = (props) => {
     const navigate = useNavigate();
     const { filterFields, setFilterFields } = React.useContext(FilterFieldsContext);
     const { updatedFields, setUpdatedFields } = React.useContext(UpdatedFieldsContext);
+    const { refreshInterviews, setRefreshInterviews } = React.useContext(RefreshInterviewsContext);
 
     // change interview
     const rescheduleInterview = (task, toNewFieldsObj, filterInputFieldsObj) => {
@@ -82,9 +89,8 @@ const RescheduleInterviewContent = (props) => {
                 <Box display="flex" justifyContent="flex-end" alignItems="flex-end" sx={{ mr: 4 }}>
                     <Button
                         onClick={() => {
-                            console.log(updatedFields);
-                            console.log(filterFields);
                             rescheduleInterview(props.taskId, updatedFields, filterFields);
+                            setRefreshInterviews(true);
                         }}
                         variant="contained"
                         size="large"
