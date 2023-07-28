@@ -230,7 +230,7 @@ const RescheduleFilterFields = (props) => {
 
                                     setFilterFields({
                                         interview_id: selectedInterviewId,
-                                        booked: true,
+                                        booked: selectedInterviewObj.group_id != null,
                                         time: selectedInterviewObj.start_time,
                                         group_id:
                                             selectedInterviewObj.group_id == null
@@ -294,13 +294,14 @@ const RescheduleFilterFields = (props) => {
                                 <RadioGroup
                                     id="booked-filter-field"
                                     row
-                                    value={filterFields.booked || false}
+                                    value={filterFields.booked}
                                     onChange={(event) =>
                                         setFilterFields((prevState) => {
                                             if (prevState.booked !== event.target.value) {
                                                 return {
                                                     ...prevState,
-                                                    booked: event.target.value
+                                                    booked: event.target.value,
+                                                    force: true
                                                 };
                                             }
                                             return prevState;
@@ -318,6 +319,10 @@ const RescheduleFilterFields = (props) => {
                                         value={false}
                                     />
                                 </RadioGroup>
+                                <Typography>
+                                    <strong>Note</strong>: If interview is booked, notify your
+                                    students that the interview has been changed via other means.
+                                </Typography>
                             </>
                         )}
                         {/* Note, sending only time is sufficient as it covers date as well */}
