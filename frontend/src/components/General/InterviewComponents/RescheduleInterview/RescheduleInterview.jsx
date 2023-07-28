@@ -48,7 +48,6 @@ const RescheduleInterviewContent = (props) => {
         let cleanedUpdatedFields = Object.fromEntries(
             Object.entries(toNewFieldsObj).filter(([key, value]) => value != null)
         );
-        // TODO: In addition to cleaning, compare with the values from GET all interviews
         if (Object.keys(cleanedUpdatedFields).length === 0) {
             toast.warn('Please fill in at least one of the updated information parameters', {
                 theme: 'colored'
@@ -56,10 +55,10 @@ const RescheduleInterviewContent = (props) => {
             return;
         }
         // DEV message
-        toast.success('Everything is ok', { theme: 'colored' });
-        console.log('=======================');
-        console.log(cleanedFilterFields);
-        console.log(cleanedUpdatedFields);
+        // toast.success('Everything is ok', { theme: 'colored' });
+        // console.log('=======================');
+        // console.log(cleanedFilterFields);
+        // console.log(cleanedUpdatedFields);
         StaffApi.changeInterview(
             props.courseId,
             task,

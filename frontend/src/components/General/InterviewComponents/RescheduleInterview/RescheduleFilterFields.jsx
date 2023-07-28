@@ -54,7 +54,6 @@ const RescheduleFilterFields = (props) => {
         if (isLoading || error) return;
         const interviewsArr = data.interviews;
         setPrefillInterviewsArr(interviewsArr);
-        console.log(data);
     }, [props.courseId, data, isLoading, error]);
 
     return (
