@@ -22,8 +22,20 @@ import RescheduleInterview from '../../General/InterviewComponents/RescheduleInt
 import ScheduleInterview from '../../General/InterviewComponents/ScheduleInterview';
 import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 import UpcomingInterviews from '../../General/UpcomingInterviews/UpcomingInterviews';
+import {
+    RefreshInterviewsContext,
+    RefreshInterviewsProvider
+} from '../../../contexts/RescheduleContexts/RefreshInterviewsContext';
 
-let InterviewPage = () => {
+const InterviewPage = () => {
+    return (
+        <RefreshInterviewsProvider>
+            <InterviewPageMain />
+        </RefreshInterviewsProvider>
+    );
+};
+
+const InterviewPageMain = () => {
     const navigate = useNavigate();
 
     const { course_id, task } = useParams();
@@ -44,6 +56,10 @@ let InterviewPage = () => {
 
     const [open, setOpen] = useState(false);
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
+
+    // Refresh interviews context
+    // TODO: Fix such that on button click for change interview, data is refreshed on calendar
+    const { refreshInterviews, setRefreshInterviews } = React.useContext(RefreshInterviewsContext);
 
     useEffect(() => {
         StaffApi.getAllInterviews(course_id, task).then((response) => {
@@ -103,8 +119,9 @@ let InterviewPage = () => {
             }
 
             setCalendarData(temp_data);
+            setRefreshInterviews(false);
         });
-    }, [course_id, task, version, navigate]);
+    }, [course_id, task, version, navigate, refreshInterviews]);
 
     // the cancel interview function
     const delete_interview = (task, id) => {

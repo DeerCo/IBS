@@ -489,38 +489,39 @@ const changeInterview = async (
 ) => {
     let token = sessionStorage.getItem('token');
 
-    let config = {
-        data: {
-            task,
-            set_time,
-            set_group_id,
-            set_length,
-            set_location,
-            set_note,
-            set_cancelled,
-            interview_id,
-            booked,
-            time,
-            date,
-            group_id,
-            length,
-            location,
-            note,
-            cancelled
-        },
+    let data = {
+        task,
+        set_time,
+        set_group_id,
+        set_length,
+        set_location,
+        set_note,
+        set_cancelled,
+        interview_id,
+        booked,
+        time,
+        date,
+        group_id,
+        length,
+        location,
+        note,
+        cancelled
+    };
+
+    const config = {
         headers: { Authorization: `Bearer ${token}` }
     };
 
     // delete all undefined/null fields from config.data
-    config.data = Object.fromEntries(
-        Object.entries(config.data).filter(([key, value]) => value != null)
-    );
+    data = Object.fromEntries(Object.entries(data).filter(([key, value]) => value != null));
+    console.log('[+]');
+    console.log(data);
 
     const role = findRoleInCourse(courseId);
     if (role === 'instructor' || role === 'ta') {
         const url = `${process.env.REACT_APP_API_URL}/${role}/course/${courseId}/interview/change`;
         try {
-            return await axios.put(url, config);
+            return await axios.put(url, data, config);
         } catch (err) {
             return err.response;
         }

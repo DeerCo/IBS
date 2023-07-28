@@ -22,6 +22,7 @@ import CustomTextField from '../../../FlexyMainComponents/forms/custom-elements/
 import CustomSelect from '../../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 import CustomFormLabel from '../../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import { UpdatedFieldsContext } from '../../../../contexts/RescheduleContexts/UpdatedFieldsContext';
+import { FilterFieldsContext } from '../../../../contexts/RescheduleContexts/FilterFieldsContext';
 
 const EditCardItem = ({ title, oldDesc, newInput }) => {
     return (
@@ -48,18 +49,7 @@ const EditCardItem = ({ title, oldDesc, newInput }) => {
 const RescheduleUpdatedFields = (props) => {
     // for backend query to changeInterview API
     const { updatedFields, setUpdatedFields } = React.useContext(UpdatedFieldsContext);
-
-    const [filterInputFieldsObj, setFilterInputFieldsObj] = React.useState({
-        interview_id: null,
-        booked: null,
-        time: null,
-        date: null,
-        group_id: null,
-        length: null,
-        location: null,
-        note: null,
-        cancelled: null
-    });
+    const { filterFields } = React.useContext(FilterFieldsContext);
 
     // for change interview's new location select
     const [isNewLocOnline, setIsNewLocOnline] = React.useState(true);
@@ -244,7 +234,52 @@ const RescheduleUpdatedFields = (props) => {
                             }
                         />
                         {/*TODO: Implement set_group_id input*/}
-                        {/*TODO: Implement set_note input*/}
+                        <EditCardItem
+                            title="Set new group ID"
+                            oldDesc={undefined}
+                            newInput={
+                                <CustomTextField
+                                    id="group-id-update-field"
+                                    margin="normal"
+                                    value={updatedFields.group_id}
+                                    onChange={(event) => {
+                                        setUpdatedFields((prevState) => ({
+                                            ...prevState,
+                                            group_id: event.target.value
+                                        }));
+                                    }}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ mt: 0 }}
+                                />
+                            }
+                        />
+                        <EditCardItem
+                            title="New Note"
+                            oldDesc={undefined}
+                            newInput={
+                                <CustomTextField
+                                    id="note-update-field"
+                                    placeholder="Write New Note"
+                                    multiline
+                                    rows={4}
+                                    variant="outlined"
+                                    value={updatedFields.note}
+                                    onChange={(event) =>
+                                        setUpdatedFields((prevState) => {
+                                            if (prevState.set_note !== event.target.value) {
+                                                return {
+                                                    ...prevState,
+                                                    set_note: event.target.value
+                                                };
+                                            }
+                                            return prevState;
+                                        })
+                                    }
+                                    sx={{ width: 500 }}
+                                />
+                            }
+                        />
                     </Box>
                 </CardContent>
             </Card>
