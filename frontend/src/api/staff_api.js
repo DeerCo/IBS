@@ -376,7 +376,7 @@ const uploadMarksCSV = async (courseId, file, taskId, overwrite = true) => {
 
     const config = {
         headers: { Authorization: `Bearer ${token}` },
-        data: { task_group_id: taskGroupId }
+        data: { task_group_id: taskId }
     };
 
     let url;
@@ -391,7 +391,7 @@ const uploadMarksCSV = async (courseId, file, taskId, overwrite = true) => {
     } catch (err) {
         return err.response;
     }
-}
+};
 
 const checkGroup = async (courseId, groupId) => {
     const token = sessionStorage.getItem('token');

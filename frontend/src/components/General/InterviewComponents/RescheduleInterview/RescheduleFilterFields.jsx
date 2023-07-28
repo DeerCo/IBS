@@ -274,7 +274,11 @@ const RescheduleFilterFields = (props) => {
                                 <CustomTextField
                                     id="interview-id-input"
                                     margin="normal"
-                                    value={filterFields.interview_id}
+                                    value={
+                                        filterFields.interview_id == null
+                                            ? ''
+                                            : filterFields.interview_id
+                                    }
                                     onChange={(event) => {
                                         setFilterFields((prevState) => ({
                                             ...prevState,
@@ -294,7 +298,9 @@ const RescheduleFilterFields = (props) => {
                                 <RadioGroup
                                     id="booked-filter-field"
                                     row
-                                    value={filterFields.booked}
+                                    value={
+                                        filterFields.booked == null ? false : filterFields.booked
+                                    }
                                     onChange={(event) =>
                                         setFilterFields((prevState) => {
                                             if (prevState.booked !== event.target.value) {
@@ -351,7 +357,7 @@ const RescheduleFilterFields = (props) => {
                                                 size: 'small'
                                             }
                                         }}
-                                        value={parseISO(filterFields.time)}
+                                        value={filterFields.time ? parseISO(filterFields.time) : ''}
                                     />
                                 </LocalizationProvider>
                             </>
@@ -364,7 +370,9 @@ const RescheduleFilterFields = (props) => {
                                 <CustomTextField
                                     id="group-id-filter-field"
                                     margin="normal"
-                                    value={filterFields.group_id}
+                                    value={
+                                        filterFields.group_id == null ? '' : filterFields.group_id
+                                    }
                                     onChange={(event) => {
                                         setFilterFields((prevState) => ({
                                             ...prevState,
@@ -386,7 +394,7 @@ const RescheduleFilterFields = (props) => {
                                     margin="normal"
                                     type="number"
                                     helperText="Length (in minutes)"
-                                    value={filterFields.length}
+                                    value={filterFields.length == null ? '' : filterFields.length}
                                     onChange={(event) => {
                                         setFilterFields((prevState) => ({
                                             ...prevState,
@@ -442,6 +450,7 @@ const RescheduleFilterFields = (props) => {
                                             variant="outlined"
                                             size="small"
                                             value={
+                                                filterFields.location == null ||
                                                 filterFields.location === 'Online'
                                                     ? ''
                                                     : filterFields.location
@@ -473,7 +482,7 @@ const RescheduleFilterFields = (props) => {
                                     multiline
                                     rows={4}
                                     variant="outlined"
-                                    value={filterFields.note}
+                                    value={filterFields.note == null ? '' : filterFields.note}
                                     onChange={(event) =>
                                         setFilterFields((prevState) => {
                                             if (prevState.note !== event.target.value) {
@@ -497,7 +506,11 @@ const RescheduleFilterFields = (props) => {
                                 <RadioGroup
                                     id="cancelled-filter-field"
                                     row
-                                    value={filterFields.cancelled || false}
+                                    value={
+                                        filterFields.cancelled == null
+                                            ? false
+                                            : filterFields.cancelled
+                                    }
                                     onChange={(event) =>
                                         setFilterFields((prevState) => {
                                             if (prevState.cancelled !== event.target.value) {
