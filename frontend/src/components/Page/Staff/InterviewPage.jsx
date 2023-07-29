@@ -26,6 +26,7 @@ import {
     RefreshInterviewsContext,
     RefreshInterviewsProvider
 } from '../../../contexts/RescheduleContexts/RefreshInterviewsContext';
+import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton';
 
 const InterviewPage = () => {
     return (
@@ -358,7 +359,10 @@ const InterviewPageMain = () => {
             <Grid xs={12}>
                 <NavBar page="Interview" role={currRole} />
             </Grid>
-            <Grid xs={12} sx={{ mt: 3, marginX: 'auto' }}>
+            <Grid xs={12} sx={{ mt: 2 }}>
+                <PreviousPageButton rightAlignOffset={6} />
+            </Grid>
+            <Grid xs={12} sx={{ mt: 1, marginX: 'auto' }}>
                 <Grid
                     container
                     spacing={0}
