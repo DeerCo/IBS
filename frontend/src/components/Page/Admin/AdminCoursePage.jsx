@@ -8,6 +8,7 @@ import { Link, useParams } from 'react-router-dom';
 import AdminCourseCRUD from '../../General/AdminCourseCRUD/AdminCourseCRUD';
 import Grid from '@mui/material/Unstable_Grid2';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
+import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton';
 
 const AdminCoursePage = () => {
     const { register: register4, handleSubmit: handleSubmit4, control: control4 } = useForm();
@@ -421,6 +422,7 @@ const AdminCoursePage = () => {
                 <Grid xs={12} sx={{ mt: 3 }}>
                     <Grid container justifyContent="center" direction="column" alignItems="center">
                         <Grid xs={12}>
+                            <PreviousPageButton rightAlignOffset={4} />
                             <AdminCourseCRUD
                                 onSubmitFunctions={{
                                     AddRole: addRole,
