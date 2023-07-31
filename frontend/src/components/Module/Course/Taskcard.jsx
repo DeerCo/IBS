@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
 import { mutate } from 'swr';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Typography, Grid, Menu, MenuItem, IconButton } from '@mui/material';
+import useSWR from 'swr';
 import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
 import SubmissionsMenu from '../Submission/SubmissionsMenu';
 import Countdown from 'react-countdown';
@@ -12,6 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InstructorApi from '../../../api/instructor_api';
 import ConfirmDialog from '../../General/DeleteConfirmation';
+import MarkPublicationDialog from '../Mark/SubmitMarks/MarkPublicationConfirmation';
 
 
 const useStyles = makeStyles({
@@ -43,10 +45,12 @@ const Taskcard = ({ data, course_id, role }) => {
 
   const classes = useStyles();
   const navigate = useNavigate();
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [releaseOpen, setReleaseOpen] = useState(false);
+  const [markIsHidden, setMarkIsHidden] = useState(true);
+  const [markIsSubmited, setMarkIsSubmited] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -54,6 +58,20 @@ const Taskcard = ({ data, course_id, role }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const { data: mark, isLoading, error } = useSWR('/mark/is_hidden'+ data.task, () =>
+    InstructorApi.markIsHidden(course_id, data.task).then((res) => res.data)
+  );
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (error) navigate("/login");
+    console.log(data.task, mark);
+    if (mark) {
+      setMarkIsSubmited(true);
+      setMarkIsHidden(mark.hidden);
+    }
+  }, [course_id, data.task, navigate, mark, isLoading, error]);
 
   const delete_task = () => {
     InstructorApi.delete_task(course_id, data.task).then((task_response) => {
@@ -77,17 +95,19 @@ const Taskcard = ({ data, course_id, role }) => {
       <DashboardCard
         key={data.task}
         title={data.task}
+        customheaderpadding="12px 12px 0 12px"
+        custompadding="16px"
         action={role === 'instructor' &&
           <div className={classes.icons}>
             <IconButton
               aria-label="delete"
               color="error"
-              onClick={() => setConfirmOpen(true)}>
+              onClick={() => setDeleteOpen(true)}>
               <DeleteIcon />
             </IconButton>
             <ConfirmDialog
-              open={confirmOpen}
-              setOpen={setConfirmOpen}
+              open={deleteOpen}
+              setOpen={setDeleteOpen}
               onConfirm={delete_task}
             >
               Are you sure you want to delete this task?
@@ -99,8 +119,6 @@ const Taskcard = ({ data, course_id, role }) => {
               <EditIcon />
             </IconButton>
           </div>}
-        customheaderpadding="12px 12px 0 12px"
-        custompadding="16px"
         children={
           <div>
             <div>
@@ -136,37 +154,6 @@ const Taskcard = ({ data, course_id, role }) => {
               >
                 Details
               </Button>
-              <Button
-                href={
-                  (role ? '/' + role : '') +
-                  '/course/' +
-                  course_id +
-                  '/task/' +
-                  data.task +
-                  '/mark'
-                }
-                variant="outlined"
-                size="small"
-              >
-                Mark
-              </Button>
-              <Button
-                href={
-                  (role ? '/' + role : '') +
-                  '/course/' +
-                  course_id +
-                  '/task/' +
-                  data.task +
-                  '/file'
-                }
-                variant="outlined"
-                size="small"
-              >
-                Feedback
-              </Button>
-              {role !== 'student' && (
-                <SubmissionsMenu course_id={course_id} task={data.task} />
-              )}
               <Button
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
@@ -234,6 +221,55 @@ const Taskcard = ({ data, course_id, role }) => {
                   </MenuItem>
                 ))}
               </Menu>
+            </div>
+            <div className={classes.buttonGroup}>
+
+              {role === 'instructor' && markIsSubmited &&
+                <Button
+                  variant="outlined"
+                  onClick={() => setReleaseOpen(true)}>
+                  {markIsHidden ? 'Release Marks' : 'Hide Marks'}
+                </Button>
+              }
+              <MarkPublicationDialog
+                courseId={course_id}
+                task={data.task}
+                open={releaseOpen}
+                setOpen={setReleaseOpen}
+                release={markIsHidden}
+              />
+              {role === 'student' &&
+                <Button
+                  href={
+                    (role ? '/' + role : '') +
+                    '/course/' +
+                    course_id +
+                    '/task/' +
+                    data.task +
+                    '/mark'
+                  }
+                  variant="outlined"
+                  size="small"
+                >
+                  Mark
+                </Button>}
+              <Button
+                href={
+                  (role ? '/' + role : '') +
+                  '/course/' +
+                  course_id +
+                  '/task/' +
+                  data.task +
+                  '/file'
+                }
+                variant="outlined"
+                size="small"
+              >
+                Feedback
+              </Button>
+              {role !== 'student' && (
+                <SubmissionsMenu course_id={course_id} task={data.task} />
+              )}
             </div>
           </div>
 

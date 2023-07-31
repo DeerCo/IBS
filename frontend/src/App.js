@@ -10,6 +10,7 @@ import StudentFilePage from './components/Page/Student/StudentFilePage';
 import StudentInterviewPage from './components/Page/Student/StudentInterviewPage';
 import StudentTaskPage from './components/Page/Student/StudentTaskPage';
 import StudentDetailsPage from './components/Page/Student/StudentDetailsPage';
+import InstructorDetailsPage from './components/Page/Instructor/InstructorDetailsPage';
 import TaTaskPage from './components/Page/Ta/TaTaskPage';
 import InterviewPage from './components/Page/Staff/InterviewPage';
 import AdminPage from './components/Page/Admin/AdminPage';
@@ -52,15 +53,19 @@ function App() {
                             element={<StudentListPage />}
                         ></Route>
                         <Route
-                            path="/course/:course_id/task/:task/details"
+                            path="/student/course/:course_id/task/:task/details"
                             element={<StudentDetailsPage />}
+                        ></Route>
+                        <Route
+                            path="instructor/course/:course_id/task/:task/details"
+                            element={<InstructorDetailsPage />}
                         ></Route>
                         <Route
                             path="/course/:course_id/task/:task/interview"
                             element={<StudentInterviewPage />}
                         ></Route>
                         <Route
-                            path="/course/:course_id/task/:task/mark"
+                            path="/student/course/:course_id/task/:task/mark"
                             element={<StudentMarkPage />}
                         ></Route>
                         <Route

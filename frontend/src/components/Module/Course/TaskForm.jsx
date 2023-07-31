@@ -334,16 +334,6 @@ const TaskForm = ({ mode, initialValues }) => {
                 ))}
               </TextField>
             </Grid>
-            /* add task group if !task_group_ids?
-            <TextField
-              sx={{ width: '100%' }}
-              key="task group"
-              label="Task Group"
-              type="number"
-              value={task_group_id ?? ''}
-              onChange={handleTaskGroupChange}
-              error={formik.touched.task_group_id && Boolean(formik.errors.task_group_id)}
-            />*/
           }
           <Grid item xs={12}>
             <TextField
