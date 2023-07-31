@@ -359,7 +359,7 @@ const AdminChangeCourse = (props) => {
                         you're still setting up the course.
                     </li>
                     <li>
-                        <strong>Course Code</strong> (Course Name): Self-Explanatory
+                        <strong>Course Code</strong>: Course Name
                     </li>
                     <li>
                         <strong>Course Session</strong>:
@@ -367,7 +367,7 @@ const AdminChangeCourse = (props) => {
                         The term that the course is being offered in.
                     </li>
                     <li>
-                        <strong>GitLab Group ID</strong>: Self-Explanatory
+                        <strong>GitLab Group ID</strong>: Refer to "Further details".
                     </li>
                     <li>
                         <strong>Default Token Count</strong>:
