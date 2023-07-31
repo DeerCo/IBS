@@ -26,7 +26,6 @@ import { visuallyHidden } from '@mui/utils';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../FlexyMainComponents/forms/custom-elements/CustomCheckbox';
 import CustomSwitch from '../../FlexyMainComponents/forms/custom-elements/CustomSwitch';
-import GetMarksCsvButton from './GetMarksCsvButton';
 import TableSearchbar from './TableSearchbar';
 
 function descendingComparator(a, b, orderBy) {
@@ -219,7 +218,6 @@ const AggregatedGradesTable = ({ headCells, rows, tableWidth, courseId }) => {
             <CardContent>
                 <Box>
                     <Paper sx={{ width: '100%', mb: 2, mt: 1 }}>
-                        <GetMarksCsvButton courseId={courseId} />
                         <AggregatedGradesTableToolbar
                             originalRows={rows}
                             setCurrRows={setCurrRows}

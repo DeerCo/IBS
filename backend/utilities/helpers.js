@@ -30,7 +30,7 @@ function name_validate(name) {
 }
 
 function string_validate(string) {
-  let regex_string = new RegExp("^[0-9a-zA-Z:_ \\,\\.\\/\\-\\(\\)\\!]{1,500}$");
+  let regex_string = new RegExp("^[0-9a-zA-Z:_ \\,\\.\\/\\-\\(\\)\\!\\?]{1,500}$");
 
   if (!regex_string.test(string)) {
     return 1;
@@ -135,39 +135,26 @@ function time_validate(time) {
 }
 
 function password_validate(password) {
-  let regex = new RegExp(".{8,}");
-  if (!regex.test(password)) {
-    return 1;
-  } else {
-    return 0;
-  }
+    let regex = new RegExp(".{8,72}");
+    if (!regex.test(password)) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 async function task_validate(course_id, task, student) {
-  if (student) {
-    var pg_res = await db.query(
-      "SELECT * FROM course_" +
-        course_id +
-        ".task WHERE task = ($1) AND hidden = 'false'",
-      [task]
-    );
-  } else {
-    var pg_res = await db.query(
-      "SELECT * FROM course_" + course_id + ".task WHERE task = ($1)",
-      [task]
-    );
-  }
+    if (student) {
+        var pg_res = await db.query("SELECT * FROM course_" + course_id + ".task WHERE task = ($1) AND hidden = 'false'", [task]);
+    } else {
+        var pg_res = await db.query("SELECT * FROM course_" + course_id + ".task WHERE task = ($1)", [task]);
+    }
 
-  if (pg_res.rowCount <= 0) {
-    return { task: "" };
-  } else {
-    return {
-      task: task,
-      change_group: pg_res.rows[0]["change_group"],
-      hide_interview: pg_res.rows[0]["hide_interview"],
-      interview_group: pg_res.rows[0]["interview_group"],
-    };
-  }
+    if (pg_res.rowCount <= 0) {
+        return { task: "" };
+    } else {
+        return { task: task, change_group: pg_res.rows[0]["change_group"], hide_interview: pg_res.rows[0]["hide_interview"], hide_file: pg_res.rows[0]["hide_file"], interview_group: pg_res.rows[0]["interview_group"] };
+    }
 }
 
 function interview_data_filter(
@@ -355,7 +342,7 @@ function search_files(username, group_id, coure_id, sub_dir = "") {
 }
 
 async function get_courses() {
-  let pg_res = await db.query("SELECT * FROM course ORDER BY task_order", []);
+    let pg_res = await db.query("SELECT * FROM course ORDER BY course_id", []);
 
   let courses = {};
   for (let row of pg_res.rows) {
@@ -370,23 +357,21 @@ async function get_courses() {
 }
 
 async function get_tasks(course_id) {
-  let pg_res = await db.query(
-    "SELECT * FROM course_" + course_id + ".task ORDER BY task_order",
-    []
-  );
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".task ORDER BY due_date, task", []);
 
-  let tasks = {};
-  for (let row of pg_res.rows) {
-    let task = {};
-    task["due_date"] = row["due_date"];
-    task["hidden"] = row["hidden"];
-    task["min_member"] = row["min_member"];
-    task["max_member"] = row["max_member"];
+    let tasks = {};
+    for (let row of pg_res.rows) {
+        let task = {};
+        task["due_date"] = row["due_date"];
+        task["hidden"] = row["hidden"];
+        task["weight"] = row["weight"];
+        task["min_member"] = row["min_member"];
+        task["max_member"] = row["max_member"];
 
-    tasks[row["task"]] = task;
-  }
+        tasks[row["task"]] = task;
+    }
 
-  return tasks;
+    return tasks;
 }
 
 async function get_criteria_id(course_id, task, criteria) {
@@ -468,6 +453,16 @@ async function get_group_id(course_id, task, username) {
   }
 }
 
+async function get_group_users(course_id, group_id) {
+    let results = [];
+    let pg_res = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE group_id = ($1) AND status = 'confirmed'", [group_id]);
+
+    for (let row of pg_res.rows) {
+        results.push(row["username"]);
+    }
+    return results;
+}
+
 async function get_all_group_users(course_id, task) {
   let results = {};
   let pg_res = await db.query(
@@ -485,6 +480,52 @@ async function get_all_group_users(course_id, task) {
     }
   }
   return results;
+}
+
+async function copy_groups(course_id, from_task, to_task) {
+    let results = [];
+    let group_user = {};
+
+    let pg_res_old_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND status = 'confirmed'", [from_task]);
+    for (let row of pg_res_old_group_user.rows) {
+        // Check if the user already has a group in to_task
+        let pg_res_new_group_user = await db.query("SELECT * FROM course_" + course_id + ".group_user WHERE task = ($1) AND username = ($2)", [to_task, row["username"]]);
+        if (pg_res_new_group_user.rowCount === 0) {
+            if (row["group_id"] in group_user) {
+                group_user[row["group_id"]].push(row["username"]);
+            } else {
+                group_user[row["group_id"]] = [row["username"]];
+            }
+        }
+    }
+
+    for (let old_group_id in group_user) {
+        // Add a new group in db
+        let pg_res_add_group = await db.query("INSERT INTO course_" + course_id + ".group (task) VALUES (($1)) RETURNING group_id", [to_task]);
+        let new_group_id = pg_res_add_group.rows[0]["group_id"];
+
+        // Create a new project on gitlab for the new group
+        let add_project = await gitlab_create_group_and_project_no_user(course_id, new_group_id, to_task);
+        if (add_project["success"] === false) {
+            results.push({ group_id: old_group_id, code: add_project["code"] });
+        } else {
+            for (let user of group_user[old_group_id]) {
+                // Add user to the new group in db
+                let err_add_user, pg_res_add_user = await db.query("INSERT INTO course_" + course_id + ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')", [to_task, user, new_group_id]);
+                if (err_add_user) {
+                    console.log("User " + user + "is already in a group");
+                } else {
+                    // Add user to the new project on gitlab
+                    add_user = await gitlab_add_user_with_gitlab_group_id(add_project["gitlab_group_id"], "", user);
+                    if (add_user["success"] === false) {
+                        results.push({ username: user, code: add_user["code"] });
+                    }
+                }
+            }
+        }
+    }
+
+    return results;
 }
 
 async function format_marks_one_task(json, course_id, task, total) {
@@ -635,6 +676,57 @@ async function format_marks_one_task_csv(json, course_id, task, res, total) {
       });
     }
   });
+}
+
+async function format_marks_all_tasks_csv(json, course_id, res, total) {
+    if (JSON.stringify(json) === "[]") {
+        res.status(200).json({ message: "No data is available." });
+        return;
+    }
+
+    let current_time = moment().tz("America/Toronto");
+    let dir_date = current_time.format("YYYY") + "/" + current_time.format("MM") + "/" + current_time.format("DD") + "/";
+    let dir = __dirname + "/../backup/" + dir_date;
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    let json2csvParser = new json2csv.Parser({ defaultValue: "0" });
+    let file_name = "marks_" + current_time.format("YYYY-MM-DD-HH-mm-ss") + ".csv";
+    let header = { Student: "Out Of" };
+    let parsed_json = {};
+    let marks = await format_marks_all_tasks(json, course_id, total);
+
+    if (Object.keys(marks).length === 0) {
+        res.status(200).json({ message: "No mark is available." });
+        return;
+    }
+
+    for (let student in marks) {
+        for (let task in marks[student]) {
+            if (!(task in header)) {
+                header[task] = marks[student][task]["out_of"];
+            }
+
+            let mark = marks[student][task]["mark"];
+            if (student in parsed_json) {
+                parsed_json[student][task] = mark;
+            } else {
+                parsed_json[student] = { Student: student, [task]: mark };
+            }
+        }
+    }
+
+    let rows = [header].concat(Object.values(parsed_json));
+
+    let csv = json2csvParser.parse(rows);
+    fs.writeFile(dir + file_name, csv, (err) => {
+        if (err) {
+            res.status(404).json({ message: "Unknown error." });
+        } else {
+            res.sendFile(file_name, { root: "./backup/" + dir_date, headers: { "Content-Disposition": "attachment; filename=" + file_name } });
+        }
+    });
 }
 
 async function gitlab_get_user_id(username) {
@@ -1317,89 +1409,51 @@ async function get_submission_before_due_date(course_id, group_id) {
 }
 
 async function collect_one_submission(course_id, group_id, overwrite) {
-  let task = await get_group_task(course_id, group_id);
-  if (task === "") {
-    return {
-      message: "The group id doesn't exist.",
-      group_id: group_id,
-      code: "group_not_exist",
-    };
-  }
-  let submission_data = await get_submission_before_due_date(
-    course_id,
-    group_id
-  );
-  if (submission_data["due_date"] === null) {
-    return {
-      message: "Unknown error.",
-      group_id: group_id,
-      code: "unknown_error",
-      submission: submission_data,
-    };
-  }
-  if (submission_data["commit_id"] === null) {
-    return {
-      message: "No commit is found for this group.",
-      group_id: group_id,
-      code: "no_commit",
-      submission: submission_data,
-    };
-  }
-  if (submission_data["before_due_date_with_extension_and_token"] === true) {
-    return {
-      message: "Due date hasn't passed for this group.",
-      group_id: group_id,
-      code: "before_due_date",
-      submission: submission_data,
-    };
-  }
+    let task = await get_group_task(course_id, group_id);
+    if (task === "") {
+        return { message: "The group id doesn't exist.", group_id: group_id, code: "group_not_exist" };
+    }
 
-  let sql_add_submission =
-    "INSERT INTO course_" +
-    course_id +
-    ".submission (task, group_id, commit_id, token_used) VALUES (($1), ($2), ($3), ($4))";
-  let sql_add_submission_data = [
-    submission_data["task"],
-    group_id,
-    submission_data["commit_id"],
-    submission_data["token_used"],
-  ];
+    if (!overwrite) {
+        let sql_check_submission = "SELECT * FROM course_" + course_id + ".submission WHERE task = ($1) AND group_id = ($2)";
+        let sql_check_submission_data = [task, group_id];
 
-  if (overwrite) {
-    sql_add_submission +=
-      " ON CONFLICT (group_id) DO UPDATE SET commit_id = EXCLUDED.commit_id, token_used = EXCLUDED.token_used";
-  } else {
-    sql_add_submission += " ON CONFLICT (group_id) DO NOTHING";
-  }
+        let err_check_submission, pg_res_check_submission = await db.query(sql_check_submission, sql_check_submission_data);
+        if (err_check_submission) {
+            return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
+        } else if (pg_res_check_submission.rowCount >= 1) {
+            return { message: "The new submission is not collected as an old submission is found and overwrite is false.", group_id: group_id, code: "submission_exists", submission: pg_res_check_submission.rows[0] };
+        }
+    }
 
-  let err_add_submission,
-    pg_res_add_submission = await db.query(
-      sql_add_submission,
-      sql_add_submission_data
-    );
-  if (err_add_submission) {
-    return {
-      message: "Unknown error.",
-      group_id: group_id,
-      code: "unknown_error",
-      submission: submission_data,
-    };
-  } else if (pg_res_add_submission.rowCount === 0) {
-    return {
-      message:
-        "The new submission is not collected as an old submission is found and overwrite is false.",
-      group_id: group_id,
-      code: "submission_exists",
-      submission: submission_data,
-    };
-  } else {
-    return {
-      message: "The new submission is collected.",
-      group_id: group_id,
-      code: "submission_collected",
-      submission: submission_data,
-    };
-  }
+    let submission_data = await get_submission_before_due_date(course_id, group_id);
+    if (submission_data["due_date"] === null) {
+        return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
+    }
+    if (submission_data["before_due_date_with_extension_and_token"] === true) {
+        return { message: "Due date hasn't passed for this group.", group_id: group_id, code: "before_due_date", submission: submission_data };
+    }
+    if (submission_data["commit_id"] === null) {
+        return { message: "No commit is found for this group.", group_id: group_id, code: "no_commit", submission: submission_data };
+    }
+
+    let sql_add_submission = "INSERT INTO course_" + course_id + ".submission (task, group_id, commit_id, token_used) VALUES (($1), ($2), ($3), ($4))";
+    let sql_add_submission_data = [submission_data["task"], group_id, submission_data["commit_id"], submission_data["token_used"]];
+
+    if (overwrite) {
+        sql_add_submission += " ON CONFLICT (group_id) DO UPDATE SET commit_id = EXCLUDED.commit_id, token_used = EXCLUDED.token_used";
+    } else {
+        sql_add_submission += " ON CONFLICT (group_id) DO NOTHING";
+    }
+
+    let err_add_submission, pg_res_add_submission = await db.query(sql_add_submission, sql_add_submission_data);
+    if (err_add_submission) {
+        return { message: "Unknown error.", group_id: group_id, code: "unknown_error", submission: submission_data };
+    } else if (pg_res_add_submission.rowCount === 0) {
+        return { message: "The new submission is not collected as an old submission is found and overwrite is false.", group_id: group_id, code: "submission_exists", submission: submission_data };
+    } else {
+        return { message: "The new submission is collected.", group_id: group_id, code: "submission_collected", submission: submission_data };
+    }
 }
 
 async function collect_all_submissions(course_id, task, overwrite) {
@@ -1509,142 +1563,64 @@ async function download_all_submissions(course_id, task) {
   return groups;
 }
 
-async function copy_groups(course_id, from_task, to_task) {
-  let results = [];
-  let group_user = {};
-
-  let pg_res_old_group_user = await db.query(
-    "SELECT * FROM course_" +
-      course_id +
-      ".group_user WHERE task = ($1) AND status = 'confirmed'",
-    [from_task]
-  );
-  for (let row of pg_res_old_group_user.rows) {
-    // Check if the user already has a group in to_task
-    let pg_res_new_group_user = await db.query(
-      "SELECT * FROM course_" +
-        course_id +
-        ".group_user WHERE task = ($1) AND username = ($2)",
-      [to_task, row["username"]]
-    );
-    if (pg_res_new_group_user.rowCount === 0) {
-      if (row["group_id"] in group_user) {
-        group_user[row["group_id"]].push(row["username"]);
-      } else {
-        group_user[row["group_id"]] = [row["username"]];
-      }
-    }
-  }
-
-  for (let old_group_id in group_user) {
-    // Add a new group in db
-    let pg_res_add_group = await db.query(
-      "INSERT INTO course_" +
-        course_id +
-        ".group (task) VALUES (($1)) RETURNING group_id",
-      [to_task]
-    );
-    let new_group_id = pg_res_add_group.rows[0]["group_id"];
-
-    // Create a new project on gitlab for the new group
-    let add_project = await gitlab_create_group_and_project_no_user(
-      course_id,
-      new_group_id,
-      to_task
-    );
-    if (add_project["success"] === false) {
-      results.push({ group_id: old_group_id, code: add_project["code"] });
-    } else {
-      for (let user of group_user[old_group_id]) {
-        // Add user to the new group in db
-        let err_add_user,
-          pg_res_add_user = await db.query(
-            "INSERT INTO course_" +
-              course_id +
-              ".group_user (task, username, group_id, status) VALUES (($1), ($2), ($3), 'confirmed')",
-            [to_task, user, new_group_id]
-          );
-        if (err_add_user) {
-          console.log("User " + user + "is already in a group");
-        } else {
-          // Add user to the new project on gitlab
-          add_user = await gitlab_add_user_with_gitlab_group_id(
-            add_project["gitlab_group_id"],
-            "",
-            user
-          );
-          if (add_user["success"] === false) {
-            results.push({ username: user, code: add_user["code"] });
-          }
-        }
-      }
-    }
-  }
-
-  return results;
-}
-
 module.exports = {
-  generateAccessToken: generateAccessToken,
+  generateAccessToken,
 
   // Validation related
-  name_validate: name_validate,
-  boolean_validate: boolean_validate,
-  number_validate: number_validate,
-  string_validate: string_validate,
-  date_validate: date_validate,
-  time_validate: time_validate,
-  email_validate: email_validate,
-  password_validate: password_validate,
-  task_validate: task_validate,
-  weight_validate: weight_validate,
-  new_weight_validate: new_weight_validate,
+  name_validate,
+  boolean_validate,
+  number_validate,
+  string_validate,
+  date_validate,
+  time_validate,
+  email_validate,
+  password_validate,
+  task_validate,
+  weight_validate,
+  new_weight_validate,
 
   // Utility
-  interview_data_filter: interview_data_filter,
-  interview_data_set_new: interview_data_set_new,
-  send_email: send_email,
-  send_email_by_group: send_email_by_group,
-  get_courses: get_courses,
-  get_tasks: get_tasks,
-  get_criteria_id: get_criteria_id,
-  get_criteria: get_criteria,
-  get_total_out_of: get_total_out_of,
-  get_group_task: get_group_task,
-  get_group_id: get_group_id,
-  get_all_group_users: get_all_group_users,
+  interview_data_filter,
+  interview_data_set_new,
+  send_email,
+  send_email_by_group,
+  get_courses,
+  get_tasks,
+  get_criteria_id,
+  get_criteria,
+  get_total_out_of,
+  get_group_task,
+  get_group_id,
+  get_group_users,
+  get_all_group_users,
+  copy_groups,
 
   // Mark related
-  format_marks_one_task: format_marks_one_task,
-  format_marks_all_tasks: format_marks_all_tasks,
-  format_marks_one_task_csv: format_marks_one_task_csv,
+  format_marks_one_task,
+  format_marks_all_tasks,
+  format_marks_one_task_csv,
+  format_marks_all_tasks_csv,
 
   // File related
-  search_files: search_files,
+  search_files,
 
   // Token related
-  get_max_user_tokens: get_max_user_tokens,
-  get_user_token_usage: get_user_token_usage,
-  get_due_date: get_due_date,
+  get_max_user_tokens,
+  get_user_token_usage,
+  get_due_date,
 
   // Submission related,
-  get_submission_before_due_date: get_submission_before_due_date,
-  collect_one_submission: collect_one_submission,
-  collect_all_submissions: collect_all_submissions,
-  download_all_submissions: download_all_submissions,
+  get_submission_before_due_date,
+  collect_one_submission,
+  collect_all_submissions,
+  download_all_submissions,
 
   // Gitlab related
-  gitlab_get_user_id: gitlab_get_user_id,
-  gitlab_create_group_and_project_no_user:
-    gitlab_create_group_and_project_no_user,
-  gitlab_create_group_and_project_with_user:
-    gitlab_create_group_and_project_with_user,
-  gitlab_add_user_with_gitlab_group_id: gitlab_add_user_with_gitlab_group_id,
-  gitlab_add_user_without_gitlab_group_id:
-    gitlab_add_user_without_gitlab_group_id,
-  gitlab_remove_user: gitlab_remove_user,
-  gitlab_get_commits: gitlab_get_commits,
-
-  // Group related
-  copy_groups: copy_groups,
+  gitlab_get_user_id,
+  gitlab_create_group_and_project_no_user,
+  gitlab_create_group_and_project_with_user,
+  gitlab_add_user_with_gitlab_group_id,
+  gitlab_add_user_without_gitlab_group_id,
+  gitlab_remove_user,
+  gitlab_get_commits,
 };

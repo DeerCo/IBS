@@ -25,6 +25,7 @@ let impersonate = async (username) => {
         headers: { Authorization: `Bearer ${token}` }
     };
 
+
     try {
         return await axios.post(process.env.REACT_APP_API_URL + '/admin/impersonate', data, config);
     } catch (err) {
