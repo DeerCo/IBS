@@ -91,7 +91,8 @@ const RescheduleUpdatedFields = (props) => {
                                             textField: {
                                                 variant: 'outlined',
                                                 size: 'small'
-                                            }
+                                            },
+                                            actionBar: { actions: ['today'] }
                                         }}
                                         value={
                                             updatedFields.set_time == null
