@@ -15,8 +15,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PropTypes from 'prop-types';
+import { UserContext } from '../../../contexts/UserContext';
 
 let NavBar = (props) => {
+    const { role: currRole } = React.useContext(UserContext);
     let navigate = useNavigate();
 
     let username = sessionStorage.getItem('username');
@@ -77,7 +79,7 @@ let NavBar = (props) => {
                                 textDecoration: 'inherit',
                                 display: 'contents'
                             }}
-                            to="/home"
+                            to={currRole !== 'admin' ? '/home' : '/admin'}
                         >
                             <HomeIcon />
                         </Box>
@@ -94,7 +96,7 @@ let NavBar = (props) => {
                                 textDecoration: 'inherit',
                                 display: 'contents'
                             }}
-                            to="/home"
+                            to={currRole !== 'admin' ? '/home' : '/admin'}
                         >
                             <Typography variant="h6" component="div">
                                 IBS
