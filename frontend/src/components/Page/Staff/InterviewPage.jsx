@@ -27,11 +27,14 @@ import {
     RefreshInterviewsProvider
 } from '../../../contexts/RescheduleContexts/RefreshInterviewsContext';
 import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const InterviewPage = () => {
     return (
         <RefreshInterviewsProvider>
-            <InterviewPageMain />
+            <PageContainer title="Interviews" description="Staff view for interviews">
+                <InterviewPageMain />
+            </PageContainer>
         </RefreshInterviewsProvider>
     );
 };
@@ -59,7 +62,6 @@ const InterviewPageMain = () => {
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
 
     // Refresh interviews context
-    // TODO: Fix such that on button click for change interview, data is refreshed on calendar
     const { refreshInterviews, setRefreshInterviews } = React.useContext(RefreshInterviewsContext);
 
     useEffect(() => {

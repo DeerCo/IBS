@@ -7,6 +7,7 @@ import NavBar from '../../Module/Navigation/NavBar';
 import { Link, useParams } from 'react-router-dom';
 import AdminCourseCRUD from '../../General/AdminCourseCRUD/AdminCourseCRUD';
 import Grid from '@mui/material/Unstable_Grid2';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const AdminCoursePage = () => {
     const { register: register4, handleSubmit: handleSubmit4, control: control4 } = useForm();
@@ -412,26 +413,28 @@ const AdminCoursePage = () => {
     };
 
     return (
-        <Grid container>
-            <Grid xs={12}>
-                <NavBar page="Course" role="admin" />
-            </Grid>
-            <Grid xs={12} sx={{ mt: 3 }}>
-                <Grid container justifyContent="center" direction="column" alignItems="center">
-                    <Grid xs={12}>
-                        <AdminCourseCRUD
-                            onSubmitFunctions={{
-                                AddRole: addRole,
-                                UploadRoles: uploadRole,
-                                DeleteRole: deleteRole,
-                                GetRole: getRole
-                            }}
-                            getRoleResponse={getRoleResponse}
-                        />
+        <PageContainer title="Roles" description="Assign/Upload/Delete/Retrieve roles for users">
+            <Grid container>
+                <Grid xs={12}>
+                    <NavBar page="Course" role="admin" />
+                </Grid>
+                <Grid xs={12} sx={{ mt: 3 }}>
+                    <Grid container justifyContent="center" direction="column" alignItems="center">
+                        <Grid xs={12}>
+                            <AdminCourseCRUD
+                                onSubmitFunctions={{
+                                    AddRole: addRole,
+                                    UploadRoles: uploadRole,
+                                    DeleteRole: deleteRole,
+                                    GetRole: getRole
+                                }}
+                                getRoleResponse={getRoleResponse}
+                            />
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-        </Grid>
+        </PageContainer>
     );
 };
 

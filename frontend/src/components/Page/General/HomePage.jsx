@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import NavBar from '../../Module/Navigation/NavBar';
 import Homecard from '../../Module/Course/Homecard';
 import { Grid } from '@mui/material';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 let Home = () => {
     let navigate = useNavigate();
@@ -31,25 +32,27 @@ let Home = () => {
     }, [roles]);
 
     return (
-        <Grid container direction="column" height="100%" wrap="nowrap">
-            <NavBar item page="Home" role={currRole} />
-            <Grid
-                item
-                container
-                spacing={2}
-                direction="row"
-                justifyContent="center"
-                alignContent="center"
-                justify="center"
-                flex="1 1 auto"
-            >
-                {roles.map((data, index) => (
-                    <Grid item key={index}>
-                        <Homecard data={data} />
-                    </Grid>
-                ))}
+        <PageContainer title="Home" description="Home page">
+            <Grid container direction="column" height="100%" wrap="nowrap">
+                <NavBar item page="Home" role={currRole} />
+                <Grid
+                    item
+                    container
+                    spacing={2}
+                    direction="row"
+                    justifyContent="center"
+                    alignContent="center"
+                    justify="center"
+                    flex="1 1 auto"
+                >
+                    {roles.map((data, index) => (
+                        <Grid item key={index}>
+                            <Homecard data={data} />
+                        </Grid>
+                    ))}
+                </Grid>
             </Grid>
-        </Grid>
+        </PageContainer>
     );
 };
 

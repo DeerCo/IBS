@@ -10,6 +10,7 @@ import AdminAddCourse from '../../General/AdminPageComponents/AdminAddCourse';
 import AdminChangeCourse from '../../General/AdminPageComponents/AdminChangeCourse';
 import AdminGetRole from '../../General/AdminPageComponents/AdminGetRole';
 import { Box, Typography } from '@mui/material';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const AdminPage = () => {
     const [courses, setCourses] = useState({});
@@ -163,18 +164,20 @@ const AdminPage = () => {
     ];
 
     return (
-        <Grid container>
-            <Grid xs={12}>
-                <NavBar page="Admin Panel" role="admin" />
-            </Grid>
-            <Grid xs={12} sx={{ mt: 3 }}>
-                <Grid container justifyContent="center" direction="column" alignItems="center">
-                    <Grid xs={12}>
-                        <FlexyTabs tabs={tabs} width={1600} height="auto" />
+        <PageContainer title="Admin Home" description="Home page for admin view">
+            <Grid container>
+                <Grid xs={12}>
+                    <NavBar page="Admin Panel" role="admin" />
+                </Grid>
+                <Grid xs={12} sx={{ mt: 3 }}>
+                    <Grid container justifyContent="center" direction="column" alignItems="center">
+                        <Grid xs={12}>
+                            <FlexyTabs tabs={tabs} width={1600} height="auto" />
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-        </Grid>
+        </PageContainer>
     );
 };
 

@@ -10,6 +10,7 @@ import NavBar from '../../Module/Navigation/NavBar';
 import { makeStyles } from '@mui/styles';
 import TaskGroupList from './TaskGroupList';
 import { getTasks } from '../../../../utilities/tasks';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const useStyles = makeStyles({
     container: {
@@ -48,58 +49,60 @@ const TaskGroupListPage = () => {
     }, [course]);
 
     return (
-        <Grid container direction="column" height="100%" wrap="nowrap">
-            <NavBar item page="Home" />
+        <PageContainer title="List of Task Groups" description="List of task groups">
+            <Grid container direction="column" height="100%" wrap="nowrap">
+                <NavBar item page="Home" />
 
-            <div className={classes.dropdown}>
-                <div>
-                    <Autocomplete
-                        disablePortal
-                        id="course-selection-dropdown"
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                size="small"
-                                placeholder="Select Course"
-                                aria-label="Select Course"
-                            />
-                        )}
-                        options={courseOptions}
-                        onChange={(event, value) => handleCourseChange(value)}
-                    />
-                </div>
-                {task && (
+                <div className={classes.dropdown}>
                     <div>
                         <Autocomplete
                             disablePortal
-                            id="task-selection-dropdown"
-                            options={taskOptions}
+                            id="course-selection-dropdown"
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     size="small"
-                                    placeholder="Select Task"
-                                    aria-label="Select Task"
+                                    placeholder="Select Course"
+                                    aria-label="Select Course"
                                 />
                             )}
-                            onChange={(event, value) => setTask(value)}
+                            options={courseOptions}
+                            onChange={(event, value) => handleCourseChange(value)}
                         />
                     </div>
-                )}
-            </div>
-            <Grid
-                item
-                container
-                spacing={2}
-                direction="row"
-                justifyContent="center"
-                alignContent="center"
-                justify="center"
-                flex="1 1 auto"
-            >
-                <TaskGroupList courseId={courseId} task={task} />
+                    {task && (
+                        <div>
+                            <Autocomplete
+                                disablePortal
+                                id="task-selection-dropdown"
+                                options={taskOptions}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        size="small"
+                                        placeholder="Select Task"
+                                        aria-label="Select Task"
+                                    />
+                                )}
+                                onChange={(event, value) => setTask(value)}
+                            />
+                        </div>
+                    )}
+                </div>
+                <Grid
+                    item
+                    container
+                    spacing={2}
+                    direction="row"
+                    justifyContent="center"
+                    alignContent="center"
+                    justify="center"
+                    flex="1 1 auto"
+                >
+                    <TaskGroupList courseId={courseId} task={task} />
+                </Grid>
             </Grid>
-        </Grid>
+        </PageContainer>
     );
 };
 
