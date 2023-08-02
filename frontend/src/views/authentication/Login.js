@@ -55,8 +55,10 @@ const Login = () => {
                     const isAdmin = response['data']['admin'];
                     sessionStorage.setItem('isAdmin', isAdmin);
 
-                    if (isAdmin) navigate('/admin');
-                    else navigate('/home');
+                    if (isAdmin) {
+                        setRole('admin');
+                        navigate('/admin');
+                    } else navigate('/home');
 
                     if (Array.isArray(response.data.roles) && response.data.roles.length > 0) {
                         const currRole = response.data.roles[0].role;
