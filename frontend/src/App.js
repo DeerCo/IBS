@@ -10,6 +10,7 @@ import StudentFilePage from './components/Page/Student/StudentFilePage';
 import StudentInterviewPage from './components/Page/Student/StudentInterviewPage';
 import StudentTaskPage from './components/Page/Student/StudentTaskPage';
 import StudentDetailsPage from './components/Page/Student/StudentDetailsPage';
+import InstructorDetailsPage from './components/Page/Instructor/InstructorDetailsPage';
 import TaTaskPage from './components/Page/Ta/TaTaskPage';
 import InterviewPage from './components/Page/Staff/InterviewPage';
 import AdminPage from './components/Page/Admin/AdminPage';
