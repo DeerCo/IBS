@@ -4,7 +4,7 @@ import { Box, Button } from '@mui/material';
 import FeatherIcon from 'feather-icons-react';
 import PropTypes from 'prop-types';
 
-const PreviousPageButton = (props) => {
+const PreviousPageButton = ({ rightAlignOffset, ...props }) => {
     const navigate = useNavigate();
 
     const BackButton = () => (
@@ -19,13 +19,13 @@ const PreviousPageButton = (props) => {
         </Button>
     );
 
-    if (props.rightAlignOffset)
+    if (rightAlignOffset)
         return (
             <Box
                 display="flex"
                 justifyContent="flex-end"
                 alignItems="flex-end"
-                sx={{ mr: props.rightAlignOffset }}
+                sx={{ mr: rightAlignOffset }}
             >
                 <BackButton />
             </Box>

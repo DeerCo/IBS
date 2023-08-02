@@ -15,10 +15,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PropTypes from 'prop-types';
-import { UserContext } from '../../../contexts/UserContext';
 
 let NavBar = (props) => {
-    const { role: currRole } = React.useContext(UserContext);
+    const currRole = sessionStorage.getItem('role');
     let navigate = useNavigate();
 
     let username = sessionStorage.getItem('username');
