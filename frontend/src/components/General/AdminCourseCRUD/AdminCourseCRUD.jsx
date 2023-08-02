@@ -16,6 +16,7 @@ import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/Cus
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 import AdminGetRole from '../AdminPageComponents/AdminGetRole';
+import ConfirmDialog from '../DeleteConfirmation';
 
 // Globally change maxWidth for each tab-list component
 const MAX_WIDTH = 300;
@@ -432,6 +433,8 @@ const AdminCourseCRUD = (props) => {
     };
 
     const DeleteRoleComponent = () => {
+        const [confirmRemoveRole, setConfirmRemoveRole] = React.useState(false);
+
         return (
             <Grid container columns={12}>
                 <Grid xs={6}>
@@ -444,12 +447,7 @@ const AdminCourseCRUD = (props) => {
                         }}
                         maxWidth={MAX_WIDTH}
                     >
-                        <Box
-                            component="form"
-                            onSubmit={handleSubmitDelete(DeleteRole)}
-                            noValidate
-                            sx={{ mt: 1 }}
-                        >
+                        <Box component="form" noValidate sx={{ mt: 1 }}>
                             <Controller
                                 render={({
                                     field: { onChange, onBlur, value, name, ref },
@@ -483,7 +481,6 @@ const AdminCourseCRUD = (props) => {
                                 name="delete_all"
                                 control={controlDelete}
                                 defaultValue={false}
-                                rules={{ required: true }}
                             />
                             {!deleteAllUsers && (
                                 <Controller
@@ -516,11 +513,18 @@ const AdminCourseCRUD = (props) => {
                                     name="username"
                                     control={controlDelete}
                                     defaultValue=""
-                                    rules={{ required: true }}
                                 />
                             )}
+                            <ConfirmDialog
+                                open={confirmRemoveRole}
+                                setOpen={setConfirmRemoveRole}
+                                onConfirm={handleSubmitDelete(DeleteRole)}
+                            >
+                                Are you sure you want to delete ALL roles from course? Doing so will
+                                remove all users' roles from the course.
+                            </ConfirmDialog>
                             <Button
-                                type="submit"
+                                onClick={() => setConfirmRemoveRole(true)}
                                 fullWidth
                                 variant="contained"
                                 color="error"

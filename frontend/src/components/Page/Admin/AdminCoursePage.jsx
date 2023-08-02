@@ -91,7 +91,11 @@ const AdminCoursePage = () => {
             console.log(response);
             const numRolesRemoved = response.data.count;
             if (numRolesRemoved > 0) {
-                toast.success(`${numRolesRemoved} roles deleted`, { theme: 'colored' });
+                const msg =
+                    numRolesRemoved === 1
+                        ? 'The specified user has been deleted'
+                        : `${numRolesRemoved} roles deleted`;
+                toast.success(msg, { theme: 'colored' });
             } else {
                 if (response.status === 401) {
                     toast.warning(response.data.message, { theme: 'colored' });

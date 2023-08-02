@@ -14,7 +14,6 @@ const ProtectedRoute = ({ allowedRoles, ...props }) => {
     const role = sessionStorage.getItem('role');
 
     React.useEffect(() => {
-        console.log(role);
         if (!allowedRoles.includes(role)) {
             navigate('/login');
         }
