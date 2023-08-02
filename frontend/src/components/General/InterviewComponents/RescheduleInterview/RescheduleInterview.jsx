@@ -42,14 +42,18 @@ const RescheduleInterviewContent = (props) => {
     const rescheduleInterview = (task, toNewFieldsObj, filterInputFieldsObj) => {
         // remove keys with null or empty string values
         let cleanedFilterFields = Object.fromEntries(
-            Object.entries(filterInputFieldsObj).filter(
-                ([key, value]) => value != null && value !== ''
-            )
+            Object.entries(filterInputFieldsObj).filter(([key, value]) => value != null)
         );
 
         let cleanedUpdatedFields = Object.fromEntries(
-            Object.entries(toNewFieldsObj).filter(([key, value]) => value != null && value !== '')
+            Object.entries(toNewFieldsObj).filter(([key, value]) => value != null)
         );
+        if (Object.keys(cleanedUpdatedFields).length === 0) {
+            toast.warn('Please fill in at least one of the updated information parameters', {
+                theme: 'colored'
+            });
+            return;
+        }
         // DEV message
         // toast.success('Everything is ok', { theme: 'colored' });
         // console.log('=======================');

@@ -59,8 +59,6 @@ const RescheduleUpdatedFields = (props) => {
         <Container>
             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                 <CardContent sx={{ pb: 0 }}>
-                    {/* TODO: Change existing info to make them editable via input fields */}
-                    {/* TODO: On change for input fields, update updatedInfo state */}
                     <Box>
                         <Grid container spacing={0}>
                             <Grid xs={6}>
@@ -93,9 +91,14 @@ const RescheduleUpdatedFields = (props) => {
                                             textField: {
                                                 variant: 'outlined',
                                                 size: 'small'
-                                            }
+                                            },
+                                            actionBar: { actions: ['today'] }
                                         }}
-                                        value={parseISO(updatedFields.set_time)}
+                                        value={
+                                            updatedFields.set_time == null
+                                                ? new Date()
+                                                : parseISO(updatedFields.set_time)
+                                        }
                                     />
                                 </LocalizationProvider>
                             }
@@ -110,7 +113,11 @@ const RescheduleUpdatedFields = (props) => {
                                     size="small"
                                     type="number"
                                     helperText="Length (in minutes)"
-                                    value={updatedFields.set_length || 0}
+                                    value={
+                                        updatedFields.set_length == null
+                                            ? ''
+                                            : updatedFields.set_length
+                                    }
                                     onChange={(event) =>
                                         setUpdatedFields((prevState) => {
                                             if (prevState.set_length !== event.target.value) {
@@ -132,7 +139,11 @@ const RescheduleUpdatedFields = (props) => {
                                 <>
                                     <RadioGroup
                                         row
-                                        value={updatedFields.set_cancelled || false}
+                                        value={
+                                            updatedFields.set_cancelled == null
+                                                ? false
+                                                : updatedFields.set_cancelled
+                                        }
                                         onChange={(event) =>
                                             setUpdatedFields((prevState) => {
                                                 if (
@@ -209,6 +220,7 @@ const RescheduleUpdatedFields = (props) => {
                                                 variant="outlined"
                                                 size="small"
                                                 value={
+                                                    updatedFields.set_location == null ||
                                                     updatedFields.set_location === 'Online'
                                                         ? ''
                                                         : updatedFields.set_location
@@ -233,7 +245,6 @@ const RescheduleUpdatedFields = (props) => {
                                 </>
                             }
                         />
-                        {/*TODO: Implement set_group_id input*/}
                         <EditCardItem
                             title="Set new group ID"
                             oldDesc={undefined}
@@ -241,7 +252,9 @@ const RescheduleUpdatedFields = (props) => {
                                 <CustomTextField
                                     id="group-id-update-field"
                                     margin="normal"
-                                    value={updatedFields.group_id}
+                                    value={
+                                        updatedFields.group_id == null ? '' : updatedFields.group_id
+                                    }
                                     onChange={(event) => {
                                         setUpdatedFields((prevState) => ({
                                             ...prevState,
@@ -264,7 +277,7 @@ const RescheduleUpdatedFields = (props) => {
                                     multiline
                                     rows={4}
                                     variant="outlined"
-                                    value={updatedFields.note}
+                                    value={updatedFields.note == null ? '' : updatedFields.note}
                                     onChange={(event) =>
                                         setUpdatedFields((prevState) => {
                                             if (prevState.set_note !== event.target.value) {

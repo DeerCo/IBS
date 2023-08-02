@@ -7,6 +7,7 @@ import NavBar from '../../Module/Navigation/NavBar';
 import InterviewBookingCard from '../../General/InterviewBookingCard/InterviewBookingCard';
 import Grid from '@mui/material/Unstable_Grid2';
 import InterviewCalendar from '../../General/InterviewCalendar/InterviewCalendar';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 let StudentInterviewPage = () => {
     let navigate = useNavigate();
@@ -227,77 +228,79 @@ let StudentInterviewPage = () => {
     };
 
     return (
-        <Grid container>
-            <Grid xs={12}>
-                <NavBar page="Interview" />
-            </Grid>
-            <Grid xs={12} sx={{ mt: 3, marginX: 10 }}>
-                <Grid container spacing={2} direction="row" sx={{ m: 'auto' }}>
-                    <Grid xs={6}>
-                        <InterviewCalendar
-                            events={calendarData}
-                            eventClickHandler={(event) => {
-                                setSelectedStart(event.start);
-                                setSelectedEnd(event.end);
-                                setSelectedLocation(event.extendedProps.location);
+        <PageContainer title={`${course_id} Interviews`} description="Interviews for students">
+            <Grid container>
+                <Grid xs={12}>
+                    <NavBar page="Interview" />
+                </Grid>
+                <Grid xs={12} sx={{ mt: 3, marginX: 10 }}>
+                    <Grid container spacing={2} direction="row" sx={{ m: 'auto' }}>
+                        <Grid xs={6}>
+                            <InterviewCalendar
+                                events={calendarData}
+                                eventClickHandler={(event) => {
+                                    setSelectedStart(event.start);
+                                    setSelectedEnd(event.end);
+                                    setSelectedLocation(event.extendedProps.location);
 
-                                setOpen(true);
-                            }}
-                            selectSlotHandler={(slotInfo) => {
-                                setOpen(false);
-                            }}
-                            width={1000}
-                        />
-                    </Grid>
-                    <Grid xs>
-                        {booked && !open && (
-                            <InterviewBookingCard
-                                booked={booked}
-                                openedPopup={open}
-                                startTime={moment(bookedStart).format('MM/DD/YYYY, h:mm:ss a')}
-                                endTime={moment(bookedEnd).format('MM/DD/YYYY, h:mm:ss a')}
-                                location={bookedLocation}
-                                eventHandler={cancel_interview}
-                                bookedNote={bookedNote}
-                                task={task}
-                                width={-1}
-                                testing={false}
+                                    setOpen(true);
+                                }}
+                                selectSlotHandler={(slotInfo) => {
+                                    setOpen(false);
+                                }}
+                                width={1000}
                             />
-                        )}
+                        </Grid>
+                        <Grid xs>
+                            {booked && !open && (
+                                <InterviewBookingCard
+                                    booked={booked}
+                                    openedPopup={open}
+                                    startTime={moment(bookedStart).format('MM/DD/YYYY, h:mm:ss a')}
+                                    endTime={moment(bookedEnd).format('MM/DD/YYYY, h:mm:ss a')}
+                                    location={bookedLocation}
+                                    eventHandler={cancel_interview}
+                                    bookedNote={bookedNote}
+                                    task={task}
+                                    width={-1}
+                                    testing={false}
+                                />
+                            )}
 
-                        {open && !booked && (
-                            <InterviewBookingCard
-                                booked={booked}
-                                openedPopup={open}
-                                startTime={selectedStart}
-                                endTime={selectedEnd}
-                                location={selectedLocation}
-                                eventHandler={book_interview}
-                                bookedNote={''}
-                                task={task}
-                                width={-1}
-                                testing={false}
-                            />
-                        )}
+                            {open && !booked && (
+                                <InterviewBookingCard
+                                    booked={booked}
+                                    openedPopup={open}
+                                    startTime={selectedStart}
+                                    endTime={selectedEnd}
+                                    location={selectedLocation}
+                                    eventHandler={book_interview}
+                                    bookedNote={''}
+                                    task={task}
+                                    width={-1}
+                                    testing={false}
+                                />
+                            )}
 
-                        {open && booked && (
-                            <InterviewBookingCard
-                                booked={booked}
-                                openedPopup={open}
-                                startTime={selectedStart}
-                                endTime={selectedEnd}
-                                location={selectedLocation}
-                                eventHandler={change_interview}
-                                bookedNote={''}
-                                task={task}
-                                width={-1}
-                                testing={false}
-                            />
-                        )}
+                            {open && booked && (
+                                <InterviewBookingCard
+                                    booked={booked}
+                                    openedPopup={open}
+                                    startTime={selectedStart}
+                                    endTime={selectedEnd}
+                                    location={selectedLocation}
+                                    eventHandler={change_interview}
+                                    bookedNote={''}
+                                    task={task}
+                                    width={-1}
+                                    testing={false}
+                                />
+                            )}
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-        </Grid>
+        </PageContainer>
     );
 };
 

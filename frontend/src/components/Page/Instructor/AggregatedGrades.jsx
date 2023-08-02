@@ -8,6 +8,7 @@ import SubmitMarksForm from '../../Module/Mark/SubmitMarks/SubmitMarksForm';
 import useSWR from 'swr';
 import StaffApi, { findRoleInCourse } from '../../../api/staff_api';
 import PropTypes from 'prop-types';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const sampleRows = [
     {
@@ -182,42 +183,44 @@ const AggregatedGrades = (props) => {
     if (error) return <Typography variant="h1">Error. Try Logging in again</Typography>;
 
     return (
-        <Grid container spacing={2}>
-            <Grid xs={12}>
-                <NavBar role={role} page="Grades" />
+        <PageContainer title="Students' Grades" description="View students' grades in table format">
+            <Grid container spacing={2}>
+                <Grid xs={12}>
+                    <NavBar role={role} page="Grades" />
+                </Grid>
+                <Grid xs={12}>
+                    <Container maxWidth="xl">
+                        <Grid xs={12}>
+                            <Typography
+                                color="textPrimary"
+                                variant="h2"
+                                fontWeight="600"
+                                sx={{ ml: 3 }}
+                            >
+                                All Grades of {courseName}
+                            </Typography>
+                        </Grid>
+                        <Grid container columnSpacing={2}>
+                            {rows !== [] && (
+                                <Grid xs>
+                                    <AggregatedGradesTable
+                                        headCells={headCells}
+                                        rows={rows}
+                                        tableWidth="100%"
+                                        courseId={courseId}
+                                    />
+                                </Grid>
+                            )}
+                            {viewersRole === 'instructor' && (
+                                <Grid xs={4}>
+                                    <SubmitMarksForm courseId={courseId} />
+                                </Grid>
+                            )}
+                        </Grid>
+                    </Container>
+                </Grid>
             </Grid>
-            <Grid xs={12}>
-                <Container maxWidth="xl">
-                    <Grid xs={12}>
-                        <Typography
-                            color="textPrimary"
-                            variant="h2"
-                            fontWeight="600"
-                            sx={{ ml: 3 }}
-                        >
-                            All Grades of {courseName}
-                        </Typography>
-                    </Grid>
-                    <Grid container columnSpacing={2}>
-                        {rows !== [] && (
-                            <Grid xs>
-                                <AggregatedGradesTable
-                                    headCells={headCells}
-                                    rows={rows}
-                                    tableWidth="100%"
-                                    courseId={courseId}
-                                />
-                            </Grid>
-                        )}
-                        {viewersRole === 'instructor' && (
-                            <Grid xs={4}>
-                                <SubmitMarksForm courseId={courseId} />
-                            </Grid>
-                        )}
-                    </Grid>
-                </Container>
-            </Grid>
-        </Grid>
+        </PageContainer>
     );
 };
 

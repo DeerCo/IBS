@@ -1,12 +1,12 @@
 import React from 'react';
 
 const defaultUpdatedFields = {
-    set_time: '',
-    set_group_id: '',
-    set_length: '',
-    set_location: '',
-    set_note: '',
-    set_cancelled: false
+    set_time: null,
+    set_group_id: null,
+    set_length: null,
+    set_location: null,
+    set_note: null,
+    set_cancelled: null
 };
 
 const UpdatedFieldsContext = React.createContext({

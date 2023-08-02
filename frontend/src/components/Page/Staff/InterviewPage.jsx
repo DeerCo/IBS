@@ -26,11 +26,15 @@ import {
     RefreshInterviewsContext,
     RefreshInterviewsProvider
 } from '../../../contexts/RescheduleContexts/RefreshInterviewsContext';
+import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const InterviewPage = () => {
     return (
         <RefreshInterviewsProvider>
-            <InterviewPageMain />
+            <PageContainer title="Interviews" description="Staff view for interviews">
+                <InterviewPageMain />
+            </PageContainer>
         </RefreshInterviewsProvider>
     );
 };
@@ -58,7 +62,6 @@ const InterviewPageMain = () => {
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
 
     // Refresh interviews context
-    // TODO: Fix such that on button click for change interview, data is refreshed on calendar
     const { refreshInterviews, setRefreshInterviews } = React.useContext(RefreshInterviewsContext);
 
     useEffect(() => {
@@ -358,7 +361,10 @@ const InterviewPageMain = () => {
             <Grid xs={12}>
                 <NavBar page="Interview" role={currRole} />
             </Grid>
-            <Grid xs={12} sx={{ mt: 3, marginX: 'auto' }}>
+            <Grid xs={12} sx={{ mt: 2 }}>
+                <PreviousPageButton rightAlignOffset={6} />
+            </Grid>
+            <Grid xs={12} sx={{ mt: 1, marginX: 'auto' }}>
                 <Grid
                     container
                     spacing={0}

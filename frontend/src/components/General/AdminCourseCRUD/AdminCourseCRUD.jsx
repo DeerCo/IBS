@@ -6,12 +6,9 @@ import {
     Box,
     Button,
     FormControlLabel,
-    InputLabel,
     MenuItem,
     Radio,
     RadioGroup,
-    Select,
-    TextField,
     Typography
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
@@ -166,7 +163,7 @@ const AdminCourseCRUD = (props) => {
                                             required
                                             fullWidth
                                             variant="outlined"
-                                            size="medium"
+                                            size="small"
                                             id="username-add-role"
                                             value={value}
                                             onChange={onChange}
@@ -194,7 +191,7 @@ const AdminCourseCRUD = (props) => {
                                             labelId="select-role"
                                             onChange={onChange}
                                             value={value}
-                                            size="medium"
+                                            size="small"
                                             variant="outlined"
                                             sx={{ width: 300, maxWidth: 300, mt: 1 }}
                                         >
@@ -256,7 +253,7 @@ const AdminCourseCRUD = (props) => {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
-                                Submit
+                                Assign Role
                             </Button>
                         </Box>
                     </Box>
@@ -343,7 +340,7 @@ const AdminCourseCRUD = (props) => {
                                             labelId="select-role"
                                             onChange={onChange}
                                             value={value}
-                                            size="medium"
+                                            size="small"
                                             variant="outlined"
                                             sx={{
                                                 width: MAX_WIDTH + 100,
@@ -460,7 +457,7 @@ const AdminCourseCRUD = (props) => {
                                 }) => (
                                     <>
                                         <Typography variant="body1">
-                                            Do you want to delete all users' roles?
+                                            Do you want to remove all users from course?
                                         </Typography>
                                         <RadioGroup
                                             row
@@ -505,7 +502,7 @@ const AdminCourseCRUD = (props) => {
                                                 id="username-delete-role"
                                                 margin="normal"
                                                 variant="outlined"
-                                                size="medium"
+                                                size="small"
                                                 required
                                                 fullWidth
                                                 value={value}
@@ -547,8 +544,8 @@ const AdminCourseCRUD = (props) => {
                         </li>
                         <li>
                             <Typography variant="body1">
-                                Deleting all users' roles will delete every role assigned to each
-                                user in the database.
+                                Removing all users from course just removes users from this course.
+                                It doesn't actually result in user account deletion.
                             </Typography>
                         </li>
                     </ul>

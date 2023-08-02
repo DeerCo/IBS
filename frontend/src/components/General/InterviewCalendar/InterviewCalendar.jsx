@@ -27,25 +27,23 @@ const InterviewCalendar = (props) => {
     };
 
     return (
-        <PageContainer title="Calendar ui" description="this is Calendar page">
-            <Card sx={{ width: props.width }}>
-                <CardContent>
-                    <Calendar
-                        selectable
-                        events={props.events}
-                        defaultView="month"
-                        scrollToTime={new Date(1970, 1, 1, 6)}
-                        defaultDate={new Date()}
-                        localizer={localizer}
-                        style={{ height: 'calc(100vh - 350px)', width: props.width - 60 }}
-                        onSelectEvent={props.eventClickHandler}
-                        onSelectSlot={props.selectSlotHandler}
-                        eventPropGetter={(event) => eventColors(event)}
-                        {...props}
-                    />
-                </CardContent>
-            </Card>
-        </PageContainer>
+        <Card sx={{ width: props.width }}>
+            <CardContent>
+                <Calendar
+                    selectable
+                    events={props.events}
+                    defaultView="month"
+                    scrollToTime={new Date(1970, 1, 1, 6)}
+                    defaultDate={new Date()}
+                    localizer={localizer}
+                    style={{ height: 'calc(100vh - 350px)', width: props.width - 60 }}
+                    onSelectEvent={props.eventClickHandler}
+                    onSelectSlot={props.selectSlotHandler}
+                    eventPropGetter={(event) => eventColors(event)}
+                    {...props}
+                />
+            </CardContent>
+        </Card>
     );
 };
 

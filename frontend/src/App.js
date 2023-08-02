@@ -32,111 +32,133 @@ import TaskGroupPage from './components/Page/Instructor/TaskGroupPage';
 import AddTask from './components/Page/Instructor/AddTask';
 import ModifyTask from './components/Page/Instructor/ModifyTask';
 import InstructorTaskMarksPage from './components/Page/Instructor/InstructorTaskMarksPage';
+import { UserContextProvider } from './contexts/UserContext';
+import ProtectedRoute from './components/Module/Routes/ProtectedRoute';
 
 function App() {
     const theme = ThemeSettings();
     const customizer = useSelector((state) => state.CustomizerReducer);
     return (
-        <ThemeProvider theme={theme}>
-            <RTL direction={customizer.activeDir}>
-                <CssBaseline />
-                <ToastContainer limit={3} position="top-center" />
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={<LoginPage />}></Route>
-                        <Route path="/login" element={<LoginPage />}></Route>
-                        <Route path="/reset" element={<ResetPasswordPage />}></Route>
-                        <Route path="/home" element={<Home />}></Route>
-                        <Route path="/course/:course_id/task" element={<StudentTaskPage />}></Route>
-                        <Route
-                            path="/course/:course_id/student-list"
-                            element={<StudentListPage />}
-                        ></Route>
-                        <Route
-                            path="/student/course/:course_id/task/:task/details"
-                            element={<StudentDetailsPage />}
-                        ></Route>
-                        <Route
-                            path="instructor/course/:course_id/task/:task/details"
-                            element={<InstructorDetailsPage />}
-                        ></Route>
-                        <Route
-                            path="/course/:course_id/task/:task/interview"
-                            element={<StudentInterviewPage />}
-                        ></Route>
-                        <Route
-                            path="/student/course/:course_id/task/:task/mark"
-                            element={<StudentMarkPage />}
-                        ></Route>
-                        <Route
-                            path="/course/:course_id/task/:task/file"
-                            element={<StudentFilePage />}
-                        ></Route>
-                        <Route path="/ta/course/:course_id/task" element={<TaTaskPage />}></Route>
-                        <Route
-                            path="/ta/course/:course_id/task/:task/interview"
-                            element={<InterviewPage />}
-                        ></Route>
-                        <Route
-                            path="/instructor/course/:course_id/task"
-                            element={<InstructorTaskPage />}
-                        ></Route>
-                        <Route
-                            path="/instructor/course/:courseId/task/:taskId/groups"
-                            element={<TaskGroupListPage />}
-                        />
-                        <Route
-                            path="/instructor/course/:course_id/impersonate"
-                            element={<InstructorImpersonate />}
-                        />
-                        <Route
-                            path="/instructor/course/:courseId/all-grades"
-                            element={<AggregatedGrades role="instructor" />}
-                        />
-                        <Route
-                            path="/instructor/course/:course_id/add-task"
-                            element={<AddTask />}
-                        />
-                        <Route
-                            path="/instructor/course/:course_id/task/:task/modify"
-                            element={<ModifyTask />}
-                        />
-                        <Route
-                            path="/instructor/course/:course_id/task/:task_id/mark"
-                            element={<InstructorTaskMarksPage />}
-                        />
-                        <Route
-                            path="/instructor/course/:course_id/task/:task/interview"
-                            element={<InterviewPage />}
-                        ></Route>
-                        <Route
-                            path="/instructor/course/:course_id/impersonate"
-                            element={<InstructorImpersonate />}
-                        ></Route>
-                        <Route
-                            path="/instructor/course/:courseId/task-group"
-                            element={<TaskGroupPage role="instructor" />}
-                        />
-                        <Route
-                            path="/instructor/course/:courseId/submit-marks"
-                            element={<SubmitMarks />}
-                        ></Route>
-                        <Route path="/admin" element={<AdminPage />}></Route>
-                        <Route path="/admin/course/:course_id/task" element={<AdminCoursePage />} />
-                        <Route path="/admin/impersonate" element={<AdminImpersonate />} />
-                        <Route
-                            path="/admin/course/:courseId/all-grades"
-                            element={<AggregatedGrades role="admin" />}
-                        />
-                        <Route
-                            path="/admin/course/:courseId/task-group"
-                            element={<TaskGroupPage role="admin" />}
-                        />
-                        <Route path="*" element={<Error />} />
-                    </Routes>
-                </BrowserRouter>
-            </RTL>
-        </ThemeProvider>
+        <UserContextProvider>
+            <ThemeProvider theme={theme}>
+                <RTL direction={customizer.activeDir}>
+                    <CssBaseline />
+                    <ToastContainer limit={3} position="top-center" />
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<LoginPage />} />
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route path="/reset" element={<ResetPasswordPage />} />
+                            <Route path="/home" element={<Home />} />
+                            <Route path="/course/:course_id/task" element={<StudentTaskPage />} />
+                            <Route
+                                path="/course/:course_id/student-list"
+                                element={<StudentListPage />}
+                            />
+                            <Route
+                                path="/course/:course_id/task/:task/details"
+                                element={<StudentDetailsPage />}
+                            />
+                            <Route
+                                path="/course/:course_id/task/:task/interview"
+                                element={<StudentInterviewPage />}
+                            />
+                            <Route
+                                path="/course/:course_id/task/:task/mark"
+                                element={<StudentMarkPage />}
+                            />
+                            <Route
+                                path="/course/:course_id/task/:task/file"
+                                element={<StudentFilePage />}
+                            />
+                            <Route path="/ta/course/:course_id/task" element={<TaTaskPage />} />
+                            <Route
+                                path="/ta/course/:course_id/task/:task/interview"
+                                element={<InterviewPage />}
+                            />
+                            <Route
+                                path="/instructor/course/:course_id/task"
+                                element={<InstructorTaskPage />}
+                            />
+                            <Route
+                                path="/instructor/course/:courseId/task/:taskId/groups"
+                                element={<TaskGroupListPage />}
+                            />
+                            <Route
+                                path="/instructor/course/:course_id/impersonate"
+                                element={<InstructorImpersonate />}
+                            />
+                            <Route
+                                path="/instructor/course/:courseId/all-grades"
+                                element={<AggregatedGrades role="instructor" />}
+                            />
+                            <Route
+                                path="/instructor/course/:course_id/add-task"
+                                element={<AddTask />}
+                            />
+                            <Route
+                                path="/instructor/course/:course_id/task/:task/modify"
+                                element={<ModifyTask />}
+                            />
+                            <Route
+                                path="/instructor/course/:course_id/task/:task_id/mark"
+                                element={<InstructorTaskMarksPage />}
+                            />
+                            <Route
+                                path="/instructor/course/:course_id/task/:task/interview"
+                                element={<InterviewPage />}
+                            />
+                            <Route
+                                path="/instructor/course/:course_id/impersonate"
+                                element={<InstructorImpersonate />}
+                            />
+                            <Route
+                                path="/instructor/course/:courseId/task-group"
+                                element={<TaskGroupPage role="instructor" />}
+                            />
+                            <Route
+                                path="/instructor/course/:courseId/submit-marks"
+                                element={<SubmitMarks />}
+                            />
+                            <Route
+                                path="/admin"
+                                element={
+                                    <ProtectedRoute allowedRoles={['admin']}>
+                                        <AdminPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/admin/course/:course_id/task"
+                                element={
+                                    <ProtectedRoute allowedRoles={['admin']}>
+                                        <AdminCoursePage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route path="/admin/impersonate" element={<AdminImpersonate />} />
+                            <Route
+                                path="/admin/course/:courseId/all-grades"
+                                element={
+                                    <ProtectedRoute allowedRoles={['admin']}>
+                                        <AggregatedGrades role="admin" />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/admin/course/:courseId/task-group"
+                                element={
+                                    <ProtectedRoute allowedRoles={['admin']}>
+                                        <TaskGroupPage role="admin" />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route path="*" element={<Error />} />
+                        </Routes>
+                    </BrowserRouter>
+                </RTL>
+            </ThemeProvider>
+        </UserContextProvider>
     );
 }
 

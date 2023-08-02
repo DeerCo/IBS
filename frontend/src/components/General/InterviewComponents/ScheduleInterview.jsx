@@ -99,7 +99,8 @@ const ScheduleInterview = (props) => {
                                         textField: {
                                             variant: 'outlined',
                                             size: 'small'
-                                        }
+                                        },
+                                        actionBar: { actions: ['today'] }
                                     }}
                                     value={parseISO(enteredTime)}
                                 />
