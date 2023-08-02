@@ -15,10 +15,8 @@ import img1 from '../../assets/images/backgrounds/login-bg.svg';
 import LogoIcon from '../../layouts/full-layout/logo/LogoIcon';
 import { toast } from 'react-toastify';
 import GeneralApi from '../../api/general_api';
-import { UserContext } from '../../contexts/UserContext';
 
 const Login = () => {
-    const { setRole } = React.useContext(UserContext);
     let navigate = useNavigate();
 
     let [username, setUsername] = useState('');
@@ -50,19 +48,20 @@ const Login = () => {
                 } else if (response['status'] === 200) {
                     sessionStorage.setItem('username', username.toLowerCase());
                     sessionStorage.setItem('token', response['data']['token']);
-                    sessionStorage.setItem('roles', JSON.stringify(response['data']['roles']));
+                    const roles = response['data']['roles'];
+                    sessionStorage.setItem('roles', JSON.stringify(roles));
 
                     const isAdmin = response['data']['admin'];
                     sessionStorage.setItem('isAdmin', isAdmin);
 
                     if (isAdmin) {
-                        setRole('admin');
+                        sessionStorage.setItem('role', 'admin');
                         navigate('/admin');
-                    } else navigate('/home');
-
-                    if (Array.isArray(response.data.roles) && response.data.roles.length > 0) {
-                        const currRole = response.data.roles[0].role;
-                        setRole(currRole);
+                    } else {
+                        if (roles.length > 0) {
+                            sessionStorage.setItem('role', roles[0].role);
+                        } else sessionStorage.setItem('role', '');
+                        navigate('/home');
                     }
                 } else if (response['status'] === 401) {
                     toast.error('Your username or password is incorrect', { theme: 'colored' });

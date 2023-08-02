@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../../contexts/UserContext';
 
 /**
  * Redirect user to login page on un-authorized entry to specific url.
@@ -10,15 +9,17 @@ import { UserContext } from '../../../contexts/UserContext';
  * @constructor
  */
 const ProtectedRoute = ({ allowedRoles, ...props }) => {
-    const { role } = React.useContext(UserContext);
-
     const navigate = useNavigate();
 
+    const role = sessionStorage.getItem('role');
+
     React.useEffect(() => {
-        if (!allowedRoles.includes(role)) navigate('/login');
+        console.log(role);
+        if (!allowedRoles.includes(role)) {
+            navigate('/login');
+        }
     }, [role, navigate, allowedRoles]);
 
     return <>{props.children}</>;
 };
-
 export default ProtectedRoute;
