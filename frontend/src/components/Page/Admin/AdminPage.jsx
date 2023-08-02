@@ -8,13 +8,10 @@ import NavBar from '../../Module/Navigation/NavBar';
 import FlexyTabs from '../../General/FlexyTabs/FlexyTabs';
 import AdminAddCourse from '../../General/AdminPageComponents/AdminAddCourse';
 import AdminChangeCourse from '../../General/AdminPageComponents/AdminChangeCourse';
-import AdminGetRole from '../../General/AdminPageComponents/AdminGetRole';
-import { Box, Typography } from '@mui/material';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const AdminPage = () => {
     const [courses, setCourses] = useState({});
-    const [role, setRole] = useState({});
 
     const {
         register: registerAdd,
@@ -29,8 +26,6 @@ const AdminPage = () => {
         handleSubmit: handleChange,
         setValue: setValueChange
     } = useForm();
-
-    const [checked, setChecked] = useState(true);
 
     const addCourse = (data) => {
         // console.log(data);
@@ -145,9 +140,9 @@ const AdminPage = () => {
             )
         },
         {
-            tabName: 'Change Course',
+            tabName: 'Modify Course',
             tabId: 2,
-            tabSubheading: 'Change existing course details',
+            tabSubheading: 'Modify existing course details',
             tabContent: (
                 <AdminChangeCourse
                     useFormObject={{

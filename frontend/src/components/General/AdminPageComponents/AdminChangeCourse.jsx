@@ -20,7 +20,7 @@ import AdminApi from '../../../api/admin_api';
 import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 
 /**
- * Component for changing existing courses via admin panel
+ * Component for changing existing courses via admin panel (technically 'modifying' course)
  * @param props useForm object with register, handleSubmit, control, formState props,
  *              as well as apiCall function to request backend with data
  * @returns {JSX.Element}
@@ -328,7 +328,7 @@ const AdminChangeCourse = (props) => {
                             color="primary"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Add Course
+                            Modify Course
                         </Button>
                     </Box>
                 </Box>
