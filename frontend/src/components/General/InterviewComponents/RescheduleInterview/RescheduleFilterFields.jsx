@@ -62,13 +62,22 @@ const RescheduleFilterFields = (props) => {
                 <CardContent sx={{ pb: 0 }}>
                     <Box>
                         <Grid container spacing={0}>
-                            <Grid xs={6}>
+                            <Grid xs={12}>
                                 <Typography variant="h4" sx={{ mt: 0.9 }}>
                                     Filter Fields
                                 </Typography>
-                                <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                                <Typography variant="subtitle1">
                                     Specify which interviews you'd like to reschedule with updated
-                                    information (on right card).
+                                    information (on right-hand side).
+                                </Typography>
+                                <Typography variant="subtitle1">
+                                    <strong>Note</strong>: This side is for specifying the
+                                    "previous" (old) interview details. The right-side pane is for
+                                    specifying the new value(s) that the (filtered) interviews would
+                                    take on.
+                                </Typography>
+                                <Typography variant="subtitle1" sx={{ mb: 2, mt: 1 }}>
+                                    Do <em>not</em> write the new information on this side.
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -354,9 +363,14 @@ const RescheduleFilterFields = (props) => {
                                             textField: {
                                                 variant: 'outlined',
                                                 size: 'small'
-                                            }
+                                            },
+                                            actionBar: { actions: ['today'] }
                                         }}
-                                        value={filterFields.time ? parseISO(filterFields.time) : ''}
+                                        value={
+                                            filterFields.time != null
+                                                ? parseISO(filterFields.time)
+                                                : new Date()
+                                        }
                                     />
                                 </LocalizationProvider>
                             </>
