@@ -277,8 +277,12 @@ const RescheduleUpdatedFields = (props) => {
                                     multiline
                                     rows={4}
                                     variant="outlined"
-                                    value={updatedFields.note == null ? '' : updatedFields.note}
-                                    onChange={(event) =>
+                                    value={
+                                        updatedFields.set_note == null ? '' : updatedFields.set_note
+                                    }
+                                    onChange={(event) => {
+                                        console.log(event.target.value);
+                                        console.log(updatedFields.note == null);
                                         setUpdatedFields((prevState) => {
                                             if (prevState.set_note !== event.target.value) {
                                                 return {
@@ -287,8 +291,8 @@ const RescheduleUpdatedFields = (props) => {
                                                 };
                                             }
                                             return prevState;
-                                        })
-                                    }
+                                        });
+                                    }}
                                     sx={{ width: 500 }}
                                 />
                             }
