@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import moment from 'moment';
@@ -59,6 +59,7 @@ const InterviewPageMain = () => {
     const [selectedCancelled, setSelectedCancelled] = useState('');
 
     const [open, setOpen] = useState(false);
+    const selectedInterviewCard = useRef(null);
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
 
     // Refresh interviews context
@@ -125,6 +126,10 @@ const InterviewPageMain = () => {
             setRefreshInterviews(false);
         });
     }, [course_id, task, version, navigate, refreshInterviews]);
+
+    useEffect(() => {
+        selectedInterviewCard.current.scrollIntoView(false);
+    }, [open]);
 
     // the cancel interview function
     const delete_interview = (task, id) => {
@@ -213,12 +218,12 @@ const InterviewPageMain = () => {
                     <Grid
                         container
                         spacing={2}
-                        direction="row"
+                        direction="column"
                         alignItems="center"
                         justifyContent="center"
                         columns={12}
                     >
-                        <Grid xs={6}>
+                        <Grid xs={12}>
                             <Container>
                                 <InterviewCalendar
                                     events={calendarData}
@@ -238,14 +243,14 @@ const InterviewPageMain = () => {
                                         setOpen(true);
                                     }}
                                     selectSlotHandler={(slotInfo) => setOpen(false)}
-                                    width={800}
+                                    width="60vw"
                                 />
                             </Container>
                         </Grid>
-                        <Grid xs>
+                        <Grid xs={12} ref={selectedInterviewCard}>
                             {open && (
                                 <Container>
-                                    <Card sx={{ pb: 0, mb: 4, width: '35vw' }}>
+                                    <Card sx={{ pb: 0, mb: 4, width: '60vw' }}>
                                         <CardContent sx={{ pb: 0 }}>
                                             <Box>
                                                 <Grid container spacing={0}>
@@ -326,6 +331,7 @@ const InterviewPageMain = () => {
                                                     }}
                                                     variant="contained"
                                                     size="large"
+                                                    color="error"
                                                     style={{ minWidth: 120, marginTop: 3 }}
                                                 >
                                                     Delete
