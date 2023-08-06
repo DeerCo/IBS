@@ -8,6 +8,7 @@ import './Calendar.css';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 import { Card, CardContent } from '@mui/material';
 import PropTypes from 'prop-types';
+import Grid from '@mui/material/Unstable_Grid2';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -31,26 +32,27 @@ const InterviewCalendar = ({ events, eventClickHandler, selectSlotHandler, width
     };
 
     return (
-        <Card sx={{ width: width }}>
-            <CardContent>
-                <Calendar
-                    selectable
-                    events={events}
-                    defaultView="month"
-                    scrollToTime={new Date(1970, 1, 1, 6)}
-                    defaultDate={new Date()}
-                    localizer={localizer}
-                    style={{
-                        height: 'calc(100vh - 350px)',
-                        width: typeof width === 'number' ? width - 60 : `calc(${width}-60px)`
-                    }}
-                    onSelectEvent={eventClickHandler}
-                    onSelectSlot={selectSlotHandler}
-                    eventPropGetter={(event) => eventColors(event)}
-                    {...props}
-                />
-            </CardContent>
-        </Card>
+        <Grid container spacing={0} direction="column" alignItems="center" justify="center">
+            <Grid xs>
+                <Card sx={{ width: `calc(${width} + 2vw)`, maxWidth: `calc(${width} + 2vw)` }}>
+                    <Calendar
+                        selectable
+                        events={events}
+                        defaultView="month"
+                        scrollToTime={new Date(1970, 1, 1, 6)}
+                        defaultDate={new Date()}
+                        localizer={localizer}
+                        style={{
+                            height: 'calc(100vh - 350px)'
+                        }}
+                        onSelectEvent={eventClickHandler}
+                        onSelectSlot={selectSlotHandler}
+                        eventPropGetter={(event) => eventColors(event)}
+                        {...props}
+                    />
+                </Card>
+            </Grid>
+        </Grid>
     );
 };
 

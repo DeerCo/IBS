@@ -74,8 +74,14 @@ const ScheduleInterview = (props) => {
     return (
         <>
             <Container>
-                <CardContent sx={{ padding: '30px' }}>
-                    <Grid container spacing={2} direction="row">
+                <CardContent>
+                    <Grid
+                        container
+                        spacing={4}
+                        direction="row"
+                        justifyContent="center"
+                        sx={{ ml: 10 }}
+                    >
                         <Grid xs>
                             <CustomFormLabel sx={{ mt: 0 }} htmlFor="interview-time">
                                 Time
