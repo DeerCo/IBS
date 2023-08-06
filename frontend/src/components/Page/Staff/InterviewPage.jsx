@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import moment from 'moment';
@@ -28,6 +28,7 @@ import {
 } from '../../../contexts/RescheduleContexts/RefreshInterviewsContext';
 import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
+import ConfirmDialog from '../../General/DeleteConfirmation';
 
 const InterviewPage = () => {
     return (
@@ -58,7 +59,14 @@ const InterviewPageMain = () => {
     const [selectedNote, setSelectedNote] = useState('');
     const [selectedCancelled, setSelectedCancelled] = useState('');
 
+    // for opening/closing interview cards when selected from interview calendar
     const [open, setOpen] = useState(false);
+    // reference to selected interview card
+    const selectedInterviewCard = useRef(null);
+
+    // confirm dialog for deleting selected interview
+    const [confirmDeleteInterview, setConfirmDeleteInterview] = useState(false);
+
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
 
     // Refresh interviews context
@@ -125,6 +133,10 @@ const InterviewPageMain = () => {
             setRefreshInterviews(false);
         });
     }, [course_id, task, version, navigate, refreshInterviews]);
+
+    useEffect(() => {
+        selectedInterviewCard.current.scrollIntoView(false);
+    }, [open]);
 
     // the cancel interview function
     const delete_interview = (task, id) => {
@@ -213,12 +225,12 @@ const InterviewPageMain = () => {
                     <Grid
                         container
                         spacing={2}
-                        direction="row"
+                        direction="column"
                         alignItems="center"
                         justifyContent="center"
                         columns={12}
                     >
-                        <Grid xs={6}>
+                        <Grid xs={12}>
                             <Container>
                                 <InterviewCalendar
                                     events={calendarData}
@@ -238,14 +250,14 @@ const InterviewPageMain = () => {
                                         setOpen(true);
                                     }}
                                     selectSlotHandler={(slotInfo) => setOpen(false)}
-                                    width={800}
+                                    width="60vw"
                                 />
                             </Container>
                         </Grid>
-                        <Grid xs>
+                        <Grid xs={12} ref={selectedInterviewCard}>
                             {open && (
                                 <Container>
-                                    <Card sx={{ pb: 0, mb: 4, width: '35vw' }}>
+                                    <Card sx={{ pb: 0, mb: 4, width: '60vw' }}>
                                         <CardContent sx={{ pb: 0 }}>
                                             <Box>
                                                 <Grid container spacing={0}>
@@ -320,12 +332,23 @@ const InterviewPageMain = () => {
                                                         desc={<pre>{selectedUsername}</pre>}
                                                     />
                                                 )}
+                                                <ConfirmDialog
+                                                    open={confirmDeleteInterview}
+                                                    setOpen={setConfirmDeleteInterview}
+                                                    onConfirm={() => {
+                                                        delete_interview(task, selectedId);
+                                                    }}
+                                                >
+                                                    Are you sure you want to delete the selected
+                                                    interview?
+                                                </ConfirmDialog>
                                                 <Button
                                                     onClick={() => {
-                                                        delete_interview(task, selectedId);
+                                                        setConfirmDeleteInterview(true);
                                                     }}
                                                     variant="contained"
                                                     size="large"
+                                                    color="error"
                                                     style={{ minWidth: 120, marginTop: 3 }}
                                                 >
                                                     Delete

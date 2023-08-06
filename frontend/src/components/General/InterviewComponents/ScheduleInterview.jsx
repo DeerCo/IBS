@@ -132,7 +132,6 @@ const ScheduleInterview = (props) => {
                                     setSelectVal(event.target.value);
                                     if (event.target.value === 'Online') {
                                         setIsOnline(true);
-                                        setEnteredLocation(event.target.value);
                                     } else {
                                         setIsOnline(false);
                                     }
@@ -165,7 +164,15 @@ const ScheduleInterview = (props) => {
                                 sx={{ mt: 3 }}
                                 size="large"
                                 onClick={() => {
-                                    schedule_interview(enteredTime, enteredLength, enteredLocation);
+                                    if (enteredLocation === '' && isOnline === true) {
+                                        schedule_interview(enteredTime, enteredLength, 'Online');
+                                        return;
+                                    } else
+                                        schedule_interview(
+                                            enteredTime,
+                                            enteredLength,
+                                            enteredLocation
+                                        );
                                 }}
                             >
                                 Schedule

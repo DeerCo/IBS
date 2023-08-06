@@ -53,7 +53,7 @@ const RescheduleUpdatedFields = (props) => {
 
     // for change interview's new location select
     const [isNewLocOnline, setIsNewLocOnline] = React.useState(true);
-    const [newLocSelectVal, setNewLocSelectVal] = React.useState('Online');
+    const [newLocSelectVal, setNewLocSelectVal] = React.useState('');
 
     return (
         <Container>
@@ -188,7 +188,8 @@ const RescheduleUpdatedFields = (props) => {
                                                 setUpdatedFields((prevState) => {
                                                     if (
                                                         prevState.set_location !==
-                                                        event.target.value
+                                                            event.target.value ||
+                                                        event.target.value !== ''
                                                     ) {
                                                         return {
                                                             ...prevState,
@@ -202,8 +203,12 @@ const RescheduleUpdatedFields = (props) => {
                                             }
                                         }}
                                         fullWidth
+                                        displayEmpty
                                         size="small"
                                     >
+                                        <MenuItem value="" disabled>
+                                            <em>Leave default or choose option</em>
+                                        </MenuItem>
                                         <MenuItem value="In-Person">In-Person</MenuItem>
                                         <MenuItem value="Online">Online</MenuItem>
                                     </CustomSelect>
