@@ -28,6 +28,7 @@ import {
 } from '../../../contexts/RescheduleContexts/RefreshInterviewsContext';
 import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
+import ConfirmDialog from '../../General/DeleteConfirmation';
 
 const InterviewPage = () => {
     return (
@@ -58,8 +59,14 @@ const InterviewPageMain = () => {
     const [selectedNote, setSelectedNote] = useState('');
     const [selectedCancelled, setSelectedCancelled] = useState('');
 
+    // for opening/closing interview cards when selected from interview calendar
     const [open, setOpen] = useState(false);
+    // reference to selected interview card
     const selectedInterviewCard = useRef(null);
+
+    // confirm dialog for deleting selected interview
+    const [confirmDeleteInterview, setConfirmDeleteInterview] = useState(false);
+
     const [version, setVersion] = useState(0); // data is refreshed if version is changed
 
     // Refresh interviews context
@@ -325,9 +332,19 @@ const InterviewPageMain = () => {
                                                         desc={<pre>{selectedUsername}</pre>}
                                                     />
                                                 )}
+                                                <ConfirmDialog
+                                                    open={confirmDeleteInterview}
+                                                    setOpen={setConfirmDeleteInterview}
+                                                    onConfirm={() => {
+                                                        delete_interview(task, selectedId);
+                                                    }}
+                                                >
+                                                    Are you sure you want to delete the selected
+                                                    interview?
+                                                </ConfirmDialog>
                                                 <Button
                                                     onClick={() => {
-                                                        delete_interview(task, selectedId);
+                                                        setConfirmDeleteInterview(true);
                                                     }}
                                                     variant="contained"
                                                     size="large"
