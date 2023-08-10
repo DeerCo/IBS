@@ -74,6 +74,7 @@ const InterviewPageMain = () => {
 
     useEffect(() => {
         StaffApi.getAllInterviews(course_id, task).then((response) => {
+            setRefreshInterviews(false);
             if (!response || !('status' in response)) {
                 toast.error('Unknown error', { theme: 'colored' });
                 navigate('/login');
@@ -130,7 +131,6 @@ const InterviewPageMain = () => {
             }
 
             setCalendarData(temp_data);
-            setRefreshInterviews(false);
         });
     }, [course_id, task, version, navigate, refreshInterviews]);
 

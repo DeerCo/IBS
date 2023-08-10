@@ -24,9 +24,7 @@ const RescheduleInterview = (props) => {
     return (
         <FilterFieldsProvider>
             <UpdatedFieldsProvider>
-                <RefreshInterviewsProvider>
-                    <RescheduleInterviewContent {...props} />
-                </RefreshInterviewsProvider>
+                <RescheduleInterviewContent {...props} />
             </UpdatedFieldsProvider>
         </FilterFieldsProvider>
     );
