@@ -28,6 +28,7 @@ import RTL from './layouts/full-layout/customizer/RTL';
 import StudentListPage from './components/Page/Student/StudentListPage';
 import TaskGroupListPage from './components/General/TaskGroupList/TaskGroupListPage';
 import SubmitMarks from './components/Page/Instructor/SubmitMarks';
+import Groups from './components/Page/Instructor/Groups';
 import TaskGroupPage from './components/Page/Instructor/TaskGroupPage';
 import AddTask from './components/Page/Instructor/AddTask';
 import ModifyTask from './components/Page/Instructor/ModifyTask';
@@ -81,6 +82,10 @@ function App() {
                         <Route
                             path="/instructor/course/:courseId/task/:taskId/groups"
                             element={<TaskGroupListPage />}
+                        />
+                        <Route
+                            path="/instructor/course/:courseId/task/:task/groups"
+                            element={<Groups role="instructor" />}
                         />
                         <Route
                             path="/instructor/course/:course_id/impersonate"

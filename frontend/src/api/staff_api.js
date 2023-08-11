@@ -136,6 +136,54 @@ let getCriteriaForTask = async (courseId, task) => {
     }
 };
 
+// Copies ALL groups from one task to another
+let copyGroups = async (courseId, fromTask, toTask) => {
+    let token = sessionStorage.getItem('token');
+
+    const data = {
+        courseId,
+        fromTask,
+        toTask
+    };
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    try {
+        return await axios.post(
+            process.env.REACT_APP_API_URL + '/instructor/course/' + courseId + '/group/copy',
+            data,
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
+};
+
+let updateGroupExtension = async (courseId, groupId, extension) => {
+    let token = sessionStorage.getItem('token');
+
+    const data = {
+        groupId,
+        extension
+    };
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    try {
+        return await axios.put(
+            process.env.REACT_APP_API_URL + '/instructor/course/' + courseId + '/group/extension',
+            data,
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
+};
+
 // Helpers
 export const findRoleInCourse = (courseId) => {
     const rolesStr = sessionStorage.getItem('roles');
@@ -563,6 +611,7 @@ const changeInterview = async (
     } else return null;
 };
 
+
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -575,6 +624,7 @@ const StaffApi = {
 
     getCriteriaForTask,
     all_tasks,
+    copyGroups,
     getCourseContent,
 
     collectAllSubmissionsForTask,

@@ -190,6 +190,44 @@ let delete_task = async (course_id, task) => {
 };
 
 let all_task_groups = async (course_id) => {
+    /**
+     * Gets all task_groups for a particular task within a course.
+     */
+    let token = sessionStorage.getItem('token');
+
+    let config = {
+        headers: { Authorization: `Bearer ${token}` }
+    };
+
+    try {
+        return await axios.get(
+            process.env.REACT_APP_API_URL +
+                '/instructor/course/' +
+                course_id +
+                '/group/all?task=' +
+                task,
+            process.env.REACT_APP_API_URL + '/instructor/course/' + course_id + '/task_group/all',
+            config
+        );
+    } catch (err) {
+        return err.response;
+    }
+};
+
+let submitMark = async (courseId, task, criteria, username, mark) => {
+    const data = {
+        username,
+        task,
+        mark,
+        criteria,
+        overwrite: true
+    };
+
+    try {
+        return await http.post(`/instructor/course/${courseId}/mark/submit`, data);
+    } catch (err) {
+        return err.response;
+    }
   /**
    * Gets all task_groups for a particular task within a course.
    */
@@ -393,6 +431,34 @@ let taskGroups = async (course_id, task) => {
 
 
 let InstructorApi = {
+    //Course related
+    impersonate,
+
+    // Task related
+    all_tasks,
+    impersonate,
+    submitMark,
+    //
+    // // Group related
+    // check_group,
+    allGroups
+    //
+    taskGroups,
+    all_task_groups,
+    get_task,
+    add_task,
+    change_task,
+    delete_task,
+    // // Interview related
+    // all_interviews,
+    // schedule_interview,
+    // delete_interview,
+
+    allGroups,
+
+    // Mark related
+    get_marks_csv,
+    submitMark
   // Course related
   all_tasks,
   impersonate,
