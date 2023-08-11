@@ -42,6 +42,7 @@ const Homecard = ({ data }) => {
             </CardActionArea>
             {staffRoles.includes(data.role) && (
                 <>
+                    <HomeCardLink to={coursePageLink} name="Assignments" />
                     <HomeCardLink to={courseStudentListPageLink} name="Enrolled Students" />
                     <HomeCardLink to={allGradesPageLink} name="View Grades" />
                     <HomeCardLink to={taskGroupsPageLink} name="Edit Task Groups" />
