@@ -6,10 +6,6 @@ import PageContainer from '../../components/FlexyMainComponents/container/PageCo
 const Error = () => {
   const navigate = useNavigate();
 
-    useEffect(() => {
-        navigate('/login')
-    }, []);
-
   return (
     <PageContainer title="Error" description="this is Error page">
       <Box
@@ -46,7 +42,7 @@ const Error = () => {
           </Typography>
           <Button color="primary" variant="contained" disableElevation
                   onClick={()=>{navigate('/home')}}>
-            Back to Login
+            Back to Home
           </Button>
         </Container>
       </Box>
