@@ -189,7 +189,7 @@ let delete_task = async (course_id, task) => {
     }
 };
 
-let all_task_groups = async (course_id) => {
+let all_task_groups = async (course_id, task) => {
     /**
      * Gets all task_groups for a particular task within a course.
      */
@@ -225,23 +225,6 @@ let submitMark = async (courseId, task, criteria, username, mark) => {
 
     try {
         return await http.post(`/instructor/course/${courseId}/mark/submit`, data);
-    } catch (err) {
-        return err.response;
-    }
-    /**
-     * Gets all task_groups for a particular task within a course.
-     */
-    let token = sessionStorage.getItem('token');
-
-    let config = {
-        headers: { Authorization: `Bearer ${token}` }
-    };
-
-    try {
-        return await axios.get(
-            process.env.REACT_APP_API_URL + '/instructor/course/' + course_id + '/task_group/all',
-            config
-        );
     } catch (err) {
         return err.response;
     }
@@ -308,32 +291,6 @@ let submitMark = async (courseId, task, criteria, username, mark) => {
 // 		return err.response;
 // 	}
 // };
-
-let submitMark = async (courseId, task, criteria, username, mark) => {
-    let token = sessionStorage.getItem('token');
-
-    const data = {
-        username,
-        task,
-        mark,
-        criteria,
-        overwrite: true
-    };
-
-    let config = {
-        headers: { Authorization: `Bearer ${token}` }
-    };
-
-    try {
-        return await axios.post(
-            process.env.REACT_APP_API_URL + '/instructor/course/' + courseId + '/mark/submit',
-            data,
-            config
-        );
-    } catch (err) {
-        return err.response;
-    }
-};
 
 let releasMarks = async (courseId, task) => {
     let token = sessionStorage.getItem('token');
