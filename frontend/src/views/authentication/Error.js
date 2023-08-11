@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
 import {Link, useNavigate} from 'react-router-dom';
 import PageContainer from '../../components/FlexyMainComponents/container/PageContainer';
 
 const Error = () => {
   const navigate = useNavigate();
+
+    useEffect(() => {
+        navigate('/login')
+    }, []);
 
   return (
     <PageContainer title="Error" description="this is Error page">
