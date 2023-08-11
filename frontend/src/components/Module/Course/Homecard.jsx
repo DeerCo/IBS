@@ -45,7 +45,7 @@ const Homecard = ({ data }) => {
                     <HomeCardLink to={coursePageLink} name="Assignments" />
                     <HomeCardLink to={courseStudentListPageLink} name="Enrolled Students" />
                     <HomeCardLink to={allGradesPageLink} name="View Grades" />
-                    <HomeCardLink to={taskGroupsPageLink} name="Edit Task Groups" />
+                    <HomeCardLink to={taskGroupsPageLink} name="Task Groups" />
                     {data.role === 'instructor' && (
                         <>
                             <HomeCardLink to={submitMarksPageLink} name="Submit Marks" />{' '}
