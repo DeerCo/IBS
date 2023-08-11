@@ -11,12 +11,14 @@ import {
     TableRow,
     TableBody,
     TextField,
-    Button
+    Button,
+    Stack
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
 import SaveIcon from '@mui/icons-material/Save';
 import InstructorApi from '../../../api/instructor_api';
+import GetMarkCSVButton from './GetMarkCSVButton';
 
 function extractCriteriaNames(data) {
     const criteria = [];
@@ -147,31 +149,34 @@ const TaskMarkTable = ({ courseId, taskId }) => {
 
     return (
         <DashboardCard title={`Marks for ${taskId}`}>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">
-                                <Typography>Student</Typography>
-                            </TableCell>
-                            {criteriaNames.map((crit) => (
-                                <TableCell align="center" key={`${crit.criteriaName}`}>
-                                    <Typography>
-                                        {crit.criteriaName} (/{crit.outOf})
-                                    </Typography>
+            <Stack spacing={2}>
+                <GetMarkCSVButton task={taskId} course_id={courseId} />
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">
+                                    <Typography>Student</Typography>
                                 </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        <TableRow>
-                            {taskMarkData.map((entry) => (
-                                <TaskMarkEntry key={`${entry.name}`} row={entry} />
-                            ))}
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                {criteriaNames.map((crit) => (
+                                    <TableCell align="center" key={`${crit.criteriaName}`}>
+                                        <Typography>
+                                            {crit.criteriaName} (/{crit.outOf})
+                                        </Typography>
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                {taskMarkData.map((entry) => (
+                                    <TaskMarkEntry key={`${entry.name}`} row={entry} />
+                                ))}
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Stack>
         </DashboardCard>
     );
 };

@@ -22,6 +22,7 @@ import CustomTextField from '../../../FlexyMainComponents/forms/custom-elements/
 import CustomSelect from '../../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 import CustomFormLabel from '../../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import { UpdatedFieldsContext } from '../../../../contexts/RescheduleContexts/UpdatedFieldsContext';
+import { FilterFieldsContext } from '../../../../contexts/RescheduleContexts/FilterFieldsContext';
 
 const EditCardItem = ({ title, oldDesc, newInput }) => {
     return (
@@ -48,29 +49,16 @@ const EditCardItem = ({ title, oldDesc, newInput }) => {
 const RescheduleUpdatedFields = (props) => {
     // for backend query to changeInterview API
     const { updatedFields, setUpdatedFields } = React.useContext(UpdatedFieldsContext);
-
-    const [filterInputFieldsObj, setFilterInputFieldsObj] = React.useState({
-        interview_id: null,
-        booked: null,
-        time: null,
-        date: null,
-        group_id: null,
-        length: null,
-        location: null,
-        note: null,
-        cancelled: null
-    });
+    const { filterFields } = React.useContext(FilterFieldsContext);
 
     // for change interview's new location select
     const [isNewLocOnline, setIsNewLocOnline] = React.useState(true);
-    const [newLocSelectVal, setNewLocSelectVal] = React.useState('Online');
+    const [newLocSelectVal, setNewLocSelectVal] = React.useState('');
 
     return (
         <Container>
             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                 <CardContent sx={{ pb: 0 }}>
-                    {/* TODO: Change existing info to make them editable via input fields */}
-                    {/* TODO: On change for input fields, update updatedInfo state */}
                     <Box>
                         <Grid container spacing={0}>
                             <Grid xs={6}>
@@ -103,9 +91,14 @@ const RescheduleUpdatedFields = (props) => {
                                             textField: {
                                                 variant: 'outlined',
                                                 size: 'small'
-                                            }
+                                            },
+                                            actionBar: { actions: ['today'] }
                                         }}
-                                        value={parseISO(updatedFields.set_time)}
+                                        value={
+                                            updatedFields.set_time == null
+                                                ? new Date()
+                                                : parseISO(updatedFields.set_time)
+                                        }
                                     />
                                 </LocalizationProvider>
                             }
@@ -120,7 +113,11 @@ const RescheduleUpdatedFields = (props) => {
                                     size="small"
                                     type="number"
                                     helperText="Length (in minutes)"
-                                    value={updatedFields.set_length || 0}
+                                    value={
+                                        updatedFields.set_length == null
+                                            ? ''
+                                            : updatedFields.set_length
+                                    }
                                     onChange={(event) =>
                                         setUpdatedFields((prevState) => {
                                             if (prevState.set_length !== event.target.value) {
@@ -142,7 +139,11 @@ const RescheduleUpdatedFields = (props) => {
                                 <>
                                     <RadioGroup
                                         row
-                                        value={updatedFields.set_cancelled || false}
+                                        value={
+                                            updatedFields.set_cancelled == null
+                                                ? false
+                                                : updatedFields.set_cancelled
+                                        }
                                         onChange={(event) =>
                                             setUpdatedFields((prevState) => {
                                                 if (
@@ -187,7 +188,8 @@ const RescheduleUpdatedFields = (props) => {
                                                 setUpdatedFields((prevState) => {
                                                     if (
                                                         prevState.set_location !==
-                                                        event.target.value
+                                                            event.target.value ||
+                                                        event.target.value !== ''
                                                     ) {
                                                         return {
                                                             ...prevState,
@@ -201,8 +203,12 @@ const RescheduleUpdatedFields = (props) => {
                                             }
                                         }}
                                         fullWidth
+                                        displayEmpty
                                         size="small"
                                     >
+                                        <MenuItem value="" disabled>
+                                            <em>Leave default or choose option</em>
+                                        </MenuItem>
                                         <MenuItem value="In-Person">In-Person</MenuItem>
                                         <MenuItem value="Online">Online</MenuItem>
                                     </CustomSelect>
@@ -219,6 +225,7 @@ const RescheduleUpdatedFields = (props) => {
                                                 variant="outlined"
                                                 size="small"
                                                 value={
+                                                    updatedFields.set_location == null ||
                                                     updatedFields.set_location === 'Online'
                                                         ? ''
                                                         : updatedFields.set_location
@@ -243,8 +250,58 @@ const RescheduleUpdatedFields = (props) => {
                                 </>
                             }
                         />
-                        {/*TODO: Implement set_group_id input*/}
-                        {/*TODO: Implement set_note input*/}
+                        <EditCardItem
+                            title="Set new group ID"
+                            oldDesc={undefined}
+                            newInput={
+                                <CustomTextField
+                                    id="group-id-update-field"
+                                    margin="normal"
+                                    value={
+                                        updatedFields.group_id == null ? '' : updatedFields.group_id
+                                    }
+                                    onChange={(event) => {
+                                        setUpdatedFields((prevState) => ({
+                                            ...prevState,
+                                            group_id: event.target.value
+                                        }));
+                                    }}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ mt: 0 }}
+                                />
+                            }
+                        />
+                        <EditCardItem
+                            title="New Note"
+                            oldDesc={undefined}
+                            newInput={
+                                <CustomTextField
+                                    id="note-update-field"
+                                    placeholder="Write New Note"
+                                    multiline
+                                    rows={4}
+                                    variant="outlined"
+                                    value={
+                                        updatedFields.set_note == null ? '' : updatedFields.set_note
+                                    }
+                                    onChange={(event) => {
+                                        console.log(event.target.value);
+                                        console.log(updatedFields.note == null);
+                                        setUpdatedFields((prevState) => {
+                                            if (prevState.set_note !== event.target.value) {
+                                                return {
+                                                    ...prevState,
+                                                    set_note: event.target.value
+                                                };
+                                            }
+                                            return prevState;
+                                        });
+                                    }}
+                                    sx={{ width: 500 }}
+                                />
+                            }
+                        />
                     </Box>
                 </CardContent>
             </Card>

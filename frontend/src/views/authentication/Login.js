@@ -48,14 +48,21 @@ const Login = () => {
                 } else if (response['status'] === 200) {
                     sessionStorage.setItem('username', username.toLowerCase());
                     sessionStorage.setItem('token', response['data']['token']);
-                    sessionStorage.setItem('roles', JSON.stringify(response['data']['roles']));
-                    if (
-                        Array.isArray(response.data.roles) &&
-                        response.data.roles.length > 0 &&
-                        response.data.roles[0].role === 'admin'
-                    ) {
+                    const roles = response['data']['roles'];
+                    sessionStorage.setItem('roles', JSON.stringify(roles));
+
+                    const isAdmin = response['data']['admin'];
+                    sessionStorage.setItem('isAdmin', isAdmin);
+
+                    if (isAdmin) {
+                        sessionStorage.setItem('role', 'admin');
                         navigate('/admin');
-                    } else navigate('/home');
+                    } else {
+                        if (roles.length > 0) {
+                            sessionStorage.setItem('role', roles[0].role);
+                        } else sessionStorage.setItem('role', '');
+                        navigate('/home');
+                    }
                 } else if (response['status'] === 401) {
                     toast.error('Your username or password is incorrect', { theme: 'colored' });
                 } else {

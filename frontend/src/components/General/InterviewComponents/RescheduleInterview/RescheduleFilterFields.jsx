@@ -19,6 +19,12 @@ import CustomFormLabel from '../../../FlexyMainComponents/forms/custom-elements/
 import CustomTextField from '../../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 import { FilterFieldsContext } from '../../../../contexts/RescheduleContexts/FilterFieldsContext';
 import CustomSelect from '../../../FlexyMainComponents/forms/custom-elements/CustomSelect';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DesktopDateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import moment from 'moment/moment';
+import { parseISO } from 'date-fns';
+import useSWR from 'swr';
+import StaffApi from '../../../../api/staff_api';
 
 const RescheduleFilterFields = (props) => {
     const { filterFields, setFilterFields } = React.useContext(FilterFieldsContext);
@@ -26,8 +32,7 @@ const RescheduleFilterFields = (props) => {
     const [showFilterInputs, setShowFilterInputs] = React.useState({
         interviewId: false,
         booked: false,
-        time: false,
-        date: false,
+        dateTime: false,
         groupId: false,
         length: false,
         location: false,
@@ -38,19 +43,41 @@ const RescheduleFilterFields = (props) => {
     const [locationSelectVal, setLocationSelectVal] = React.useState('Online');
     const [isLocationOnline, setIsLocationOnline] = React.useState(true);
 
+    const [prefillDataId, setPrefillDataId] = React.useState('');
+    const [prefillInterviewsArr, setPrefillInterviewsArr] = React.useState([]);
+
+    const { data, error, isLoading } = useSWR('/interviews/get-all', () =>
+        StaffApi.getAllInterviews(props.courseId, props.taskId).then((res) => res.data)
+    );
+
+    React.useEffect(() => {
+        if (isLoading || error) return;
+        const interviewsArr = data.interviews;
+        setPrefillInterviewsArr(interviewsArr);
+    }, [props.courseId, data, isLoading, error]);
+
     return (
         <Container>
             <Card sx={{ pb: 0, mb: 4, width: 'auto' }}>
                 <CardContent sx={{ pb: 0 }}>
                     <Box>
                         <Grid container spacing={0}>
-                            <Grid xs={6}>
+                            <Grid xs={12}>
                                 <Typography variant="h4" sx={{ mt: 0.9 }}>
                                     Filter Fields
                                 </Typography>
-                                <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                                <Typography variant="subtitle1">
                                     Specify which interviews you'd like to reschedule with updated
-                                    information (on right card).
+                                    information (on right-hand side).
+                                </Typography>
+                                <Typography variant="subtitle1">
+                                    <strong>Note</strong>: This side is for specifying the
+                                    "previous" (old) interview details. The right-side pane is for
+                                    specifying the new value(s) that the (filtered) interviews would
+                                    take on.
+                                </Typography>
+                                <Typography variant="subtitle1" sx={{ mb: 2, mt: 1 }}>
+                                    Do <em>not</em> write the new information on this side.
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -68,6 +95,7 @@ const RescheduleFilterFields = (props) => {
                                                     interviewId: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.interviewId}
                                         />
                                     }
                                     label="Interview ID"
@@ -82,6 +110,7 @@ const RescheduleFilterFields = (props) => {
                                                     booked: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.booked}
                                         />
                                     }
                                     label="Booked (Yes/No)"
@@ -93,26 +122,13 @@ const RescheduleFilterFields = (props) => {
                                             onChange={(event, checked) => {
                                                 setShowFilterInputs((prevState) => ({
                                                     ...prevState,
-                                                    time: checked
+                                                    dateTime: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.dateTime}
                                         />
                                     }
-                                    label="Time"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            disableRipple
-                                            onChange={(event, checked) => {
-                                                setShowFilterInputs((prevState) => ({
-                                                    ...prevState,
-                                                    date: checked
-                                                }));
-                                            }}
-                                        />
-                                    }
-                                    label="Date"
+                                    label="Date & Time"
                                 />
                             </Stack>
                             <Stack direction="row">
@@ -126,6 +142,7 @@ const RescheduleFilterFields = (props) => {
                                                     groupId: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.groupId}
                                         />
                                     }
                                     label="Group ID"
@@ -140,6 +157,7 @@ const RescheduleFilterFields = (props) => {
                                                     length: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.length}
                                         />
                                     }
                                     label="Length"
@@ -154,6 +172,7 @@ const RescheduleFilterFields = (props) => {
                                                     location: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.location}
                                         />
                                     }
                                     label="Location"
@@ -168,6 +187,7 @@ const RescheduleFilterFields = (props) => {
                                                     note: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.note}
                                         />
                                     }
                                     label="Note"
@@ -182,6 +202,7 @@ const RescheduleFilterFields = (props) => {
                                                     cancelled: checked
                                                 }));
                                             }}
+                                            checked={showFilterInputs.cancelled}
                                         />
                                     }
                                     label="Cancelled (Yes/No)"
@@ -190,6 +211,69 @@ const RescheduleFilterFields = (props) => {
                         </FormGroup>
                     </Box>
                     <Box sx={{ mt: 0 }}>
+                        <CustomFormLabel htmlFor="prefill-filter-data-label" sx={{ mb: 0 }}>
+                            Prefill data using existing interview
+                        </CustomFormLabel>
+                        <CustomSelect
+                            labelId="prefill-filter-data-label"
+                            id="prefill-filter-data"
+                            value={prefillDataId}
+                            onChange={(event, newVal) => {
+                                const selectedInterviewId = event.target.value;
+                                setPrefillDataId(selectedInterviewId);
+                                const selectedInterviewObj = prefillInterviewsArr.find(
+                                    (interview) => interview.interview_id === selectedInterviewId
+                                );
+                                if (selectedInterviewObj) {
+                                    setShowFilterInputs({
+                                        interviewId: true,
+                                        booked: true,
+                                        dateTime: true,
+                                        groupId: true,
+                                        length: true,
+                                        location: true,
+                                        note: true,
+                                        cancelled: true
+                                    });
+
+                                    setFilterFields({
+                                        interview_id: selectedInterviewId,
+                                        booked: selectedInterviewObj.group_id != null,
+                                        time: selectedInterviewObj.start_time,
+                                        group_id:
+                                            selectedInterviewObj.group_id == null
+                                                ? ''
+                                                : selectedInterviewObj.group_id,
+                                        length: selectedInterviewObj.length,
+                                        location: selectedInterviewObj.location,
+                                        note:
+                                            selectedInterviewObj.note == null
+                                                ? ''
+                                                : selectedInterviewObj.note,
+                                        cancelled: false
+                                    });
+                                }
+                            }}
+                            displayEmpty
+                            size="small"
+                            fullWidth
+                            sx={{ mt: 2 }}
+                        >
+                            <MenuItem disabled value="">
+                                <em>Select interview</em>
+                            </MenuItem>
+                            {prefillInterviewsArr.map((interview, idx) => {
+                                const startTime = interview.start_time;
+                                const timeFormatted =
+                                    moment(startTime).format('MM/DD/YYYY, h:mm A');
+                                return (
+                                    <MenuItem
+                                        value={interview.interview_id}
+                                        key={`interview-prefill-${idx}`}
+                                    >{`${interview.location} at ${timeFormatted}`}</MenuItem>
+                                );
+                            })}
+                        </CustomSelect>
                         {showFilterInputs.interviewId && (
                             <>
                                 <CustomFormLabel htmlFor="interview-id-input" sx={{ mb: 0 }}>
@@ -198,11 +282,15 @@ const RescheduleFilterFields = (props) => {
                                 <CustomTextField
                                     id="interview-id-input"
                                     margin="normal"
-                                    value={filterFields.interviewId}
+                                    value={
+                                        filterFields.interview_id == null
+                                            ? ''
+                                            : filterFields.interview_id
+                                    }
                                     onChange={(event) => {
                                         setFilterFields((prevState) => ({
                                             ...prevState,
-                                            interviewId: event.target.value
+                                            interview_id: event.target.value
                                         }));
                                     }}
                                     size="small"
@@ -218,13 +306,16 @@ const RescheduleFilterFields = (props) => {
                                 <RadioGroup
                                     id="booked-filter-field"
                                     row
-                                    value={filterFields.booked || false}
+                                    value={
+                                        filterFields.booked == null ? false : filterFields.booked
+                                    }
                                     onChange={(event) =>
                                         setFilterFields((prevState) => {
                                             if (prevState.booked !== event.target.value) {
                                                 return {
                                                     ...prevState,
-                                                    booked: event.target.value
+                                                    booked: event.target.value,
+                                                    force: true
                                                 };
                                             }
                                             return prevState;
@@ -242,9 +333,48 @@ const RescheduleFilterFields = (props) => {
                                         value={false}
                                     />
                                 </RadioGroup>
+                                <Typography>
+                                    <strong>Note</strong>: If interview is booked, notify your
+                                    students that the interview has been changed via other means.
+                                </Typography>
                             </>
                         )}
-                        {/* TODO: Implement time and date inputs */}
+                        {/* Note, sending only time is sufficient as it covers date as well */}
+                        {showFilterInputs.dateTime && (
+                            <>
+                                <CustomFormLabel htmlFor="dateTime-filter-field" sx={{ mb: 0 }}>
+                                    Date & Time
+                                </CustomFormLabel>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DesktopDateTimePicker
+                                        placeholder="Date & Time"
+                                        onChange={(value) => {
+                                            // value is Date object
+                                            const dateToTimeString =
+                                                moment(value).format('YYYY-MM-DD HH:mm:ss');
+                                            setFilterFields((prevState) => {
+                                                if (prevState.time !== dateToTimeString) {
+                                                    return { ...prevState, time: dateToTimeString };
+                                                }
+                                                return prevState;
+                                            });
+                                        }}
+                                        slotProps={{
+                                            textField: {
+                                                variant: 'outlined',
+                                                size: 'small'
+                                            },
+                                            actionBar: { actions: ['today'] }
+                                        }}
+                                        value={
+                                            filterFields.time != null
+                                                ? parseISO(filterFields.time)
+                                                : new Date()
+                                        }
+                                    />
+                                </LocalizationProvider>
+                            </>
+                        )}
                         {showFilterInputs.groupId && (
                             <>
                                 <CustomFormLabel htmlFor="group-id-filter-field" sx={{ mb: 0 }}>
@@ -253,7 +383,9 @@ const RescheduleFilterFields = (props) => {
                                 <CustomTextField
                                     id="group-id-filter-field"
                                     margin="normal"
-                                    value={filterFields.group_id}
+                                    value={
+                                        filterFields.group_id == null ? '' : filterFields.group_id
+                                    }
                                     onChange={(event) => {
                                         setFilterFields((prevState) => ({
                                             ...prevState,
@@ -275,7 +407,7 @@ const RescheduleFilterFields = (props) => {
                                     margin="normal"
                                     type="number"
                                     helperText="Length (in minutes)"
-                                    value={filterFields.length}
+                                    value={filterFields.length == null ? '' : filterFields.length}
                                     onChange={(event) => {
                                         setFilterFields((prevState) => ({
                                             ...prevState,
@@ -331,6 +463,7 @@ const RescheduleFilterFields = (props) => {
                                             variant="outlined"
                                             size="small"
                                             value={
+                                                filterFields.location == null ||
                                                 filterFields.location === 'Online'
                                                     ? ''
                                                     : filterFields.location
@@ -362,7 +495,7 @@ const RescheduleFilterFields = (props) => {
                                     multiline
                                     rows={4}
                                     variant="outlined"
-                                    value={filterFields.note}
+                                    value={filterFields.note == null ? '' : filterFields.note}
                                     onChange={(event) =>
                                         setFilterFields((prevState) => {
                                             if (prevState.note !== event.target.value) {
@@ -386,7 +519,11 @@ const RescheduleFilterFields = (props) => {
                                 <RadioGroup
                                     id="cancelled-filter-field"
                                     row
-                                    value={filterFields.cancelled || false}
+                                    value={
+                                        filterFields.cancelled == null
+                                            ? false
+                                            : filterFields.cancelled
+                                    }
                                     onChange={(event) =>
                                         setFilterFields((prevState) => {
                                             if (prevState.cancelled !== event.target.value) {

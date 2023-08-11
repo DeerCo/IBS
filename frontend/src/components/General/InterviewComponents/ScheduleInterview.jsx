@@ -74,8 +74,14 @@ const ScheduleInterview = (props) => {
     return (
         <>
             <Container>
-                <CardContent sx={{ padding: '30px' }}>
-                    <Grid container spacing={2} direction="row">
+                <CardContent>
+                    <Grid
+                        container
+                        spacing={4}
+                        direction="row"
+                        justifyContent="center"
+                        sx={{ ml: 10 }}
+                    >
                         <Grid xs>
                             <CustomFormLabel sx={{ mt: 0 }} htmlFor="interview-time">
                                 Time
@@ -99,7 +105,8 @@ const ScheduleInterview = (props) => {
                                         textField: {
                                             variant: 'outlined',
                                             size: 'small'
-                                        }
+                                        },
+                                        actionBar: { actions: ['today'] }
                                     }}
                                     value={parseISO(enteredTime)}
                                 />
@@ -131,7 +138,6 @@ const ScheduleInterview = (props) => {
                                     setSelectVal(event.target.value);
                                     if (event.target.value === 'Online') {
                                         setIsOnline(true);
-                                        setEnteredLocation(event.target.value);
                                     } else {
                                         setIsOnline(false);
                                     }
@@ -164,7 +170,15 @@ const ScheduleInterview = (props) => {
                                 sx={{ mt: 3 }}
                                 size="large"
                                 onClick={() => {
-                                    schedule_interview(enteredTime, enteredLength, enteredLocation);
+                                    if (enteredLocation === '' && isOnline === true) {
+                                        schedule_interview(enteredTime, enteredLength, 'Online');
+                                        return;
+                                    } else
+                                        schedule_interview(
+                                            enteredTime,
+                                            enteredLength,
+                                            enteredLocation
+                                        );
                                 }}
                             >
                                 Schedule

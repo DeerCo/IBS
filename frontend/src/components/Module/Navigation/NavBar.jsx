@@ -17,6 +17,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PropTypes from 'prop-types';
 
 let NavBar = (props) => {
+    const currRole = sessionStorage.getItem('role');
     let navigate = useNavigate();
 
     let username = sessionStorage.getItem('username');
@@ -77,7 +78,7 @@ let NavBar = (props) => {
                                 textDecoration: 'inherit',
                                 display: 'contents'
                             }}
-                            to="/home"
+                            to={currRole !== 'admin' ? '/home' : '/admin'}
                         >
                             <HomeIcon />
                         </Box>
@@ -94,7 +95,7 @@ let NavBar = (props) => {
                                 textDecoration: 'inherit',
                                 display: 'contents'
                             }}
-                            to="/home"
+                            to={currRole !== 'admin' ? '/home' : '/admin'}
                         >
                             <Typography variant="h6" component="div">
                                 IBS

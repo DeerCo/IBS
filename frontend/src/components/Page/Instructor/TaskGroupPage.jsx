@@ -9,6 +9,7 @@ import TaskGroupTable from '../../General/TaskGroupTable/TaskGroupTable';
 import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/CustomTextField';
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import { toast } from 'react-toastify';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 const TaskGroupPage = (props) => {
     const { role } = props;
@@ -112,59 +113,61 @@ const TaskGroupPage = (props) => {
     }, [courseId, alert]);
 
     return (
-        <Grid container spacing={2}>
-            <Grid xs={12}>
-                <NavBar role={role} page="Task Groups" />
+        <PageContainer title="Task Groups" description="View task groups">
+            <Grid container spacing={2}>
+                <Grid xs={12}>
+                    <NavBar role={role} page="Task Groups" />
+                </Grid>
+                <Grid xs={12}>
+                    <Container>
+                        <Typography variant="h2" fontWeight={600} sx={{ mt: 10, ml: '10vw' }}>
+                            Task Groups for Course: {courseId}
+                        </Typography>
+                        <Card sx={{ width: '70%', margin: 'auto', mt: 4 }}>
+                            <CardContent>
+                                <Box>
+                                    <TaskGroupTable
+                                        headCells={tgCols}
+                                        rows={tgRows}
+                                        courseId={courseId}
+                                        alerts={{ alert, setAlert }}
+                                    />
+                                </Box>
+                                <Box sx={{ mt: 8 }}>
+                                    <CustomFormLabel
+                                        sx={{
+                                            mt: 0
+                                        }}
+                                        htmlFor="max-tokens-field"
+                                    >
+                                        Maximum Tokens Count
+                                    </CustomFormLabel>
+                                    <CustomTextField
+                                        id="max-tokens-field"
+                                        variant="outlined"
+                                        size="small"
+                                        type="number"
+                                        sx={{ width: 160 }}
+                                        value={newMaxTokens === null ? 0 : newMaxTokens}
+                                        onChange={(event) => {
+                                            setNewMaxTokens(event.target.value);
+                                        }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleAddTg}
+                                        sx={{ ml: 2 }}
+                                    >
+                                        Add Task Group
+                                    </Button>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Container>
+                </Grid>
             </Grid>
-            <Grid xs={12}>
-                <Container>
-                    <Typography variant="h2" fontWeight={600} sx={{ mt: 10, ml: '10vw' }}>
-                        Task Groups for Course: {courseId}
-                    </Typography>
-                    <Card sx={{ width: '70%', margin: 'auto', mt: 4 }}>
-                        <CardContent>
-                            <Box>
-                                <TaskGroupTable
-                                    headCells={tgCols}
-                                    rows={tgRows}
-                                    courseId={courseId}
-                                    alerts={{ alert, setAlert }}
-                                />
-                            </Box>
-                            <Box sx={{ mt: 8 }}>
-                                <CustomFormLabel
-                                    sx={{
-                                        mt: 0
-                                    }}
-                                    htmlFor="max-tokens-field"
-                                >
-                                    Maximum Tokens Count
-                                </CustomFormLabel>
-                                <CustomTextField
-                                    id="max-tokens-field"
-                                    variant="outlined"
-                                    size="small"
-                                    type="number"
-                                    sx={{ width: 160 }}
-                                    value={newMaxTokens === null ? 0 : newMaxTokens}
-                                    onChange={(event) => {
-                                        setNewMaxTokens(event.target.value);
-                                    }}
-                                />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleAddTg}
-                                    sx={{ ml: 2 }}
-                                >
-                                    Add Task Group
-                                </Button>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                </Container>
-            </Grid>
-        </Grid>
+        </PageContainer>
     );
 };
 

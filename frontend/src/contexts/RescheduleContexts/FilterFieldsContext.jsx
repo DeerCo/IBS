@@ -1,15 +1,15 @@
 import React from 'react';
 
 const defaultFilterFields = {
-    interview_id: '',
-    booked: false,
-    time: '',
-    date: '',
-    group_id: '',
-    length: '',
-    location: '',
-    note: '',
-    cancelled: false
+    interview_id: null,
+    booked: null,
+    time: null,
+    date: null,
+    group_id: null,
+    length: null,
+    location: null,
+    note: null,
+    cancelled: null
 };
 
 const FilterFieldsContext = React.createContext({

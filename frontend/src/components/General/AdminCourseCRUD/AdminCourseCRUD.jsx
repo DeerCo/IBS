@@ -6,12 +6,9 @@ import {
     Box,
     Button,
     FormControlLabel,
-    InputLabel,
     MenuItem,
     Radio,
     RadioGroup,
-    Select,
-    TextField,
     Typography
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
@@ -19,6 +16,7 @@ import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/Cus
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 import AdminGetRole from '../AdminPageComponents/AdminGetRole';
+import ConfirmDialog from '../DeleteConfirmation';
 
 // Globally change maxWidth for each tab-list component
 const MAX_WIDTH = 300;
@@ -166,7 +164,7 @@ const AdminCourseCRUD = (props) => {
                                             required
                                             fullWidth
                                             variant="outlined"
-                                            size="medium"
+                                            size="small"
                                             id="username-add-role"
                                             value={value}
                                             onChange={onChange}
@@ -194,7 +192,7 @@ const AdminCourseCRUD = (props) => {
                                             labelId="select-role"
                                             onChange={onChange}
                                             value={value}
-                                            size="medium"
+                                            size="small"
                                             variant="outlined"
                                             sx={{ width: 300, maxWidth: 300, mt: 1 }}
                                         >
@@ -256,7 +254,7 @@ const AdminCourseCRUD = (props) => {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
-                                Submit
+                                Assign Role
                             </Button>
                         </Box>
                     </Box>
@@ -343,7 +341,7 @@ const AdminCourseCRUD = (props) => {
                                             labelId="select-role"
                                             onChange={onChange}
                                             value={value}
-                                            size="medium"
+                                            size="small"
                                             variant="outlined"
                                             sx={{
                                                 width: MAX_WIDTH + 100,
@@ -435,6 +433,8 @@ const AdminCourseCRUD = (props) => {
     };
 
     const DeleteRoleComponent = () => {
+        const [confirmRemoveRole, setConfirmRemoveRole] = React.useState(false);
+
         return (
             <Grid container columns={12}>
                 <Grid xs={6}>
@@ -447,12 +447,7 @@ const AdminCourseCRUD = (props) => {
                         }}
                         maxWidth={MAX_WIDTH}
                     >
-                        <Box
-                            component="form"
-                            onSubmit={handleSubmitDelete(DeleteRole)}
-                            noValidate
-                            sx={{ mt: 1 }}
-                        >
+                        <Box component="form" noValidate sx={{ mt: 1 }}>
                             <Controller
                                 render={({
                                     field: { onChange, onBlur, value, name, ref },
@@ -460,7 +455,7 @@ const AdminCourseCRUD = (props) => {
                                 }) => (
                                     <>
                                         <Typography variant="body1">
-                                            Do you want to delete all users' roles?
+                                            Do you want to remove all users from course?
                                         </Typography>
                                         <RadioGroup
                                             row
@@ -486,7 +481,6 @@ const AdminCourseCRUD = (props) => {
                                 name="delete_all"
                                 control={controlDelete}
                                 defaultValue={false}
-                                rules={{ required: true }}
                             />
                             {!deleteAllUsers && (
                                 <Controller
@@ -505,7 +499,7 @@ const AdminCourseCRUD = (props) => {
                                                 id="username-delete-role"
                                                 margin="normal"
                                                 variant="outlined"
-                                                size="medium"
+                                                size="small"
                                                 required
                                                 fullWidth
                                                 value={value}
@@ -519,11 +513,18 @@ const AdminCourseCRUD = (props) => {
                                     name="username"
                                     control={controlDelete}
                                     defaultValue=""
-                                    rules={{ required: true }}
                                 />
                             )}
+                            <ConfirmDialog
+                                open={confirmRemoveRole}
+                                setOpen={setConfirmRemoveRole}
+                                onConfirm={handleSubmitDelete(DeleteRole)}
+                            >
+                                Are you sure you want to delete ALL roles from course? Doing so will
+                                remove all users' roles from the course.
+                            </ConfirmDialog>
                             <Button
-                                type="submit"
+                                onClick={() => setConfirmRemoveRole(true)}
                                 fullWidth
                                 variant="contained"
                                 color="error"
@@ -547,8 +548,8 @@ const AdminCourseCRUD = (props) => {
                         </li>
                         <li>
                             <Typography variant="body1">
-                                Deleting all users' roles will delete every role assigned to each
-                                user in the database.
+                                Removing all users from course just removes users from this course.
+                                It doesn't actually result in user account deletion.
                             </Typography>
                         </li>
                     </ul>

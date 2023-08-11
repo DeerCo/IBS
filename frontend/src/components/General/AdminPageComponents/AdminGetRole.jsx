@@ -72,7 +72,7 @@ const AdminGetRole = (props) => {
                             color="primary"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Get role
+                            Get Role
                         </Button>
                         {rolesResponse.length > 0 && (
                             <Grid container spacing={2} sx={{ mt: 3 }}>

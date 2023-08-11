@@ -37,10 +37,10 @@ const InterviewsTimeline = (props) => {
                 const isOnline = interviewObj.location === 'Online';
 
                 const startTimeConversion = moment(interviewObj.start_time).format(
-                    'MMMM Do YYY, h:mm a'
+                    'MMMM Do YYYY, h:mm a'
                 );
                 const endTimeConversion = moment(interviewObj.end_time).format(
-                    'MMMM Do YYY, h:mm a'
+                    'MMMM Do YYYY, h:mm a'
                 );
 
                 const gridStyling = () => (

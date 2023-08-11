@@ -406,6 +406,41 @@ let deleteTaskGroup = async (courseId, taskGroupId) => {
     }
 };
 
+/**
+ *
+ * @param {int} courseId: Course ID to submit marks to
+ * @param {file} file: The [CSV] file containing the marks
+ * @param {int} taskId: The ID of the task pertaining the marks
+ * @param {boolean} overwrite: Overwrite current marks in this category
+ *
+ * Access Permissions: Instructor
+ *
+ * @returns  {Promise<axios.AxiosResponse<any>|*|null>}
+ */
+const uploadMarksCSV = async (courseId, file, taskId, overwrite = true) => {
+    const token = sessionStorage.getItem('token');
+
+    const role = findRoleInCourse(courseId);
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { task_group_id: taskId }
+    };
+
+    let url;
+    if (role === 'instructor') {
+        url = `${process.env.REACT_APP_API_URL}/instructor/course/${courseId}/mark/upload`;
+    } else {
+        return null;
+    }
+
+    try {
+        return await axios.post(url, config);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 const checkGroup = async (courseId, groupId) => {
     const token = sessionStorage.getItem('token');
     const role = findRoleInCourse(courseId);
@@ -537,38 +572,39 @@ const changeInterview = async (
 ) => {
     let token = sessionStorage.getItem('token');
 
-    let config = {
-        data: {
-            task,
-            set_time,
-            set_group_id,
-            set_length,
-            set_location,
-            set_note,
-            set_cancelled,
-            interview_id,
-            booked,
-            time,
-            date,
-            group_id,
-            length,
-            location,
-            note,
-            cancelled
-        },
+    let data = {
+        task,
+        set_time,
+        set_group_id,
+        set_length,
+        set_location,
+        set_note,
+        set_cancelled,
+        interview_id,
+        booked,
+        time,
+        date,
+        group_id,
+        length,
+        location,
+        note,
+        cancelled
+    };
+
+    const config = {
         headers: { Authorization: `Bearer ${token}` }
     };
 
     // delete all undefined/null fields from config.data
-    config.data = Object.fromEntries(
-        Object.entries(config.data).filter(([key, value]) => value != null)
-    );
+    data = Object.fromEntries(Object.entries(data).filter(([key, value]) => value != null));
+    console.log('[+]');
+    console.log(data);
 
     const role = findRoleInCourse(courseId);
     if (role === 'instructor' || role === 'ta') {
         const url = `${process.env.REACT_APP_API_URL}/${role}/course/${courseId}/interview/change`;
         try {
-            return await axios.put(url, config);
+            return await axios.put(url, data, config);
         } catch (err) {
             return err.response;
         }
@@ -594,13 +630,12 @@ const StaffApi = {
     collectAllSubmissionsForTask,
     collectOneSubmission,
     downloadSubmissions,
-
     checkGroup,
-
     getAllInterviews,
     scheduleInterview,
     deleteInterview,
-    changeInterview
+    changeInterview,
+    uploadMarksCSV
 };
 
 export default StaffApi;
