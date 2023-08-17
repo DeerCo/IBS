@@ -115,7 +115,6 @@ const AdminCoursePage = () => {
                 <Grid xs={12} sx={{ mt: 3 }}>
                     <Grid container justifyContent="center" direction="column" alignItems="center">
                         <Grid xs={12}>
-                            <PreviousPageButton rightAlignOffset={4} />
                             <AdminCourseCRUD
                                 onSubmitFunctions={{
                                     AddRole: addRole,

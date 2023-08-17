@@ -16,6 +16,10 @@ import CustomOutlinedInput from './CustomOutlinedInput';
 const AdminGetRole = (props) => {
     const { useFormObject, apiCall, rolesResponse } = props;
 
+    React.useEffect(() => {
+        console.log(rolesResponse);
+    }, []);
+
     return (
         <Grid container columns={12}>
             <Grid xs={6}>
@@ -88,9 +92,21 @@ const AdminGetRole = (props) => {
                                             {rolesResponse.map((obj, index) => {
                                                 return (
                                                     <li key={`roles-response-${index}`}>
-                                                        Course ID: {obj.course_id}, Role:{' '}
-                                                        {obj.role.charAt(0).toUpperCase() +
-                                                            obj.role.slice(1)}
+                                                        <Typography>
+                                                            Course Code:{' '}
+                                                            <code>{obj.course_code}</code>
+                                                        </Typography>
+                                                        <Typography>
+                                                            Course Session:{' '}
+                                                            <code>{obj.course_session}</code>
+                                                        </Typography>
+                                                        <Typography>
+                                                            Role:{' '}
+                                                            <code>
+                                                                {obj.role.charAt(0).toUpperCase() +
+                                                                    obj.role.slice(1)}
+                                                            </code>
+                                                        </Typography>
                                                     </li>
                                                 );
                                             })}

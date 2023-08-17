@@ -15,6 +15,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PropTypes from 'prop-types';
+import PreviousPageFAB from '../../General/PreviousPageButton/PreviousPageFAB';
 
 let NavBar = (props) => {
     const currRole = sessionStorage.getItem('role');
@@ -153,6 +154,14 @@ let NavBar = (props) => {
                             </Typography>
                         )}
                     </Breadcrumbs>
+                    <PreviousPageFAB
+                        iconName="chevron-left"
+                        text="Previous Page"
+                        color="primary"
+                        sx={{ mr: 1, boxShadow: 0 }}
+                        disableFocusRipple
+                        disableRipple
+                    />
                     {impersonated ? (
                         <>
                             <Typography> {origusername + ' impersonating ' + username} </Typography>
