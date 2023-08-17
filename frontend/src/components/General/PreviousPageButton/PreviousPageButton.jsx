@@ -3,16 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import FeatherIcon from 'feather-icons-react';
 import PropTypes from 'prop-types';
+import { useLocation } from 'react-router';
 
 const PreviousPageButton = ({ rightAlignOffset, ...props }) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const BackButton = () => (
         <Button
             variant="contained"
             color="secondary"
             startIcon={<FeatherIcon icon="chevron-left" width="18" />}
-            onClick={() => navigate(-1)}
+            onClick={() => {
+                if (location.pathname !== '/admin' && location.pathname !== '/home') {
+                    navigate(-1);
+                }
+            }}
             {...props}
         >
             Back to Previous Page
