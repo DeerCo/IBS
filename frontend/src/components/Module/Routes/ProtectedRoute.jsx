@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /**
- * Redirect user to login page on un-authorized entry to specific url.
+ * Redirect user to home page on un-authorized entry to specific url.
  * @param allowedRoles array of allowed roles in route
  * @param props other props
  * @returns {JSX.Element}
