@@ -15,7 +15,8 @@ const ProtectedRoute = ({ allowedRoles, ...props }) => {
 
     React.useEffect(() => {
         if (!allowedRoles.includes(role)) {
-            navigate('/login');
+            if (role === 'admin') navigate('/admin');
+            else navigate('/home');
         }
     }, [role, navigate, allowedRoles]);
 
