@@ -34,6 +34,7 @@ import AddTask from './components/Page/Instructor/AddTask';
 import ModifyTask from './components/Page/Instructor/ModifyTask';
 import InstructorTaskMarksPage from './components/Page/Instructor/InstructorTaskMarksPage';
 import ProtectedRoute from './components/Module/Routes/ProtectedRoute';
+import AddMentorSession from './components/Page/Instructor/AddMentorSession';
 
 function App() {
     const theme = ThemeSettings();
@@ -123,6 +124,16 @@ function App() {
                             path="/instructor/course/:courseId/submit-marks"
                             element={<SubmitMarks />}
                         />
+
+                        <Route
+                            path="/instructor/course/:course_id/add-mentor-session"
+                            element={<AddMentorSession />}
+                        />
+                        <Route
+                            path="/instructor/course/:course_id/task/:task/modify-mentor-session"
+                            element={<ModifyMentorSession />}
+                        />
+
                         <Route
                             path="/admin"
                             element={

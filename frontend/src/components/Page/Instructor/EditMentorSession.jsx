@@ -51,4 +51,4 @@ const ModifyMentorSession = () => {
     );
 };
 
-export default ModifyTask;
+export default ModifyMentorSession;
