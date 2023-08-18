@@ -77,8 +77,6 @@ const TaskMarkTable = ({ courseId, taskId }) => {
                 })
 
                 setTaskMarkData(markDataTemp);
-
-                console.log(markDataTemp)
             });
         })
     }, [isLoading, error, data]);
