@@ -260,7 +260,7 @@ const Taskcard = ({ data, course_id, role }) => {
                   variant="outlined"
                   size="small"
                 >
-                  Mark
+                  {role === INSTRUCTOR ? "View Grades" : "Mark"}
                 </Button>}
               <Button
                 href={
