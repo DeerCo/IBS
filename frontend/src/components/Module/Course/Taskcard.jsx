@@ -14,7 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InstructorApi from '../../../api/instructor_api';
 import ConfirmDialog from '../../General/DeleteConfirmation';
 import MarkPublicationDialog from '../Mark/SubmitMarks/MarkPublicationConfirmation';
-import {INSTRUCTOR} from "../../../Constants/roles";
+import {INSTRUCTOR, STUDENT} from "../../../Constants/roles";
 
 
 const useStyles = makeStyles({
@@ -247,7 +247,7 @@ const Taskcard = ({ data, course_id, role }) => {
                 setOpen={setReleaseOpen}
                 release={markIsHidden}
               />
-              {role === 'student' &&
+              {[STUDENT, INSTRUCTOR].includes(role) &&
                 <Button
                   href={
                     (role ? '/' + role : '') +
