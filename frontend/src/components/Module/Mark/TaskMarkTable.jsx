@@ -58,23 +58,27 @@ const TaskMarkTable = ({ courseId, taskId }) => {
 
                 const markDataTemp = extractMarkData(data);
 
-                if (markDataTemp.length === 0) {
-                    const markDataTemp2 = tempStudentList.map((studObj) => {
-                        const result = { name: studObj.username }
-                        critObjList.forEach((critObj) => {
-                            result[critObj.criteria] = {
-                                mark: 0,
-                                out_of: critObj.total
-                            }
-                        });
+                const markDataTemp2 = tempStudentList.map((studObj) => {
+                    const result = { name: studObj.username }
+                    critObjList.forEach((critObj) => {
+                        result[critObj.criteria] = {
+                            mark: 0,
+                            out_of: critObj.total
+                        }
+                    });
 
-                        return result;
-                    })
+                    return result;
+                })
 
-                    setTaskMarkData(markDataTemp2);
-                } else {
-                    setTaskMarkData(markDataTemp);
-                }
+                markDataTemp2.forEach(markDataObj => {
+                    if (!markDataTemp.find(el => el.name === markDataObj.name)) {
+                        markDataTemp.push(markDataObj);
+                    }
+                })
+
+                setTaskMarkData(markDataTemp);
+
+                console.log(markDataTemp)
             });
         })
     }, [isLoading, error, data]);
@@ -133,7 +137,7 @@ const TaskMarkTable = ({ courseId, taskId }) => {
         };
 
         return (
-            <>
+            <TableRow>
                 {Object.keys(row).map((col) => {
                     if (col === 'name')
                         return (
@@ -164,7 +168,7 @@ const TaskMarkTable = ({ courseId, taskId }) => {
                         Save
                     </Button>
                 </TableCell>
-            </>
+            </TableRow>
         );
     };
 
@@ -197,11 +201,9 @@ const TaskMarkTable = ({ courseId, taskId }) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                {taskMarkData.map((entry) => (
-                                    <TaskMarkEntry key={`${entry.name}`} row={entry} />
-                                ))}
-                            </TableRow>
+                            {taskMarkData.map((entry) => (
+                                <TaskMarkEntry key={`${entry.name}`} row={entry} />
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
