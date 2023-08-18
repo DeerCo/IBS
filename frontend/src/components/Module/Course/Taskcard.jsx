@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InstructorApi from '../../../api/instructor_api';
 import ConfirmDialog from '../../General/DeleteConfirmation';
 import MarkPublicationDialog from '../Mark/SubmitMarks/MarkPublicationConfirmation';
+import {INSTRUCTOR} from "../../../Constants/roles";
 
 
 const useStyles = makeStyles({
@@ -51,6 +52,15 @@ const Taskcard = ({ data, course_id, role }) => {
   const [markIsSubmited, setMarkIsSubmited] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
+  const [editAnchorEl, setEditAnchorEl] = useState(null);
+  const editOpen = Boolean(editAnchorEl);
+  const handleEditClick = (event) => {
+    setEditAnchorEl(event.currentTarget);
+  };
+  const handleEditClose = () => {
+    setEditAnchorEl(null);
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -146,7 +156,7 @@ const Taskcard = ({ data, course_id, role }) => {
                   course_id +
                   '/task/' +
                   data.task +
-                  '/details'
+                  (role === INSTRUCTOR ? '/modify-criteria' : '/details')
                 }
                 variant="outlined"
                 size="small"

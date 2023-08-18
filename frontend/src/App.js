@@ -34,6 +34,7 @@ import AddTask from './components/Page/Instructor/AddTask';
 import ModifyTask from './components/Page/Instructor/ModifyTask';
 import InstructorTaskMarksPage from './components/Page/Instructor/InstructorTaskMarksPage';
 import ProtectedRoute from './components/Module/Routes/ProtectedRoute';
+import ModifyTaskCriteriaPage from "./components/Page/Instructor/ModifyTaskCriteriaPage";
 
 function App() {
     const theme = ThemeSettings();
@@ -102,6 +103,10 @@ function App() {
                         <Route
                             path="/instructor/course/:course_id/task/:task/modify"
                             element={<ModifyTask />}
+                        />
+                        <Route
+                            path="/instructor/course/:courseId/task/:taskId/modify-criteria"
+                            element={<ModifyTaskCriteriaPage />}
                         />
                         <Route
                             path="/instructor/course/:course_id/task/:task_id/mark"
