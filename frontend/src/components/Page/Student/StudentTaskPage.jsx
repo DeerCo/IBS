@@ -44,6 +44,7 @@ let StudentTaskPage = () => {
             <Grid container direction="column" height="100%" wrap="nowrap">
                 <NavBar item page="Task" />
                 <Grid item container textAlign="center" padding={'32px'}>
+                    {mainTasks.length === 0 && <h5>There are currently no assessments in this course</h5>}
                     {mainTasks.map((data, index) => (
                         <Taskcard key={index} data={data} course_id={course_id} role="student" />
                     ))}

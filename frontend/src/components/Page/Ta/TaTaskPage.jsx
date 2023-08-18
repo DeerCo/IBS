@@ -91,6 +91,7 @@ let TaTaskPage = () => {
             <div>
                 <NavBar page="Task" role={'ta'} />
                 <div className={classes.container}>
+                    {mainTasks.length === 0 && <h5>There are currently no assessments in this course</h5>}
                     {mainTasks.map((data) => (
                         <Taskcard data={data} course_id={course_id} role={'ta'} />
                     ))}
