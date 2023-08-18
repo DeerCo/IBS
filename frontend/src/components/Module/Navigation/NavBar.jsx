@@ -217,7 +217,7 @@ let NavBar = (props) => {
                                             '/impersonate/'
                                         }
                                     >
-                                        Impersonate
+                                        Student View
                                     </MenuItem>
                                 )}
                                 <MenuItem onClick={logout}>Logout</MenuItem>
