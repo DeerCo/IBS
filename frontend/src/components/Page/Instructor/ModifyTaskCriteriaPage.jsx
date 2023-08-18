@@ -24,7 +24,7 @@ const ModifyTaskCriteriaPage = () => {
                     </Grid>
                     <Grid item xs={3}>
                         <DashboardCard
-                            title={`List of criteria for ${taskId}`}
+                            title="Add criteria for this assignment"
                             children={<AddTaskCriteriaForm courseId={courseId} taskId={taskId} />}
                         />
                     </Grid>
