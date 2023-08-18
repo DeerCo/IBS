@@ -136,6 +136,33 @@ let getCriteriaForTask = async (courseId, task) => {
     }
 };
 
+let deleteCriterionForTask = async (courseId, criterionId) => {
+    try {
+        return await http.delete(`/instructor/course/${courseId}/criteria/delete`, {
+            data: {
+                criteria_id: criterionId
+            }
+        })
+    } catch (err) {
+        return err.response
+    }
+}
+
+let addCriterionForTask = async (courseId, taskId, criteriaName, total, description = undefined) => {
+    const body = {
+        task: taskId,
+        criteria: criteriaName,
+        total,
+        description
+    }
+
+    try {
+        return http.post(`/instructor/course/${courseId}/criteria/add`, body);
+    } catch (err) {
+        return err.response;
+    }
+}
+
 // Copies ALL groups from one task to another
 let copyGroups = async (courseId, fromTask, toTask) => {
     let token = sessionStorage.getItem('token');
@@ -623,6 +650,9 @@ const StaffApi = {
     deleteTaskGroup,
 
     getCriteriaForTask,
+    deleteCriterionForTask,
+    addCriterionForTask,
+
     all_tasks,
     copyGroups,
     getCourseContent,
