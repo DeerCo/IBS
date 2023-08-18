@@ -19,6 +19,7 @@ import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
 import SaveIcon from '@mui/icons-material/Save';
 import InstructorApi from '../../../api/instructor_api';
 import GetMarkCSVButton from './GetMarkCSVButton';
+import UploadMarksButton from "./UploadMarks/UploadMarksButton";
 
 function extractMarkData(data) {
     return Object.keys(data).map((studentName) => {
@@ -182,6 +183,7 @@ const TaskMarkTable = ({ courseId, taskId }) => {
         <DashboardCard title={`Marks for ${taskId}`}>
             <Stack spacing={2}>
                 <GetMarkCSVButton task={taskId} course_id={courseId} />
+                <UploadMarksButton courseId={courseId} taskId={taskId}/>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }}>
                         <TableHead>
