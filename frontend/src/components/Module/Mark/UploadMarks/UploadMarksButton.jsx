@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Button } from '@mui/material';
-import Grid from '@mui/material';
-import { Form } from 'react-router-dom';
+import {Button, Grid} from '@mui/material';
 import StaffApi from '../../../../api/staff_api';
 import { toast } from 'react-toastify';
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import {Form} from "formik";
 
-const UploadMarksButton = (courseId, taskId) => {
+const UploadMarksButton = ({ courseId, taskId }) => {
     const [file, setFile] = useState(null);
 
     const handleUpload = (event) => {
@@ -22,14 +22,10 @@ const UploadMarksButton = (courseId, taskId) => {
     };
 
     return (
-        <Grid>
-            <Form>
-                <Button>
-                    Upload Marks
-                    <input hidden accept="*.csv" type="file" onChange={handleUpload} />
-                </Button>
-            </Form>
-        </Grid>
+        <Button component="label" startIcon={<UploadFileIcon />} variant="contained" color="secondary">
+            Upload Marks
+            <input hidden accept="*.csv" type="file" onChange={handleUpload} />
+        </Button>
     );
 };
 
