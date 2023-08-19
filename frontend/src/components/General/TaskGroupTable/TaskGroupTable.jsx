@@ -310,6 +310,15 @@ const TaskGroupTable = ({ headCells, rows, courseId, alerts }) => {
                                                     variant="h6"
                                                     fontWeight="400"
                                                 >
+                                                    {row.name}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography
+                                                    color="textSecondary"
+                                                    variant="h6"
+                                                    fontWeight="400"
+                                                >
                                                     {row.maxTokens}
                                                 </Typography>
                                             </TableCell>

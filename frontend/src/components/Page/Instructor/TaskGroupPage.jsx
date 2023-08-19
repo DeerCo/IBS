@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Unstable_Grid2';
 import NavBar from '../../Module/Navigation/NavBar';
-import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Stack, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import StaffApi from '../../../api/staff_api';
@@ -17,6 +17,7 @@ const TaskGroupPage = (props) => {
 
     // For TextField when adding task group
     const [newMaxTokens, setNewMaxTokens] = useState(null);
+    const [newTaskGroupName, setNewTaskGroupName] = useState('');
 
     // For useEffect
     const [alert, setAlert] = useState(false);
@@ -33,6 +34,12 @@ const TaskGroupPage = (props) => {
             numeric: false,
             disablePadding: false,
             label: 'Task Group ID'
+        },
+        {
+            id: 'name',
+            numeric: false,
+            disablePadding: false,
+            label: 'Task Group Name'
         },
         {
             id: 'maxTokens',
@@ -67,6 +74,7 @@ const TaskGroupPage = (props) => {
                     let newRow = {
                         id: rowId,
                         taskGroupId: taskGroup.task_group_id,
+                        name: taskGroup.name,
                         maxTokens: taskGroup.max_token
                     };
                     newRows.push(newRow);
@@ -83,7 +91,7 @@ const TaskGroupPage = (props) => {
     const handleAddTg = () => {
         // Use newMaxTokens state to request backend API
         if (newMaxTokens !== null) {
-            StaffApi.addTaskGroup(courseId, newMaxTokens).then((res) => {
+            StaffApi.addTaskGroup(courseId, newMaxTokens, newTaskGroupName).then((res) => {
                 toast.success('Added new task group', { theme: 'colored' });
                 setAlert(true);
             });
@@ -134,33 +142,59 @@ const TaskGroupPage = (props) => {
                                     />
                                 </Box>
                                 <Box sx={{ mt: 8 }}>
-                                    <CustomFormLabel
-                                        sx={{
-                                            mt: 0
-                                        }}
-                                        htmlFor="max-tokens-field"
-                                    >
-                                        Maximum Tokens Count
-                                    </CustomFormLabel>
-                                    <CustomTextField
-                                        id="max-tokens-field"
-                                        variant="outlined"
-                                        size="small"
-                                        type="number"
-                                        sx={{ width: 160 }}
-                                        value={newMaxTokens === null ? 0 : newMaxTokens}
-                                        onChange={(event) => {
-                                            setNewMaxTokens(event.target.value);
-                                        }}
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleAddTg}
-                                        sx={{ ml: 2 }}
-                                    >
-                                        Add Task Group
-                                    </Button>
+                                    <Stack direction="row">
+                                        <Stack direction="row" spacing={2}>
+                                            <div>
+                                                <CustomFormLabel
+                                                    sx={{
+                                                        mt: 0
+                                                    }}
+                                                    htmlFor="max-tokens-field"
+                                                >
+                                                    Task Group Name
+                                                </CustomFormLabel>
+                                                <CustomTextField
+                                                    id="max-tokens-field"
+                                                    variant="outlined"
+                                                    size="small"
+                                                    sx={{ width: 160 }}
+                                                    value={newTaskGroupName}
+                                                    onChange={(event) => {
+                                                        setNewTaskGroupName(event.target.value);
+                                                    }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <CustomFormLabel
+                                                    sx={{
+                                                        mt: 0
+                                                    }}
+                                                    htmlFor="max-tokens-field"
+                                                >
+                                                    Maximum Tokens Count
+                                                </CustomFormLabel>
+                                                <CustomTextField
+                                                    id="max-tokens-field"
+                                                    variant="outlined"
+                                                    size="small"
+                                                    type="number"
+                                                    sx={{ width: 160 }}
+                                                    value={newMaxTokens === null ? 0 : newMaxTokens}
+                                                    onChange={(event) => {
+                                                        setNewMaxTokens(event.target.value);
+                                                    }}
+                                                />
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={handleAddTg}
+                                                    sx={{ ml: 2 }}
+                                                >
+                                                    Add Task Group
+                                                </Button>
+                                            </div>
+                                        </Stack>
+                                    </Stack>
                                 </Box>
                             </CardContent>
                         </Card>
