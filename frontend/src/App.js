@@ -10,7 +10,6 @@ import StudentFilePage from './components/Page/Student/StudentFilePage';
 import StudentInterviewPage from './components/Page/Student/StudentInterviewPage';
 import StudentTaskPage from './components/Page/Student/StudentTaskPage';
 import StudentDetailsPage from './components/Page/Student/StudentDetailsPage';
-import InstructorDetailsPage from './components/Page/Instructor/InstructorDetailsPage';
 import TaTaskPage from './components/Page/Ta/TaTaskPage';
 import InterviewPage from './components/Page/Staff/InterviewPage';
 import AdminPage from './components/Page/Admin/AdminPage';
@@ -36,6 +35,7 @@ import InstructorTaskMarksPage from './components/Page/Instructor/InstructorTask
 import ProtectedRoute from './components/Module/Routes/ProtectedRoute';
 import AddMentorSession from './components/Page/Instructor/AddMentorSession';
 import ModifyTaskCriteriaPage from "./components/Page/Instructor/ModifyTaskCriteriaPage";
+import ModifyMentorSession from "./components/Page/Instructor/EditMentorSession";
 
 function App() {
     const theme = ThemeSettings();
