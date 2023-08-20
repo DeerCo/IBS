@@ -9,7 +9,6 @@ router.get("/", (req, res) => {
 }
 
   let sql_hidden = "SELECT hidden FROM course_" + res.locals["course_id"] + ".mark WHERE task = ($1)";
-  console.log(sql_hidden);
 
   client.query(sql_hidden, [res.locals["task"]], (err, pgRes) => {
     if (err) {

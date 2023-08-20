@@ -16,7 +16,7 @@ import CustomTextField from '../../FlexyMainComponents/forms/custom-elements/Cus
 import CustomFormLabel from '../../FlexyMainComponents/forms/custom-elements/CustomFormLabel';
 import CustomSelect from '../../FlexyMainComponents/forms/custom-elements/CustomSelect';
 import AdminGetRole from '../AdminPageComponents/AdminGetRole';
-import ConfirmDialog from '../DeleteConfirmation';
+import ConfirmDialog from '../DeleteConfirmationDialog/DeleteConfirmation';
 
 // Globally change maxWidth for each tab-list component
 const MAX_WIDTH = 300;

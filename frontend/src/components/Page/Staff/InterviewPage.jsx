@@ -12,7 +12,6 @@ import {
     Button,
     Card,
     CardContent,
-    Container,
     IconButton,
     Link,
     Typography
@@ -28,7 +27,7 @@ import {
 } from '../../../contexts/RescheduleContexts/RefreshInterviewsContext';
 import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
-import ConfirmDialog from '../../General/DeleteConfirmation';
+import ConfirmDialog from '../../General/DeleteConfirmationDialog/DeleteConfirmation';
 
 const InterviewPage = () => {
     return (
