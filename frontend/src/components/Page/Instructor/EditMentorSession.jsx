@@ -6,7 +6,8 @@ import { Grid, Box } from '@mui/material';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 import InstructorApi from '../../../api/instructor_api';
 import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
-import TaskForm from '../../Module/Course/TaskForm';
+import TaskForm from '../../Module/Task/TaskForm';
+
 
 const ModifyMentorSession = () => {
     let { course_id, task } = useParams();
