@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import NavBar from "../../Module/Navigation/NavBar";
-import Taskcard from "../../Module/Course/Taskcard";
-import { Grid } from '@mui/material';
+import Taskcard from "../../Module/Task/Taskcard";
+import { Grid, Typography, Box } from '@mui/material';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 import InstructorApi from "../../../api/instructor_api";
 import useSWR from 'swr';
+import PreviousPageButton from '../../General/PreviousPageButton/PreviousPageButton'
+
 
 let StudentTaskPage = () => {
   let navigate = useNavigate();
@@ -38,10 +39,16 @@ let StudentTaskPage = () => {
         height="100%"
         wrap="nowrap">
         <NavBar item page="Task" role='instructor' />
+        <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '32px 32px 0 32px'}}>
+          <Typography variant="h1"> Assignments </Typography>
+          <PreviousPageButton />
+        </Box>
         <Grid item container
-          padding={'32px'}>
+          padding='32px'>
           {mainTasks.map((data, index) => (
-            <Taskcard key={index} data={data} course_id={course_id} role='instructor' />
+            <Grid item xs='12' sm="8" md="6" lg="4">
+              <Taskcard key={index} data={data} course_id={course_id} role='instructor' />
+            </Grid>
           ))}
         </Grid>
       </Grid>

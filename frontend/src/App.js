@@ -54,19 +54,19 @@ function App() {
                             element={<StudentListPage />}
                         />
                         <Route
-                            path="/course/:course_id/task/:task/details"
+                            path="/student/course/:course_id/task/:task/details"
                             element={<StudentDetailsPage />}
                         />
                         <Route
-                            path="/course/:course_id/task/:task/interview"
+                            path="/student/course/:course_id/task/:task/interview"
                             element={<StudentInterviewPage />}
                         />
                         <Route
-                            path="/course/:course_id/task/:task/mark"
+                            path="/student/course/:course_id/task/:task/mark"
                             element={<StudentMarkPage />}
                         />
                         <Route
-                            path="/course/:course_id/task/:task/file"
+                            path="/student/course/:course_id/task/:task/file"
                             element={<StudentFilePage />}
                         />
                         <Route path="/ta/course/:course_id/task" element={<TaTaskPage />} />
@@ -117,6 +117,10 @@ function App() {
                         <Route
                             path="/instructor/course/:courseId/submit-marks"
                             element={<SubmitMarks />}
+                        />
+                        <Route
+                            path="/instructor/course/:course_id/task/:task/details"
+                            element={<InstructorDetailsPage />}
                         />
                         <Route
                             path="/admin"
