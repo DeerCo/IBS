@@ -82,8 +82,11 @@ const Taskcard = ({ data, course_id, role }) => {
     setAnchorEl(null);
   };
 
-  const { data: mark, isLoading, error } = useSWR('/mark/is_hidden' + data.task, () =>
-    InstructorApi.markIsHidden(course_id, data.task).then((res) => res.data)
+  const { data: mark, isLoading, error } = useSWR('/mark/is_hidden' + data.task, () => {
+    if (role === INSTRUCTOR) {
+      InstructorApi.markIsHidden(course_id, data.task).then((res) => res.data)
+    }
+  }
   );
 
   useEffect(() => {
