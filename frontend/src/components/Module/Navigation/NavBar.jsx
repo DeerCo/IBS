@@ -16,10 +16,13 @@ import { Link } from 'react-router-dom';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PropTypes from 'prop-types';
 import PreviousPageFAB from '../../General/PreviousPageButton/PreviousPageFAB';
+import { useLocation } from 'react-router';
 
 let NavBar = (props) => {
     const currRole = sessionStorage.getItem('role');
     let navigate = useNavigate();
+    const location = useLocation();
+    const atHome = location.pathname === '/home' || location.pathname === '/admin';
 
     let username = sessionStorage.getItem('username');
     let roles = JSON.parse(sessionStorage.getItem('roles'));
@@ -154,14 +157,16 @@ let NavBar = (props) => {
                             </Typography>
                         )}
                     </Breadcrumbs>
-                    <PreviousPageFAB
-                        iconName="chevron-left"
-                        text="Previous Page"
-                        color="primary"
-                        sx={{ mr: 1, boxShadow: 0 }}
-                        disableFocusRipple
-                        disableRipple
-                    />
+                    {!atHome && (
+                        <PreviousPageFAB
+                            iconName="chevron-left"
+                            text="Previous Page"
+                            color="primary"
+                            sx={{ mr: 1, boxShadow: 0 }}
+                            disableFocusRipple
+                            disableRipple
+                        />
+                    )}
                     {impersonated ? (
                         <>
                             <Typography> {origusername + ' impersonating ' + username} </Typography>
