@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import NavBar from '../../Module/Navigation/NavBar';
-import Taskcard from '../../Module/Course/Taskcard';
-import { Grid } from '@mui/material';
+import Taskcard from '../../Module/Task/Taskcard';
+import { Grid, Typography } from '@mui/material';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 import InstructorApi from '../../../api/instructor_api';
 import useSWR from 'swr';
@@ -41,9 +41,22 @@ let InstructorTaskPage = () => {
         >
             <Grid container direction="column" height="100%" wrap="nowrap">
                 <NavBar item page="Task" role="instructor" />
+                <Typography variant="h1" sx={{ textAlign: 'center', marginTop: '32px' }}>
+                    Assignments
+                </Typography>
                 <Grid item container padding={'32px'}>
+                    {mainTasks.length === 0 && (
+                        <h5>There are currently no assessments in this course</h5>
+                    )}
                     {mainTasks.map((data, index) => (
-                        <Taskcard key={index} data={data} course_id={course_id} role="instructor" />
+                        <Grid item xs="12" sm="8" md="6" lg="4">
+                            <Taskcard
+                                key={index}
+                                data={data}
+                                course_id={course_id}
+                                role="instructor"
+                            />
+                        </Grid>
                     ))}
                 </Grid>
             </Grid>

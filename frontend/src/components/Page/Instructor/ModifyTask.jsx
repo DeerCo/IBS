@@ -6,7 +6,9 @@ import { Grid, Box } from '@mui/material';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 import InstructorApi from "../../../api/instructor_api";
 import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
-import TaskForm from '../../Module/Course/TaskForm';
+import TaskForm from '../../Module/Task/TaskForm';
+import TaskNotes from '../../Module/Task/TaskNotes';
+
 
 const ModifyTask = () => {
   let { course_id, task } = useParams();
@@ -41,10 +43,14 @@ const ModifyTask = () => {
     >
       <NavBar item page="Modify Task" />
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Grid container sx='12' sm='10' md='8' lg='6' xl='6'>
-          <DashboardCard title={`Modify ${task}`}>
-            <TaskForm mode='modify' initialValues={task_data} />
-          </DashboardCard >
+        <Grid container sx='12' sm='12' md='10' lg='10' xl='8'>
+          <DashboardCard title={`Modify ${task}`}
+            children={
+              <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                <TaskForm mode='modify' initialValues={task_data} />
+                <TaskNotes />
+              </Box>}
+          />
         </Grid>
       </Box>
     </PageContainer>

@@ -25,7 +25,7 @@ const TaskForm = ({ mode, initialValues }) => {
   const [hide_interview, setHideInterview] = useState(false);
   const [hide_file, setHideFile] = useState(false);
   const [interview_group, setInterviewGroup] = useState();
-  const [interview_groups, setInterviewGroups] = useState();
+  //const [interview_groups, setInterviewGroups] = useState();
   const [task_group_id, setTaskGroupId] = useState();
   const [task_group_ids, setTaskGroupIds] = useState();
   const [starter_code_url, setStarterCodeUrl] = useState();
@@ -152,17 +152,19 @@ const TaskForm = ({ mode, initialValues }) => {
     setStarterCodeUrl(event.target.value);
   };
 
-  const handleInterviewGroup = (event) => {
+  /*const handleInterviewGroup = (event) => {
     setInterviewGroup(event.target.value);
-  };
+  };*/
 
   useEffect(() => {
     InstructorApi.all_task_groups(course_id)
       .then((res) => res.data)
       .then((data) => {
-        const tempTaskGroupId = data.task_group.map((gp) => gp.task_group_id);
+        const tempTaskGroupId = data.task_group.map((gp) => {
+          return { id: gp.task_group_id, name: gp.name };
+        });
         if (tempTaskGroupId.length > 0) {
-          tempTaskGroupId.sort();
+          tempTaskGroupId.sort((a, b) => a.task_group_id - b.task_group_id);
           setTaskGroupIds(tempTaskGroupId);
         }
       })
@@ -171,7 +173,7 @@ const TaskForm = ({ mode, initialValues }) => {
           theme: 'colored'
         })
       );
-    InstructorApi.all_tasks(course_id).then(
+    /*InstructorApi.all_tasks(course_id).then(
       (response) => {
         if (!response || !("status" in response)) {
           toast.error("Unknown error", { theme: "colored" });
@@ -191,7 +193,7 @@ const TaskForm = ({ mode, initialValues }) => {
           toast.error("Unknown error", { theme: "colored" });
           navigate("/login");
         }
-      })
+      })*/
   }, [course_id, navigate]);
 
   return (
@@ -204,9 +206,9 @@ const TaskForm = ({ mode, initialValues }) => {
             <Grid item xs={12}>
               <TextField
                 required
-                key="task"
+                key="task_id"
                 sx={{ width: '100%' }}
-                label="Task"
+                label="Code"
                 value={task}
                 onChange={handleTaskChange}
                 error={formik.touched.task && Boolean(formik.errors.task)}
@@ -218,7 +220,7 @@ const TaskForm = ({ mode, initialValues }) => {
               required
               sx={{ width: '100%' }}
               key="long_name"
-              label="Long Name"
+              label="Name"
               value={long_name ?? ''}
               onChange={handleLongNameChange}
               error={formik.touched.long_name && Boolean(formik.errors.long_name)}
@@ -234,6 +236,9 @@ const TaskForm = ({ mode, initialValues }) => {
                 views={['year', 'month', 'day', 'hours', 'minutes']}
                 value={dayjs(due_date)}
                 onChange={handleDueDateChange}
+                slotProps={{
+                  actionBar: { actions: ['today', 'accept'] }
+                }}
                 error={formik.touched.due_date && Boolean(formik.errors.due_date)}
               />
             </LocalizationProvider>
@@ -243,7 +248,7 @@ const TaskForm = ({ mode, initialValues }) => {
               required
               sx={{ width: '100%' }}
               key="weight"
-              label="Weight"
+              label="Grade Weight"
               type="number"
               value={weight ?? ''}
               onChange={handleWeightChange}
@@ -257,7 +262,7 @@ const TaskForm = ({ mode, initialValues }) => {
               required
               sx={{ width: '100%' }}
               key="min_memeber"
-              label="Min Member"
+              label="Minimum Member"
               type="number"
               value={min_member ?? ''}
               onChange={handleMinMemberChange}
@@ -270,7 +275,7 @@ const TaskForm = ({ mode, initialValues }) => {
               required
               sx={{ width: '100%' }}
               key="max_memeber"
-              label="Max Member"
+              label="Maximum Member"
               type="number"
               value={max_member ?? ''}
               onChange={handleMaxMemberChange}
@@ -283,7 +288,7 @@ const TaskForm = ({ mode, initialValues }) => {
               required
               sx={{ width: '100%' }}
               key="max_token"
-              label="Max Token"
+              label="Maximum Token"
               type="number"
               value={max_token ?? ''}
               onChange={handleMaxTokenChange}
@@ -291,7 +296,7 @@ const TaskForm = ({ mode, initialValues }) => {
               helperText={formik.touched.max_token && formik.errors.max_token}
             />
           </Grid>
-          {interview_groups &&
+          {/*interview_groups &&
             <Grid item xs={12}>
               <TextField
                 select
@@ -312,7 +317,7 @@ const TaskForm = ({ mode, initialValues }) => {
                 ))}
               </TextField>
             </Grid>
-          }
+                */}
           {task_group_ids &&
             <Grid item xs={12}>
               <TextField
@@ -327,9 +332,9 @@ const TaskForm = ({ mode, initialValues }) => {
                 <MenuItem Key='None' value={undefined}>
                   <em>None</em>
                 </MenuItem>
-                {task_group_ids.map((id) => (
-                  <MenuItem key={id} value={id}>
-                    {id}
+                {task_group_ids.map((gp) => (
+                  <MenuItem key={gp.id} value={gp.id}>
+                    {`${gp.id} - ${gp.name}`}
                   </MenuItem>
                 ))}
               </TextField>
@@ -349,17 +354,6 @@ const TaskForm = ({ mode, initialValues }) => {
 
           <Grid container item flexDirection='row' justifyContent='space-between'>
             <Grid item>
-              <InputLabel>Task Hidden</InputLabel>
-              <Switch
-                key="hidden"
-                id="hidden"
-                label="Hidden"
-                checked={hidden}
-                onChange={handleHiddenChange}
-                error={formik.touched.hidden && Boolean(formik.errors.hidden)}
-              />
-            </Grid>
-            <Grid item>
               <InputLabel>Allow Group Change</InputLabel>
               <Switch
                 key="change_group"
@@ -368,6 +362,17 @@ const TaskForm = ({ mode, initialValues }) => {
                 checked={change_group}
                 onChange={handleChangeGroupChange}
                 error={formik.touched.change_group && Boolean(formik.errors.change_group)}
+              />
+            </Grid>
+            <Grid item>
+              <InputLabel>Hide Assignment</InputLabel>
+              <Switch
+                key="hidden"
+                id="hidden"
+                label="Hidden"
+                checked={hidden}
+                onChange={handleHiddenChange}
+                error={formik.touched.hidden && Boolean(formik.errors.hidden)}
               />
             </Grid>
             <Grid item>
@@ -382,7 +387,7 @@ const TaskForm = ({ mode, initialValues }) => {
               />
             </Grid>
             <Grid item>
-              <InputLabel>Hide File</InputLabel>
+              <InputLabel>Hide Feedback</InputLabel>
               <Switch
                 key="hide_file"
                 id="hide_file"

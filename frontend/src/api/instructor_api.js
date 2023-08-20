@@ -201,11 +201,6 @@ let all_task_groups = async (course_id, task) => {
 
     try {
         return await axios.get(
-            process.env.REACT_APP_API_URL +
-                '/instructor/course/' +
-                course_id +
-                '/group/all?task=' +
-                task,
             process.env.REACT_APP_API_URL + '/instructor/course/' + course_id + '/task_group/all',
             config
         );

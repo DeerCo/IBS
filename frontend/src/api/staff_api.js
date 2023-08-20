@@ -136,6 +136,39 @@ let getCriteriaForTask = async (courseId, task) => {
     }
 };
 
+let deleteCriterionForTask = async (courseId, criterionId) => {
+    try {
+        return await http.delete(`/instructor/course/${courseId}/criteria/delete`, {
+            data: {
+                criteria_id: criterionId
+            }
+        });
+    } catch (err) {
+        return err.response;
+    }
+};
+
+let addCriterionForTask = async (
+    courseId,
+    taskId,
+    criteriaName,
+    total,
+    description = undefined
+) => {
+    const body = {
+        task: taskId,
+        criteria: criteriaName,
+        total,
+        description
+    };
+
+    try {
+        return http.post(`/instructor/course/${courseId}/criteria/add`, body);
+    } catch (err) {
+        return err.response;
+    }
+};
+
 // Copies ALL groups from one task to another
 let copyGroups = async (courseId, fromTask, toTask) => {
     let token = sessionStorage.getItem('token');
@@ -308,9 +341,10 @@ let getAllTaskGroups = async (courseId) => {
  * POST Add task group (Instructors + Admins)
  * @param courseId string
  * @param maxTokens number
+ * @param name the name of the task group
  * @returns {Promise<axios.AxiosResponse<any>|*|null>}
  */
-let addTaskGroup = async (courseId, maxTokens) => {
+let addTaskGroup = async (courseId, maxTokens, name) => {
     const token = sessionStorage.getItem('token');
 
     const role = findRoleInCourse(courseId);
@@ -330,7 +364,7 @@ let addTaskGroup = async (courseId, maxTokens) => {
     }
 
     try {
-        return await axios.post(url, { max_token: maxTokens }, config);
+        return await axios.post(url, { max_token: maxTokens, name }, config);
     } catch (err) {
         return err.response;
     }
@@ -611,7 +645,6 @@ const changeInterview = async (
     } else return null;
 };
 
-
 const StaffApi = {
     get_students_in_course,
     getAllMarks,
@@ -623,6 +656,9 @@ const StaffApi = {
     deleteTaskGroup,
 
     getCriteriaForTask,
+    deleteCriterionForTask,
+    addCriterionForTask,
+
     all_tasks,
     copyGroups,
     getCourseContent,

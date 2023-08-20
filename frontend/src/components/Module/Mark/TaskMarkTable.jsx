@@ -19,19 +19,7 @@ import DashboardCard from '../../FlexyMainComponents/base-card/DashboardCard';
 import SaveIcon from '@mui/icons-material/Save';
 import InstructorApi from '../../../api/instructor_api';
 import GetMarkCSVButton from './GetMarkCSVButton';
-
-function extractCriteriaNames(data) {
-    const criteria = [];
-
-    for (const studentData of Object.values(data)) {
-        for (const key of Object.keys(studentData)) {
-            if (criteria.includes(key)) continue;
-            criteria.push({ criteriaName: key, outOf: studentData[key].out_of });
-        }
-    }
-
-    return criteria;
-}
+import UploadMarksButton from "./UploadMarks/UploadMarksButton";
 
 function extractMarkData(data) {
     return Object.keys(data).map((studentName) => {
@@ -40,7 +28,8 @@ function extractMarkData(data) {
 }
 
 const TaskMarkTable = ({ courseId, taskId }) => {
-    const [criteriaNames, setCriteriaNames] = useState([]);
+    const [criteria, setCriteria] = useState([]);
+    const [studentList, setStudentList] = useState([]);
     const [taskMarkData, setTaskMarkData] = useState([]);
 
     const markFetcher = (key) => StaffApi.getMarksForTask(courseId, taskId);
@@ -51,11 +40,46 @@ const TaskMarkTable = ({ courseId, taskId }) => {
     useEffect(() => {
         if (isLoading || error) return;
 
-        const criteriaNamesTemp = extractCriteriaNames(data);
-        setCriteriaNames(criteriaNamesTemp);
+        StaffApi.getCriteriaForTask(courseId, taskId).then((res) => {
+            const critObjList = res.data.criteria;
+            setCriteria(critObjList);
 
-        const markDataTemp = extractMarkData(data);
-        setTaskMarkData(markDataTemp);
+            StaffApi.get_students_in_course(courseId).then((response) => {
+                const tempStudentList = response.data.role
+                    .filter((role) => role.role === 'student')
+                    .map((role) => {
+                        return {
+                            username: role.username,
+                            email: role.email,
+                            id: `${role.username}/${role.email}`
+                        };
+                    });
+
+                setStudentList(tempStudentList);
+
+                const markDataTemp = extractMarkData(data);
+
+                const markDataTemp2 = tempStudentList.map((studObj) => {
+                    const result = { name: studObj.username }
+                    critObjList.forEach((critObj) => {
+                        result[critObj.criteria] = {
+                            mark: 0,
+                            out_of: critObj.total
+                        }
+                    });
+
+                    return result;
+                })
+
+                markDataTemp2.forEach(markDataObj => {
+                    if (!markDataTemp.find(el => el.name === markDataObj.name)) {
+                        markDataTemp.push(markDataObj);
+                    }
+                })
+
+                setTaskMarkData(markDataTemp);
+            });
+        })
     }, [isLoading, error, data]);
 
     if (isLoading) return <Typography variant="h1">Loading...</Typography>;
@@ -112,7 +136,7 @@ const TaskMarkTable = ({ courseId, taskId }) => {
         };
 
         return (
-            <>
+            <TableRow>
                 {Object.keys(row).map((col) => {
                     if (col === 'name')
                         return (
@@ -143,14 +167,23 @@ const TaskMarkTable = ({ courseId, taskId }) => {
                         Save
                     </Button>
                 </TableCell>
-            </>
+            </TableRow>
         );
     };
+
+    if (studentList.length === 0) {
+        return (
+            <DashboardCard title={`Marks for ${taskId}`}>
+                <h5>No students in this course</h5>
+            </DashboardCard>
+        );
+    }
 
     return (
         <DashboardCard title={`Marks for ${taskId}`}>
             <Stack spacing={2}>
                 <GetMarkCSVButton task={taskId} course_id={courseId} />
+                <UploadMarksButton courseId={courseId} taskId={taskId}/>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }}>
                         <TableHead>
@@ -158,21 +191,19 @@ const TaskMarkTable = ({ courseId, taskId }) => {
                                 <TableCell align="center">
                                     <Typography>Student</Typography>
                                 </TableCell>
-                                {criteriaNames.map((crit) => (
-                                    <TableCell align="center" key={`${crit.criteriaName}`}>
+                                {criteria.map((critObj) => (
+                                    <TableCell align="center" key={`${critObj.criteria}`}>
                                         <Typography>
-                                            {crit.criteriaName} (/{crit.outOf})
+                                            {critObj.criteria} (/{critObj.total})
                                         </Typography>
                                     </TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                {taskMarkData.map((entry) => (
-                                    <TaskMarkEntry key={`${entry.name}`} row={entry} />
-                                ))}
-                            </TableRow>
+                            {taskMarkData.map((entry) => (
+                                <TaskMarkEntry key={`${entry.name}`} row={entry} />
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
