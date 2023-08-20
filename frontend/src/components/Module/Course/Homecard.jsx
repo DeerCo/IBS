@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import HomeCardLink from './HomeCardLink';
-import { ADMIN, INSTRUCTOR } from '../../../Constants/roles';
+import { ADMIN, INSTRUCTOR, TA } from '../../../Constants/roles';
 
 const Homecard = ({ data }) => {
     const role = data.role === undefined || data.role === 'student' ? '' : data.role;
@@ -48,7 +48,7 @@ const Homecard = ({ data }) => {
                     {data.role !== ADMIN && (
                         <HomeCardLink to={allGradesPageLink} name="View Grades" />
                     )}
-                    {data.role !== ADMIN && (
+                    {data.role !== ADMIN && data.role !== TA && (
                         <HomeCardLink to={taskGroupsPageLink} name="Task Groups" />
                     )}
                     {data.role === INSTRUCTOR && (
