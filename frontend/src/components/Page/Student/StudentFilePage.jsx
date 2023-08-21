@@ -18,15 +18,13 @@ let StudentFilePage = () => {
       (response) => {
         if (!response || !("status" in response)) {
           toast.error("Unknown error", { theme: "colored" });
-          navigate("/login");
         } else if (response["status"] === 200) {
           setFiles(response["data"]["files"]);
         } else if (response["status"] === 401 || response["status"] === 403) {
           toast.warn("You need to login again", { theme: "colored" });
           navigate("/login");
-        } else {
+        } else if (response["status"] !== 400) {
           toast.error("Unknown error", { theme: "colored" });
-          navigate("/login");
         }
       })
   }, [course_id, task, navigate]);
@@ -62,7 +60,7 @@ let StudentFilePage = () => {
       <NavBar page="Feedback" />
 
       <DashboardCard
-        title={task}
+        title={`${task} Feedback File`}
         children=
         {<div>
           {files.length === 0 ? <Typography> No feedback file is available. </Typography> :

@@ -19,6 +19,7 @@ let StudentDetailsPage = () => {
 
     // Task data
     let [min_member, setMinMember] = useState(0);
+    let [task_name, setTaskName] = useState('');
     let [max_member, setMaxMember] = useState(0);
     let [changeGroup, setChangeGroup] = useState(true);
 
@@ -50,6 +51,7 @@ let StudentDetailsPage = () => {
                 return;
             } else if (task_response['status'] === 200) {
                 let task_data = task_response['data']['task'];
+                setTaskName(task_data['long_name']);
                 setMinMember(task_data['min_member']);
                 setMaxMember(task_data['max_member']);
                 setChangeGroup(task_data['change_group']);
@@ -233,7 +235,7 @@ let StudentDetailsPage = () => {
 
     const TaskDetails = () => {
         return (
-            <DashboardCard title={`${task} Details`}>
+            <DashboardCard title={`${task_name} Details`}>
                 {status === 'joined' && (
                     <div>
                         <Typography variant="h4"> Due Date </Typography>

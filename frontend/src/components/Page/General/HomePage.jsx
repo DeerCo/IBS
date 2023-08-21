@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import NavBar from '../../Module/Navigation/NavBar';
 import Homecard from '../../Module/Course/Homecard';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 let Home = () => {
@@ -35,16 +35,15 @@ let Home = () => {
         <PageContainer title="Home" description="Home page">
             <Grid container direction="column" height="100%" wrap="nowrap">
                 <NavBar item page="Home" role={currRole} />
-                <Grid
-                    item
-                    container
-                    spacing={2}
-                    direction="row"
-                    justifyContent="center"
-                    alignContent="center"
-                    justify="center"
-                    flex="1 1 auto"
-                >
+                <Typography variant="h1" sx={{ textAlign: 'center', marginTop: '32px' }}>
+                    Dashboard
+                </Typography>
+                <Grid item container padding={'32px'}>
+                    {roles.length === 0 && (
+                        <Typography variant='h2' sx={{margin: '32px'}} > 
+                            You're not enrolled in any active courses. 
+                        </Typography>
+                    )}
                     {roles.map((data, index) => (
                         <Grid item key={index}>
                             <Homecard data={data} />

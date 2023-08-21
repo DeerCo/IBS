@@ -156,7 +156,7 @@ const SubmitMarksForm = ({ courseId }) => {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <InputLabel>Task</InputLabel>
+                            <InputLabel>Assignment</InputLabel>
                             <Select
                                 sx={{ width: '100%' }}
                                 key="task"

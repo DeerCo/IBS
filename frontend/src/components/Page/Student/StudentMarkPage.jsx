@@ -42,7 +42,7 @@ let StudentMarkPage = () => {
       <NavBar page="Mark" />
 
       <DashboardCard
-        title={task}
+        title={`${task} Mark`}
         children=
         {<MarkSummary marks={marks} />}
       />

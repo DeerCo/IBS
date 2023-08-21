@@ -17,6 +17,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PropTypes from 'prop-types';
 import PreviousPageFAB from '../../General/PreviousPageButton/PreviousPageFAB';
 import { useLocation } from 'react-router';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 let NavBar = (props) => {
     const currRole = sessionStorage.getItem('role');
@@ -195,6 +196,7 @@ let NavBar = (props) => {
                                 aria-haspopup="true"
                                 aria-expanded={open ? 'true' : undefined}
                                 onClick={handleClick}
+                                endIcon={<ArrowDropDownIcon/>}
                             >
                                 {username}
                             </Button>

@@ -167,7 +167,7 @@ const AdminPage = () => {
                 <Grid xs={12} sx={{ mt: 3 }}>
                     <Grid container justifyContent="center" direction="column" alignItems="center">
                         <Grid xs={12}>
-                            <FlexyTabs tabs={tabs} width={1600} height="auto" />
+                            <FlexyTabs tabs={tabs} width='95vw' height="auto" />
                         </Grid>
                     </Grid>
                 </Grid>

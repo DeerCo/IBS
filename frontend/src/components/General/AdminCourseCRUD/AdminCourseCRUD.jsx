@@ -597,7 +597,7 @@ const AdminCourseCRUD = (props) => {
     ];
     return (
         <>
-            <FlexyTabs tabs={tabs} width={1500} height={800} />
+            <FlexyTabs tabs={tabs} width='95vw' height={800} />
         </>
     );
 };
