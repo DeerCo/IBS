@@ -70,7 +70,7 @@ const Taskcard = ({ data, course_id, role }) => {
   const submitMarksPageLink = `/instructor/course/${course_id}/submit-marks`;
   const editTaskPageLink = `/instructor/course/${course_id}/task/${data.task}/modify`;
   const editCriteriaPageLink = `/instructor/course/${course_id}/task/${data.task}/modify-criteria`;
-  //'view-Grades
+
   const taskMarkPageLink = (role ? '/' + role : '') + `/course/${course_id}/task/${data.task}/mark`;
   const detailsPageLink = (role ? '/' + role : '') + `/course/${course_id}/task/${data.task}/details`;
   const interviewPageLink = (role ? '/' + role : '') + `/course/${course_id}/task/${data.task}/interview`;
@@ -82,16 +82,14 @@ const Taskcard = ({ data, course_id, role }) => {
     setAnchorEl(null);
   };
 
-  const { data: mark, isLoading, error } = useSWR('/mark/is_hidden' + data.task, () => {
-    if (role === INSTRUCTOR) {
-      InstructorApi.markIsHidden(course_id, data.task).then((res) => res.data)
-    }
-  }
+  const { data: mark, isLoading, error } = useSWR(role === INSTRUCTOR ? ('/mark/is_hidden' + data.task) : null, () =>
+    InstructorApi.markIsHidden(course_id, data.task).then((res) => res.data)
   );
 
   useEffect(() => {
     if (isLoading) return;
     if (error) navigate("/login");
+    console.log(mark)
     if (mark) {
       setMarkIsSubmited(true);
       setMarkIsHidden(mark.hidden);
@@ -246,15 +244,6 @@ const Taskcard = ({ data, course_id, role }) => {
           </div>
           }
           <div className={classes.buttonGroup}>
-            {role === INSTRUCTOR && markIsSubmited &&
-              <Button
-                className={classes.button}
-                variant="outlined"
-                size='small'
-                onClick={() => setReleaseOpen(true)}>
-                {markIsHidden ? 'Release Marks' : 'Hide Marks'}
-              </Button>
-            }
             {role === INSTRUCTOR && !markIsSubmited &&
               <Button
                 className={classes.button}
@@ -264,6 +253,15 @@ const Taskcard = ({ data, course_id, role }) => {
                 size="small"
               >
                 Submit Grades
+              </Button>
+            }
+            {role === INSTRUCTOR && markIsSubmited &&
+              <Button
+                className={classes.button}
+                variant="outlined"
+                size='small'
+                onClick={() => setReleaseOpen(true)}>
+                {markIsHidden ? 'Release Marks' : 'Hide Marks'}
               </Button>
             }
             <MarkPublicationDialog
