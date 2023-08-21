@@ -60,7 +60,7 @@ let StudentFilePage = () => {
       <NavBar page="Feedback" />
 
       <DashboardCard
-        title={task}
+        title={`${task} Feedback File`}
         children=
         {<div>
           {files.length === 0 ? <Typography> No feedback file is available. </Typography> :

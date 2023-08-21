@@ -48,8 +48,7 @@ let InstructorDetailsPage = () => {
         <Grid item width='100%'>
           <DashboardCard
             customdisplay='grid'
-            title={`${task}   Details`}
-            subtitle={task_data['long_name']}
+            title={`${task_data['long_name']} Details`}
             action={
               <Button
                 href={"/instructor/course/" + course_id + "/task/" + task_data.task + "/modify"}
