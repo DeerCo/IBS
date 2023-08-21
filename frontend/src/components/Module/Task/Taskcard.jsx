@@ -65,13 +65,13 @@ const Taskcard = ({ data, course_id, role }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const taskMarkPageLink = `/student/course/${course_id}/task/${data.task}/mark`;
   const taskFeedbackPageLink = `/student/course/${course_id}/task/${data.task}/file`;
 
   const submitMarksPageLink = `/instructor/course/${course_id}/submit-marks`;
   const editTaskPageLink = `/instructor/course/${course_id}/task/${data.task}/modify`;
-  //'/modify-criteria'
+  const editCriteriaPageLink = `/instructor/course/${course_id}/task/${data.task}/modify-criteria`;
   //'view-Grades
+  const taskMarkPageLink = (role ? '/' + role : '') + `/course/${course_id}/task/${data.task}/mark`;
   const detailsPageLink = (role ? '/' + role : '') + `/course/${course_id}/task/${data.task}/details`;
   const interviewPageLink = (role ? '/' + role : '') + `/course/${course_id}/task/${data.task}/interview`;
 
@@ -230,8 +230,22 @@ const Taskcard = ({ data, course_id, role }) => {
               ))}
             </Menu>
           </div>
+          {role !== STUDENT && <div className={classes.buttonGroup}>
+            {role === INSTRUCTOR &&
+              <Button
+                className={classes.button}
+                component={Link}
+                to={editCriteriaPageLink}
+                variant="outlined"
+                size="small"
+              >
+                Modify Criteria
+              </Button>
+            }
+            <SubmissionsMenu course_id={course_id} task={data.task} />
+          </div>
+          }
           <div className={classes.buttonGroup}>
-
             {role === INSTRUCTOR && markIsSubmited &&
               <Button
                 className={classes.button}
@@ -259,7 +273,7 @@ const Taskcard = ({ data, course_id, role }) => {
               setOpen={setReleaseOpen}
               release={markIsHidden}
             />
-            {role === STUDENT &&
+            {[STUDENT, INSTRUCTOR].includes(role) &&
               <Button
                 className={classes.button}
                 component={Link}
@@ -267,7 +281,7 @@ const Taskcard = ({ data, course_id, role }) => {
                 variant="outlined"
                 size="small"
               >
-                Grade
+                {role === INSTRUCTOR ? "View Grades" : "Mark"}
               </Button>}
             {role === STUDENT && (
               <Button
@@ -279,9 +293,7 @@ const Taskcard = ({ data, course_id, role }) => {
                 Feedback
               </Button>
             )}
-            {role !== STUDENT && (
-              <SubmissionsMenu course_id={course_id} task={data.task} />
-            )}
+
           </div>
         </div>
       }

@@ -35,16 +35,10 @@ let Home = () => {
         <PageContainer title="Home" description="Home page">
             <Grid container direction="column" height="100%" wrap="nowrap">
                 <NavBar item page="Home" role={currRole} />
-                <Grid
-                    item
-                    container
-                    spacing={2}
-                    direction="row"
-                    justifyContent="center"
-                    alignContent="center"
-                    justify="center"
-                    flex="1 1 auto"
-                >
+                <Typography variant="h1" sx={{ textAlign: 'center', marginTop: '32px' }}>
+                    Dashboard
+                </Typography>
+                <Grid item container padding={'32px'}>
                     {roles.length === 0 && (
                         <Typography variant='h2' sx={{margin: '32px'}} > 
                             You're not enrolled in any active courses. 

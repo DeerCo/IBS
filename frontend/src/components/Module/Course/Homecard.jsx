@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import HomeCardLink from './HomeCardLink';
 import { ADMIN, INSTRUCTOR, TA } from '../../../Constants/roles';
@@ -42,22 +42,22 @@ const Homecard = ({ data }) => {
                 </CardContent>
             </CardActionArea>
             {staffRoles.includes(data.role) && (
-                <>
-                    {data.role !== ADMIN && <HomeCardLink to={coursePageLink} name="Assignments" />}
-                    <HomeCardLink to={courseStudentListPageLink} name="Enrolled Students" />
-                    {data.role !== ADMIN && (
-                        <HomeCardLink to={allGradesPageLink} name="View Grades" />
-                    )}
-                    {data.role !== ADMIN && data.role !== TA && (
-                        <HomeCardLink to={taskGroupsPageLink} name="Task Groups" />
-                    )}
-                    {data.role === INSTRUCTOR && (
+                <Box sx={{display: 'flex',  flexWrap: 'wrap', justifyContent: 'space-between'}}>
+                    <HomeCardLink to={courseStudentListPageLink} name="Student List" />
+                    {data.role !== ADMIN && 
                         <>
-                            <HomeCardLink to={submitMarksPageLink} name="Submit Marks" />{' '}
-                            <HomeCardLink to={addTaskPageLink} name="Add Task" />{' '}
+                            <HomeCardLink to={coursePageLink} name="Assignments" />
                         </>
-                    )}
-                </>
+                     }
+                    {data.role === INSTRUCTOR && 
+                        <>
+                            <HomeCardLink to={addTaskPageLink} name="Add Assignment" />
+                            <HomeCardLink to={allGradesPageLink} name="View Grades" />
+                            <HomeCardLink to={submitMarksPageLink} name="Submit Grades" />
+                            <HomeCardLink to={taskGroupsPageLink} name="Task Groups" />
+                        </>
+                    }
+                </Box>
             )}
         </Card>
     );
