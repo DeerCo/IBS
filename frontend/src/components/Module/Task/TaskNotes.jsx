@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography, Box } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 
 let TaskNotes = () => {
 
@@ -26,7 +26,7 @@ let TaskNotes = () => {
       <Typography variant='h6'> Each Task group has a limit on the overal tokens allowed to use for the assignments in it. </Typography>
       <br />
       <Typography variant='h5'> Starter Code URL: </Typography>
-      <Typography variant='h6'> The URL should start with https:// and end with .git. E.g. https://ibs.git </Typography>
+      <Typography variant='h6'> The URL should start with <b>https://</b> and end with <b>.git</b>. E.g. https://ibs.git </Typography>
       <br />
     </Grid>
   );
