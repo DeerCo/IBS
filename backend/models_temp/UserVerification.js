@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
-    // Define associations (UserVerification belongs to User)
 
     return UserVerification;
 };

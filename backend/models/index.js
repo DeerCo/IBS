@@ -17,34 +17,25 @@ if (config.use_env_variable) {
 }
 
 fs
-    .readdirSync(__dirname)
-    .filter(file => {
-      return (
-          file.indexOf('.') !== 0 &&
-          file !== basename &&
-          file.slice(-3) === '.js' &&
-          file.indexOf('.test.js') === -1
-      );
-    })
-    .forEach(file => {
-      const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-      db[model.name] = model;
-    });
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.js' &&
+      file.indexOf('.test.js') === -1
+    );
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
-
-// define associations
-User.hasOne(UserVerification, { foreignKey: 'username' });
-UserVerification.belongsTo(User, { foreignKey: 'username' });
-User.hasMany(CourseRole, { foreignKey: 'username' });
-CourseRole.belongsTo(User, { foreignKey: 'username' });
-Course.hasMany(CourseRole, { foreignKey: 'course_id' });
-CourseRole.belongsTo(Course, { foreignKey: 'course_id' });
-
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

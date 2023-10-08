@@ -1,4 +1,4 @@
-t
+
 
 module.exports = (sequelize, DataTypes) => {
     const CourseRole = sequelize.define('CourseRole', {
@@ -7,8 +7,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
     });
-
-    // Define associations (CourseRole belongs to User, CourseRole belongs to Course)
 
     return CourseRole;
 };
