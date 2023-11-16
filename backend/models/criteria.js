@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Criteria.belongsTo(Task, { foreignKey: 'task', as: 'task' });
     }
   }
   criteria.init({

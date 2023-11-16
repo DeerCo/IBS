@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'UserVerification',
+    tableName: 'UserVerification',
   });
   return UserVerification;
 };

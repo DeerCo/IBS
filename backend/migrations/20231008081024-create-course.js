@@ -3,11 +3,11 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Courses', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        type: Sequelize.INTEGER,
-      },
+      // id: {
+      //   allowNull: false,
+      //   autoIncrement: true,
+      //   type: Sequelize.INTEGER,
+      // },
       course_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -52,7 +52,7 @@ module.exports = {
       }
     });
     // Add the foreign key constraint
-    await queryInterface.addConstraint('course', {
+    await queryInterface.addConstraint('Courses', {
       fields: ['course_id'],
       type: 'foreign key',
       name: 'custom_fkey_course_id',
@@ -67,6 +67,6 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.dropAllTables();
     // Remove the foreign key constraint
-    await queryInterface.removeConstraint('Course', 'custom_fkey_course_id');
+    await queryInterface.removeConstraint('Courses', 'custom_fkey_course_id');
   }
 };

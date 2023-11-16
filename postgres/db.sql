@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE user_info
+CREATE TABLE Users
 (
     username character varying NOT NULL,
     password character varying NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE user_verification
     created_at timestamp NOT NULL DEFAULT NOW(),
     PRIMARY KEY (username),
     CONSTRAINT username FOREIGN KEY (username)
-        REFERENCES user_info (username) MATCH SIMPLE
+        REFERENCES Users (username) MATCH SIMPLE
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
         NOT VALID
@@ -42,7 +42,7 @@ CREATE TABLE course_role
     role character varying NOT NULL,
     PRIMARY KEY (username, course_id),
     CONSTRAINT username FOREIGN KEY (username)
-        REFERENCES user_info (username) MATCH SIMPLE
+        REFERENCES Users (username) MATCH SIMPLE
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
         NOT VALID,

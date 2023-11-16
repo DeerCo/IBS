@@ -10,8 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      mark.belongsTo(Criteria, { foreignKey: 'criteria_id', as: 'criteria' });
-      mark.belongsTo(User, { foreignKey: 'username', as: 'user' });
+      Mark.belongsTo(Criteria, { foreignKey: 'criteria_id', as: 'criteria' });
+      Mark.belongsTo(User, { foreignKey: 'username', as: 'user' });
+      Mark.belongsTo(Task, { foreignKey: 'task', as: 'task' });
     }
   }
   mark.init({

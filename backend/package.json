@@ -4,10 +4,15 @@
   "description": "A backend server for forming groups, handling marks, managing interviews and distributing files.",
   "main": "app.js",
   "scripts": {
-    "start": "node app",
+    "start": "PORT=3000 node app",
     "dev": "nodemon app.js --legacy-watch",
     "deploy": "pm2 start --env production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test && npm run migrate && npm run execute",
+    "execute": "NODE_ENV=test DATABASE_URL=postgres://ibs:password@localhost:5432/testibs PORT=3001 mocha ",
+    "migrate": "NODE_ENV=test npx sequelize-cli db:migrate",
+    "migrateundo": "NODE_ENV=test npx sequelize-cli db:migrate:undo",
+    "seed": "NODE_ENV=test npx sequelize-cli db:seed --seed",
+    "newtest": "node runTest.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +24,8 @@
     "@octokit/core": "^4.1.0",
     "adm-zip": "^0.5.9",
     "axios": "^1.1.3",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "bent": "^7.3.12",
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
@@ -34,10 +41,12 @@
     "nodemailer": "^6.7.2",
     "pg": "^8.11.3",
     "pg-format": "^1.0.4",
-    "pg-hstore": "^2.3.4"
+    "pg-hstore": "^2.3.4",
+    "supertest": "^6.3.3"
   },
   "devDependencies": {
     "chai": "^4.3.10",
+    "chai-http": "^4.4.0",
     "mocha": "^10.2.0",
     "nodemon": "^3.0.1",
     "sequelize": "^6.33.0",

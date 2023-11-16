@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('CourseRoles', {
+    await queryInterface.createTable('course_role', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -31,7 +31,19 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
+    });
+    // For the 'course_id' foreign key
+    await queryInterface.addConstraint('course_role', {
+      fields: ['course_id'],
+      type: 'foreign key',
+      name: 'fkey_course_id',
+      references: {
+        table: 'Courses',
+        field: 'course_id',
+      },
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
     });
   },
   async down(queryInterface, Sequelize) {
