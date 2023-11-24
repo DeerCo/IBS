@@ -14,7 +14,7 @@ describe('Login Endpoint', () => {
     it('should successfully log in a user', (done) => {
         chai.request("http://localhost:3001")
             .post('/auth/login')
-            .send({ username: 'demoUser', password: 'password' }) // Adjust according to your seeder data
+            .send({ "username": 'demoUser', "password": 'password' }) // Adjust according to your seeder data
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body).to.have.property('token');

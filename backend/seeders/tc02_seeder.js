@@ -6,7 +6,7 @@ module.exports = {
     async up (queryInterface, Sequelize) {
         return queryInterface.bulkInsert('user_info', [
             {
-                username: 'demoUser',
+                username: 'demouser',
                 password: bcrypt.hashSync('password', 8), // Replace 'password' with the user's password
                 email: 'demo@example.com',
                 admin: false, // or true, based on your requirements
