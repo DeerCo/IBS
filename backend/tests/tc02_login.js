@@ -7,8 +7,6 @@ const expect = chai.expect;
 
 describe('Login Endpoint', () => {
     beforeEach(async () => {
-        // Run your seeder here if needed, or sync the database
-        // await sequelize.sync({ force: true });
     });
 
     it('should successfully log in a user', (done) => {
@@ -45,11 +43,5 @@ describe('Login Endpoint', () => {
     });
 
     after(async () => {
-        // Clean up the database here if necessary
-        // try {
-        //     await sequelize.drop(); // Drop all tables in the test database
-        // } catch (error) {
-        //     console.error('Error:', error);
-        // }
     });
 });

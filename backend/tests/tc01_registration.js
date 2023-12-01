@@ -8,8 +8,6 @@ const expect = chai.expect;
 
 describe('Registration Endpoint', () => {
     beforeEach(async () => {
-        // await truncate();
-        // await sequelize.sync({ force: true }); // This recreates the tables in the test database
     });
 
     it('should successfully register a new admin user', (done) => {
@@ -54,10 +52,5 @@ describe('Registration Endpoint', () => {
     });
 
     after(async () => {
-        // try {
-        //     await sequelize.drop(); // Drop all tables in the test database
-        // } catch (error) {
-        //     console.error('Error:', error);
-        // }
     });
 });
