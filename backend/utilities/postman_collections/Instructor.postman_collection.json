@@ -1,44 +1,11 @@
 {
 	"info": {
-		"_postman_id": "fbfb425c-adf5-468e-8198-82e69fa9bfbc",
+		"_postman_id": "e1285266-aef0-4fdf-8468-f43845d8bde4",
 		"name": "Instructor",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19282045"
+		"_exporter_id": "21802714"
 	},
 	"item": [
-		{
-			"name": "Role",
-			"item": [
-				{
-					"name": "Get role",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/instructor/course/{{course_id}}/role/get",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"instructor",
-								"course",
-								"{{course_id}}",
-								"role",
-								"get"
-							],
-							"query": [
-								{
-									"key": "username",
-									"value": null,
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
 		{
 			"name": "Token",
 			"item": [
@@ -146,7 +113,12 @@
 							"formdata": [
 								{
 									"key": "max_token",
-									"value": "",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "example",
 									"type": "text"
 								}
 							]
@@ -301,22 +273,12 @@
 									"type": "text"
 								},
 								{
-									"key": "long_name",
-									"value": "",
-									"type": "text"
-								},
-								{
 									"key": "due_date",
 									"value": "",
 									"type": "text"
 								},
 								{
 									"key": "hidden",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "weight",
 									"value": "",
 									"type": "text"
 								},
@@ -342,11 +304,6 @@
 								},
 								{
 									"key": "hide_interview",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "hide_file",
 									"value": "",
 									"type": "text"
 								},
@@ -400,11 +357,6 @@
 									"type": "text"
 								},
 								{
-									"key": "long_name",
-									"value": "",
-									"type": "text"
-								},
-								{
 									"key": "due_date",
 									"value": "",
 									"type": "text"
@@ -436,11 +388,6 @@
 								},
 								{
 									"key": "hide_interview",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "hide_file",
 									"value": "",
 									"type": "text"
 								},
@@ -1120,11 +1067,6 @@
 									"type": "text"
 								},
 								{
-									"key": "group_id",
-									"value": "",
-									"disabled": true
-								},
-								{
 									"key": "mark",
 									"value": "",
 									"type": "text"
@@ -1459,12 +1401,6 @@
 									"disabled": true
 								},
 								{
-									"key": "host",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
 									"key": "group_id",
 									"value": "",
 									"type": "text",
@@ -1771,6 +1707,39 @@
 			]
 		},
 		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "Get role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/instructor/course/{{course_id}}/role/get",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"instructor",
+								"course",
+								"{{course_id}}",
+								"role",
+								"get"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Login",
 			"event": [
 				{
@@ -2021,17 +1990,17 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "",
+			"value": "http://localhost/api",
 			"type": "string"
 		},
 		{
 			"key": "token",
-			"value": "",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtpYW5vb3NoIiwiZW1haWwiOiJraWFub29zaEB1dG9yb250by5jYSIsImFkbWluIjpmYWxzZSwicm9sZXMiOnsiMSI6Imluc3RydWN0b3IifSwiaWF0IjoxNjgzOTE4NzcyLCJleHAiOjE2ODM5MjA1NzJ9.rSF3W8Nj_fbEF7C6TOJCeP6Tmid8BmZOuDNBbA5eUzY",
 			"type": "string"
 		},
 		{
 			"key": "course_id",
-			"value": "",
+			"value": "1",
 			"type": "string"
 		}
 	]

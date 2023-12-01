@@ -12,10 +12,12 @@ const get_role = require("../module/role/admin/get");
 const add_role = require("../module/role/admin/add");
 const upload_role = require("../module/role/admin/upload");
 const delete_role = require("../module/role/admin/delete");
+const get_all_marks = require("../module/mark/staff/all");
+const impersonate = require("../module/impersonate/admin/impersonate");
 
 router.use("/", function (req, res, next) {
-    next();
-})
+  next();
+});
 
 // Middleware
 router.use("/", middleware);
@@ -35,5 +37,11 @@ router.use("/role/get", get_role);
 router.use("/role/add", add_role);
 router.use("/role/upload", upload_role);
 router.use("/role/delete", delete_role);
+
+// Mark
+router.use("/course/:course_id/mark/all", get_all_marks);
+
+// impersonate
+router.use("/impersonate", impersonate);
 
 module.exports = router;

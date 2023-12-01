@@ -45,9 +45,9 @@ const manual_collect_submission = require("../module/submission/staff/collect_ma
 const download_submissions = require("../module/submission/staff/download");
 const check_submission = require("../module/submission/staff/check");
 
-router.use("/", function(req, res, next) {
-    next();
-})
+router.use("/", function (req, res, next) {
+  next();
+});
 
 // Middleware
 router.use("/course/", middleware);

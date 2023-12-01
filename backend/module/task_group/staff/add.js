@@ -9,8 +9,16 @@ router.post("/", (req, res) => {
         return;
     }
 
-    let sql_add = "INSERT INTO course_" + res.locals["course_id"] + ".task_group (max_token) VALUES (($1))";
-    let sql_add_data = [req.body["max_token"]];
+    if (!("name" in req.body) || helpers.name_validate(req.body["name"])) {
+        res.status(400).json({ message: "The task group name is missing or has invalid format." });
+        return;
+    }
+
+    let sql_add =
+        "INSERT INTO course_" +
+        res.locals["course_id"] +
+        ".task_group (max_token, name) VALUES (($1), ($2))";
+    let sql_add_data = [req.body["max_token"], req.body["name"]];
 
     client.query(sql_add, sql_add_data, (err, pgRes) => {
         if (err) {
@@ -20,6 +28,6 @@ router.post("/", (req, res) => {
             res.status(200).json({ message: "The task group is added." });
         }
     });
-})
+});
 
 module.exports = router;

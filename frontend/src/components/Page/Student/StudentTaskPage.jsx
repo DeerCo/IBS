@@ -1,186 +1,66 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import StudentApi from "../../../api/student_api";
-import NavBar from "../../Module/Navigation/NavBar";
-import { makeStyles } from "@mui/styles";
-import { Typography, Button } from '@mui/material';
-import Countdown from 'react-countdown';
-
-const useStyles = makeStyles({
-	container: {
-		display: 'flex',
-		flexWrap: 'wrap',
-		alignItems: 'flex-start',
-		justifyContent: 'flex-start',
-		margin: '16px',
-		padding: '16px',
-	},
-	card: {
-		display: 'flex',
-		boxShadow: '0px 2px 10px 1px #e6e9ed',
-		flexDirection: 'column',
-		margin: '32px',
-		borderRadius: '15px 15px 15px 15px',
-		padding: '12px 8px 12px 8px'
-	},
-	cardHeader: {
-		borderBottom: 'solid ghostwhite',
-		paddingBottom: '8px',
-	},
-	cardSubtitle: {
-		margin: '12px',
-		color: 'green',
-	},
-	buttonGroup: {
-		display: 'flex',
-		flexDirection: 'column',
-	},
-	button: {
-		color: '#202126',
-		borderRadius: '8px 8px 8px 8px',
-		padding: '4px 8px 4px 8px',
-		border: 'solid 1px #adcadd99',
-		boxShadow: 'inset 5px 5px 10px 0px #adcadd17',
-		fontSize: 'small',
-		width: '100px'
-	},
-	meeting: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		padding: '8px 0 0 8px',
-		marginTop: '8px',
-		borderTop: 'solid ghostwhite',
-	}
-});
+import StudentApi from '../../../api/student_api';
+import NavBar from '../../Module/Navigation/NavBar';
+import Taskcard from '../../Module/Task/Taskcard';
+import { Grid, Typography } from '@mui/material';
+import PageContainer from '../../FlexyMainComponents/container/PageContainer';
 
 
 let StudentTaskPage = () => {
-	const classes = useStyles();
-	let navigate = useNavigate();
-	let { course_id } = useParams();
-	let [tasks, setTasks] = useState([]);
+  let navigate = useNavigate();
+  let { course_id } = useParams();
+  let [tasks, setTasks] = useState([]);
 
-	useEffect(() => {
-		StudentApi.all_tasks(course_id).then(
-			(response) => {
-				if (!response || !("status" in response)) {
-					toast.error("Unknown error", { theme: "colored" });
-					navigate("/login");
-				} else if (response["status"] === 200) {
-					setTasks(response["data"]["task"]);
-				} else if (response["status"] === 401 || response["status"] === 403) {
-					toast.warn("You need to login again", { theme: "colored" });
-					navigate("/login");
-				} else {
-					toast.error("Unknown error", { theme: "colored" });
-					navigate("/login");
-				}
-			})
-	}, [course_id, navigate]);
+  useEffect(() => {
+    StudentApi.all_tasks(course_id).then((response) => {
+      if (!response || !('status' in response)) {
+        toast.error('Unknown error', { theme: 'colored' });
+        navigate('/login');
+      } else if (response['status'] === 200) {
+        setTasks(response['data']['task']);
+      } else if (response['status'] === 401 || response['status'] === 403) {
+        toast.warn('You need to login again', { theme: 'colored' });
+        navigate('/login');
+      } else {
+        toast.error('Unknown error', { theme: 'colored' });
+        navigate('/login');
+      }
+    });
+  }, [course_id, navigate]);
 
-	let mainTasks = tasks.filter(task => task.interview_group === null).map(
-		task => ({ ...task, subtasks: tasks.filter(subtask => subtask.interview_group === task.task) })
-	);
+  let mainTasks = tasks
+    .filter((task) => task.interview_group === null)
+    .map((task) => ({
+      ...task,
+      subtasks: tasks.filter((subtask) => subtask.interview_group === task.task)
+    }));
 
-	return (
-		<div>
-			<NavBar page="Task" />
-			<div className={classes.container}>
-				{mainTasks.map(data => (
-					<div className={classes.card} key={data.task}>
-						<div>
-							<div className={classes.cardHeader}>
-								<Typography variant="h5">
-									{data.long_name}
-								</Typography>
-							</div>
-							{data.interview_group === null &&
-								<div className={classes.cardSubtitle}>
-									<Countdown date={data.due_date_utc} renderer={({ days, hours, minutes, seconds, completed }) => {
-										if (completed) {
-											return <Typography color='#a71111fc '>
-												Due Date Has Passed
-											</Typography>;
-										}
-										else {
-											let text = `${days} Day`;
-											if (days > 1){
-												text += "s";
-											}
-											text += `, ${hours} Hour`;
-											if (hours > 1){
-												text += "s";
-											}
-											text += `, ${minutes} Minute`;
-											if (minutes > 1){
-												text += "s";
-											}
-											text += ` and ${seconds} Second`;
-											if (seconds > 1){
-												text += "s";
-											}
-											text += " Left";
-											return text;
-										}
-									}} />
-								</div>
-							}
-							<div className={classes.buttonGroup}>
-								<div>
-									{data.interview_group === null &&
-										<Button href={"/course/" + course_id + "/task/" + data.task + "/details"}>
-											<div className={classes.button}>
-												Details
-											</div>
-										</Button>
-									}
-									{data.interview_group === null &&
-										<Button href={"/course/" + course_id + "/task/" + data.task + "/mark"}>
-											<div className={classes.button}>
-												Mark
-											</div>
-										</Button>
-									}
-									{(data.hide_file === true || data.hide_file === false) &&
-										<Button href={"/course/" + course_id + "/task/" + data.task + "/file"}>
-											<div className={classes.button}>
-												Feedback
-											</div>
-										</Button>
-									}
-								</div>
-								<div>
-									{data.subtasks.map(subtask => (
-										<div className={classes.meeting}>
-											<Typography variant="subtitle1"> {subtask.long_name} </Typography>
-											<Button href={"/course/" + course_id + "/task/" + subtask.task + "/interview"}>
-												<div className={classes.button}>
-													Book
-												</div>
-											</Button>
-										</div>
-									))}
-									{data.hide_interview === false &&
-										<div className={classes.meeting}>
-											<Typography variant="subtitle1"> {data.long_name} Interview </Typography>
-											<Button href={"/course/" + course_id + "/task/" + data.task + "/interview"}>
-												<div className={classes.button}>
-													Book
-												</div>
-											</Button>
-										</div>
-									}
-								</div>
-							</div>
-						</div>
-					</div>
-				))}
-			</div>
-		</div>
-	);
+  return (
+    <PageContainer
+      title={`${course_id} Tasks`}
+      description={`Contains the tasks for the course '${course_id}'`}
+      height="100%"
+    >
+      <Grid container direction="column" wrap="nowrap">
+        <NavBar item page="Task" role='student' />
+        <Typography variant="h1"
+          sx={{ textAlign: 'center', marginTop: '32px' }} >
+          Assignments
+        </Typography>
+        <Grid item container textAlign="center" padding={'32px'}
+          alignItems='center'>
+          {mainTasks.length === 0 && <h5>There are currently no assessments in this course</h5>}
+          {mainTasks.map((data, index) => (
+            <Grid item xs="12" sm="6" md="4" lg="3">
+              <Taskcard key={index} data={data} course_id={course_id} role="student" />
+            </Grid>
+          ))}
+        </Grid>
+      </Grid>
+    </PageContainer>
+  );
 };
-
 
 export default StudentTaskPage;

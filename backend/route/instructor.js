@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const middleware = require("../module/auth/instructor/middleware");
+const get_course = require("../module/course/instructor/get");
 const get_role = require("../module/role/staff/get");
 const get_token = require("../module/token/staff/get");
 const change_token = require("../module/token/staff/change");
@@ -9,6 +10,7 @@ const all_tasks = require("../module/task/staff/all");
 const get_task = require("../module/task/staff/get");
 const add_task = require("../module/task/staff/add");
 const change_task = require("../module/task/staff/change");
+const delete_task = require("../module/task/staff/delete");
 const all_task_group = require("../module/task_group/staff/all");
 const add_task_group = require("../module/task_group/staff/add");
 const change_task_group = require("../module/task_group/staff/change");
@@ -34,6 +36,7 @@ const submit_mark = require("../module/mark/staff/submit");
 const upload_marks = require("../module/mark/staff/upload");
 const release_marks = require("../module/mark/staff/release");
 const hide_marks = require("../module/mark/staff/hide");
+const mark_is_hidden = require("../module/mark/staff/is_hidden");
 const all_interviews = require("../module/interview/staff/all");
 const today_interviews = require("../module/interview/staff/today");
 const schedule_interview = require("../module/interview/staff/schedule");
@@ -44,13 +47,17 @@ const collect_all_submissions = require("../module/submission/staff/collect_all"
 const manual_collect_submission = require("../module/submission/staff/collect_manual");
 const download_submissions = require("../module/submission/staff/download");
 const check_submission = require("../module/submission/staff/check");
+const impersonate = require("../module/impersonate/instructor/impersonate");
 
-router.use("/", function(req, res, next) {
-    next();
-})
+router.use("/", function (req, res, next) {
+  next();
+});
 
 // Middleware
 router.use("/course/", middleware);
+
+// Course Content
+router.use("/course/:course_id/get", get_course);
 
 // Role
 router.use("/course/:course_id/role/get", get_role);
@@ -70,6 +77,7 @@ router.use("/course/:course_id/task/all", all_tasks);
 router.use("/course/:course_id/task/get", get_task);
 router.use("/course/:course_id/task/add", add_task);
 router.use("/course/:course_id/task/change", change_task);
+router.use("/course/:course_id/task/delete", delete_task);
 
 // Criteria
 router.use("/course/:course_id/criteria/all", all_criteria);
@@ -99,6 +107,7 @@ router.use("/course/:course_id/mark/submit", submit_mark);
 router.use("/course/:course_id/mark/upload", upload_marks);
 router.use("/course/:course_id/mark/release", release_marks);
 router.use("/course/:course_id/mark/hide", hide_marks);
+router.use("/course/:course_id/mark/is_hidden", mark_is_hidden);
 
 // Interview
 router.use("/course/:course_id/interview/all", all_interviews);
@@ -109,9 +118,18 @@ router.use("/course/:course_id/interview/delete", delete_interview);
 
 // Submission
 router.use("/course/:course_id/submission/collect/one", collect_one_submission);
-router.use("/course/:course_id/submission/collect/all", collect_all_submissions);
-router.use("/course/:course_id/submission/collect/manual", manual_collect_submission);
+router.use(
+  "/course/:course_id/submission/collect/all",
+  collect_all_submissions
+);
+router.use(
+  "/course/:course_id/submission/collect/manual",
+  manual_collect_submission
+);
 router.use("/course/:course_id/submission/download", download_submissions);
 router.use("/course/:course_id/submission/check", check_submission);
+
+// impersonate
+router.use("/course/:course_id/impersonate", impersonate);
 
 module.exports = router;
