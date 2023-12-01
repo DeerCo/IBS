@@ -89,7 +89,7 @@ app.use((err, req, res, next) => {
 // const env = process.env.NODE_ENV || "development"; // Set a default environment
 // const dbConfig = require("./sequelize.config")[env];
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
     console.log(`The server is listening at http://localhost:${port}`)
