@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.NUMERIC,
       allowNull: false,
     },
-    oldMark: {
+    old_mark: {
       type: DataTypes.NUMERIC,
     },
     hidden: {
