@@ -2,31 +2,40 @@ const express = require("express");
 const router = express.Router();
 const helpers = require("../../../utilities/helpers");
 const rate_limit = require("../../../setup/rate_limit");
-const client = require("../../../setup/db");
+const user_model = require("../../../models/user"); // Adjust the path as per your project structure
+const user_verify_model = require("../../../models/userVerification"); // Adjust the path as per your project structure
 
-router.post("/", rate_limit.email_limiter, (req, res) => {
-    if (!("username" in req.body) || req.body["username"] === "") {
-        res.status(400).json({ message: "Your username is missing." });
-        return;
+router.post("/", rate_limit.email_limiter, async (req, res) => {
+    const username = req.body.username;
+
+    if (!username || username === "") {
+        return res.status(400).json({ message: "Your username is missing." });
     }
 
-    let sql_email = "SELECT email FROM user_info WHERE username = ($1)";
-    let sql_verify = "INSERT INTO user_verification (username, code, created_at) VALUES (($1), ($2), NOW()) ON CONFLICT (username) DO UPDATE SET code = ($2), created_at = NOW()"
+    try {
+        const user = await user_model.findOne({ where: { username: username.toLowerCase() } });
 
-    client.query(sql_email, [req.body["username"].toLowerCase()], (err_email, pg_res_email) => {
-        if (err_email) {
-            res.status(404).json({ message: "Unknown error." });
-            console.log(err_email);
-        } else {
-            if (pg_res_email.rowCount === 1) {
-                let code = Math.floor(100000 + Math.random() * 900000);
-                helpers.send_email(pg_res_email.rows[0]["email"], "IBS Password Reset Request", "We received a request to reset your password. If this was you, please enter code " + code + ". The code will expire in 5 minutes.");
-                client.query(sql_verify, [req.body["username"].toLowerCase(), code.toString()]);
+        if (user) {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            const existingVerification = await user_verify_model.findOne({ where: { username: username.toLowerCase() } });
+
+            if (existingVerification) {
+                // Update existing record
+                await existingVerification.update({ code: code, created_at: new Date() });
+            } else {
+                // Create new record
+                await user_verify_model.create({ username: username.toLowerCase(), code: code, created_at: new Date() });
             }
 
-            res.status(200).json({ message: "An email has been sent if the username is valid." });
+            helpers.send_email(user.email, "IBS Password Reset Request",
+                "We received a request to reset your password. If this was you, please enter code " + code + ". The code will expire in 5 minutes.");
         }
-    });
-})
+
+        res.status(200).json({ message: "An email has been sent if the username is valid." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Unknown error." });
+    }
+});
 
 module.exports = router;

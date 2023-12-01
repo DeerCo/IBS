@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('UserVerifications', {
+    await queryInterface.createTable('user_verification', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -22,15 +22,6 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.literal('NOW()'),
       },
-
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
     });
   },
   async down(queryInterface, Sequelize) {
