@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.NUMERIC,
         allowNull: false,
       },
-      oldMark: {
+      old_mark: {
         type: Sequelize.NUMERIC,
       },
       hidden: {
