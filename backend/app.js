@@ -85,6 +85,9 @@ app.use((err, req, res, next) => {
         res.status(500).json({ message: "Unknown error. Please check error log." });
     }
 })
+// // Load the appropriate database configuration based on the environment
+// const env = process.env.NODE_ENV || "development"; // Set a default environment
+// const dbConfig = require("./sequelize.config")[env];
 
 const port = process.env.PORT || 3000;
 
