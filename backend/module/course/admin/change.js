@@ -44,7 +44,7 @@ router.put('/', (req, res) => {
     }
 
     let sql_change =
-        'UPDATE course SET course_code = ($1), course_session = ($2), gitlab_group_id = ($3), default_token_count = ($4), token_length = ($5), hidden = ($6) WHERE course_id = ($7)';
+        'UPDATE courses SET course_code = ($1), course_session = ($2), gitlab_group_id = ($3), default_token_count = ($4), token_length = ($5), hidden = ($6) WHERE course_id = ($7)';
     let sql_change_data = [
         req.body['course_code'],
         req.body['course_session'],
@@ -57,16 +57,19 @@ router.put('/', (req, res) => {
 
     client.query(sql_change, sql_change_data, (err, pg_res) => {
         if (err) {
+            console.log(err);
+            console.log(err.code);
             if (
                 err.code === '23505' &&
-                err.constraint === 'course_course_code_course_session_key'
+                err.constraint === 'course_code_course_session_key'
             ) {
                 res.status(409).json({
                     message: 'The course must have unique course code and session.'
                 });
-            } else if (err.code === '23505' && err.constraint === 'course_gitlab_group_id_key') {
+            } else if (err.code === '23505' && err.constraint === 'courses_gitlab_group_id_key') {
                 res.status(409).json({ message: 'The course must have unique Gitlab group id.' });
             } else {
+
                 res.status(404).json({ message: 'Unknown error.' });
                 console.log(err);
             }

@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Courses', {
+    await queryInterface.createTable('courses', {
       // id: {
       //   allowNull: false,
       //   autoIncrement: true,
@@ -43,21 +43,21 @@ module.exports = {
         defaultValue: false,
       },
       createdAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE
       }
     });
     // Add the foreign key constraint
-    await queryInterface.addConstraint('Courses', {
+    await queryInterface.addConstraint('courses', {
       fields: ['course_id'],
       type: 'foreign key',
       name: 'custom_fkey_course_id',
       references: {
-        table: 'Courses', // The referenced table name (should match your model name)
+        table: 'courses', // The referenced table name (should match your model name)
         field: 'course_id', // The referenced field name (should match your model)
       },
       onDelete: 'restrict',
@@ -67,6 +67,6 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.dropAllTables();
     // Remove the foreign key constraint
-    await queryInterface.removeConstraint('Courses', 'custom_fkey_course_id');
+    await queryInterface.removeConstraint('courses', 'custom_fkey_course_id');
   }
 };

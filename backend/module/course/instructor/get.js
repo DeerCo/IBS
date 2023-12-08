@@ -6,7 +6,7 @@ const helpers = require("../../../utilities/helpers");
 router.get("/", (req, res) => {
   console.log(`[+] RESPONSE Locals: ${res.locals["course_id"]}`);
   if (res.locals["course_id"] === "") {
-    res.status(400).json({ message: "The course id is missing or invalid." });
+    res.status(400).json({ message: "1. The course id is missing or invalid." });
   }
   let sqlCourse = "SELECT * FROM course WHERE course_id = ($1)";
   client.query(sqlCourse, [res.locals["course_id"]], (err, pgRes) => {
