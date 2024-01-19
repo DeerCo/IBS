@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const helpers = require("../../../utilities/helpers");
 const rate_limit = require("../../../setup/rate_limit");
-const user_model = require("../../../models/user"); // Adjust the path as per your project structure
-const user_verify_model = require("../../../models/userVerification"); // Adjust the path as per your project structure
+const { User, UserVerification } = require("../../../models"); // Adjust the path as per your project structure
 
 router.post("/", rate_limit.email_limiter, async (req, res) => {
     const username = req.body.username;
@@ -13,18 +12,18 @@ router.post("/", rate_limit.email_limiter, async (req, res) => {
     }
 
     try {
-        const user = await user_model.findOne({ where: { username: username.toLowerCase() } });
+        const user = await User.findOne({ where: { username: username.toLowerCase() } });
 
         if (user) {
             const code = Math.floor(100000 + Math.random() * 900000).toString();
-            const existingVerification = await user_verify_model.findOne({ where: { username: username.toLowerCase() } });
+            const existingVerification = await UserVerification.findOne({ where: { username: username.toLowerCase() } });
 
             if (existingVerification) {
                 // Update existing record
                 await existingVerification.update({ code: code, created_at: new Date() });
             } else {
                 // Create new record
-                await user_verify_model.create({ username: username.toLowerCase(), code: code, created_at: new Date() });
+                await UserVerification.create({ username: username.toLowerCase(), code: code, created_at: new Date() });
             }
 
             helpers.send_email(user.email, "IBS Password Reset Request",

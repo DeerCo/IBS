@@ -1,44 +1,48 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class CourseRole extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      CourseRole.belongsTo(models.User, {
-        foreignKey: 'username',
-        onDelete: 'RESTRICT',
-        onUpdate: 'RESTRICT',
-      });
-      CourseRole.belongsTo(models.Course, {
-        foreignKey: 'course_id',
-        onDelete: 'RESTRICT',
-        onUpdate: 'RESTRICT',
-      });
-    }
-  }
-  CourseRole.init({
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    course_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../helpers/database'); // Adjust the path as per your project structure
 
-  }, {
-    sequelize,
-    modelName: 'CourseRole',
-  });
-  return CourseRole;
-};
+class CourseRole extends Model {
+  static associate(models) {
+    console.log("=========== Association for courserole is called here ===========");
+
+    CourseRole.belongsTo(models.Course, {
+      foreignKey: 'course_id',
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
+      as: 'Course', // Consistent alias
+    });
+    // Define associations here
+    CourseRole.belongsTo(models.User, {
+      foreignKey: 'username',
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
+      as: 'User',
+    });
+  }
+
+  // Define any static methods if needed
+}
+
+CourseRole.init({
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  course_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }
+}, {
+  sequelize,
+  modelName: 'CourseRole',
+  tableName: 'course_role',
+  timestamps: false
+},
+
+);
+
+module.exports = CourseRole;

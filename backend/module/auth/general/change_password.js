@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const { Op } = require("sequelize"); // Import Sequelize's Op object
-const User = require("../../../models/user"); // Adjust the path as per your project structure
-const UserVerification = require("../../../models/userVerification"); // Adjust the path as per your project structure
+const { User, UserVerification } = require("../../../models"); // Adjust the path as per your project structure
 
 router.post("/", async (req, res) => {
     const { username, password, code } = req.body;

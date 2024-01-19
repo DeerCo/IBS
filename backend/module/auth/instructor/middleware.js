@@ -10,6 +10,15 @@ router.use("/:course_id/", function (req, res, next) {
         res.status(401).json({ message: "You need to provide a valid token." });
     } else {
         jwt.verify(token, process.env.TOKEN_SECRET, (err, token_data) => {
+            // Add a check to ensure token_data and token_data["roles"] is defined
+            if (!token_data || typeof token_data["roles"] !== 'object') {
+                return res.status(401).json({ message: "Invalid token structure." });
+            }
+
+            // Existing check for course_id and role
+            if (helpers.number_validate(req.params["course_id"]) || token_data["roles"][req.params["course_id"]] !== "instructor") {
+                return res.status(400).json({ message: "Invalid or unauthorized access to course." });
+            }
             if (err) {
                 res.status(401).json({ message: "Your token is invalid. Please generate a new one." });
             } else {

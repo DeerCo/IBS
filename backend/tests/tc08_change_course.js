@@ -46,16 +46,16 @@ describe('Change Course Endpoint', () => {
             .set('Authorization', `Bearer ${adminToken}`)
             .send({
                 course_id: 1, // Assuming '1' is the ID of the seeded course
-                course_code: "CSC105", // Assuming this code already exists for another course
+                course_code: "CSC102", // Assuming this code already exists for another course
                 course_session: "2023F",
-                gitlab_group_id: "124",
+                gitlab_group_id: "126",
                 default_token_count: 12,
                 token_length: 8,
                 hidden: true
             });
 
         expect(response).to.have.status(409);
-        expect(response.body).to.have.property('message', 'The course must have unique Gitlab group id.');
+        expect(response.body).to.have.property('message', 'The course must have unique course code and session.');
     });
 
     it('should fail to update due to invalid course id', async () => {

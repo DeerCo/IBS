@@ -3,6 +3,13 @@ const sequelize = require('../helpers/database'); // Adjust the path as per your
 
 class User extends Model {
   // If you have any instance methods, you can define them here
+  static associate(models) {
+    // Define association here
+    User.hasMany(models.CourseRole, {
+      foreignKey: 'username',
+      as: 'CourseRole', // Consistent alias
+    });
+  }
 }
 
 User.init({

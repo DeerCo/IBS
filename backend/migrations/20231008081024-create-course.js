@@ -51,17 +51,10 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-    // Add the foreign key constraint
-    await queryInterface.addConstraint('courses', {
-      fields: ['course_id'],
-      type: 'foreign key',
-      name: 'custom_fkey_course_id',
-      references: {
-        table: 'courses', // The referenced table name (should match your model name)
-        field: 'course_id', // The referenced field name (should match your model)
-      },
-      onDelete: 'restrict',
-      onUpdate: 'restrict',
+    // Adding unique constraint for course_code and course_session
+    await queryInterface.addIndex('courses', ['course_code', 'course_session'], {
+      unique: true,
+      name: 'unique_course_code_and_session'
     });
   },
   async down(queryInterface, Sequelize) {

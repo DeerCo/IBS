@@ -33,9 +33,6 @@ describe('Get All Courses Endpoint', () => {
                 expect(res.body).to.have.property('count').that.is.a('number');
                 expect(res.body).to.have.property('course').that.is.an('array');
 
-                // Log the returned courses
-                console.log("Returned Courses:", res.body.course);
-
                 // Validate the expected courses
                 const expectedCourses = [
                     { course_code: 'CSC101', course_session: '2023S' },

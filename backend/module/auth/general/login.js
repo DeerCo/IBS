@@ -2,12 +2,13 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
 const helpers = require('../../../utilities/helpers');
-const User = require('../../../models/user'); // Adjust the path as per your project structure
+const User = require('../../../models/user');
+const { CourseRole, Course } = require('../../../models');
+
 
 router.post('/', async (req, res) => {
     const { username, password } = req.body;
 
-    // Check if username and password are provided
     if (!username || username === '') {
         return res.status(400).json({ message: 'Your username is missing.' });
     }
@@ -16,29 +17,44 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        // Find the user by username
-        const user = await User.findOne({ where: { username: username.toLowerCase()  } });
+        const user = await User.findOne({ where: { username: username.toLowerCase() } });
 
-        // Check if user exists
         if (!user) {
             return res.status(401).json({ message: 'Your username or password is incorrect.' });
         }
 
-        // Compare the provided password with the stored hashed password
         const passwordIsValid = bcrypt.compareSync(password, user.password);
 
-        // Check if password is valid
         if (!passwordIsValid) {
             return res.status(401).json({ message: 'Your username or password is incorrect.' });
         }
 
-        // Generate a token for the authenticated user
-        let token = helpers.generateAccessToken(username.toLowerCase(), user.email, user.admin /*, roles */);
+        // Fetch roles and course details using Sequelize
+        const roles = await CourseRole.findAll({
+            where: { username: username.toLowerCase() },
+            include: [{
+                model: Course,
+                as: 'Course', // This should match the alias defined in the association
+                where: { hidden: false },
+                attributes: ['course_id', 'course_code', 'course_session']
+            }]
+        });
+        const rolesMap = roles.reduce((acc, role) => {
+            // acc[role.Course.course_id] = {
+            //     role: role.role,
+            //     course_code: role.Course.course_code,
+            //     course_session: role.Course.course_session
+            // };
+            acc[role.Course.course_id] = role.role;
+            return acc;
+        }, {});
 
-        // Respond with token and other user details as needed
+        let token = helpers.generateAccessToken(username.toLowerCase(), user.email, user.admin, rolesMap);
+        // let token = helpers.generateAccessToken(username.toLowerCase(), user.email, user.admin);
+
         res.json({
             token: token,
-            // Include other user details or roles as needed
+            // roles: Object.values(rolesMap)
         });
     } catch (error) {
         console.error(error);
