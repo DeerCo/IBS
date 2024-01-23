@@ -12,26 +12,16 @@ module.exports = {
       username: {
         type: Sequelize.STRING,
         allowNull: false,
-        primaryKey: true,
       },
       course_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        primaryKey: true,
       },
       role: {
         type: Sequelize.STRING,
         allowNull: false,
       },
 
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
     });
     // For the 'course_id' foreign key
     await queryInterface.addConstraint('course_role', {
@@ -39,8 +29,20 @@ module.exports = {
       type: 'foreign key',
       name: 'fkey_course_id',
       references: {
-        table: 'Courses',
+        table: 'courses',
         field: 'course_id',
+      },
+      onDelete: 'RESTRICT',
+      onUpdate: 'RESTRICT',
+    });
+    // Add foreign key for 'username'
+    await queryInterface.addConstraint('course_role', {
+      fields: ['username'],
+      type: 'foreign key',
+      name: 'fkey_username',
+      references: {
+        table: 'user_info', // Replace with the actual name of your User table
+        field: 'username',
       },
       onDelete: 'RESTRICT',
       onUpdate: 'RESTRICT',

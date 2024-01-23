@@ -2,7 +2,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
-const User = require("../../../models/user"); // Adjust the path as per your project structure
+const { User } = require("../../../models"); // Adjust the path as per your project structure
 const helpers = require("../../../utilities/helpers");
 
 router.post("/", async (req, res) => {

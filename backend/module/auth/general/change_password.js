@@ -1,43 +1,49 @@
 const express = require("express");
 const router = express.Router();
-const client = require("../../../setup/db");
+const bcrypt = require('bcryptjs');
+const { Op } = require("sequelize"); // Import Sequelize's Op object
+const { User, UserVerification } = require("../../../models"); // Adjust the path as per your project structure
 
-router.post("/", (req, res) => {
-    if (!("username" in req.body) || req.body["username"] === "") {
-        res.status(400).json({ message: "Your username is missing." });
-        return;
+router.post("/", async (req, res) => {
+    const { username, password, code } = req.body;
+
+    if (!username || username === "") {
+        return res.status(400).json({ message: "Your username is missing." });
     }
-    if (!("password" in req.body) || req.body["password"] === "") {
-        res.status(400).json({ message: "Your password is missing." });
-        return;
+    if (!password || password === "") {
+        return res.status(400).json({ message: "Your password is missing." });
     }
-    if (!("code" in req.body) || req.body["code"] === "") {
-        res.status(400).json({ message: "Your verification code is missing." });
-        return;
+    if (!code || code === "") {
+        return res.status(400).json({ message: "Your verification code is missing." });
     }
 
-    let sql_verify = "SELECT * FROM user_verification WHERE username = ($1) AND code = ($2) AND (NOW() - created_at <= INTERVAL '5 minutes')";
-    let sql_delete_code = "DELETE FROM user_verification WHERE username = ($1)";
-    let sql_change_password = "UPDATE user_info SET password = crypt(($1), gen_salt('bf', 8)) WHERE username = ($2)";
-
-    client.query(sql_verify, [req.body["username"].toLowerCase(), req.body["code"]], (err_verify, pg_res_verify) => {
-        client.query(sql_delete_code, [req.body["username"].toLowerCase()]);
-
-        if (err_verify) {
-            res.status(404).json({ message: "Unknown error." });
-        } else if (pg_res_verify.rowCount === 1) {
-            client.query(sql_change_password, [req.body["password"], req.body["username"].toLowerCase()], (err_change_password, pg_res_change_password) => {
-                if (err_change_password) {
-                    res.status(404).json({ message: "Unknown error." });
-                    console.log(err_change_password)
-                } else {
-                    res.status(200).json({ message: "Your password is changed." });
+    try {
+        const userVerification = await UserVerification.findOne({
+            where: {
+                username: username.toLowerCase(),
+                code: code,
+                created_at: {
+                    [Op.gte]: new Date(new Date() - 5 * 60 * 1000) // 5 minutes ago
                 }
-            });
-        } else {
-            res.status(400).json({ message: "Your username or code is invalid." });
+            }
+        });
+
+        if (!userVerification) {
+            return res.status(400).json({ message: "Your username or code is invalid." });
         }
-    });
-})
+
+        // Delete the verification code
+        await UserVerification.destroy({ where: { username: username.toLowerCase() } });
+
+        // Update the user's password
+        const hashedPassword = bcrypt.hashSync(password, 8);
+        await User.update({ password: hashedPassword }, { where: { username: username.toLowerCase() } });
+
+        res.status(200).json({ message: "Your password is changed." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Unknown error." });
+    }
+});
 
 module.exports = router;
