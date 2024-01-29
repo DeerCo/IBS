@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "ibs",
+    "password": "password",
+    "database": "ibs",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+  "username": "ibs",
+  "password": "password",
+  "database": "testibs",
+  "host": "127.0.0.1",
+  "dialect": "postgres"
+}
+}
