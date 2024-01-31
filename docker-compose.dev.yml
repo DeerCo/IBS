@@ -47,10 +47,13 @@ services:
     build:
       context: ./backend
       dockerfile: dev.Dockerfile
+    environment:
+      DATABASE_URL: postgres://ibs:password@postgres:5432/ibs?sslmode=disable
     volumes:
       - ./backend:/backend
     env_file:
       - backend/.env
+
 
   frontend:
     restart: always
