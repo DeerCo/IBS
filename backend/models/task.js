@@ -4,7 +4,7 @@ const sequelize = require('../helpers/database');
 class Task extends Model {
   static associate(models) {
     Task.belongsTo(models.Course, { foreignKey: 'course_id', as: 'course' });
-    // Task.belongsTo(models.Taskgroup, { foreignKey: 'task_group_id', as: 'taskGroup' });
+    Task.belongsTo(models.TaskGroup, { foreignKey: 'task_group_id', as: 'taskGroup' });
   }
 }
 
